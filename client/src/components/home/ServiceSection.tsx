@@ -184,10 +184,10 @@ const ServiceSection = () => {
   
   // Features list for highlight section
   const keyFeatures = [
-    "Expert Team Members",
-    "Fastest Customer Service",
-    "Competitive Pricing Plan",
-    "Quality Solutions for Business"
+    "Experienced Web Development Team",
+    "Responsive Customer Support",
+    "Affordable Pricing Plans",
+    "Customized IT Solutions for Your Business"
   ];
   
   return (
@@ -257,7 +257,7 @@ const ServiceSection = () => {
             </h2>
             
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
-              From web development to digital marketing, we offer comprehensive technology solutions to help your business stand out and succeed in the digital world.
+              From custom web development to digital marketing and creative design, we offer affordable IT solutions to help businesses in Madurai and beyond establish a strong online presence.
             </p>
           </div>
 
@@ -297,9 +297,9 @@ const ServiceSection = () => {
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
               <div>
-                <h3 className="text-2xl font-bold text-neutral-800 mb-6">Why Choose Our Technology Services?</h3>
+                <h3 className="text-2xl font-bold text-neutral-800 mb-6">Why Choose GodivaTech Services?</h3>
                 <p className="text-neutral-600 mb-8">
-                  Our expert team is committed to delivering innovative solutions that drive your business forward with cutting-edge technology and strategic implementation.
+                  With over a decade of experience, our team is dedicated to providing affordable and high-quality technology solutions tailored to your specific business needs.
                 </p>
                 
                 <ul className="space-y-3">

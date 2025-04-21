@@ -23,7 +23,7 @@ const AboutSection = () => {
           </div>
           <div className="w-full lg:w-1/2">
             <h2 className="text-3xl font-bold text-neutral-800 mb-6">
-              We are increasing business success with technology
+              Affordable IT solutions to boost your online presence
             </h2>
             <p className="text-lg text-neutral-600 mb-6">
               At Godiva Tech, we provide a range of digital marketing services in Madurai, including web development, mobile app development, UI/UX design, poster design, and marketing strategies.
@@ -36,17 +36,17 @@ const AboutSection = () => {
               <div className="text-center">
                 <p className="text-4xl font-bold text-primary mb-2">13+</p>
                 <p className="text-neutral-600">Years of Experience</p>
-                <p className="text-sm text-neutral-500 mt-1">To succeed, every software solution be deeply integrated into the</p>
+                <p className="text-sm text-neutral-500 mt-1">Delivering quality IT solutions since 2010</p>
               </div>
               <div className="text-center">
                 <p className="text-4xl font-bold text-primary mb-2">150+</p>
-                <p className="text-neutral-600">Successfully Projects Done</p>
-                <p className="text-sm text-neutral-500 mt-1">To succeed, every software solution be deeply integrated into the</p>
+                <p className="text-neutral-600">Successfully Completed Projects</p>
+                <p className="text-sm text-neutral-500 mt-1">Web development, marketing & design projects</p>
               </div>
               <div className="text-center">
                 <p className="text-4xl font-bold text-primary mb-2">120+</p>
                 <p className="text-neutral-600">Satisfied Happy Clients</p>
-                <p className="text-sm text-neutral-500 mt-1">To succeed, every software solution be deeply integrated into the</p>
+                <p className="text-sm text-neutral-500 mt-1">From businesses in Madurai and beyond</p>
               </div>
             </div>
             
