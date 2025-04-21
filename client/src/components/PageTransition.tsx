@@ -95,7 +95,7 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
         animate="animate"
         exit="exit"
         variants={contentVariants}
-        className="page-content"
+        className="page-content relative" // Added relative positioning for better scroll tracking
       >
         {children}
       </motion.div>
@@ -181,6 +181,7 @@ export const TransitionItem: React.FC<{
       }}
       initial="initial"
       animate="animate"
+      className="relative" // Added relative positioning for better animation tracking
     >
       {children}
     </motion.div>

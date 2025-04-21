@@ -23,15 +23,17 @@ const Home = () => {
   return (
     <PageTransition>
       <div className="relative">
-        {/* Hero section without delay for immediate display */}
-        <HeroSection />
+        {/* Hero section with immediate display */}
+        <TransitionItem>
+          <HeroSection />
+        </TransitionItem>
         
         {/* Other sections with staggered reveal */}
-        <TransitionItem>
+        <TransitionItem delay={0.1}>
           <TrustedBySection />
         </TransitionItem>
         
-        <TransitionItem delay={0.1}>
+        <TransitionItem delay={0.2}>
           <ServiceSection />
         </TransitionItem>
         
@@ -39,7 +41,7 @@ const Home = () => {
           <AboutSection />
         </TransitionItem>
         
-        <TransitionItem delay={0.15}>
+        <TransitionItem delay={0.2}>
           <TeamSection />
         </TransitionItem>
         
@@ -47,15 +49,15 @@ const Home = () => {
           <PortfolioSection />
         </TransitionItem>
         
-        <TransitionItem delay={0.1}>
+        <TransitionItem delay={0.2}>
           <TestimonialsSection />
         </TransitionItem>
         
-        <TransitionItem delay={0.15}>
+        <TransitionItem delay={0.1}>
           <BlogSection />
         </TransitionItem>
         
-        <TransitionItem delay={0.1}>
+        <TransitionItem delay={0.2}>
           <NewsletterSection />
         </TransitionItem>
         
@@ -63,7 +65,7 @@ const Home = () => {
           <CTASection />
         </TransitionItem>
         
-        <TransitionItem delay={0.15}>
+        <TransitionItem delay={0.2}>
           <ContactSection />
         </TransitionItem>
         
@@ -72,8 +74,18 @@ const Home = () => {
         </TransitionItem>
         
         {/* Thin visual separator lines between sections */}
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+        <motion.div 
+          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+        />
+        <motion.div 
+          className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+        />
       </div>
     </PageTransition>
   );
