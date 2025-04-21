@@ -13,9 +13,9 @@ import { TransitionItem } from "@/components/PageTransition";
 const getIconForService = (serviceName: string) => {
   const iconMap: Record<string, React.ElementType> = {
     'web-development': Code,
-    'digital-marketing': Cloud,
+    'digital-marketing': Cloud, 
     'app-development': Users,
-    'video-production': Shield,
+    'poster-design': Shield,
     'ui-ux-design': BarChart,
     'creative-designing': BrainCircuit
   };
@@ -130,42 +130,42 @@ const ServiceSection = () => {
     {
       id: 1,
       title: "Web Development",
-      description: "Unlock the potential of your business with our dynamic and impactful web solutions!",
+      description: "Create affordable, responsive websites for your business that work on all devices and help your brand stand out online.",
       icon: Code,
       slug: "web-development"
     },
     {
       id: 2,
       title: "Digital Marketing",
-      description: "Unleash your online potential with our tailored solutions. From SEO and PPC to social media management.",
+      description: "Boost your online presence with our comprehensive digital marketing strategies including SEO, social media management, and online advertising.",
       icon: Cloud,
       slug: "digital-marketing"
     },
     {
       id: 3,
-      title: "App Development",
-      description: "From vision to reality, our team delivers cutting-edge mobile app services. With expert developers.",
+      title: "Mobile App Development",
+      description: "Build custom mobile applications for Android and iOS platforms that connect you with your customers wherever they are.",
       icon: Users,
       slug: "app-development"
     },
     {
       id: 4,
-      title: "Video Production",
-      description: "Elevate your brand marketing efforts by leveraging the power of video. We deliver high-quality video content.",
+      title: "Poster Design",
+      description: "Craft eye-catching posters and marketing materials that effectively communicate your message and attract customer attention.",
       icon: Shield,
-      slug: "video-production"
+      slug: "poster-design"
     },
     {
       id: 5,
       title: "UI/UX Design",
-      description: "As a UI/UX design company in India we have delivered exceptional user experience.",
+      description: "Create intuitive and engaging user interfaces that provide exceptional user experiences and keep customers coming back.",
       icon: BarChart,
       slug: "ui-ux-design"
     },
     {
       id: 6,
-      title: "Creative Designing",
-      description: "Your business presentation and professionalism is instantly communicated when someone views your brand identity.",
+      title: "Logo & Brand Design",
+      description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
       icon: BrainCircuit,
       slug: "creative-designing"
     }
@@ -253,7 +253,7 @@ const ServiceSection = () => {
             </div>
             
             <h2 className="text-4xl md:text-5xl font-bold text-neutral-800 mb-6 tracking-tight leading-tight">
-              We deal with the aspects of <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">professional IT services</span>
+              Leading <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">web development & digital marketing</span> in Madurai
             </h2>
             
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
