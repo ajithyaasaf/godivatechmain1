@@ -10,8 +10,9 @@ const HeroSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaButtonRef = useRef<HTMLButtonElement>(null);
-  const [imageRef, imageOffset] = useParallax<HTMLDivElement>(-0.15);
-  const [contentRef, contentOffset] = useParallax<HTMLDivElement>(0.1);
+  // Reduced parallax intensity to minimize blurring effect during scroll
+  const [imageRef, imageOffset] = useParallax<HTMLDivElement>(-0.05);
+  const [contentRef, contentOffset] = useParallax<HTMLDivElement>(0.03);
   
   // Scroll-based animations using framer-motion
   const { scrollYProgress } = useScroll({
@@ -26,8 +27,10 @@ const HeroSection = () => {
     }
   };
   
-  const backgroundOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  // Adjusted to maintain visibility throughout most of the scroll
+  // Only start fading when user has scrolled significantly
+  const backgroundOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 1]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 1]);
   
   useEffect(() => {
     if (subtitleRef.current) {
@@ -248,16 +251,13 @@ const HeroSection = () => {
                 />
               </motion.div>
               
-              {/* Interactive floating elements around the image */}
+              {/* Interactive floating elements around the image - removed parallax effect */}
               <motion.div 
                 className="absolute -top-5 -left-5 w-24 h-24 rounded-lg bg-blue-500/40 backdrop-blur-md"
-                style={{
-                  y: useTransform(scrollYProgress, [0, 1], ["0%", "20%"]),
-                  rotate: useTransform(scrollYProgress, [0, 1], ["0deg", "10deg"]),
-                }}
                 animate={{ 
                   scale: [1, 1.1, 1],
-                  rotate: [0, 5, 0]
+                  rotate: [0, 5, 0],
+                  y: [0, -5, 0]
                 }}
                 transition={{ 
                   duration: 6, 
@@ -268,12 +268,10 @@ const HeroSection = () => {
               
               <motion.div 
                 className="absolute -bottom-5 -right-5 w-28 h-28 rounded-full bg-purple-600/30 backdrop-blur-md"
-                style={{
-                  y: useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]),
-                }}
                 animate={{ 
                   scale: [1, 0.9, 1],
-                  rotate: [0, -5, 0]
+                  rotate: [0, -5, 0],
+                  y: [0, 5, 0]
                 }}
                 transition={{ 
                   duration: 8, 

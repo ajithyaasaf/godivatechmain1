@@ -2,16 +2,26 @@ import React, { useRef } from "react";
 import { Link } from "wouter";
 import { 
   ChevronRight, Code, Cloud, Users, Shield, BarChart, BrainCircuit,
-  ArrowRight
+  ArrowRight, 
+  CodeIcon, CloudIcon, UsersIcon, ShieldIcon, BarChartIcon, Brain
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useAnimateOnScroll, slideInUpVariants } from "@/hooks/use-animation";
 import ParallaxSection from "@/components/ui/ParallaxSection";
 
-// Fixed the icon rendering issues by ensuring proper component usage
-const IconComponent = ({ icon: Icon }: { icon: React.ElementType }) => {
-  return <Icon className="text-2xl text-primary h-6 w-6" />;
+// Explicit mapping of service types to icon components to avoid lowercase tag errors
+const getIconForService = (serviceName: string) => {
+  const iconMap: Record<string, React.ElementType> = {
+    'software-development': Code,
+    'cloud-solutions': Cloud,
+    'it-consulting': Users,
+    'cybersecurity': Shield,
+    'data-analytics': BarChart,
+    'ai-machine-learning': BrainCircuit
+  };
+  
+  return iconMap[serviceName] || Code;
 };
 
 const ServiceCard = ({ 
@@ -39,7 +49,8 @@ const ServiceCard = ({
       <div className="p-8">
         <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative">
           <div className="absolute inset-0 rounded-full bg-primary/5 animate-ping opacity-75" style={{ animationDuration: '3s' }}></div>
-          <IconComponent icon={Icon} />
+          {/* Using Icon component directly with validation */}
+          {Icon && typeof Icon === 'function' && <Icon className="text-2xl text-primary h-6 w-6" />}
         </div>
         <h3 className="text-xl font-semibold text-neutral-800 mb-3 group-hover:text-primary transition-colors">{title}</h3>
         <p className="text-neutral-600 mb-6 line-clamp-3">
