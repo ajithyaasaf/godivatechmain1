@@ -7,6 +7,7 @@ import {
   ArrowUpRight, Globe, Layers, Shield, Database, 
   Braces, BrainCircuit, Palette, CircleUser
 } from "lucide-react";
+import godivaLogo from "../assets/godiva-logo.png";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -118,28 +119,14 @@ const Header = () => {
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
-                  <div className="relative">
-                    <Box className="rotate-45 h-8 w-8 text-primary z-10 relative" />
-                    <motion.div 
-                      className="absolute -inset-1.5 bg-primary/20 rounded-lg -z-10"
-                      initial={{ scale: 0.8, opacity: 0.5 }}
-                      animate={{ 
-                        scale: [0.8, 1.2, 0.8], 
-                        opacity: [0.5, 0.8, 0.5]
-                      }}
-                      transition={{ 
-                        duration: 3,
-                        repeat: Infinity,
-                        repeatType: "loop"
-                      }}
-                    />
-                  </div>
-                  <span className="relative">
-                    <span className="bg-gradient-to-r from-primary via-blue-500 to-indigo-600 bg-clip-text text-transparent font-extrabold">
-                      GodivaTech
-                    </span>
-                    <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-blue-500 to-indigo-600 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-                  </span>
+                  <img 
+                    src={godivaLogo} 
+                    alt="GodivaTech Logo" 
+                    className="h-10 w-auto"
+                  />
+                  <motion.div 
+                    className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-blue-500 to-indigo-600 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"
+                  />
                 </motion.span>
               </Link>
             </div>

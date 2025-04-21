@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { Box, MapPin, Phone, Mail, ArrowUpCircle } from "lucide-react";
 import { FaLinkedinIn, FaTwitter, FaFacebookF, FaInstagram } from "react-icons/fa";
 import { motion } from "framer-motion";
+import godivaLogo from "../assets/godiva-logo.png";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -45,11 +46,14 @@ const Footer = () => {
           <motion.div variants={itemVariants}>
             <div className="flex items-center mb-6">
               <motion.span 
-                className="text-2xl font-bold flex items-center"
+                className="flex items-center"
                 whileHover={{ scale: 1.05 }}
               >
-                <Box className="rotate-45 text-primary mr-2 h-6 w-6" />
-                GodivaTech
+                <img 
+                  src={godivaLogo} 
+                  alt="GodivaTech Logo" 
+                  className="h-10 w-auto invert brightness-150"
+                />
               </motion.span>
             </div>
             <p className="text-neutral-300 mb-6 leading-relaxed">
