@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import CTASection from "@/components/home/CTASection";
+import PageTransition, { TransitionItem } from "@/components/PageTransition";
 
 interface Project {
   id: number;
@@ -11,6 +14,122 @@ interface Project {
   technologies: string[];
   link?: string;
 }
+
+// Project card component with animation
+const ProjectCard = ({ project, index }: { project: Project; index: number }) => {
+  return (
+    <motion.div
+      className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-100 h-full"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ 
+        duration: 0.6,
+        delay: index * 0.1 + 0.2,
+        ease: [0.25, 0.1, 0.25, 1.0] 
+      }}
+      whileHover={{ y: -8 }}
+    >
+      <div className="relative overflow-hidden group">
+        <motion.div 
+          className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          whileHover={{ opacity: 1 }}
+        >
+          <motion.span 
+            className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1"
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+          >
+            View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
+          </motion.span>
+        </motion.div>
+        
+        <img
+          src={project.image}
+          alt={project.title}
+          className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        
+        <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+          {project.category}
+        </div>
+      </div>
+      <div className="p-6">
+        <h3 className="text-lg font-bold text-neutral-800 mb-2 group-hover:text-primary transition-colors">
+          {project.title}
+        </h3>
+        <p className="text-neutral-600 mb-4 text-sm">{project.description}</p>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {project.technologies.map((tech, idx) => (
+            <span
+              key={idx}
+              className="bg-neutral-100 text-neutral-700 text-xs font-medium px-2.5 py-1 rounded-full"
+            >
+              {tech}
+            </span>
+          ))}
+        </div>
+        <a
+          href={project.link || "#"}
+          className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors text-sm"
+        >
+          <span className="relative">
+            View Case Study
+            <motion.span 
+              className="absolute -bottom-1 left-0 w-full h-[2px] bg-primary origin-left"
+              initial={{ scaleX: 0 }}
+              whileHover={{ scaleX: 1 }}
+              transition={{ duration: 0.3 }}
+            />
+          </span>
+          <ArrowRight className="ml-1 h-3.5 w-3.5" />
+        </a>
+      </div>
+    </motion.div>
+  );
+};
+
+// Methodology step component
+const MethodologyStep = ({ number, title, description, delay }: { 
+  number: number; 
+  title: string; 
+  description: string;
+  delay: number;
+}) => (
+  <motion.div 
+    className="bg-white p-8 rounded-xl shadow-lg text-center border border-neutral-100 h-full"
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.6, delay }}
+    whileHover={{ y: -10, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.1)" }}
+  >
+    <motion.div 
+      className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative"
+      whileHover={{ scale: 1.1 }}
+      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+    >
+      <motion.div 
+        className="absolute inset-0 rounded-full bg-primary/5"
+        animate={{ 
+          scale: [1, 1.2, 1], 
+          opacity: [0.7, 0.2, 0.7] 
+        }}
+        transition={{ 
+          duration: 2, 
+          repeat: Infinity,
+          repeatType: "loop" 
+        }}
+      />
+      <span className="text-xl font-bold text-primary relative z-10">{number}</span>
+    </motion.div>
+    <h3 className="text-xl font-semibold text-neutral-800 mb-3">{title}</h3>
+    <p className="text-neutral-600">
+      {description}
+    </p>
+  </motion.div>
+);
 
 const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -74,138 +193,202 @@ const Portfolio = () => {
   const displayProjects = projects.length > 0 ? projects : defaultProjects;
   
   // Get unique categories from projects
-  const categories = ['All', ...new Set(displayProjects.map(project => project.category))];
+  const uniqueCategories = Array.from(new Set(displayProjects.map(project => project.category)));
+  const categories = ['All', ...uniqueCategories];
   
   // Filter projects by category
   const filteredProjects = activeFilter 
     ? displayProjects.filter(project => project.category === activeFilter) 
     : displayProjects;
+    
+  // Methodology steps
+  const methodologySteps = [
+    {
+      number: 1,
+      title: "Discovery",
+      description: "We thoroughly analyze your requirements, goals, and challenges to define the project scope."
+    },
+    {
+      number: 2,
+      title: "Planning",
+      description: "We create a detailed project plan with timelines, milestones, and resource allocation."
+    },
+    {
+      number: 3,
+      title: "Execution",
+      description: "Our expert team develops the solution, with regular updates and feedback sessions."
+    },
+    {
+      number: 4,
+      title: "Delivery & Support",
+      description: "We deploy the solution and provide ongoing support to ensure long-term success."
+    }
+  ];
 
   return (
-    <>
-      <section className="py-20 bg-gradient-to-r from-primary to-secondary text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl font-bold mb-6">Our Project Portfolio</h1>
-            <p className="text-xl text-white/90">
-              Explore our successful projects and see how we've helped businesses across various industries achieve their goals through innovative technology solutions.
-            </p>
-          </div>
-        </div>
-      </section>
+    <PageTransition>
+      <div className="relative">
+        {/* Hero section */}
+        <TransitionItem>
+          <section className="relative py-24 overflow-hidden">
+            {/* Background gradient with mesh */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary to-indigo-800"></div>
+            
+            {/* Background patterns */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMjkgNTl2LTJoMnYyaC0yem0wLTRWMzloMnYxNmgtMnptMC0xOFYyMWgydjE2aC0yem0wLTE4VjNoMnYxNmgtMnptLTIgNDBWNDFoMnYxNmgtMnptMC0xOFYyM2gydjE2aC0yek0yNyA1VjNoMnYyaC0yem0yIDJWNWgydjJoLTJ6bTIgMlY3aDJ2MmgtMnptMiAyVjloMnYyaC0yem0yIDJWMTFoMnYyaC0yem0yIDJWMTNoMnYyaC0yem0yIDJWMTVoMnYyaC0yem0yIDJWMTdoMnYyaC0yem0yIDJWMTloMnYyaC0yem0tMTYgMTRWMzNoMnYyaC0yem0wIDRWMzdoMnYyaC0yem0wIDRWNDFoMnYyaC0yem0wIDRWNDVoMnYyaC0yem0wIDRWNDloMnYyaC0yem0wIDRWNTNoMnYyaC0yem0wIDRWNTdoMnYyaC0yeiIvPjwvZz48L2c+PC9zdmc+')]"></div>
+            </div>
+            
+            {/* Content */}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="text-center max-w-3xl mx-auto text-white">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7 }}
+                >
+                  <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                    Our Project <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-indigo-200">Portfolio</span>
+                  </h1>
+                  <p className="text-xl text-white/90 mb-6">
+                    Explore our successful projects and see how we've helped businesses across various industries achieve their goals through innovative technology solutions.
+                  </p>
+                </motion.div>
+                
+                {/* Animated highlight */}
+                <motion.div
+                  className="mt-8 inline-block bg-white/10 backdrop-blur-sm px-6 py-3 rounded-lg border border-white/20"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.3 }}
+                >
+                  <span className="font-medium">
+                    Delivering excellence across {categories.length - 1} specialized service areas
+                  </span>
+                </motion.div>
+              </div>
+            </div>
+            
+            {/* Decorative elements */}
+            <motion.div 
+              className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/30 rounded-full blur-3xl"
+              animate={{ y: [0, 15, 0], opacity: [0.2, 0.3, 0.2] }}
+              transition={{ duration: 7, repeat: Infinity, repeatType: "reverse" }}
+            />
+            <motion.div 
+              className="absolute top-1/4 -right-10 w-60 h-60 bg-indigo-500/30 rounded-full blur-3xl"
+              animate={{ y: [0, -20, 0], opacity: [0.2, 0.3, 0.2] }}
+              transition={{ duration: 10, repeat: Infinity, repeatType: "reverse", delay: 1 }}
+            />
+          </section>
+        </TransitionItem>
 
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 flex flex-wrap justify-center gap-4">
-            {categories.map((category, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveFilter(category === 'All' ? null : category)}
-                className={`py-2 px-6 rounded-full text-sm font-medium transition duration-150 ${
-                  (category === 'All' && activeFilter === null) || category === activeFilter
-                    ? "bg-primary text-white"
-                    : "bg-neutral-100 hover:bg-neutral-200 text-neutral-700"
-                }`}
+        {/* Filter and projects section */}
+        <TransitionItem delay={0.2}>
+          <section className="py-20 bg-neutral-50 relative">
+            {/* Subtle grid pattern */}
+            <div className="absolute inset-0 
+              [background-image:linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] 
+              [background-size:4rem_4rem]" />
+              
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              {/* Filter buttons */}
+              <motion.div 
+                className="mb-12 flex flex-wrap justify-center gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
               >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="bg-neutral-50 rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow duration-300">
-                <div className="relative">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-64 object-cover"
-                  />
-                  <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
-                    {project.category}
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-neutral-800 mb-2">{project.title}</h3>
-                  <p className="text-neutral-600 mb-4">{project.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.technologies.map((tech, index) => (
-                      <span
-                        key={index}
-                        className="bg-neutral-200 text-neutral-700 text-xs font-medium px-2.5 py-1 rounded"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  <a
-                    href={project.link || "#"}
-                    className="text-primary font-medium hover:text-primary/90 transition duration-150 flex items-center"
+                {categories.map((category, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={() => setActiveFilter(category === 'All' ? null : category)}
+                    className={`py-2 px-6 rounded-full text-sm font-medium transition-all duration-300 ${
+                      (category === 'All' && activeFilter === null) || category === activeFilter
+                        ? "bg-primary text-white shadow-md"
+                        : "bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200"
+                    }`}
+                    whileHover={{ y: -3 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 * index }}
                   >
-                    View Case Study <i className="fas fa-arrow-right ml-2"></i>
-                  </a>
+                    {category}
+                  </motion.button>
+                ))}
+              </motion.div>
+
+              {/* Projects grid with staggered animation */}
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={activeFilter || 'all'}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                >
+                  {filteredProjects.map((project, index) => (
+                    <ProjectCard 
+                      key={project.id} 
+                      project={project} 
+                      index={index} 
+                    />
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </section>
+        </TransitionItem>
+
+        {/* Methodology section */}
+        <TransitionItem delay={0.1}>
+          <section className="py-20 bg-white relative overflow-hidden">
+            {/* Background elements */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mr-48 -mt-48" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl -ml-48 -mb-48" />
+            
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <motion.div 
+                className="text-center mb-16"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+              >
+                <div className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
+                  <span className="text-primary font-semibold text-sm">OUR APPROACH</span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+                
+                <h2 className="text-4xl font-bold text-neutral-800 mb-4">Our Project Methodology</h2>
+                <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+                  We follow a proven approach to ensure successful project delivery and exceptional results.
+                </p>
+              </motion.div>
 
-      <section className="py-20 bg-neutral-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Project Methodology</h2>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              We follow a proven approach to ensure successful project delivery.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-xl font-bold text-primary">1</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {methodologySteps.map((step, index) => (
+                  <MethodologyStep 
+                    key={index}
+                    number={step.number}
+                    title={step.title}
+                    description={step.description}
+                    delay={0.1 * index + 0.2}
+                  />
+                ))}
               </div>
-              <h3 className="text-xl font-semibold text-neutral-800 mb-3">Discovery</h3>
-              <p className="text-neutral-600">
-                We thoroughly analyze your requirements, goals, and challenges to define the project scope.
-              </p>
             </div>
+          </section>
+        </TransitionItem>
 
-            <div className="bg-white p-8 rounded-lg shadow text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-xl font-bold text-primary">2</span>
-              </div>
-              <h3 className="text-xl font-semibold text-neutral-800 mb-3">Planning</h3>
-              <p className="text-neutral-600">
-                We create a detailed project plan with timelines, milestones, and resource allocation.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-lg shadow text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-xl font-bold text-primary">3</span>
-              </div>
-              <h3 className="text-xl font-semibold text-neutral-800 mb-3">Execution</h3>
-              <p className="text-neutral-600">
-                Our expert team develops the solution, with regular updates and feedback sessions.
-              </p>
-            </div>
-
-            <div className="bg-white p-8 rounded-lg shadow text-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-xl font-bold text-primary">4</span>
-              </div>
-              <h3 className="text-xl font-semibold text-neutral-800 mb-3">Delivery & Support</h3>
-              <p className="text-neutral-600">
-                We deploy the solution and provide ongoing support to ensure long-term success.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <CTASection />
-    </>
+        {/* CTA Section */}
+        <TransitionItem delay={0.2}>
+          <CTASection />
+        </TransitionItem>
+      </div>
+    </PageTransition>
   );
 };
 
