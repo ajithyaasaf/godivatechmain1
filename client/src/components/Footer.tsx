@@ -86,12 +86,12 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6 relative pl-3 border-l-2 border-primary">Services</h3>
             <ul className="space-y-3">
               {[
-                "Software Development",
-                "IT Consulting",
-                "Cloud Solutions",
-                "Cybersecurity",
-                "Data Analytics",
-                "AI & Machine Learning"
+                "Web Development",
+                "Digital Marketing",
+                "Mobile App Development",
+                "Poster Design",
+                "UI/UX Design",
+                "Logo & Brand Design"
               ].map((service, index) => (
                 <motion.li 
                   key={index}
@@ -143,12 +143,12 @@ const Footer = () => {
               <li className="flex items-start group">
                 <MapPin className="h-5 w-5 mt-1 mr-3 text-primary group-hover:text-white transition-colors" />
                 <span className="text-neutral-300 group-hover:text-white transition-colors">
-                  123 Tech Center Blvd, Suite 500, San Francisco, CA 94103
+                  261, Vaigai Mainroad 4th Street, Sri Nagar, Iyer Bungalow, Madurai 625007, India
                 </span>
               </li>
               <li className="flex items-start group">
                 <Phone className="h-5 w-5 mt-1 mr-3 text-primary group-hover:text-white transition-colors" />
-                <span className="text-neutral-300 group-hover:text-white transition-colors">(123) 456-7890</span>
+                <span className="text-neutral-300 group-hover:text-white transition-colors">+91 96005 20130</span>
               </li>
               <li className="flex items-start group">
                 <Mail className="h-5 w-5 mt-1 mr-3 text-primary group-hover:text-white transition-colors" />

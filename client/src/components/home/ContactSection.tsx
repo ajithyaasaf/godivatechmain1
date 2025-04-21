@@ -107,9 +107,9 @@ const ContactSection = () => {
                   <div>
                     <p className="font-medium text-neutral-800 mb-1">Our Office</p>
                     <p className="text-neutral-600">
-                      123 Tech Center Blvd<br />
-                      Suite 500<br />
-                      San Francisco, CA 94103
+                      261, Vaigai Mainroad 4th Street<br />
+                      Sri Nagar, Iyer Bungalow<br />
+                      Madurai 625007, India
                     </p>
                   </div>
                 </div>
@@ -120,7 +120,7 @@ const ContactSection = () => {
                   </div>
                   <div>
                     <p className="font-medium text-neutral-800 mb-1">Phone</p>
-                    <p className="text-neutral-600">(123) 456-7890</p>
+                    <p className="text-neutral-600">+91 96005 20130</p>
                   </div>
                 </div>
 
@@ -242,7 +242,7 @@ const ContactSection = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full py-3 px-4 rounded-md border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="(123) 456-7890"
+                    placeholder="+91 96005 20130"
                   />
                 </div>
 
