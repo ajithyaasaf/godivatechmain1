@@ -302,9 +302,9 @@ const HeroSection = memo(() => {
                             </div>
                           </div>
                           
-                          {/* Floating feature blocks */}
+                          {/* Floating feature boxes - rearranged for better visual balance */}
                           <motion.div
-                            className="absolute -top-4 -right-8 w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600/80 to-blue-400/80 border border-white/20 backdrop-blur-sm shadow-lg"
+                            className="absolute top-0 right-0 w-20 h-20 rounded-lg bg-gradient-to-br from-blue-600/80 to-blue-400/80 border border-white/20 backdrop-blur-sm shadow-lg"
                             animate={{ 
                               y: [0, -8, 0],
                               rotate: [0, 5, 0]
@@ -317,7 +317,7 @@ const HeroSection = memo(() => {
                           />
                           
                           <motion.div
-                            className="absolute top-20 -left-8 w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600/80 to-purple-400/80 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
+                            className="absolute top-1/4 left-0 w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600/80 to-purple-400/80 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
                             animate={{ 
                               y: [0, 8, 0],
                               rotate: [12, 0, 12]
@@ -331,7 +331,7 @@ const HeroSection = memo(() => {
                           />
                           
                           <motion.div
-                            className="absolute bottom-20 -right-8 w-16 h-16 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
+                            className="absolute bottom-0 right-6 w-14 h-14 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
                             animate={{ 
                               y: [0, 8, 0],
                               rotate: [12, 0, 12]
