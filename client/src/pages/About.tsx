@@ -29,7 +29,7 @@ const About = () => {
               >
                 <h1 className="text-5xl font-bold text-neutral-800 mb-6">About Us</h1>
                 <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-                  We are architects of innovation, trailblazers of technological advancement, and partners in your success.
+                  We provide affordable IT and technology solutions for businesses in Madurai and beyond, helping them establish a strong online presence.
                 </p>
               </motion.div>
 
@@ -101,7 +101,7 @@ const About = () => {
                       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 to-transparent" />
                     </h2>
                     <p className="text-lg text-neutral-600 mb-8">
-                      Our mission is to deliver innovative and effective IT solutions that help businesses grow their online presence and achieve their digital transformation goals.
+                      Our mission is to provide affordable and effective IT solutions for businesses of all sizes. We aim to help our clients establish a strong online presence through our web development, digital marketing, and creative design services.
                     </p>
                     
                     {/* Values with hover effects */}
@@ -110,9 +110,9 @@ const About = () => {
                         className="p-6 rounded-lg border border-neutral-200 bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-white/80"
                         whileHover={{ y: -5 }}
                       >
-                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Expert Team Members</h3>
+                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Client-Centric Approach</h3>
                         <p className="text-neutral-600">
-                          Our team consists of skilled professionals with expertise in various domains of web development, digital marketing, and design who work collaboratively to deliver exceptional results.
+                          We put our clients' needs first and work closely with them to understand their business goals, target audience, and unique requirements to deliver customized solutions.
                         </p>
                       </motion.div>
                       
@@ -120,9 +120,9 @@ const About = () => {
                         className="p-6 rounded-lg border border-neutral-200 bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-white/80"
                         whileHover={{ y: -5 }}
                       >
-                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Fastest Customer Service</h3>
+                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Affordable Solutions</h3>
                         <p className="text-neutral-600">
-                          We pride ourselves on our responsive customer service, ensuring that client queries and concerns are addressed promptly and effectively.
+                          We provide cost-effective IT and technology solutions without compromising on quality, making our services accessible to businesses of all sizes in Madurai and beyond.
                         </p>
                       </motion.div>
                       
@@ -130,9 +130,9 @@ const About = () => {
                         className="p-6 rounded-lg border border-neutral-200 bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-white/80"
                         whileHover={{ y: -5 }}
                       >
-                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Quality Solutions for Business</h3>
+                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Timely Delivery</h3>
                         <p className="text-neutral-600">
-                          We are committed to delivering high-quality, tailor-made solutions that address the specific needs and challenges of each business we work with.
+                          We understand the importance of time in business, which is why we consistently deliver projects on schedule while maintaining the highest quality standards for all our services.
                         </p>
                       </motion.div>
                     </div>
@@ -152,7 +152,7 @@ const About = () => {
                       size="lg"
                       className="bg-primary hover:bg-primary/90 rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                     >
-                      <Link href="/contact">Get in Touch</Link>
+                      <Link href="/contact">Start a Project</Link>
                     </Button>
                   </motion.div>
                 </div>
