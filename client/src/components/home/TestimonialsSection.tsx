@@ -72,26 +72,26 @@ const TestimonialsSection = () => {
   const defaultTestimonials = [
     {
       id: 1,
-      name: "Jennifer Miller",
-      position: "Marketing Director",
-      company: "Axon Enterprises",
-      content: "GodivaTech transformed our digital presence with a new website and custom CRM integration. Their team was professional, responsive, and delivered a solution that exceeded our expectations.",
-      image: "https://randomuser.me/api/portraits/women/32.jpg"
-    },
-    {
-      id: 2,
-      name: "Robert Thompson",
-      position: "CTO",
-      company: "HealthFirst",
-      content: "Working with GodivaTech on our cloud migration was a game-changer. They made a complex process seamless and helped us achieve significant cost savings while improving performance.",
+      name: "Siva Prakash",
+      position: "Owner",
+      company: "Give Grants",
+      content: "Godiva Technologies revamped our website with a modern design and improved user experience. Their team was quick to understand our requirements and delivered exactly what we needed for our business.",
       image: "https://randomuser.me/api/portraits/men/32.jpg"
     },
     {
+      id: 2,
+      name: "Ahmed Al-Maktoum",
+      position: "Director",
+      company: "UAE Business Solutions",
+      content: "We appreciate Godiva Tech's professional approach to website development. They created a website that perfectly represents our brand and has helped increase our customer inquiries by 40%.",
+      image: "https://randomuser.me/api/portraits/men/33.jpg"
+    },
+    {
       id: 3,
-      name: "Maria Sanchez",
-      position: "Operations Manager",
-      company: "Global Logistics",
-      content: "The custom software GodivaTech developed for our logistics operations has increased efficiency by 35%. Their ongoing support and continuous improvements have made them a valuable partner.",
+      name: "Priya Venkatesh",
+      position: "Marketing Manager",
+      company: "Padmarajam Textiles",
+      content: "The social media marketing campaigns designed by Godiva Technologies have significantly improved our online presence. Their team is responsive, creative, and delivers great results on time.",
       image: "https://randomuser.me/api/portraits/women/28.jpg"
     }
   ];
@@ -260,7 +260,7 @@ const TestimonialsSection = () => {
             variants={textVariants}
             className="text-lg text-white/90 max-w-2xl mx-auto"
           >
-            Don't just take our word for it. Here's what our clients have to say about working with GodivaTech.
+            Hear directly from our satisfied clients about their experience working with Godiva Technologies.
           </motion.p>
         </motion.div>
 

@@ -53,45 +53,45 @@ const Header = () => {
   // Services for mega menu
   const serviceItems = [
     { 
-      icon: Braces, 
-      title: "Software Development", 
-      description: "Custom apps, websites, and enterprise solutions",
-      path: "/services/software-development",
+      icon: Globe, 
+      title: "Web Design & Development", 
+      description: "Custom websites with responsive designs",
+      path: "/services/web-design-development",
       color: "text-blue-500"
     },
     { 
-      icon: Globe, 
-      title: "Cloud Solutions", 
-      description: "Scalable infrastructure and migration services",
-      path: "/services/cloud-solutions",
+      icon: Palette, 
+      title: "Branding & Logo Design", 
+      description: "Custom branding and visual identity for businesses",
+      path: "/services/branding-logo-design",
       color: "text-cyan-500"
     },
     { 
       icon: Layers, 
-      title: "IT Consulting", 
-      description: "Strategic technology advisory services",
-      path: "/services/it-consulting",
+      title: "Digital Marketing", 
+      description: "SEO, SMM, content marketing and more",
+      path: "/services/digital-marketing",
       color: "text-indigo-500"
     },
     { 
-      icon: Shield, 
-      title: "Cybersecurity", 
-      description: "Comprehensive protection from evolving threats",
-      path: "/services/cybersecurity",
+      icon: Box, 
+      title: "E-commerce Solutions", 
+      description: "Online stores with secure payment processing",
+      path: "/services/ecommerce-solutions",
       color: "text-purple-500"
     },
     { 
       icon: Database, 
-      title: "Data Analytics", 
-      description: "Insights from your data through advanced analytics",
-      path: "/services/data-analytics",
+      title: "Web Hosting & Maintenance", 
+      description: "Reliable hosting and ongoing website maintenance",
+      path: "/services/web-hosting-maintenance",
       color: "text-green-500"
     },
     { 
-      icon: BrainCircuit, 
-      title: "AI & Machine Learning", 
-      description: "Intelligent automation and predictive systems",
-      path: "/services/ai-machine-learning",
+      icon: CircleUser, 
+      title: "UI/UX Design", 
+      description: "User-centered design for better user experiences",
+      path: "/services/ui-ux-design",
       color: "text-rose-500"
     }
   ];
@@ -222,7 +222,7 @@ const Header = () => {
                   className="bg-primary hover:bg-primary/90 rounded-full font-medium px-4 py-2 flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-300"
                 >
                   <Link href="/contact">
-                    <span>Get Started</span>
+                    <span>Start a Project</span>
                     <ArrowUpRight className="h-3.5 w-3.5 ml-1" />
                   </Link>
                 </Button>
@@ -321,7 +321,7 @@ const Header = () => {
                 <div className="p-4">
                   <p className="text-sm text-neutral-500 mb-3">Popular searches:</p>
                   <div className="flex flex-wrap gap-2">
-                    {['Software Development', 'Cloud Solutions', 'Machine Learning', 'Data Analytics'].map((term, idx) => (
+                    {['Web Design', 'Digital Marketing', 'E-commerce', 'Logo Design'].map((term, idx) => (
                       <span key={idx} className="text-sm px-3 py-1 bg-neutral-100 rounded-full text-neutral-700 hover:bg-primary/10 hover:text-primary cursor-pointer transition-colors">
                         {term}
                       </span>
@@ -398,7 +398,7 @@ const Header = () => {
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Link href="/contact" className="flex items-center justify-center">
-                      Get Started
+                      Start a Project
                       <ArrowUpRight className="ml-1 h-4 w-4" />
                     </Link>
                   </Button>
