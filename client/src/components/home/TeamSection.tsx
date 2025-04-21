@@ -65,34 +65,34 @@ const TeamSection = () => {
       id: 1,
       name: "Rajesh Kumar",
       position: "Founder & CEO",
-      bio: "Founded GodivaTech in 2010 with a vision to empower businesses through innovative technology solutions.",
+      bio: "Founded Godiva Technologies in 2010 with a vision to provide affordable IT solutions to businesses in Madurai.",
       image: ceoImage,
       linkedIn: "https://linkedin.com",
       twitter: "https://twitter.com"
     },
     {
       id: 2,
-      name: "Sarah Johnson",
-      position: "Chief Technology Officer",
-      bio: "Former Google engineer with expertise in cloud architecture and AI.",
+      name: "Priya Sankar",
+      position: "Creative Director",
+      bio: "Leads our creative design team with over 8 years of experience in branding and visual communications.",
       image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
       linkedIn: "https://linkedin.com",
       twitter: "https://twitter.com"
     },
     {
       id: 3,
-      name: "David Rodriguez",
-      position: "VP of Client Services",
-      bio: "Dedicated to building strong client relationships and delivering results.",
+      name: "Karthik Rajan",
+      position: "Technical Lead",
+      bio: "Heads our web development team with expertise in responsive design and modern frameworks.",
       image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
       linkedIn: "https://linkedin.com",
       twitter: "https://twitter.com"
     },
     {
       id: 4,
-      name: "Emily Patel",
-      position: "Director of Innovation",
-      bio: "Leading our R&D efforts to bring cutting-edge solutions to market.",
+      name: "Meena Krishnan",
+      position: "Digital Marketing Specialist",
+      bio: "Manages our digital marketing strategies with a focus on SEO, content marketing, and social media campaigns.",
       image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
       linkedIn: "https://linkedin.com",
       twitter: "https://twitter.com"
@@ -105,9 +105,9 @@ const TeamSection = () => {
     <section className="py-20 bg-neutral-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-neutral-800 mb-4">Meet Our Leadership Team</h2>
+          <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Expert Team</h2>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-            Our diverse team of experts brings together decades of experience in technology and business.
+            We have a dedicated team of professionals with expertise across web development, design, and digital marketing to deliver quality solutions for your business.
           </p>
         </div>
 

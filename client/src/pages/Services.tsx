@@ -230,11 +230,11 @@ const Services = () => {
                     transition={{ duration: 0.7 }}
                   >
                     <h2 className="text-3xl font-bold text-neutral-800 mb-6 relative inline-block">
-                      Our Service Approach
+                      Our Work Process
                       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 to-transparent" />
                     </h2>
                     <p className="text-lg text-neutral-600 mb-8">
-                      At GodivaTech, we follow a systematic approach to deliver solutions that meet your specific business needs:
+                      At Godiva Technologies, we follow a structured process to ensure the successful delivery of high-quality digital solutions for our clients:
                     </p>
                   </motion.div>
                   
@@ -304,7 +304,7 @@ const Services = () => {
                       transition={{ duration: 0.5, delay: 0.8 }}
                     >
                       <CheckCircle className="text-primary h-5 w-5 mr-2" />
-                      <span className="font-medium text-sm">Trusted Process</span>
+                      <span className="font-medium text-sm">Client-Centric Approach</span>
                     </motion.div>
                   </motion.div>
                 </div>
@@ -334,12 +334,12 @@ const Services = () => {
                 transition={{ duration: 0.7 }}
               >
                 <div className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
-                  <span className="text-primary font-semibold text-sm">SPECIALIZED EXPERTISE</span>
+                  <span className="text-primary font-semibold text-sm">OUR TARGET INDUSTRIES</span>
                 </div>
                 
                 <h2 className="text-4xl font-bold text-neutral-800 mb-4">Industries We Serve</h2>
                 <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-                  We provide tailored technology solutions for a diverse range of industries, with expertise that spans across multiple sectors.
+                  We provide tailored digital solutions for businesses across various industries in Madurai and beyond, with specialized expertise in these key sectors.
                 </p>
               </motion.div>
               

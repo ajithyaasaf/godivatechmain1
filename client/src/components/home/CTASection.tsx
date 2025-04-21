@@ -11,14 +11,14 @@ const CTASection = () => {
           <div className="lg:flex">
             <div className="lg:w-1/2 p-10 md:p-16">
               <h2 className="text-3xl font-bold text-white mb-6">
-                Ready to transform your business with technology?
+                Ready to elevate your online presence?
               </h2>
               <p className="text-neutral-300 mb-8 text-lg">
-                Let's discuss how our solutions can help you achieve your business goals. Schedule a free consultation with our experts today.
+                Let's discuss how our digital solutions can help grow your business. Contact us today for a free consultation with our expert team.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button asChild className="bg-primary hover:bg-primary/90 text-white">
-                  <Link href="/contact">Get Started</Link>
+                  <Link href="/contact">Start a Project</Link>
                 </Button>
                 <Button
                   asChild
@@ -42,7 +42,7 @@ const CTASection = () => {
                       <RocketIcon className="h-16 w-16 mx-auto" />
                     </div>
                     <p className="text-white text-xl font-semibold">
-                      Launch Your Digital Transformation
+                      Affordable IT & Technology Solutions
                     </p>
                   </div>
                 </div>
