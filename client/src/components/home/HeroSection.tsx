@@ -37,7 +37,7 @@ const HeroSection = memo(() => {
       setTimeout(() => {
         typeText(
           subtitleRef,
-          "Transforming ideas into powerful digital solutions that drive growth and efficiency for forward-thinking companies.",
+          "We are architects of innovation, trailblazers of technological advancement.",
           30, // Slightly faster typing for better performance
           800
         );
@@ -155,10 +155,10 @@ const HeroSection = memo(() => {
               className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
             >
               <span className="block">
-                Transform Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">Digital</span>
+                Affordable big IT & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">technology</span>
               </span>
               <span className="block mt-2">
-                Future with <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">Innovation</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">solutions</span>
               </span>
             </motion.h1>
             
@@ -189,7 +189,7 @@ const HeroSection = memo(() => {
                 >
                   <Link href="/contact">
                     <span className="flex items-center justify-center gap-2">
-                      Get Started 
+                      Start a Project 
                       <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
                     </span>
                   </Link>
