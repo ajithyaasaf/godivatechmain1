@@ -27,9 +27,9 @@ const About = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
               >
-                <h1 className="text-5xl font-bold text-neutral-800 mb-6">About GodivaTech</h1>
+                <h1 className="text-5xl font-bold text-neutral-800 mb-6">About Us</h1>
                 <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-                  Empowering businesses with innovative technology solutions since 2010.
+                  We are architects of innovation, trailblazers of technological advancement, and partners in your success.
                 </p>
               </motion.div>
 
@@ -42,13 +42,13 @@ const About = () => {
                       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 to-transparent" />
                     </h2>
                     <p className="text-lg text-neutral-600 mb-6">
-                      GodivaTech was founded in 2010 by a group of passionate technologists who believed in the power of technology to transform businesses. What began as a small software development shop has grown into a full-service technology partner trusted by companies worldwide.
+                      Godiva Technologies was established by Rajesh Kumar in 2010, with a vision of providing comprehensive IT solutions that combine creativity, innovation, and technical expertise to meet diverse business needs. We started as a small web development company and gradually expanded our service offerings.
                     </p>
                     <p className="text-lg text-neutral-600 mb-6">
-                      Over the years, we've expanded our services to include cloud solutions, IT consulting, cybersecurity, data analytics, and AI & machine learning, always staying at the forefront of technological innovations.
+                      Today, we've grown into a full-service digital transformation partner offering web development, digital marketing, app development, video production, UI/UX design, and creative designing services to businesses in Madurai and beyond.
                     </p>
                     <p className="text-lg text-neutral-600">
-                      Today, we're proud to have a team of 50+ technology experts dedicated to helping our clients navigate the ever-changing digital landscape and achieve their business goals.
+                      With 13+ years of experience and a portfolio of 150+ successful projects, we continue to help businesses establish a strong online presence and achieve their digital goals with our tailored solutions.
                     </p>
                   </div>
                   <div>
@@ -97,11 +97,11 @@ const About = () => {
                   </div>
                   <div className="order-1 lg:order-2">
                     <h2 className="text-3xl font-bold text-neutral-800 mb-6 relative inline-block">
-                      Our Mission & Values
+                      Our Vision & Mission
                       <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 to-transparent" />
                     </h2>
                     <p className="text-lg text-neutral-600 mb-8">
-                      Our mission is to empower businesses through innovative technology solutions that drive growth, efficiency, and competitive advantage.
+                      Our mission is to deliver innovative and effective IT solutions that help businesses grow their online presence and achieve their digital transformation goals.
                     </p>
                     
                     {/* Values with hover effects */}
@@ -110,9 +110,9 @@ const About = () => {
                         className="p-6 rounded-lg border border-neutral-200 bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-white/80"
                         whileHover={{ y: -5 }}
                       >
-                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Client-Centric Approach</h3>
+                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Expert Team Members</h3>
                         <p className="text-neutral-600">
-                          We put our clients' needs at the center of everything we do, focusing on delivering solutions that address their unique challenges and opportunities.
+                          Our team consists of skilled professionals with expertise in various domains of web development, digital marketing, and design who work collaboratively to deliver exceptional results.
                         </p>
                       </motion.div>
                       
@@ -120,9 +120,9 @@ const About = () => {
                         className="p-6 rounded-lg border border-neutral-200 bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-white/80"
                         whileHover={{ y: -5 }}
                       >
-                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Innovation</h3>
+                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Fastest Customer Service</h3>
                         <p className="text-neutral-600">
-                          We're constantly exploring new technologies and methodologies to ensure our clients benefit from the latest advancements in the industry.
+                          We pride ourselves on our responsive customer service, ensuring that client queries and concerns are addressed promptly and effectively.
                         </p>
                       </motion.div>
                       
@@ -130,9 +130,9 @@ const About = () => {
                         className="p-6 rounded-lg border border-neutral-200 bg-white/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 hover:bg-white/80"
                         whileHover={{ y: -5 }}
                       >
-                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Excellence</h3>
+                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">Quality Solutions for Business</h3>
                         <p className="text-neutral-600">
-                          We're committed to delivering the highest quality solutions, maintaining rigorous standards in our work, and continuously improving our processes.
+                          We are committed to delivering high-quality, tailor-made solutions that address the specific needs and challenges of each business we work with.
                         </p>
                       </motion.div>
                     </div>

@@ -82,32 +82,32 @@ const Services = () => {
     { 
       icon: Heart, 
       title: "Healthcare", 
-      description: "Secure, HIPAA-compliant solutions that streamline operations and enhance patient care."
+      description: "Custom websites and marketing solutions for clinics, hospitals and healthcare providers to enhance patient engagement."
     },
     { 
       icon: BarChart4, 
-      title: "Finance", 
-      description: "Robust, secure solutions that meet regulatory requirements and drive business growth."
+      title: "Food & Restaurants", 
+      description: "Engaging websites, social media marketing and branding solutions for restaurants, catering services and food businesses."
     },
     { 
       icon: Activity, 
       title: "Retail & E-commerce", 
-      description: "Scalable platforms that deliver seamless shopping experiences and drive conversions."
+      description: "Online stores, digital marketing campaigns and branded content to help retail businesses increase sales."
     },
     { 
       icon: Building2, 
-      title: "Manufacturing", 
-      description: "IoT and automation solutions that optimize production and reduce operational costs."
+      title: "Real Estate", 
+      description: "Property listing websites, virtual tours and promotional content for real estate agents and property developers."
     },
     { 
       icon: GraduationCap, 
       title: "Education", 
-      description: "Digital learning platforms and administrative systems that enhance educational experiences."
+      description: "Websites, learning platforms and branding solutions for educational institutions and training centers."
     },
     { 
       icon: Truck, 
-      title: "Logistics & Transportation", 
-      description: "Real-time tracking and management systems that improve efficiency and visibility."
+      title: "Local Businesses", 
+      description: "Affordable web development and digital marketing services for small businesses in Madurai and beyond."
     }
   ];
   
@@ -149,7 +149,7 @@ const Services = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
                 >
-                  Our Technology <span className="text-white/90">Services</span>
+                  Our <span className="text-white/90">Services</span>
                 </motion.h1>
                 
                 <motion.p 
@@ -158,7 +158,7 @@ const Services = () => {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8, delay: 0.3 }}
                 >
-                  Comprehensive solutions to help your business thrive in the digital age through innovation and expertise.
+                  From web development to digital marketing, we provide comprehensive digital solutions to elevate your business in the online world.
                 </motion.p>
                 
                 <motion.div
@@ -241,36 +241,36 @@ const Services = () => {
                   <div className="space-y-8">
                     <ServiceStep 
                       number={1} 
-                      title="Discovery & Analysis" 
-                      description="We begin by understanding your business goals, challenges, and requirements through in-depth consultations and analysis."
+                      title="Initial Consultation" 
+                      description="We start by understanding your business, goals, and specific requirements through detailed discussions with your team."
                       delay={0.1}
                     />
                     
                     <ServiceStep 
                       number={2} 
-                      title="Strategy & Planning" 
-                      description="We develop a comprehensive strategy and project plan tailored to your specific needs and objectives."
+                      title="Custom Strategy Development" 
+                      description="We create a tailored digital strategy that addresses your unique challenges and leverages the right technologies for your business."
                       delay={0.2}
                     />
                     
                     <ServiceStep 
                       number={3} 
-                      title="Implementation" 
-                      description="Our expert team executes the plan using industry best practices and cutting-edge technologies."
+                      title="Creative Design & Development" 
+                      description="Our team designs and develops solutions with a focus on user experience, visual appeal, and technical excellence."
                       delay={0.3}
                     />
                     
                     <ServiceStep 
                       number={4} 
-                      title="Testing & Quality Assurance" 
-                      description="We rigorously test all solutions to ensure they meet the highest standards of quality and performance."
+                      title="Quality Testing" 
+                      description="We thoroughly test all deliverables across different devices and platforms to ensure optimal performance and functionality."
                       delay={0.4}
                     />
                     
                     <ServiceStep 
                       number={5} 
-                      title="Deployment & Support" 
-                      description="We ensure smooth deployment and provide ongoing support and maintenance to keep your systems running optimally."
+                      title="Launch & Ongoing Support" 
+                      description="After launch, we provide dedicated support and maintenance to ensure your digital assets continue to perform at their best."
                       delay={0.5}
                     />
                   </div>
