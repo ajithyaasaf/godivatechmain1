@@ -1,12 +1,25 @@
 import React, { useRef } from "react";
 import { Link } from "wouter";
-import { ChevronRight, Code, Cloud, Users, Shield, BarChart, BrainCircuit } from "lucide-react";
+import { 
+  ChevronRight, Code, Cloud, Users, Shield, BarChart, BrainCircuit,
+  ArrowRight
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useAnimateOnScroll, slideInUpVariants } from "@/hooks/use-animation";
 import ParallaxSection from "@/components/ui/ParallaxSection";
 
-const ServiceCard = ({ icon: Icon, title, description, slug }: { 
+// Fixed the icon rendering issues by ensuring proper component usage
+const IconComponent = ({ icon: Icon }: { icon: React.ElementType }) => {
+  return <Icon className="text-2xl text-primary h-6 w-6" />;
+};
+
+const ServiceCard = ({ 
+  icon: Icon, 
+  title, 
+  description, 
+  slug 
+}: { 
   icon: React.ElementType, 
   title: string, 
   description: string,
@@ -20,22 +33,45 @@ const ServiceCard = ({ icon: Icon, title, description, slug }: {
       initial="hidden"
       animate={controls}
       variants={slideInUpVariants}
-      className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+      className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300 hover:bg-gradient-to-br hover:from-white hover:to-primary/5 border border-neutral-100"
+      whileHover={{ y: -10 }}
     >
       <div className="p-8">
-        <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-          {Icon && <Icon className="text-2xl text-primary h-6 w-6" />}
+        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative">
+          <div className="absolute inset-0 rounded-full bg-primary/5 animate-ping opacity-75" style={{ animationDuration: '3s' }}></div>
+          <IconComponent icon={Icon} />
         </div>
-        <h3 className="text-xl font-semibold text-neutral-800 mb-3">{title}</h3>
-        <p className="text-neutral-600 mb-6">
+        <h3 className="text-xl font-semibold text-neutral-800 mb-3 group-hover:text-primary transition-colors">{title}</h3>
+        <p className="text-neutral-600 mb-6 line-clamp-3">
           {description}
         </p>
-        <Link 
-          href={`/services/${slug}`} 
-          className="text-primary font-medium hover:text-primary/90 transition duration-150 flex items-center"
+        <motion.div
+          className="overflow-hidden relative"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
-          Learn More <ChevronRight className="ml-2 h-4 w-4" />
-        </Link>
+          <Link 
+            href={`/services/${slug}`} 
+            className="inline-flex items-center text-primary font-medium group-hover:text-primary-dark transition-colors"
+          >
+            <span className="relative">
+              Learn More
+              <motion.span 
+                className="absolute bottom-0 left-0 w-full h-[2px] bg-primary origin-left" 
+                initial={{ scaleX: 0 }}
+                whileHover={{ scaleX: 1 }}
+                transition={{ duration: 0.3 }}
+              />
+            </span>
+            <motion.div
+              className="ml-2"
+              whileHover={{ x: 5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <ArrowRight className="h-4 w-4" />
+            </motion.div>
+          </Link>
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -108,9 +144,8 @@ const ServiceSection = () => {
     offset: ["start end", "end start"]
   });
   
-  // Create different parallax effects for background elements
-  const leftCircleY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  const rightCircleY = useTransform(scrollYProgress, [0, 1], ["0%", "-100%"]);
+  // Modern background effects
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.6]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.2, 0.3], [0, 1, 1]);
   const titleY = useTransform(scrollYProgress, [0, 0.2, 1], ["50px", "0px", "0px"]);
   
@@ -118,45 +153,63 @@ const ServiceSection = () => {
     <section 
       id="services" 
       ref={sectionRef}
-      className="py-20 relative overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, #f5f7fa 0%, #e4e8ee 100%)"
-      }}
+      className="py-24 relative overflow-hidden"
     >
-      {/* Decorative background elements with parallax effect */}
+      {/* Modern gradient background */}
       <motion.div 
-        className="absolute top-20 -left-32 w-64 h-64 rounded-full bg-primary/5"
-        style={{ y: leftCircleY }}
+        className="absolute inset-0 bg-gradient-to-br from-primary/5 via-white to-neutral-50"
+        style={{ opacity: bgOpacity }}
       />
-      <motion.div 
-        className="absolute bottom-20 -right-32 w-96 h-96 rounded-full bg-secondary/5"
-        style={{ y: rightCircleY }}
-      />
-      <motion.div 
-        className="absolute top-40 right-10 w-20 h-20 rounded-lg rotate-12 bg-primary/5"
-        style={{ 
-          rotate: useTransform(scrollYProgress, [0, 1], ["12deg", "45deg"]),
-          scale: useTransform(scrollYProgress, [0, 1], [1, 1.2])
-        }}
-      />
-      <motion.div 
-        className="absolute bottom-10 left-10 w-32 h-32 rounded-full bg-secondary/5"
-        style={{ 
-          scale: useTransform(scrollYProgress, [0, 1], [1, 1.5]),
-          x: useTransform(scrollYProgress, [0, 1], ["0px", "100px"])
-        }}
-      />
+      
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+      <div className="absolute inset-0">
+        <div className="absolute -top-10 -right-10 w-64 h-64 rounded-full bg-blue-100/50 blur-3xl"></div>
+        <div className="absolute top-1/2 -left-20 w-72 h-72 rounded-full bg-primary/5 blur-3xl"></div>
+        <div className="absolute -bottom-10 right-1/4 w-56 h-56 rounded-full bg-purple-100/50 blur-3xl"></div>
+      </div>
+      
+      {/* Floating particles */}
+      {Array.from({ length: 10 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full bg-primary/20 backdrop-blur-sm"
+          style={{
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            width: `${Math.random() * 8 + 4}px`,
+            height: `${Math.random() * 8 + 4}px`,
+            opacity: 0.4,
+            y: useTransform(
+              scrollYProgress,
+              [0, 1],
+              [0, Math.random() * 100 * (Math.random() > 0.5 ? 1 : -1)]
+            ),
+            x: useTransform(
+              scrollYProgress,
+              [0, 1],
+              [0, Math.random() * 50 * (Math.random() > 0.5 ? 1 : -1)]
+            ),
+          }}
+        />
+      ))}
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div 
-          className="text-center mb-16"
+          className="text-center mb-20"
           style={{ 
             opacity: titleOpacity,
             y: titleY 
           }}
         >
+          <div className="flex items-center justify-center mb-4">
+            <div className="h-[1px] w-16 bg-primary/60 rounded"></div>
+            <span className="mx-2 text-primary font-semibold text-sm">WHAT WE OFFER</span>
+            <div className="h-[1px] w-16 bg-primary/60 rounded"></div>
+          </div>
+          
           <motion.h2 
-            className="text-3xl md:text-4xl font-bold text-neutral-800 mb-4"
+            className="text-3xl md:text-5xl font-bold text-neutral-800 mb-6 tracking-tight"
             whileInView={{ 
               opacity: [0, 1],
               y: [-20, 0] 
@@ -167,7 +220,7 @@ const ServiceSection = () => {
             Our Services
           </motion.h2>
           <motion.p 
-            className="text-lg text-neutral-600 max-w-2xl mx-auto"
+            className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed"
             whileInView={{ 
               opacity: [0, 1]
             }}
