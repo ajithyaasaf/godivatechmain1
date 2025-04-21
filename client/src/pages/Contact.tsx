@@ -18,20 +18,20 @@ const Contact = () => {
     { 
       icon: Phone, 
       title: "Call Us", 
-      info: "(123) 456-7890",
-      description: "Monday to Friday, 9am to 5pm"
+      info: "+91 96005 20130",
+      description: "Get in touch with our team"
     },
     { 
       icon: MapPin, 
       title: "Visit Us", 
-      info: "123 Tech Avenue, San Francisco, CA",
+      info: "261, Vaigai mainroad 4th Street, Sri Nagar, Iyer Bungalow, Madurai 625007",
       description: "Our headquarters location"
     },
     { 
       icon: Clock, 
       title: "Working Hours", 
-      info: "9:00 AM - 5:00 PM (PST)",
-      description: "Monday to Friday"
+      info: "9:00 AM - 6:00 PM (IST)",
+      description: "Monday to Saturday"
     }
   ];
   

@@ -60,27 +60,51 @@ const PortfolioSection = () => {
   const defaultProjects = [
     {
       id: 1,
-      title: "E-Commerce Platform Redesign",
-      description: "Completely redesigned the online shopping experience for a leading retailer, resulting in a 40% increase in conversions.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Software Development",
-      technologies: ["React", "Node.js", "AWS"]
+      title: "Tilted – Email Campaign",
+      description: "Created engaging email campaign designs to maximize customer engagement and conversion rates.",
+      image: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      category: "Marketing",
+      technologies: ["Email Design", "Digital Marketing", "Brand Strategy"]
     },
     {
       id: 2,
-      title: "Healthcare Data Migration",
-      description: "Migrated a healthcare provider's legacy systems to a secure cloud infrastructure, improving performance by 60%.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Cloud Solutions",
-      technologies: ["Azure", "Kubernetes", "HIPAA"]
+      title: "Marakkaar Biryani",
+      description: "Developed promotional materials and marketing strategy for this popular food brand to increase visibility.",
+      image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      category: "Marketing",
+      technologies: ["Social Media", "Poster Design", "Brand Promotion"]
     },
     {
       id: 3,
-      title: "Predictive Maintenance System",
-      description: "Developed an AI-powered system for a manufacturing company that predicts equipment failures before they occur.",
-      image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "AI & Machine Learning",
-      technologies: ["Python", "TensorFlow", "IoT"]
+      title: "India Cater",
+      description: "Created distinctive marketing materials that showcased the catering company's services and offerings.",
+      image: "https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      category: "Marketing",
+      technologies: ["Brand Identity", "Poster Design", "Marketing Strategy"]
+    },
+    {
+      id: 4,
+      title: "Siddahayur Health Care",
+      description: "Designed healthcare marketing materials that effectively communicated wellness services to potential clients.",
+      image: "https://images.unsplash.com/photo-1584982751601-97dcc096659c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      category: "Marketing",
+      technologies: ["Healthcare Marketing", "Visual Design", "Brand Strategy"]
+    },
+    {
+      id: 5,
+      title: "Wrap & Eat",
+      description: "Created vibrant promotional materials for this food business to attract customers and build brand recognition.",
+      image: "https://images.unsplash.com/photo-1565299507177-b0ac66763828?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      category: "Marketing",
+      technologies: ["Food Marketing", "Graphic Design", "Branding"]
+    },
+    {
+      id: 6,
+      title: "Jeeva Vasal Church",
+      description: "Designed compelling poster designs for events and communications that aligned with the organization's mission.",
+      image: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      category: "Marketing",
+      technologies: ["Event Promotion", "Community Outreach", "Visual Design"]
     }
   ];
 
@@ -90,9 +114,9 @@ const PortfolioSection = () => {
     <section id="portfolio" className="py-20 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-neutral-800 mb-4">Featured Projects</h2>
+          <h2 className="text-3xl font-bold text-neutral-800 mb-4">Explore our recent projects</h2>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-            Explore some of our recent work and see how we've helped our clients achieve their goals.
+            Take a look at our diverse portfolio of successful marketing and web development projects for various clients.
           </p>
         </div>
 

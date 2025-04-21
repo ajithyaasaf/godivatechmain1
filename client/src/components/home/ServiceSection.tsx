@@ -12,12 +12,12 @@ import { TransitionItem } from "@/components/PageTransition";
 // Explicit mapping of service types to icon components to avoid lowercase tag errors
 const getIconForService = (serviceName: string) => {
   const iconMap: Record<string, React.ElementType> = {
-    'software-development': Code,
-    'cloud-solutions': Cloud,
-    'it-consulting': Users,
-    'cybersecurity': Shield,
-    'data-analytics': BarChart,
-    'ai-machine-learning': BrainCircuit
+    'web-development': Code,
+    'digital-marketing': Cloud,
+    'app-development': Users,
+    'video-production': Shield,
+    'ui-ux-design': BarChart,
+    'creative-designing': BrainCircuit
   };
   
   return iconMap[serviceName] || Code;
@@ -129,45 +129,45 @@ const ServiceSection = () => {
   const defaultServices: ServiceType[] = [
     {
       id: 1,
-      title: "Software Development",
-      description: "Custom software solutions tailored to your business needs, from web applications to mobile apps and enterprise systems.",
+      title: "Web Development",
+      description: "Unlock the potential of your business with our dynamic and impactful web solutions!",
       icon: Code,
-      slug: "software-development"
+      slug: "web-development"
     },
     {
       id: 2,
-      title: "Cloud Solutions",
-      description: "Scalable cloud infrastructure, migration services, and managed cloud solutions to optimize your business operations.",
+      title: "Digital Marketing",
+      description: "Unleash your online potential with our tailored solutions. From SEO and PPC to social media management.",
       icon: Cloud,
-      slug: "cloud-solutions"
+      slug: "digital-marketing"
     },
     {
       id: 3,
-      title: "IT Consulting",
-      description: "Strategic technology advisory services to help you make informed decisions and maximize your IT investments.",
+      title: "App Development",
+      description: "From vision to reality, our team delivers cutting-edge mobile app services. With expert developers.",
       icon: Users,
-      slug: "it-consulting"
+      slug: "app-development"
     },
     {
       id: 4,
-      title: "Cybersecurity",
-      description: "Comprehensive security assessments, implementation, and monitoring to protect your business from evolving threats.",
+      title: "Video Production",
+      description: "Elevate your brand marketing efforts by leveraging the power of video. We deliver high-quality video content.",
       icon: Shield,
-      slug: "cybersecurity"
+      slug: "video-production"
     },
     {
       id: 5,
-      title: "Data Analytics",
-      description: "Turn your data into actionable insights with our advanced analytics, business intelligence, and data visualization solutions.",
+      title: "UI/UX Design",
+      description: "As a UI/UX design company in India we have delivered exceptional user experience.",
       icon: BarChart,
-      slug: "data-analytics"
+      slug: "ui-ux-design"
     },
     {
       id: 6,
-      title: "AI & Machine Learning",
-      description: "Cutting-edge AI solutions that automate processes, predict trends, and enhance decision-making for your business.",
+      title: "Creative Designing",
+      description: "Your business presentation and professionalism is instantly communicated when someone views your brand identity.",
       icon: BrainCircuit,
-      slug: "ai-machine-learning"
+      slug: "creative-designing"
     }
   ];
 
@@ -184,10 +184,10 @@ const ServiceSection = () => {
   
   // Features list for highlight section
   const keyFeatures = [
-    "Custom development tailored to your needs",
-    "Expert team with diverse technology skills",
-    "Transparent process and communication",
-    "Ongoing support and maintenance"
+    "Expert Team Members",
+    "Fastest Customer Service",
+    "Competitive Pricing Plan",
+    "Quality Solutions for Business"
   ];
   
   return (
@@ -253,11 +253,11 @@ const ServiceSection = () => {
             </div>
             
             <h2 className="text-4xl md:text-5xl font-bold text-neutral-800 mb-6 tracking-tight leading-tight">
-              Innovative <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">Technology Solutions</span> for Your Business
+              We deal with the aspects of <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">professional IT services</span>
             </h2>
             
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">
-              We offer comprehensive technology services to help your business thrive in the digital landscape, combining innovative thinking with technical excellence.
+              From web development to digital marketing, we offer comprehensive technology solutions to help your business stand out and succeed in the digital world.
             </p>
           </div>
 
