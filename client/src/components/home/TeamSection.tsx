@@ -1,6 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FaLinkedin, FaTwitter } from "react-icons/fa";
+import ceoImage from "../../assets/team/ceo.jpg";
 
 interface TeamMember {
   id: number;
@@ -62,10 +63,10 @@ const TeamSection = () => {
   const defaultTeamMembers = [
     {
       id: 1,
-      name: "Michael Chen",
-      position: "Chief Executive Officer",
-      bio: "20+ years of experience in tech leadership and business transformation.",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+      name: "Rajesh Kumar",
+      position: "Founder & CEO",
+      bio: "Founded GodivaTech in 2010 with a vision to empower businesses through innovative technology solutions.",
+      image: ceoImage,
       linkedIn: "https://linkedin.com",
       twitter: "https://twitter.com"
     },
