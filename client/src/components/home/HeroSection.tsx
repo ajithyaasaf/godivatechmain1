@@ -37,7 +37,7 @@ const HeroSection = memo(() => {
       setTimeout(() => {
         typeText(
           subtitleRef,
-          "We are architects of innovation, trailblazers of technological advancement.",
+          "Providing affordable IT solutions to businesses in Madurai and beyond.",
           30, // Slightly faster typing for better performance
           800
         );
@@ -47,9 +47,9 @@ const HeroSection = memo(() => {
   
   // Featured services to display in hero
   const featuredServices = [
-    { icon: Code, label: "Software Development" },
-    { icon: Layers, label: "Cloud Solutions" },
-    { icon: BarChart, label: "Data Analytics" }
+    { icon: Code, label: "Web Development" },
+    { icon: Layers, label: "Digital Marketing" },
+    { icon: BarChart, label: "UI/UX Design" }
   ];
   
   // Animation variants
