@@ -32,8 +32,8 @@ interface NavItemProps {
 
 const NavItem = ({ icon: Icon, label, href, active, onClick }: NavItemProps) => (
   <Link href={href}>
-    <a 
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+    <div 
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
         active 
           ? "bg-primary text-primary-foreground" 
           : "hover:bg-secondary"
@@ -42,7 +42,7 @@ const NavItem = ({ icon: Icon, label, href, active, onClick }: NavItemProps) => 
     >
       <Icon size={18} />
       <span>{label}</span>
-    </a>
+    </div>
   </Link>
 );
 
