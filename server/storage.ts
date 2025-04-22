@@ -17,6 +17,7 @@ import {
   sampleTeamMembers, 
   sampleTestimonials 
 } from "../client/src/lib/sampleData";
+import session from "express-session";
 
 export interface IStorage {
   // User methods
@@ -29,44 +30,61 @@ export interface IStorage {
   getBlogPost(id: number): Promise<BlogPost | undefined>;
   getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
   createBlogPost(blogPost: InsertBlogPost): Promise<BlogPost>;
+  updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined>;
+  deleteBlogPost(id: number): Promise<boolean>;
   
   // Categories methods
   getAllCategories(): Promise<Category[]>;
   getCategory(id: number): Promise<Category | undefined>;
   getCategoryBySlug(slug: string): Promise<Category | undefined>;
   createCategory(category: InsertCategory): Promise<Category>;
+  updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category | undefined>;
+  deleteCategory(id: number): Promise<boolean>;
   
   // Projects methods
   getAllProjects(): Promise<Project[]>;
   getProject(id: number): Promise<Project | undefined>;
   createProject(project: InsertProject): Promise<Project>;
+  updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined>;
+  deleteProject(id: number): Promise<boolean>;
   
   // Services methods
   getAllServices(): Promise<Service[]>;
   getService(id: number): Promise<Service | undefined>;
   getServiceBySlug(slug: string): Promise<Service | undefined>;
   createService(service: InsertService): Promise<Service>;
+  updateService(id: number, service: Partial<InsertService>): Promise<Service | undefined>;
+  deleteService(id: number): Promise<boolean>;
   
   // Team members methods
   getAllTeamMembers(): Promise<TeamMember[]>;
   getTeamMember(id: number): Promise<TeamMember | undefined>;
   createTeamMember(teamMember: InsertTeamMember): Promise<TeamMember>;
+  updateTeamMember(id: number, teamMember: Partial<InsertTeamMember>): Promise<TeamMember | undefined>;
+  deleteTeamMember(id: number): Promise<boolean>;
   
   // Testimonials methods
   getAllTestimonials(): Promise<Testimonial[]>;
   getTestimonial(id: number): Promise<Testimonial | undefined>;
   createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
+  updateTestimonial(id: number, testimonial: Partial<InsertTestimonial>): Promise<Testimonial | undefined>;
+  deleteTestimonial(id: number): Promise<boolean>;
   
   // Contact messages methods
   getAllContactMessages(): Promise<ContactMessage[]>;
   getContactMessage(id: number): Promise<ContactMessage | undefined>;
   createContactMessage(contactMessage: InsertContactMessage): Promise<ContactMessage>;
+  deleteContactMessage(id: number): Promise<boolean>;
   
   // Subscribers methods
   getAllSubscribers(): Promise<Subscriber[]>;
   getSubscriber(id: number): Promise<Subscriber | undefined>;
   getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
   createSubscriber(subscriber: InsertSubscriber): Promise<Subscriber>;
+  deleteSubscriber(id: number): Promise<boolean>;
+  
+  // Session store for authentication
+  sessionStore: session.SessionStore;
 }
 
 export class MemStorage implements IStorage {
@@ -340,4 +358,375 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Add missing MemStorage methods to align with updated IStorage interface
+MemStorage.prototype.updateBlogPost = async function(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
+  const existingPost = this.blogPosts.get(id);
+  if (!existingPost) {
+    return undefined;
+  }
+  const updatedPost = { ...existingPost, ...blogPost };
+  this.blogPosts.set(id, updatedPost);
+  return updatedPost;
+};
+
+MemStorage.prototype.deleteBlogPost = async function(id: number): Promise<boolean> {
+  return this.blogPosts.delete(id);
+};
+
+MemStorage.prototype.updateCategory = async function(id: number, category: Partial<InsertCategory>): Promise<Category | undefined> {
+  const existingCategory = this.categories.get(id);
+  if (!existingCategory) {
+    return undefined;
+  }
+  const updatedCategory = { ...existingCategory, ...category };
+  this.categories.set(id, updatedCategory);
+  return updatedCategory;
+};
+
+MemStorage.prototype.deleteCategory = async function(id: number): Promise<boolean> {
+  return this.categories.delete(id);
+};
+
+MemStorage.prototype.updateProject = async function(id: number, project: Partial<InsertProject>): Promise<Project | undefined> {
+  const existingProject = this.projects.get(id);
+  if (!existingProject) {
+    return undefined;
+  }
+  const updatedProject = { ...existingProject, ...project };
+  this.projects.set(id, updatedProject);
+  return updatedProject;
+};
+
+MemStorage.prototype.deleteProject = async function(id: number): Promise<boolean> {
+  return this.projects.delete(id);
+};
+
+MemStorage.prototype.updateService = async function(id: number, service: Partial<InsertService>): Promise<Service | undefined> {
+  const existingService = this.services.get(id);
+  if (!existingService) {
+    return undefined;
+  }
+  const updatedService = { ...existingService, ...service };
+  this.services.set(id, updatedService);
+  return updatedService;
+};
+
+MemStorage.prototype.deleteService = async function(id: number): Promise<boolean> {
+  return this.services.delete(id);
+};
+
+MemStorage.prototype.updateTeamMember = async function(id: number, teamMember: Partial<InsertTeamMember>): Promise<TeamMember | undefined> {
+  const existingMember = this.teamMembers.get(id);
+  if (!existingMember) {
+    return undefined;
+  }
+  const updatedMember = { ...existingMember, ...teamMember };
+  this.teamMembers.set(id, updatedMember);
+  return updatedMember;
+};
+
+MemStorage.prototype.deleteTeamMember = async function(id: number): Promise<boolean> {
+  return this.teamMembers.delete(id);
+};
+
+MemStorage.prototype.updateTestimonial = async function(id: number, testimonial: Partial<InsertTestimonial>): Promise<Testimonial | undefined> {
+  const existingTestimonial = this.testimonials.get(id);
+  if (!existingTestimonial) {
+    return undefined;
+  }
+  const updatedTestimonial = { ...existingTestimonial, ...testimonial };
+  this.testimonials.set(id, updatedTestimonial);
+  return updatedTestimonial;
+};
+
+MemStorage.prototype.deleteTestimonial = async function(id: number): Promise<boolean> {
+  return this.testimonials.delete(id);
+};
+
+MemStorage.prototype.deleteContactMessage = async function(id: number): Promise<boolean> {
+  return this.contactMessages.delete(id);
+};
+
+MemStorage.prototype.deleteSubscriber = async function(id: number): Promise<boolean> {
+  return this.subscribers.delete(id);
+};
+
+// Add memory session store
+import createMemoryStore from "memorystore";
+const MemoryStore = createMemoryStore(session);
+
+Object.defineProperty(MemStorage.prototype, 'sessionStore', {
+  get: function() {
+    if (!this._sessionStore) {
+      this._sessionStore = new MemoryStore({
+        checkPeriod: 86400000 // prune expired entries every 24h
+      });
+    }
+    return this._sessionStore;
+  }
+});
+
+// Database storage implementation
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
+import connectPg from "connect-pg-simple";
+import { pool } from "./db";
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: session.SessionStore;
+  
+  constructor() {
+    // Initialize session store
+    this.sessionStore = new (connectPg(session))({
+      pool,
+      createTableIfMissing: true
+    });
+  }
+  
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db.insert(users).values(insertUser).returning();
+    return user;
+  }
+  
+  // Blog posts methods
+  async getAllBlogPosts(): Promise<BlogPost[]> {
+    return await db.select().from(blogPosts).orderBy(desc(blogPosts.publishedAt));
+  }
+  
+  async getBlogPost(id: number): Promise<BlogPost | undefined> {
+    const [post] = await db.select().from(blogPosts).where(eq(blogPosts.id, id));
+    return post;
+  }
+  
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    const [post] = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug));
+    return post;
+  }
+  
+  async createBlogPost(insertBlogPost: InsertBlogPost): Promise<BlogPost> {
+    const [post] = await db.insert(blogPosts).values(insertBlogPost).returning();
+    return post;
+  }
+
+  async updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
+    const [updated] = await db.update(blogPosts)
+      .set(blogPost)
+      .where(eq(blogPosts.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteBlogPost(id: number): Promise<boolean> {
+    await db.delete(blogPosts).where(eq(blogPosts.id, id));
+    return true;
+  }
+  
+  // Categories methods
+  async getAllCategories(): Promise<Category[]> {
+    return await db.select().from(categories);
+  }
+  
+  async getCategory(id: number): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.id, id));
+    return category;
+  }
+  
+  async getCategoryBySlug(slug: string): Promise<Category | undefined> {
+    const [category] = await db.select().from(categories).where(eq(categories.slug, slug));
+    return category;
+  }
+  
+  async createCategory(insertCategory: InsertCategory): Promise<Category> {
+    const [category] = await db.insert(categories).values(insertCategory).returning();
+    return category;
+  }
+
+  async updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category | undefined> {
+    const [updated] = await db.update(categories)
+      .set(category)
+      .where(eq(categories.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteCategory(id: number): Promise<boolean> {
+    await db.delete(categories).where(eq(categories.id, id));
+    return true;
+  }
+  
+  // Projects methods
+  async getAllProjects(): Promise<Project[]> {
+    return await db.select().from(projects);
+  }
+  
+  async getProject(id: number): Promise<Project | undefined> {
+    const [project] = await db.select().from(projects).where(eq(projects.id, id));
+    return project;
+  }
+  
+  async createProject(insertProject: InsertProject): Promise<Project> {
+    const [project] = await db.insert(projects).values(insertProject).returning();
+    return project;
+  }
+
+  async updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined> {
+    const [updated] = await db.update(projects)
+      .set(project)
+      .where(eq(projects.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteProject(id: number): Promise<boolean> {
+    await db.delete(projects).where(eq(projects.id, id));
+    return true;
+  }
+  
+  // Services methods
+  async getAllServices(): Promise<Service[]> {
+    return await db.select().from(services);
+  }
+  
+  async getService(id: number): Promise<Service | undefined> {
+    const [service] = await db.select().from(services).where(eq(services.id, id));
+    return service;
+  }
+  
+  async getServiceBySlug(slug: string): Promise<Service | undefined> {
+    const [service] = await db.select().from(services).where(eq(services.slug, slug));
+    return service;
+  }
+  
+  async createService(insertService: InsertService): Promise<Service> {
+    const [service] = await db.insert(services).values(insertService).returning();
+    return service;
+  }
+
+  async updateService(id: number, service: Partial<InsertService>): Promise<Service | undefined> {
+    const [updated] = await db.update(services)
+      .set(service)
+      .where(eq(services.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteService(id: number): Promise<boolean> {
+    await db.delete(services).where(eq(services.id, id));
+    return true;
+  }
+  
+  // Team members methods
+  async getAllTeamMembers(): Promise<TeamMember[]> {
+    return await db.select().from(teamMembers);
+  }
+  
+  async getTeamMember(id: number): Promise<TeamMember | undefined> {
+    const [member] = await db.select().from(teamMembers).where(eq(teamMembers.id, id));
+    return member;
+  }
+  
+  async createTeamMember(insertTeamMember: InsertTeamMember): Promise<TeamMember> {
+    const [member] = await db.insert(teamMembers).values(insertTeamMember).returning();
+    return member;
+  }
+
+  async updateTeamMember(id: number, teamMember: Partial<InsertTeamMember>): Promise<TeamMember | undefined> {
+    const [updated] = await db.update(teamMembers)
+      .set(teamMember)
+      .where(eq(teamMembers.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteTeamMember(id: number): Promise<boolean> {
+    await db.delete(teamMembers).where(eq(teamMembers.id, id));
+    return true;
+  }
+  
+  // Testimonials methods
+  async getAllTestimonials(): Promise<Testimonial[]> {
+    return await db.select().from(testimonials);
+  }
+  
+  async getTestimonial(id: number): Promise<Testimonial | undefined> {
+    const [testimonial] = await db.select().from(testimonials).where(eq(testimonials.id, id));
+    return testimonial;
+  }
+  
+  async createTestimonial(insertTestimonial: InsertTestimonial): Promise<Testimonial> {
+    const [testimonial] = await db.insert(testimonials).values(insertTestimonial).returning();
+    return testimonial;
+  }
+
+  async updateTestimonial(id: number, testimonial: Partial<InsertTestimonial>): Promise<Testimonial | undefined> {
+    const [updated] = await db.update(testimonials)
+      .set(testimonial)
+      .where(eq(testimonials.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteTestimonial(id: number): Promise<boolean> {
+    await db.delete(testimonials).where(eq(testimonials.id, id));
+    return true;
+  }
+  
+  // Contact messages methods
+  async getAllContactMessages(): Promise<ContactMessage[]> {
+    return await db.select().from(contactMessages).orderBy(desc(contactMessages.createdAt));
+  }
+  
+  async getContactMessage(id: number): Promise<ContactMessage | undefined> {
+    const [message] = await db.select().from(contactMessages).where(eq(contactMessages.id, id));
+    return message;
+  }
+  
+  async createContactMessage(insertContactMessage: InsertContactMessage): Promise<ContactMessage> {
+    const [message] = await db.insert(contactMessages).values(insertContactMessage).returning();
+    return message;
+  }
+
+  async deleteContactMessage(id: number): Promise<boolean> {
+    await db.delete(contactMessages).where(eq(contactMessages.id, id));
+    return true;
+  }
+  
+  // Subscribers methods
+  async getAllSubscribers(): Promise<Subscriber[]> {
+    return await db.select().from(subscribers).orderBy(desc(subscribers.createdAt));
+  }
+  
+  async getSubscriber(id: number): Promise<Subscriber | undefined> {
+    const [subscriber] = await db.select().from(subscribers).where(eq(subscribers.id, id));
+    return subscriber;
+  }
+  
+  async getSubscriberByEmail(email: string): Promise<Subscriber | undefined> {
+    const [subscriber] = await db.select().from(subscribers).where(eq(subscribers.email, email));
+    return subscriber;
+  }
+  
+  async createSubscriber(insertSubscriber: InsertSubscriber): Promise<Subscriber> {
+    const [subscriber] = await db.insert(subscribers).values(insertSubscriber).returning();
+    return subscriber;
+  }
+
+  async deleteSubscriber(id: number): Promise<boolean> {
+    await db.delete(subscribers).where(eq(subscribers.id, id));
+    return true;
+  }
+}
+
+// Use DatabaseStorage instead of MemStorage
+export const storage = new DatabaseStorage();
