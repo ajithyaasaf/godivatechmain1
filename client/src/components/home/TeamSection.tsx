@@ -105,9 +105,9 @@ const TeamSection = () => {
     <section className="py-20 bg-neutral-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-neutral-800 mb-4">Our Expert Team</h2>
+          <h2 className="text-3xl font-bold text-neutral-800 mb-4">Leadership Team</h2>
           <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-            We have a dedicated team of professionals with expertise across web development, design, and digital marketing to deliver quality solutions for your business.
+            Meet our leadership team of experienced professionals who are passionate about creating innovative digital solutions and delivering exceptional results for our clients worldwide.
           </p>
         </div>
 
