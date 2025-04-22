@@ -1,23 +1,7 @@
 import React from "react";
 import { Link } from "wouter";
 import { formatDistanceToNow, format } from "date-fns";
-
-interface BlogPost {
-  id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  publishedAt: string;
-  coverImage: string;
-  authorName: string;
-  authorImage: string;
-  categoryId: number;
-  category?: {
-    id: number;
-    name: string;
-    slug: string;
-  };
-}
+import type { BlogPost, Category } from "@shared/schema";
 
 const BlogCard = ({ post }: { post: BlogPost }) => {
   const formattedDate = formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true });
