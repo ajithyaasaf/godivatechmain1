@@ -15,6 +15,7 @@ import {
   MessageSquare, 
   PenTool, 
   Users, 
+  UserPlus,
   X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -76,7 +77,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { icon: Users, label: "Team Members", href: "/admin/team-members" },
     { icon: BarChart3, label: "Projects", href: "/admin/projects" },
     { icon: MessageSquare, label: "Testimonials", href: "/admin/testimonials" },
-    { icon: Mail, label: "Contact Messages", href: "/admin/messages" },
+    { icon: Mail, label: "Contact Messages", href: "/admin/contact-messages" },
+    { icon: UserPlus, label: "Subscribers", href: "/admin/subscribers" },
     { icon: Home, label: "Back to Website", href: "/" },
   ];
 

@@ -21,6 +21,13 @@ import FirebaseAuthPage from "@/pages/firebase-auth";
 // Admin pages
 import AdminDashboard from "@/pages/admin";
 import BlogPostsPage from "@/pages/admin/blog-posts";
+import CategoriesPage from "@/pages/admin/categories";
+import ServicesPage from "@/pages/admin/services";
+import TeamMembersPage from "@/pages/admin/team-members";
+import TestimonialsPage from "@/pages/admin/testimonials";
+import ProjectsPage from "@/pages/admin/projects";
+import ContactMessagesPage from "@/pages/admin/contact-messages";
+import SubscribersPage from "@/pages/admin/subscribers";
 
 /**
  * Modern App wrapper with advanced AnimatePresence for page transitions
@@ -65,16 +72,46 @@ function App() {
         {isAdminRoute && (
           <Switch key={location}>
             {/* Legacy Passport.js Auth */}
-            <ProtectedRoute path="/admin" component={AdminDashboard} />
+            <ProtectedRoute path="/admin" exact component={AdminDashboard} />
             <ProtectedRoute path="/admin/blog-posts" component={BlogPostsPage} />
+            <ProtectedRoute path="/admin/categories" component={CategoriesPage} />
+            <ProtectedRoute path="/admin/services" component={ServicesPage} />
+            <ProtectedRoute path="/admin/team-members" component={TeamMembersPage} />
+            <ProtectedRoute path="/admin/testimonials" component={TestimonialsPage} />
+            <ProtectedRoute path="/admin/projects" component={ProjectsPage} />
+            <ProtectedRoute path="/admin/contact-messages" component={ContactMessagesPage} />
+            <ProtectedRoute path="/admin/subscribers" component={SubscribersPage} />
             
             {/* Firebase Auth - Uncomment the lines below to switch to Firebase Auth */}
-            {/* <FirebaseProtectedRoute path="/admin">
+            {/* 
+            <FirebaseProtectedRoute path="/admin" exact>
               <AdminDashboard />
             </FirebaseProtectedRoute>
             <FirebaseProtectedRoute path="/admin/blog-posts">
               <BlogPostsPage />
-            </FirebaseProtectedRoute> */}
+            </FirebaseProtectedRoute>
+            <FirebaseProtectedRoute path="/admin/categories">
+              <CategoriesPage />
+            </FirebaseProtectedRoute>
+            <FirebaseProtectedRoute path="/admin/services">
+              <ServicesPage />
+            </FirebaseProtectedRoute>
+            <FirebaseProtectedRoute path="/admin/team-members">
+              <TeamMembersPage />
+            </FirebaseProtectedRoute>
+            <FirebaseProtectedRoute path="/admin/testimonials">
+              <TestimonialsPage />
+            </FirebaseProtectedRoute>
+            <FirebaseProtectedRoute path="/admin/projects">
+              <ProjectsPage />
+            </FirebaseProtectedRoute>
+            <FirebaseProtectedRoute path="/admin/contact-messages">
+              <ContactMessagesPage />
+            </FirebaseProtectedRoute>
+            <FirebaseProtectedRoute path="/admin/subscribers">
+              <SubscribersPage />
+            </FirebaseProtectedRoute>
+            */}
             
             <Route component={NotFound} />
           </Switch>
