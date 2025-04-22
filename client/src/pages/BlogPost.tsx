@@ -57,26 +57,44 @@ const BlogPost = () => {
   const formattedDate = format(new Date(post.publishedAt), "MMMM dd, yyyy");
   const timeAgo = formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true });
   
-  // Process content for better rendering
+  // Process content for better rendering with SEO keywords
   const processContent = (content: string) => {
     // Replace Markdown-style headers with HTML headers
     let processed = content
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
       .replace(/- (.*?)(?:\n|$)/g, '<li>$1</li>') // List items
       
-      // Add internal links to services and related terms
-      .replace(/Web Development/g, '<a href="/services/web-development" class="text-primary hover:underline">Web Development</a>')
-      .replace(/Digital Marketing/g, '<a href="/services/digital-marketing" class="text-primary hover:underline">Digital Marketing</a>')
-      .replace(/Mobile App/g, '<a href="/services/app-development" class="text-primary hover:underline">Mobile App</a>')
-      .replace(/SEO/g, '<a href="/services/digital-marketing" class="text-primary hover:underline">SEO</a>')
-      .replace(/Logo Design/g, '<a href="/services/logo-brand-design" class="text-primary hover:underline">Logo Design</a>')
-      .replace(/UI\/UX Design/g, '<a href="/services/ui-ux-design" class="text-primary hover:underline">UI/UX Design</a>')
-      .replace(/Brand Design/g, '<a href="/services/logo-brand-design" class="text-primary hover:underline">Brand Design</a>')
-      .replace(/Poster Design/g, '<a href="/services/poster-design" class="text-primary hover:underline">Poster Design</a>')
+      // Add internal links to services with targeted SEO keywords for Madurai
+      .replace(/Web Development/g, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">best web development in Madurai</a>')
+      .replace(/Digital Marketing/g, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">top digital marketing agency in Madurai</a>')
+      .replace(/Mobile App/g, '<a href="https://www.godivatech.com/services/app-development" class="text-primary hover:underline">mobile app development company in Madurai</a>')
+      .replace(/SEO/g, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">SEO services in Madurai</a>')
+      .replace(/Logo Design/g, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary hover:underline">professional logo design in Madurai</a>')
+      .replace(/UI\/UX Design/g, '<a href="https://www.godivatech.com/services/ui-ux-design" class="text-primary hover:underline">UI/UX design services in Madurai</a>')
+      .replace(/Brand Design/g, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary hover:underline">brand design company in Madurai</a>')
+      .replace(/Poster Design/g, '<a href="https://www.godivatech.com/services/poster-design" class="text-primary hover:underline">poster design services in Madurai</a>')
+      
+      // Add Madurai-specific business keywords
+      .replace(/business website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">business website development in Madurai</a>')
+      .replace(/online presence/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">digital presence for Madurai businesses</a>')
+      .replace(/social media/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">social media marketing in Madurai</a>')
+      .replace(/local business/gi, '<a href="https://www.godivatech.com/about" class="text-primary hover:underline">Madurai local business solutions</a>')
+      .replace(/ecommerce/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">eCommerce website development in Madurai</a>')
+      .replace(/website design/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">best website design in Madurai</a>')
+      .replace(/responsive website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">responsive website design in Madurai</a>')
+      .replace(/professional website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">professional website development in Madurai</a>')
+      .replace(/branding/gi, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary hover:underline">branding services in Madurai</a>')
+      .replace(/content marketing/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">content marketing services in Madurai</a>')
+      .replace(/Tamil Nadu/gi, '<a href="https://www.godivatech.com/about" class="text-primary hover:underline">best IT company in Tamil Nadu</a>')
+      
+      // Replace GodivaTech mentions with SEO optimized links
+      .replace(/GodivaTech/g, '<a href="https://www.godivatech.com/about" class="text-primary hover:underline">GodivaTech - best software company in Madurai</a>')
       
       // Add external authoritative links
-      .replace(/Google My Business/g, '<a href="https://business.google.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google My Business</a>')
-      .replace(/Google Maps/g, '<a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google Maps</a>');
+      .replace(/Google My Business/g, '<a href="https://business.google.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google My Business for Madurai companies</a>')
+      .replace(/Google Maps/g, '<a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google Maps listing for Madurai</a>')
+      .replace(/Facebook/g, '<a href="https://business.facebook.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Facebook marketing for Madurai</a>')
+      .replace(/Instagram/g, '<a href="https://business.instagram.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Instagram marketing for Madurai</a>');
     
     return processed;
   };
@@ -87,18 +105,126 @@ const BlogPost = () => {
   return (
     <>
       <Helmet>
-        <title>{post.title} | GodivaTech Madurai</title>
-        <meta name="description" content={post.excerpt} />
-        <meta name="keywords" content={`${post.category?.name || ''}, Madurai, Tamil Nadu, ${post.title.toLowerCase()}`} />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt} />
+        <title>{post.title} | Best {post.category?.name || 'Digital Services'} in Madurai | GodivaTech</title>
+        <meta name="description" content={`${post.excerpt} GodivaTech provides the best ${post.category?.name || 'digital services'} in Madurai, Tamil Nadu for businesses looking to grow their online presence.`} />
+        <meta name="keywords" content={`
+          ${post.category?.name || ''}, 
+          best software company in Madurai, 
+          top web development company in Madurai, 
+          digital marketing agency Madurai, 
+          SEO services in Madurai, 
+          website design Madurai, 
+          mobile app development Madurai, 
+          eCommerce development Tamil Nadu, 
+          branding agency Madurai, 
+          UI/UX design Madurai, 
+          logo design Madurai, 
+          ${post.title.toLowerCase()}, 
+          GodivaTech Madurai, 
+          IT company Tamil Nadu`} />
+        <meta property="og:title" content={`${post.title} | Best ${post.category?.name || 'Digital Services'} in Madurai | GodivaTech`} />
+        <meta property="og:description" content={`${post.excerpt} Get professional ${post.category?.name || 'digital services'} for your business in Madurai, Tamil Nadu.`} />
         <meta property="og:image" content={post.coverImage} />
         <meta property="og:type" content="article" />
         <meta property="og:locale" content="en_IN" />
+        <meta property="og:site_name" content="GodivaTech - Best Software Company in Madurai" />
         <meta property="article:published_time" content={new Date(post.publishedAt).toISOString()} />
         <meta property="article:author" content={post.authorName} />
         <meta property="article:section" content={post.category?.name} />
+        <meta property="article:tag" content={`Madurai, ${post.category?.name || 'Digital Services'}, Tamil Nadu`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${post.title} | GodivaTech Madurai`} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:image" content={post.coverImage} />
+        <meta name="geo.region" content="IN-TN" />
+        <meta name="geo.placename" content="Madurai" />
         <link rel="canonical" href={`https://godivatech.com/blog/${post.slug}`} />
+        
+        {/* JSON-LD Schema markup for better SEO */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": post.title,
+            "description": post.excerpt,
+            "image": post.coverImage,
+            "url": `https://godivatech.com/blog/${post.slug}`,
+            "datePublished": new Date(post.publishedAt).toISOString(),
+            "dateModified": new Date(post.publishedAt).toISOString(),
+            "author": {
+              "@type": "Person",
+              "name": post.authorName,
+              "url": "https://godivatech.com/about"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "GodivaTech - Best Software Company in Madurai",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://godivatech.com/assets/godiva-logo.png"
+              }
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://godivatech.com/blog/${post.slug}`
+            },
+            "keywords": `${post.category?.name || ''}, best software company in Madurai, ${post.title.toLowerCase()}, GodivaTech Madurai`,
+            "articleSection": post.category?.name,
+            "isAccessibleForFree": "True",
+            "locationCreated": {
+              "@type": "Place",
+              "name": "Madurai, Tamil Nadu, India",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Madurai",
+                "addressRegion": "TN",
+                "addressCountry": "IN"
+              }
+            }
+          })}
+        </script>
+
+        {/* Local Business Schema for GodivaTech */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "LocalBusiness",
+            "name": "GodivaTech",
+            "description": "Best Software & Digital Marketing Company in Madurai",
+            "url": "https://www.godivatech.com",
+            "logo": "https://godivatech.com/assets/godiva-logo.png",
+            "image": "https://godivatech.com/assets/godiva-logo.png",
+            "telephone": "+91-XXXXXXXXXX",
+            "email": "info@godivatech.com",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "261, Vaigai mainroad 4th Street, Sri Nagar, Iyer Bungalow",
+              "addressLocality": "Madurai",
+              "postalCode": "625007",
+              "addressRegion": "Tamil Nadu",
+              "addressCountry": "IN"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": "9.9252",
+              "longitude": "78.1198"
+            },
+            "openingHoursSpecification": {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              "opens": "09:00",
+              "closes": "18:00"
+            },
+            "sameAs": [
+              "https://www.facebook.com/godivatech",
+              "https://www.instagram.com/godivatech",
+              "https://www.linkedin.com/company/godivatech",
+              "https://twitter.com/godivatech"
+            ],
+            "priceRange": "₹₹",
+            "servesCuisine": ["Web Development", "Digital Marketing", "Mobile App Development", "UI/UX Design"]
+          })}
+        </script>
       </Helmet>
 
       <section className="bg-white pt-20 pb-12">
@@ -214,19 +340,22 @@ const BlogPost = () => {
               })}
             </article>
             
-            {/* Call to Action Box */}
+            {/* Call to Action Box with Targeted SEO Keywords */}
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-8 mb-8">
-              <h3 className="text-2xl font-bold text-primary mb-4">Need Help With Your {post.category?.name || "Digital"} Project?</h3>
+              <h3 className="text-2xl font-bold text-primary mb-4">Need the Best {post.category?.name || "Digital Services"} in Madurai?</h3>
               <p className="text-neutral-700 mb-6">
-                GodivaTech specializes in {post.category?.name || "digital services"} for businesses in Madurai and across Tamil Nadu. 
-                Our experienced team can help you implement the strategies discussed in this article.
+                As the leading software company in Madurai, GodivaTech specializes in professional {post.category?.name?.toLowerCase() || "digital services"} for businesses across Tamil Nadu. 
+                Our experienced Madurai-based team can help you implement all the strategies discussed in this article with affordable, result-driven solutions.
+              </p>
+              <p className="text-neutral-700 mb-6">
+                From <a href="https://www.godivatech.com/services/web-development" className="text-primary hover:underline">expert web development</a> and <a href="https://www.godivatech.com/services/digital-marketing" className="text-primary hover:underline">digital marketing</a> to <a href="https://www.godivatech.com/services/logo-brand-design" className="text-primary hover:underline">professional branding</a>, we provide all the technical services your Madurai business needs to succeed online.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/contact" className="bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-lg inline-block text-center font-medium">
-                  Contact Us
+                  Contact Best {post.category?.name || "Digital"} Agency in Madurai
                 </Link>
                 <Link href={`/services/${post.category?.slug || ''}`} className="bg-white border border-primary text-primary hover:bg-primary/5 py-3 px-6 rounded-lg inline-block text-center font-medium">
-                  Our {post.category?.name || "Services"}
+                  View Our {post.category?.name || "Services"} in Madurai
                 </Link>
               </div>
             </div>
