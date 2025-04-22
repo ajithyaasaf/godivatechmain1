@@ -51,12 +51,14 @@ const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       
       <Link href={`/blog/${post.slug}`}>
-        <img
-          src={post.coverImage}
-          alt={post.title}
-          className="w-full h-48 object-cover"
-          loading="lazy" // Add lazy loading for better performance
-        />
+        <div className="w-full h-48 overflow-hidden">
+          <img
+            src={post.coverImage}
+            alt={post.title}
+            className="w-full h-full object-cover object-center"
+            loading="lazy" // Add lazy loading for better performance
+          />
+        </div>
       </Link>
       <div className="p-6">
         <div className="flex items-center mb-4">
@@ -80,13 +82,15 @@ const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
         </Link>
         <p className="text-neutral-600 mb-4">{post.excerpt}</p>
         <div className="flex items-center">
-          <img
-            src={post.authorImage}
-            alt={`${post.authorName} - Author at GodivaTech Madurai`}
-            className="w-8 h-8 rounded-full mr-3"
-            loading="lazy"
-          />
-          <span className="text-neutral-700 font-medium">{post.authorName}</span>
+          <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+            <img
+              src={post.authorImage}
+              alt={`Ananth - Author at GodivaTech Madurai`}
+              className="w-full h-full object-cover object-center"
+              loading="lazy"
+            />
+          </div>
+          <span className="text-neutral-700 font-medium">Ananth</span>
         </div>
       </div>
     </article>

@@ -63,9 +63,9 @@ const TeamSection = () => {
   const defaultTeamMembers = [
     {
       id: 1,
-      name: "Rajesh Kumar",
+      name: "Srinivas Reddy",
       position: "Founder & CEO",
-      bio: "Founded Godiva Technologies in 2010 with a vision to provide affordable IT solutions to businesses in Madurai.",
+      bio: "Founded Godiva Technologies in 2012 with a vision to provide innovative web solutions and digital transformation services to businesses worldwide.",
       image: ceoImage,
       linkedIn: "https://linkedin.com",
       twitter: "https://twitter.com"
