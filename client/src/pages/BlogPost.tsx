@@ -57,18 +57,48 @@ const BlogPost = () => {
   const formattedDate = format(new Date(post.publishedAt), "MMMM dd, yyyy");
   const timeAgo = formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true });
   
+  // Process content for better rendering
+  const processContent = (content: string) => {
+    // Replace Markdown-style headers with HTML headers
+    let processed = content
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
+      .replace(/- (.*?)(?:\n|$)/g, '<li>$1</li>') // List items
+      
+      // Add internal links to services and related terms
+      .replace(/Web Development/g, '<a href="/services/web-development" class="text-primary hover:underline">Web Development</a>')
+      .replace(/Digital Marketing/g, '<a href="/services/digital-marketing" class="text-primary hover:underline">Digital Marketing</a>')
+      .replace(/Mobile App/g, '<a href="/services/app-development" class="text-primary hover:underline">Mobile App</a>')
+      .replace(/SEO/g, '<a href="/services/digital-marketing" class="text-primary hover:underline">SEO</a>')
+      .replace(/Logo Design/g, '<a href="/services/logo-brand-design" class="text-primary hover:underline">Logo Design</a>')
+      .replace(/UI\/UX Design/g, '<a href="/services/ui-ux-design" class="text-primary hover:underline">UI/UX Design</a>')
+      .replace(/Brand Design/g, '<a href="/services/logo-brand-design" class="text-primary hover:underline">Brand Design</a>')
+      .replace(/Poster Design/g, '<a href="/services/poster-design" class="text-primary hover:underline">Poster Design</a>')
+      
+      // Add external authoritative links
+      .replace(/Google My Business/g, '<a href="https://business.google.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google My Business</a>')
+      .replace(/Google Maps/g, '<a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google Maps</a>');
+    
+    return processed;
+  };
+
   // Split content by paragraphs for better rendering
   const contentParagraphs = post.content.split("\n\n");
 
   return (
     <>
       <Helmet>
-        <title>{post.title} | GodivaTech Blog</title>
+        <title>{post.title} | GodivaTech Madurai</title>
         <meta name="description" content={post.excerpt} />
+        <meta name="keywords" content={`${post.category?.name || ''}, Madurai, Tamil Nadu, ${post.title.toLowerCase()}`} />
         <meta property="og:title" content={post.title} />
         <meta property="og:description" content={post.excerpt} />
         <meta property="og:image" content={post.coverImage} />
         <meta property="og:type" content="article" />
+        <meta property="og:locale" content="en_IN" />
+        <meta property="article:published_time" content={new Date(post.publishedAt).toISOString()} />
+        <meta property="article:author" content={post.authorName} />
+        <meta property="article:section" content={post.category?.name} />
+        <link rel="canonical" href={`https://godivatech.com/blog/${post.slug}`} />
       </Helmet>
 
       <section className="bg-white pt-20 pb-12">
@@ -113,19 +143,95 @@ const BlogPost = () => {
             </div>
             
             <div className="mb-10">
-              <img 
-                src={post.coverImage} 
-                alt={post.title} 
-                className="w-full h-auto rounded-lg shadow-lg"
-              />
+              <figure>
+                <img 
+                  src={post.coverImage} 
+                  alt={`${post.title} - GodivaTech Madurai - ${post.category?.name || 'Blog'}`} 
+                  className="w-full h-auto rounded-lg shadow-lg"
+                  loading="eager"
+                  width="800"
+                  height="450"
+                />
+                <figcaption className="text-center text-neutral-500 text-sm mt-2">
+                  {post.title} | GodivaTech Madurai
+                </figcaption>
+              </figure>
             </div>
             
+            {/* Table of Contents for longer articles */}
+            {contentParagraphs.length > 5 && (
+              <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-6 mb-8">
+                <h2 className="text-xl font-semibold mb-4">Table of Contents</h2>
+                <ul className="space-y-2">
+                  {contentParagraphs.slice(0, 6).map((para, idx) => {
+                    // Extract potential headings (assuming first sentences of paragraphs)
+                    const firstSentence = para.split('.')[0];
+                    if (firstSentence.length > 10 && firstSentence.length < 100) {
+                      return (
+                        <li key={idx} className="text-primary hover:text-primary/80">
+                          <a href={`#section-${idx}`} className="hover:underline">
+                            {firstSentence.replace(/\*\*/g, '')}
+                          </a>
+                        </li>
+                      );
+                    }
+                    return null;
+                  }).filter(Boolean)}
+                </ul>
+              </div>
+            )}
+            
             <article className="prose prose-lg max-w-none mb-12">
-              {contentParagraphs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
+              {contentParagraphs.map((paragraph, index) => {
+                // Process paragraph to add links and formatting
+                const processedContent = processContent(paragraph);
+                
+                // For paragraphs that might be headings (identified by bold start)
+                if (processedContent.startsWith('<strong>')) {
+                  return (
+                    <div key={index} id={`section-${index}`}>
+                      <h2 className="text-2xl font-bold text-neutral-800 mt-8 mb-4" 
+                          dangerouslySetInnerHTML={{ __html: processedContent.replace('<strong>', '').replace('</strong>', '') }} />
+                    </div>
+                  );
+                }
+                
+                // For list items
+                if (processedContent.includes('<li>')) {
+                  return (
+                    <ul key={index} className="list-disc pl-5 my-4">
+                      <div dangerouslySetInnerHTML={{ __html: processedContent }} />
+                    </ul>
+                  );
+                }
+                
+                // Regular paragraphs with possible inline links
+                return (
+                  <div key={index} id={`section-${index}`}>
+                    <p dangerouslySetInnerHTML={{ __html: processedContent }} />
+                  </div>
+                );
+              })}
             </article>
             
+            {/* Call to Action Box */}
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-8 mb-8">
+              <h3 className="text-2xl font-bold text-primary mb-4">Need Help With Your {post.category?.name || "Digital"} Project?</h3>
+              <p className="text-neutral-700 mb-6">
+                GodivaTech specializes in {post.category?.name || "digital services"} for businesses in Madurai and across Tamil Nadu. 
+                Our experienced team can help you implement the strategies discussed in this article.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/contact" className="bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-lg inline-block text-center font-medium">
+                  Contact Us
+                </Link>
+                <Link href={`/services/${post.category?.slug || ''}`} className="bg-white border border-primary text-primary hover:bg-primary/5 py-3 px-6 rounded-lg inline-block text-center font-medium">
+                  Our {post.category?.name || "Services"}
+                </Link>
+              </div>
+            </div>
+            
+            {/* Social Sharing */}
             <div className="border-t border-neutral-200 pt-8 mb-12">
               <div className="flex flex-wrap gap-2">
                 <span className="text-neutral-700 font-medium">Share this article:</span>
