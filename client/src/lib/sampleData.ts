@@ -89,45 +89,45 @@ export const sampleBlogPosts = [
 export const sampleServices = [
   {
     id: 1,
-    title: "Software Development",
-    description: "Custom software solutions tailored to your business needs, from web applications to mobile apps and enterprise systems.",
+    title: "Web Development",
+    description: "Create affordable, responsive websites for your business that work on all devices and help your brand stand out online.",
     icon: "code",
-    slug: "software-development"
+    slug: "web-development"
   },
   {
     id: 2,
-    title: "Cloud Solutions",
-    description: "Scalable cloud infrastructure, migration services, and managed cloud solutions to optimize your business operations.",
+    title: "Digital Marketing",
+    description: "Boost your online presence with our comprehensive digital marketing strategies including SEO, social media management, and online advertising.",
     icon: "cloud",
-    slug: "cloud-solutions"
+    slug: "digital-marketing"
   },
   {
     id: 3,
-    title: "IT Consulting",
-    description: "Strategic technology advisory services to help you make informed decisions and maximize your IT investments.",
+    title: "Mobile App Development",
+    description: "Build custom mobile applications for Android and iOS platforms that connect you with your customers wherever they are.",
     icon: "users",
-    slug: "it-consulting"
+    slug: "app-development"
   },
   {
     id: 4,
-    title: "Cybersecurity",
-    description: "Comprehensive security assessments, implementation, and monitoring to protect your business from evolving threats.",
+    title: "Poster Design",
+    description: "Craft eye-catching posters and marketing materials that effectively communicate your message and attract customer attention.",
     icon: "shield",
-    slug: "cybersecurity"
+    slug: "poster-design"
   },
   {
     id: 5,
-    title: "Data Analytics",
-    description: "Turn your data into actionable insights with our advanced analytics, business intelligence, and data visualization solutions.",
+    title: "UI/UX Design",
+    description: "Create intuitive and engaging user interfaces that provide exceptional user experiences and keep customers coming back.",
     icon: "bar-chart",
-    slug: "data-analytics"
+    slug: "ui-ux-design"
   },
   {
     id: 6,
-    title: "AI & Machine Learning",
-    description: "Cutting-edge AI solutions that automate processes, predict trends, and enhance decision-making for your business.",
+    title: "Logo & Brand Design",
+    description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
     icon: "brain",
-    slug: "ai-machine-learning"
+    slug: "logo-brand-design"
   }
 ];
 
