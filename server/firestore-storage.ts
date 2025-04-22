@@ -5,7 +5,8 @@ import {
   collection, doc, getDoc, getDocs, 
   query, where, orderBy, limit, 
   addDoc, updateDoc, deleteDoc, setDoc,
-  serverTimestamp, Timestamp
+  serverTimestamp, Timestamp, 
+  DocumentData, QueryDocumentSnapshot
 } from "firebase/firestore";
 import { 
   InsertUser, User,
@@ -22,8 +23,19 @@ import {
 // Create a memory store for session storage
 const MemoryStoreClass = MemoryStore(session);
 
+// Helper function to convert Firestore timestamp to Date
+const convertTimestampToDate = (timestamp: any): Date => {
+  if (timestamp instanceof Timestamp) {
+    return new Date(timestamp.toMillis());
+  }
+  if (timestamp && typeof timestamp.toDate === 'function') {
+    return timestamp.toDate();
+  }
+  return new Date();
+};
+
 export class FirestoreStorage {
-  sessionStore: session.SessionStore;
+  sessionStore: any; // Use 'any' type to avoid SessionStore issues
 
   constructor() {
     this.sessionStore = new MemoryStoreClass({
@@ -31,13 +43,31 @@ export class FirestoreStorage {
     });
   }
 
+  // Helper method to get a new ID from a counter
+  private async getNextId(counterName: string): Promise<number> {
+    const counterRef = doc(db, 'counters', counterName);
+    const counterSnap = await getDoc(counterRef);
+    
+    let nextId = 1;
+    if (counterSnap.exists()) {
+      nextId = (counterSnap.data()?.count || 0) + 1;
+    }
+    
+    // Update the counter
+    await setDoc(counterRef, { count: nextId });
+    
+    return nextId;
+  }
+
   // User methods
   async getUser(id: number): Promise<User | undefined> {
     try {
-      const userDoc = await db.collection('users').doc(id.toString()).get();
-      if (!userDoc.exists) return undefined;
+      const docRef = doc(db, 'users', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      const userData = userDoc.data() as User;
+      if (!docSnap.exists()) return undefined;
+      
+      const userData = docSnap.data() as User;
       return { ...userData, id };
     } catch (error) {
       console.error("Error getting user:", error);
@@ -47,8 +77,9 @@ export class FirestoreStorage {
 
   async getUserByUsername(username: string): Promise<User | undefined> {
     try {
-      const usersRef = db.collection('users');
-      const querySnapshot = await usersRef.where('username', '==', username).limit(1).get();
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('username', '==', username), limit(1));
+      const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) return undefined;
       
@@ -62,26 +93,14 @@ export class FirestoreStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('users');
-      const counterDoc = await counterRef.get();
-      
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
+      const nextId = await this.getNextId('users');
       
       // Create the user
-      const userRef = db.collection('users').doc(nextId.toString());
-      await userRef.set({
-        ...insertUser,
-        id: nextId
-      });
+      const userRef = doc(db, 'users', nextId.toString());
+      const user: User = { ...insertUser, id: nextId };
+      await setDoc(userRef, user);
       
-      return { ...insertUser, id: nextId };
+      return user;
     } catch (error) {
       console.error("Error creating user:", error);
       throw error;
@@ -95,18 +114,13 @@ export class FirestoreStorage {
       const q = query(blogPostsRef, orderBy('publishedAt', 'desc'));
       const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(docSnapshot => {
-        const data = docSnapshot.data() as any;
-        // Handle Firestore Timestamp conversion to Date
-        const publishedAt = data.publishedAt instanceof Timestamp 
-          ? new Date(data.publishedAt.toMillis()) 
-          : new Date();
-          
+      return querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data() as any;
+        
         return { 
           ...data,
-          id: parseInt(docSnapshot.id),
-          publishedAt,
-          // Ensure required fields have default values if missing
+          id: parseInt(docSnap.id),
+          publishedAt: convertTimestampToDate(data.publishedAt),
           published: data.published ?? true,
           authorImage: data.authorImage ?? null,
           coverImage: data.coverImage ?? null,
@@ -121,16 +135,22 @@ export class FirestoreStorage {
 
   async getBlogPost(id: number): Promise<BlogPost | undefined> {
     try {
-      const blogPostDoc = await db.collection('blog_posts').doc(id.toString()).get();
+      const docRef = doc(db, 'blog_posts', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      if (!blogPostDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
-      const data = blogPostDoc.data() as BlogPost;
+      const data = docSnap.data() as any;
+      
       return { 
         ...data,
         id,
-        publishedAt: data.publishedAt.toString(), // Convert Firestore timestamp to string
-      };
+        publishedAt: convertTimestampToDate(data.publishedAt),
+        published: data.published ?? true,
+        authorImage: data.authorImage ?? null,
+        coverImage: data.coverImage ?? null,
+        categoryId: data.categoryId ?? null
+      } as BlogPost;
     } catch (error) {
       console.error("Error getting blog post:", error);
       return undefined;
@@ -139,19 +159,24 @@ export class FirestoreStorage {
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
     try {
-      const blogPostsRef = db.collection('blog_posts');
-      const querySnapshot = await blogPostsRef.where('slug', '==', slug).limit(1).get();
+      const blogPostsRef = collection(db, 'blog_posts');
+      const q = query(blogPostsRef, where('slug', '==', slug), limit(1));
+      const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) return undefined;
       
-      const blogPostDoc = querySnapshot.docs[0];
-      const data = blogPostDoc.data() as BlogPost;
+      const docSnap = querySnapshot.docs[0];
+      const data = docSnap.data() as any;
       
       return { 
         ...data,
-        id: parseInt(blogPostDoc.id),
-        publishedAt: data.publishedAt.toString(), // Convert Firestore timestamp to string
-      };
+        id: parseInt(docSnap.id),
+        publishedAt: convertTimestampToDate(data.publishedAt),
+        published: data.published ?? true,
+        authorImage: data.authorImage ?? null,
+        coverImage: data.coverImage ?? null,
+        categoryId: data.categoryId ?? null
+      } as BlogPost;
     } catch (error) {
       console.error("Error getting blog post by slug:", error);
       return undefined;
@@ -160,26 +185,27 @@ export class FirestoreStorage {
 
   async createBlogPost(insertBlogPost: InsertBlogPost): Promise<BlogPost> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('blog_posts');
-      const counterDoc = await counterRef.get();
+      const nextId = await this.getNextId('blog_posts');
       
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
-      
-      // Create the blog post
-      const blogPostRef = db.collection('blog_posts').doc(nextId.toString());
-      await blogPostRef.set({
+      // Create the blog post with required fields
+      const blogPost: BlogPost = {
         ...insertBlogPost,
-        id: nextId
+        id: nextId,
+        published: insertBlogPost.published ?? true,
+        authorImage: insertBlogPost.authorImage ?? null,
+        coverImage: insertBlogPost.coverImage ?? null,
+        publishedAt: insertBlogPost.publishedAt ?? new Date(),
+        categoryId: insertBlogPost.categoryId ?? null
+      };
+      
+      // Save to Firestore
+      const blogPostRef = doc(db, 'blog_posts', nextId.toString());
+      await setDoc(blogPostRef, {
+        ...blogPost,
+        publishedAt: serverTimestamp() // Use Firestore timestamp for storage
       });
       
-      return { ...insertBlogPost, id: nextId };
+      return blogPost;
     } catch (error) {
       console.error("Error creating blog post:", error);
       throw error;
@@ -188,23 +214,30 @@ export class FirestoreStorage {
 
   async updateBlogPost(id: number, blogPost: Partial<InsertBlogPost>): Promise<BlogPost | undefined> {
     try {
-      const blogPostRef = db.collection('blog_posts').doc(id.toString());
-      const blogPostDoc = await blogPostRef.get();
+      const blogPostRef = doc(db, 'blog_posts', id.toString());
+      const docSnap = await getDoc(blogPostRef);
       
-      if (!blogPostDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
       // Update the blog post
-      await blogPostRef.update(blogPost);
+      await updateDoc(blogPostRef, {
+        ...blogPost,
+        updatedAt: serverTimestamp()
+      });
       
       // Get the updated document
-      const updatedDoc = await blogPostRef.get();
-      const data = updatedDoc.data() as BlogPost;
+      const updatedSnap = await getDoc(blogPostRef);
+      const data = updatedSnap.data() as any;
       
       return { 
         ...data,
         id,
-        publishedAt: data.publishedAt.toString(), // Convert Firestore timestamp to string
-      };
+        publishedAt: convertTimestampToDate(data.publishedAt),
+        published: data.published ?? true,
+        authorImage: data.authorImage ?? null,
+        coverImage: data.coverImage ?? null,
+        categoryId: data.categoryId ?? null
+      } as BlogPost;
     } catch (error) {
       console.error("Error updating blog post:", error);
       return undefined;
@@ -213,7 +246,8 @@ export class FirestoreStorage {
 
   async deleteBlogPost(id: number): Promise<boolean> {
     try {
-      await db.collection('blog_posts').doc(id.toString()).delete();
+      const docRef = doc(db, 'blog_posts', id.toString());
+      await deleteDoc(docRef);
       return true;
     } catch (error) {
       console.error("Error deleting blog post:", error);
@@ -224,14 +258,15 @@ export class FirestoreStorage {
   // Categories methods
   async getAllCategories(): Promise<Category[]> {
     try {
-      const categoriesRef = db.collection('categories');
-      const querySnapshot = await categoriesRef.orderBy('name').get();
+      const categoriesRef = collection(db, 'categories');
+      const q = query(categoriesRef, orderBy('name'));
+      const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data() as Category;
+      return querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data() as Category;
         return { 
           ...data,
-          id: parseInt(doc.id)
+          id: parseInt(docSnap.id)
         };
       });
     } catch (error) {
@@ -242,11 +277,12 @@ export class FirestoreStorage {
 
   async getCategory(id: number): Promise<Category | undefined> {
     try {
-      const categoryDoc = await db.collection('categories').doc(id.toString()).get();
+      const docRef = doc(db, 'categories', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      if (!categoryDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
-      const data = categoryDoc.data() as Category;
+      const data = docSnap.data() as Category;
       return { ...data, id };
     } catch (error) {
       console.error("Error getting category:", error);
@@ -256,15 +292,16 @@ export class FirestoreStorage {
 
   async getCategoryBySlug(slug: string): Promise<Category | undefined> {
     try {
-      const categoriesRef = db.collection('categories');
-      const querySnapshot = await categoriesRef.where('slug', '==', slug).limit(1).get();
+      const categoriesRef = collection(db, 'categories');
+      const q = query(categoriesRef, where('slug', '==', slug), limit(1));
+      const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) return undefined;
       
-      const categoryDoc = querySnapshot.docs[0];
-      const data = categoryDoc.data() as Category;
+      const docSnap = querySnapshot.docs[0];
+      const data = docSnap.data() as Category;
       
-      return { ...data, id: parseInt(categoryDoc.id) };
+      return { ...data, id: parseInt(docSnap.id) };
     } catch (error) {
       console.error("Error getting category by slug:", error);
       return undefined;
@@ -273,26 +310,18 @@ export class FirestoreStorage {
 
   async createCategory(insertCategory: InsertCategory): Promise<Category> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('categories');
-      const counterDoc = await counterRef.get();
-      
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
+      const nextId = await this.getNextId('categories');
       
       // Create the category
-      const categoryRef = db.collection('categories').doc(nextId.toString());
-      await categoryRef.set({
+      const category: Category = {
         ...insertCategory,
         id: nextId
-      });
+      };
       
-      return { ...insertCategory, id: nextId };
+      const categoryRef = doc(db, 'categories', nextId.toString());
+      await setDoc(categoryRef, category);
+      
+      return category;
     } catch (error) {
       console.error("Error creating category:", error);
       throw error;
@@ -301,17 +330,20 @@ export class FirestoreStorage {
 
   async updateCategory(id: number, category: Partial<InsertCategory>): Promise<Category | undefined> {
     try {
-      const categoryRef = db.collection('categories').doc(id.toString());
-      const categoryDoc = await categoryRef.get();
+      const categoryRef = doc(db, 'categories', id.toString());
+      const docSnap = await getDoc(categoryRef);
       
-      if (!categoryDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
       // Update the category
-      await categoryRef.update(category);
+      await updateDoc(categoryRef, {
+        ...category,
+        updatedAt: serverTimestamp()
+      });
       
       // Get the updated document
-      const updatedDoc = await categoryRef.get();
-      const data = updatedDoc.data() as Category;
+      const updatedSnap = await getDoc(categoryRef);
+      const data = updatedSnap.data() as Category;
       
       return { ...data, id };
     } catch (error) {
@@ -322,7 +354,8 @@ export class FirestoreStorage {
 
   async deleteCategory(id: number): Promise<boolean> {
     try {
-      await db.collection('categories').doc(id.toString()).delete();
+      const docRef = doc(db, 'categories', id.toString());
+      await deleteDoc(docRef);
       return true;
     } catch (error) {
       console.error("Error deleting category:", error);
@@ -330,18 +363,21 @@ export class FirestoreStorage {
     }
   }
 
-  // Implement the remaining methods required by IStorage
-  // These will follow the same pattern as the ones above
-
   // Projects methods
   async getAllProjects(): Promise<Project[]> {
     try {
-      const projectsRef = db.collection('projects');
-      const querySnapshot = await projectsRef.orderBy('order').get();
+      const projectsRef = collection(db, 'projects');
+      const q = query(projectsRef, orderBy('title'));
+      const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data() as Project;
-        return { ...data, id: parseInt(doc.id) };
+      return querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data() as any;
+        return { 
+          ...data,
+          id: parseInt(docSnap.id),
+          link: data.link ?? null,
+          image: data.image ?? null
+        } as Project;
       });
     } catch (error) {
       console.error("Error getting all projects:", error);
@@ -351,12 +387,18 @@ export class FirestoreStorage {
 
   async getProject(id: number): Promise<Project | undefined> {
     try {
-      const projectDoc = await db.collection('projects').doc(id.toString()).get();
+      const docRef = doc(db, 'projects', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      if (!projectDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
-      const data = projectDoc.data() as Project;
-      return { ...data, id };
+      const data = docSnap.data() as any;
+      return { 
+        ...data,
+        id,
+        link: data.link ?? null,
+        image: data.image ?? null
+      } as Project;
     } catch (error) {
       console.error("Error getting project:", error);
       return undefined;
@@ -365,26 +407,20 @@ export class FirestoreStorage {
 
   async createProject(insertProject: InsertProject): Promise<Project> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('projects');
-      const counterDoc = await counterRef.get();
+      const nextId = await this.getNextId('projects');
       
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
-      
-      // Create the project
-      const projectRef = db.collection('projects').doc(nextId.toString());
-      await projectRef.set({
+      // Create the project with required fields
+      const project: Project = {
         ...insertProject,
-        id: nextId
-      });
+        id: nextId,
+        link: insertProject.link ?? null,
+        image: insertProject.image ?? null
+      };
       
-      return { ...insertProject, id: nextId };
+      const projectRef = doc(db, 'projects', nextId.toString());
+      await setDoc(projectRef, project);
+      
+      return project;
     } catch (error) {
       console.error("Error creating project:", error);
       throw error;
@@ -393,19 +429,27 @@ export class FirestoreStorage {
 
   async updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined> {
     try {
-      const projectRef = db.collection('projects').doc(id.toString());
-      const projectDoc = await projectRef.get();
+      const projectRef = doc(db, 'projects', id.toString());
+      const docSnap = await getDoc(projectRef);
       
-      if (!projectDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
       // Update the project
-      await projectRef.update(project);
+      await updateDoc(projectRef, {
+        ...project,
+        updatedAt: serverTimestamp()
+      });
       
       // Get the updated document
-      const updatedDoc = await projectRef.get();
-      const data = updatedDoc.data() as Project;
+      const updatedSnap = await getDoc(projectRef);
+      const data = updatedSnap.data() as any;
       
-      return { ...data, id };
+      return { 
+        ...data,
+        id,
+        link: data.link ?? null,
+        image: data.image ?? null
+      } as Project;
     } catch (error) {
       console.error("Error updating project:", error);
       return undefined;
@@ -414,7 +458,8 @@ export class FirestoreStorage {
 
   async deleteProject(id: number): Promise<boolean> {
     try {
-      await db.collection('projects').doc(id.toString()).delete();
+      const docRef = doc(db, 'projects', id.toString());
+      await deleteDoc(docRef);
       return true;
     } catch (error) {
       console.error("Error deleting project:", error);
@@ -425,12 +470,13 @@ export class FirestoreStorage {
   // Services methods
   async getAllServices(): Promise<Service[]> {
     try {
-      const servicesRef = db.collection('services');
-      const querySnapshot = await servicesRef.orderBy('order').get();
+      const servicesRef = collection(db, 'services');
+      const q = query(servicesRef, orderBy('title'));
+      const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data() as Service;
-        return { ...data, id: parseInt(doc.id) };
+      return querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data() as Service;
+        return { ...data, id: parseInt(docSnap.id) };
       });
     } catch (error) {
       console.error("Error getting all services:", error);
@@ -440,11 +486,12 @@ export class FirestoreStorage {
 
   async getService(id: number): Promise<Service | undefined> {
     try {
-      const serviceDoc = await db.collection('services').doc(id.toString()).get();
+      const docRef = doc(db, 'services', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      if (!serviceDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
-      const data = serviceDoc.data() as Service;
+      const data = docSnap.data() as Service;
       return { ...data, id };
     } catch (error) {
       console.error("Error getting service:", error);
@@ -454,15 +501,16 @@ export class FirestoreStorage {
 
   async getServiceBySlug(slug: string): Promise<Service | undefined> {
     try {
-      const servicesRef = db.collection('services');
-      const querySnapshot = await servicesRef.where('slug', '==', slug).limit(1).get();
+      const servicesRef = collection(db, 'services');
+      const q = query(servicesRef, where('slug', '==', slug), limit(1));
+      const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) return undefined;
       
-      const serviceDoc = querySnapshot.docs[0];
-      const data = serviceDoc.data() as Service;
+      const docSnap = querySnapshot.docs[0];
+      const data = docSnap.data() as Service;
       
-      return { ...data, id: parseInt(serviceDoc.id) };
+      return { ...data, id: parseInt(docSnap.id) };
     } catch (error) {
       console.error("Error getting service by slug:", error);
       return undefined;
@@ -471,26 +519,18 @@ export class FirestoreStorage {
 
   async createService(insertService: InsertService): Promise<Service> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('services');
-      const counterDoc = await counterRef.get();
-      
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
+      const nextId = await this.getNextId('services');
       
       // Create the service
-      const serviceRef = db.collection('services').doc(nextId.toString());
-      await serviceRef.set({
+      const service: Service = {
         ...insertService,
         id: nextId
-      });
+      };
       
-      return { ...insertService, id: nextId };
+      const serviceRef = doc(db, 'services', nextId.toString());
+      await setDoc(serviceRef, service);
+      
+      return service;
     } catch (error) {
       console.error("Error creating service:", error);
       throw error;
@@ -499,17 +539,20 @@ export class FirestoreStorage {
 
   async updateService(id: number, service: Partial<InsertService>): Promise<Service | undefined> {
     try {
-      const serviceRef = db.collection('services').doc(id.toString());
-      const serviceDoc = await serviceRef.get();
+      const serviceRef = doc(db, 'services', id.toString());
+      const docSnap = await getDoc(serviceRef);
       
-      if (!serviceDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
       // Update the service
-      await serviceRef.update(service);
+      await updateDoc(serviceRef, {
+        ...service,
+        updatedAt: serverTimestamp()
+      });
       
       // Get the updated document
-      const updatedDoc = await serviceRef.get();
-      const data = updatedDoc.data() as Service;
+      const updatedSnap = await getDoc(serviceRef);
+      const data = updatedSnap.data() as Service;
       
       return { ...data, id };
     } catch (error) {
@@ -520,7 +563,8 @@ export class FirestoreStorage {
 
   async deleteService(id: number): Promise<boolean> {
     try {
-      await db.collection('services').doc(id.toString()).delete();
+      const docRef = doc(db, 'services', id.toString());
+      await deleteDoc(docRef);
       return true;
     } catch (error) {
       console.error("Error deleting service:", error);
@@ -531,12 +575,19 @@ export class FirestoreStorage {
   // Team members methods
   async getAllTeamMembers(): Promise<TeamMember[]> {
     try {
-      const teamMembersRef = db.collection('team_members');
-      const querySnapshot = await teamMembersRef.orderBy('order').get();
+      const teamMembersRef = collection(db, 'team_members');
+      const q = query(teamMembersRef, orderBy('name'));
+      const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data() as TeamMember;
-        return { ...data, id: parseInt(doc.id) };
+      return querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data() as any;
+        return { 
+          ...data,
+          id: parseInt(docSnap.id),
+          image: data.image ?? null,
+          linkedIn: data.linkedIn ?? null,
+          twitter: data.twitter ?? null
+        } as TeamMember;
       });
     } catch (error) {
       console.error("Error getting all team members:", error);
@@ -546,12 +597,19 @@ export class FirestoreStorage {
 
   async getTeamMember(id: number): Promise<TeamMember | undefined> {
     try {
-      const teamMemberDoc = await db.collection('team_members').doc(id.toString()).get();
+      const docRef = doc(db, 'team_members', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      if (!teamMemberDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
-      const data = teamMemberDoc.data() as TeamMember;
-      return { ...data, id };
+      const data = docSnap.data() as any;
+      return { 
+        ...data,
+        id,
+        image: data.image ?? null,
+        linkedIn: data.linkedIn ?? null,
+        twitter: data.twitter ?? null
+      } as TeamMember;
     } catch (error) {
       console.error("Error getting team member:", error);
       return undefined;
@@ -560,26 +618,21 @@ export class FirestoreStorage {
 
   async createTeamMember(insertTeamMember: InsertTeamMember): Promise<TeamMember> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('team_members');
-      const counterDoc = await counterRef.get();
+      const nextId = await this.getNextId('team_members');
       
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
-      
-      // Create the team member
-      const teamMemberRef = db.collection('team_members').doc(nextId.toString());
-      await teamMemberRef.set({
+      // Create the team member with required fields
+      const teamMember: TeamMember = {
         ...insertTeamMember,
-        id: nextId
-      });
+        id: nextId,
+        image: insertTeamMember.image ?? null,
+        linkedIn: insertTeamMember.linkedIn ?? null,
+        twitter: insertTeamMember.twitter ?? null
+      };
       
-      return { ...insertTeamMember, id: nextId };
+      const teamMemberRef = doc(db, 'team_members', nextId.toString());
+      await setDoc(teamMemberRef, teamMember);
+      
+      return teamMember;
     } catch (error) {
       console.error("Error creating team member:", error);
       throw error;
@@ -588,19 +641,28 @@ export class FirestoreStorage {
 
   async updateTeamMember(id: number, teamMember: Partial<InsertTeamMember>): Promise<TeamMember | undefined> {
     try {
-      const teamMemberRef = db.collection('team_members').doc(id.toString());
-      const teamMemberDoc = await teamMemberRef.get();
+      const teamMemberRef = doc(db, 'team_members', id.toString());
+      const docSnap = await getDoc(teamMemberRef);
       
-      if (!teamMemberDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
       // Update the team member
-      await teamMemberRef.update(teamMember);
+      await updateDoc(teamMemberRef, {
+        ...teamMember,
+        updatedAt: serverTimestamp()
+      });
       
       // Get the updated document
-      const updatedDoc = await teamMemberRef.get();
-      const data = updatedDoc.data() as TeamMember;
+      const updatedSnap = await getDoc(teamMemberRef);
+      const data = updatedSnap.data() as any;
       
-      return { ...data, id };
+      return { 
+        ...data,
+        id,
+        image: data.image ?? null,
+        linkedIn: data.linkedIn ?? null,
+        twitter: data.twitter ?? null
+      } as TeamMember;
     } catch (error) {
       console.error("Error updating team member:", error);
       return undefined;
@@ -609,7 +671,8 @@ export class FirestoreStorage {
 
   async deleteTeamMember(id: number): Promise<boolean> {
     try {
-      await db.collection('team_members').doc(id.toString()).delete();
+      const docRef = doc(db, 'team_members', id.toString());
+      await deleteDoc(docRef);
       return true;
     } catch (error) {
       console.error("Error deleting team member:", error);
@@ -620,12 +683,17 @@ export class FirestoreStorage {
   // Testimonials methods
   async getAllTestimonials(): Promise<Testimonial[]> {
     try {
-      const testimonialsRef = db.collection('testimonials');
-      const querySnapshot = await testimonialsRef.orderBy('order').get();
+      const testimonialsRef = collection(db, 'testimonials');
+      const q = query(testimonialsRef, orderBy('name'));
+      const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data() as Testimonial;
-        return { ...data, id: parseInt(doc.id) };
+      return querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data() as any;
+        return { 
+          ...data,
+          id: parseInt(docSnap.id),
+          image: data.image ?? null
+        } as Testimonial;
       });
     } catch (error) {
       console.error("Error getting all testimonials:", error);
@@ -635,12 +703,17 @@ export class FirestoreStorage {
 
   async getTestimonial(id: number): Promise<Testimonial | undefined> {
     try {
-      const testimonialDoc = await db.collection('testimonials').doc(id.toString()).get();
+      const docRef = doc(db, 'testimonials', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      if (!testimonialDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
-      const data = testimonialDoc.data() as Testimonial;
-      return { ...data, id };
+      const data = docSnap.data() as any;
+      return { 
+        ...data,
+        id,
+        image: data.image ?? null
+      } as Testimonial;
     } catch (error) {
       console.error("Error getting testimonial:", error);
       return undefined;
@@ -649,26 +722,19 @@ export class FirestoreStorage {
 
   async createTestimonial(insertTestimonial: InsertTestimonial): Promise<Testimonial> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('testimonials');
-      const counterDoc = await counterRef.get();
+      const nextId = await this.getNextId('testimonials');
       
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
-      
-      // Create the testimonial
-      const testimonialRef = db.collection('testimonials').doc(nextId.toString());
-      await testimonialRef.set({
+      // Create the testimonial with required fields
+      const testimonial: Testimonial = {
         ...insertTestimonial,
-        id: nextId
-      });
+        id: nextId,
+        image: insertTestimonial.image ?? null
+      };
       
-      return { ...insertTestimonial, id: nextId };
+      const testimonialRef = doc(db, 'testimonials', nextId.toString());
+      await setDoc(testimonialRef, testimonial);
+      
+      return testimonial;
     } catch (error) {
       console.error("Error creating testimonial:", error);
       throw error;
@@ -677,19 +743,26 @@ export class FirestoreStorage {
 
   async updateTestimonial(id: number, testimonial: Partial<InsertTestimonial>): Promise<Testimonial | undefined> {
     try {
-      const testimonialRef = db.collection('testimonials').doc(id.toString());
-      const testimonialDoc = await testimonialRef.get();
+      const testimonialRef = doc(db, 'testimonials', id.toString());
+      const docSnap = await getDoc(testimonialRef);
       
-      if (!testimonialDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
       // Update the testimonial
-      await testimonialRef.update(testimonial);
+      await updateDoc(testimonialRef, {
+        ...testimonial,
+        updatedAt: serverTimestamp()
+      });
       
       // Get the updated document
-      const updatedDoc = await testimonialRef.get();
-      const data = updatedDoc.data() as Testimonial;
+      const updatedSnap = await getDoc(testimonialRef);
+      const data = updatedSnap.data() as any;
       
-      return { ...data, id };
+      return { 
+        ...data,
+        id,
+        image: data.image ?? null
+      } as Testimonial;
     } catch (error) {
       console.error("Error updating testimonial:", error);
       return undefined;
@@ -698,7 +771,8 @@ export class FirestoreStorage {
 
   async deleteTestimonial(id: number): Promise<boolean> {
     try {
-      await db.collection('testimonials').doc(id.toString()).delete();
+      const docRef = doc(db, 'testimonials', id.toString());
+      await deleteDoc(docRef);
       return true;
     } catch (error) {
       console.error("Error deleting testimonial:", error);
@@ -709,16 +783,17 @@ export class FirestoreStorage {
   // Contact messages methods
   async getAllContactMessages(): Promise<ContactMessage[]> {
     try {
-      const contactMessagesRef = db.collection('contact_messages');
-      const querySnapshot = await contactMessagesRef.orderBy('createdAt', 'desc').get();
+      const contactMessagesRef = collection(db, 'contact_messages');
+      const q = query(contactMessagesRef, orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data() as ContactMessage;
+      return querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data() as any;
         return { 
           ...data,
-          id: parseInt(doc.id),
-          createdAt: data.createdAt.toString()
-        };
+          id: parseInt(docSnap.id),
+          createdAt: convertTimestampToDate(data.createdAt)
+        } as ContactMessage;
       });
     } catch (error) {
       console.error("Error getting all contact messages:", error);
@@ -728,16 +803,17 @@ export class FirestoreStorage {
 
   async getContactMessage(id: number): Promise<ContactMessage | undefined> {
     try {
-      const contactMessageDoc = await db.collection('contact_messages').doc(id.toString()).get();
+      const docRef = doc(db, 'contact_messages', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      if (!contactMessageDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
-      const data = contactMessageDoc.data() as ContactMessage;
+      const data = docSnap.data() as any;
       return { 
         ...data,
         id,
-        createdAt: data.createdAt.toString()
-      };
+        createdAt: convertTimestampToDate(data.createdAt)
+      } as ContactMessage;
     } catch (error) {
       console.error("Error getting contact message:", error);
       return undefined;
@@ -746,32 +822,22 @@ export class FirestoreStorage {
 
   async createContactMessage(insertContactMessage: InsertContactMessage): Promise<ContactMessage> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('contact_messages');
-      const counterDoc = await counterRef.get();
+      const nextId = await this.getNextId('contact_messages');
       
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
-      
-      // Create the contact message with timestamp
-      const now = new Date();
-      const contactMessageRef = db.collection('contact_messages').doc(nextId.toString());
-      await contactMessageRef.set({
+      // Create the contact message and add timestamp
+      const contactMessage: ContactMessage = {
         ...insertContactMessage,
         id: nextId,
-        createdAt: now.toISOString()
+        createdAt: new Date()
+      };
+      
+      const contactMessageRef = doc(db, 'contact_messages', nextId.toString());
+      await setDoc(contactMessageRef, {
+        ...contactMessage,
+        createdAt: serverTimestamp() // Use Firestore timestamp for storage
       });
       
-      return { 
-        ...insertContactMessage, 
-        id: nextId,
-        createdAt: now.toISOString()
-      };
+      return contactMessage;
     } catch (error) {
       console.error("Error creating contact message:", error);
       throw error;
@@ -780,7 +846,8 @@ export class FirestoreStorage {
 
   async deleteContactMessage(id: number): Promise<boolean> {
     try {
-      await db.collection('contact_messages').doc(id.toString()).delete();
+      const docRef = doc(db, 'contact_messages', id.toString());
+      await deleteDoc(docRef);
       return true;
     } catch (error) {
       console.error("Error deleting contact message:", error);
@@ -791,16 +858,17 @@ export class FirestoreStorage {
   // Subscribers methods
   async getAllSubscribers(): Promise<Subscriber[]> {
     try {
-      const subscribersRef = db.collection('subscribers');
-      const querySnapshot = await subscribersRef.orderBy('createdAt', 'desc').get();
+      const subscribersRef = collection(db, 'subscribers');
+      const q = query(subscribersRef, orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(doc => {
-        const data = doc.data() as Subscriber;
+      return querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data() as any;
         return { 
           ...data,
-          id: parseInt(doc.id),
-          createdAt: data.createdAt.toString()
-        };
+          id: parseInt(docSnap.id),
+          createdAt: convertTimestampToDate(data.createdAt)
+        } as Subscriber;
       });
     } catch (error) {
       console.error("Error getting all subscribers:", error);
@@ -810,16 +878,17 @@ export class FirestoreStorage {
 
   async getSubscriber(id: number): Promise<Subscriber | undefined> {
     try {
-      const subscriberDoc = await db.collection('subscribers').doc(id.toString()).get();
+      const docRef = doc(db, 'subscribers', id.toString());
+      const docSnap = await getDoc(docRef);
       
-      if (!subscriberDoc.exists) return undefined;
+      if (!docSnap.exists()) return undefined;
       
-      const data = subscriberDoc.data() as Subscriber;
+      const data = docSnap.data() as any;
       return { 
         ...data,
         id,
-        createdAt: data.createdAt.toString()
-      };
+        createdAt: convertTimestampToDate(data.createdAt)
+      } as Subscriber;
     } catch (error) {
       console.error("Error getting subscriber:", error);
       return undefined;
@@ -828,19 +897,20 @@ export class FirestoreStorage {
 
   async getSubscriberByEmail(email: string): Promise<Subscriber | undefined> {
     try {
-      const subscribersRef = db.collection('subscribers');
-      const querySnapshot = await subscribersRef.where('email', '==', email).limit(1).get();
+      const subscribersRef = collection(db, 'subscribers');
+      const q = query(subscribersRef, where('email', '==', email), limit(1));
+      const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) return undefined;
       
-      const subscriberDoc = querySnapshot.docs[0];
-      const data = subscriberDoc.data() as Subscriber;
+      const docSnap = querySnapshot.docs[0];
+      const data = docSnap.data() as any;
       
       return { 
         ...data,
-        id: parseInt(subscriberDoc.id),
-        createdAt: data.createdAt.toString()
-      };
+        id: parseInt(docSnap.id),
+        createdAt: convertTimestampToDate(data.createdAt)
+      } as Subscriber;
     } catch (error) {
       console.error("Error getting subscriber by email:", error);
       return undefined;
@@ -849,32 +919,22 @@ export class FirestoreStorage {
 
   async createSubscriber(insertSubscriber: InsertSubscriber): Promise<Subscriber> {
     try {
-      // Get the latest ID
-      const counterRef = db.collection('counters').doc('subscribers');
-      const counterDoc = await counterRef.get();
-      
-      let nextId = 1;
-      if (counterDoc.exists) {
-        nextId = (counterDoc.data()?.count || 0) + 1;
-      }
-      
-      // Update the counter
-      await counterRef.set({ count: nextId });
+      const nextId = await this.getNextId('subscribers');
       
       // Create the subscriber with timestamp
-      const now = new Date();
-      const subscriberRef = db.collection('subscribers').doc(nextId.toString());
-      await subscriberRef.set({
+      const subscriber: Subscriber = {
         ...insertSubscriber,
         id: nextId,
-        createdAt: now.toISOString()
+        createdAt: new Date()
+      };
+      
+      const subscriberRef = doc(db, 'subscribers', nextId.toString());
+      await setDoc(subscriberRef, {
+        ...subscriber,
+        createdAt: serverTimestamp() // Use Firestore timestamp for storage
       });
       
-      return { 
-        ...insertSubscriber, 
-        id: nextId,
-        createdAt: now.toISOString()
-      };
+      return subscriber;
     } catch (error) {
       console.error("Error creating subscriber:", error);
       throw error;
@@ -883,7 +943,8 @@ export class FirestoreStorage {
 
   async deleteSubscriber(id: number): Promise<boolean> {
     try {
-      await db.collection('subscribers').doc(id.toString()).delete();
+      const docRef = doc(db, 'subscribers', id.toString());
+      await deleteDoc(docRef);
       return true;
     } catch (error) {
       console.error("Error deleting subscriber:", error);
