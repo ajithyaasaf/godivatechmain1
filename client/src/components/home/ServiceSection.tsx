@@ -17,7 +17,7 @@ const getIconForService = (serviceName: string) => {
     'app-development': Users,
     'poster-design': Shield,
     'ui-ux-design': BarChart,
-    'creative-designing': BrainCircuit
+    'logo-brand-design': BrainCircuit
   };
   
   return iconMap[serviceName] || Code;
@@ -125,7 +125,7 @@ const ServiceSection = () => {
     queryKey: ['/api/services'],
   });
 
-  // Use predefined services if API doesn't return data
+  // Use predefined services from footer if API doesn't return data
   const defaultServices: ServiceType[] = [
     {
       id: 1,
@@ -167,7 +167,7 @@ const ServiceSection = () => {
       title: "Logo & Brand Design",
       description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
       icon: BrainCircuit,
-      slug: "creative-designing"
+      slug: "logo-brand-design"
     }
   ];
 
