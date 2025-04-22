@@ -200,8 +200,8 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                 <FormItem>
                   <FormLabel>Category</FormLabel>
                   <Select
-                    onValueChange={(value) => field.onChange(value ? parseInt(value) : null)}
-                    value={field.value ? field.value.toString() : ""}
+                    onValueChange={(value) => field.onChange(value && value !== "none" ? parseInt(value) : null)}
+                    value={field.value ? field.value.toString() : "none"}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -209,7 +209,7 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value="none">None</SelectItem>
                       {categories.map((category: any) => (
                         <SelectItem key={category.id} value={category.id.toString()}>
                           {category.name}
