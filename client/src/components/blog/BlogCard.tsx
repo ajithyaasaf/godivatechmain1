@@ -3,7 +3,16 @@ import { Link } from "wouter";
 import { formatDistanceToNow, format } from "date-fns";
 import type { BlogPost, Category } from "@shared/schema";
 
-const BlogCard = ({ post }: { post: BlogPost }) => {
+// Extend the BlogPost type to include a category property
+interface ExtendedBlogPost extends BlogPost {
+  category?: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+}
+
+const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
   const formattedDate = formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true });
   const formattedISODate = new Date(post.publishedAt).toISOString();
   const humanReadableDate = format(new Date(post.publishedAt), 'MMMM dd, yyyy');
