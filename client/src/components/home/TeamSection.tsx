@@ -15,15 +15,15 @@ interface TeamMember {
 
 const TeamMemberCard = ({ member }: { member: TeamMember }) => {
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <img
         src={member.image}
         alt={`${member.name} - ${member.position}`}
         className="w-full h-64 object-cover"
       />
       <div className="p-6">
-        <h3 className="text-xl font-semibold text-neutral-800 mb-1">{member.name}</h3>
-        <p className="text-primary mb-3">{member.position}</p>
+        <h3 className="text-2xl font-bold text-primary mb-1 border-b border-primary pb-2">{member.name}</h3>
+        <p className="text-neutral-700 font-medium mt-3 mb-3">{member.position}</p>
         <p className="text-neutral-600 mb-4">{member.bio}</p>
         <div className="flex space-x-3">
           {member.linkedIn && (
