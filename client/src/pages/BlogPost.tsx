@@ -64,37 +64,37 @@ const BlogPost = () => {
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text
       .replace(/- (.*?)(?:\n|$)/g, '<li>$1</li>') // List items
       
-      // Add internal links to services with targeted SEO keywords for Madurai
-      .replace(/Web Development/g, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">best web development in Madurai</a>')
-      .replace(/Digital Marketing/g, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">top digital marketing agency in Madurai</a>')
-      .replace(/Mobile App/g, '<a href="https://www.godivatech.com/services/app-development" class="text-primary hover:underline">mobile app development company in Madurai</a>')
-      .replace(/SEO/g, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">SEO services in Madurai</a>')
-      .replace(/Logo Design/g, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary hover:underline">professional logo design in Madurai</a>')
-      .replace(/UI\/UX Design/g, '<a href="https://www.godivatech.com/services/ui-ux-design" class="text-primary hover:underline">UI/UX design services in Madurai</a>')
-      .replace(/Brand Design/g, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary hover:underline">brand design company in Madurai</a>')
-      .replace(/Poster Design/g, '<a href="https://www.godivatech.com/services/poster-design" class="text-primary hover:underline">poster design services in Madurai</a>')
+      // Add internal links to services with targeted SEO keywords for Madurai - WITHOUT underlines
+      .replace(/Web Development/g, '<a href="https://www.godivatech.com/services/web-development" class="text-primary no-underline">best web development in Madurai</a>')
+      .replace(/Digital Marketing/g, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary no-underline">top digital marketing agency in Madurai</a>')
+      .replace(/Mobile App/g, '<a href="https://www.godivatech.com/services/app-development" class="text-primary no-underline">mobile app development company in Madurai</a>')
+      .replace(/SEO/g, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary no-underline">SEO services in Madurai</a>')
+      .replace(/Logo Design/g, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary no-underline">professional logo design in Madurai</a>')
+      .replace(/UI\/UX Design/g, '<a href="https://www.godivatech.com/services/ui-ux-design" class="text-primary no-underline">UI/UX design services in Madurai</a>')
+      .replace(/Brand Design/g, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary no-underline">brand design company in Madurai</a>')
+      .replace(/Poster Design/g, '<a href="https://www.godivatech.com/services/poster-design" class="text-primary no-underline">poster design services in Madurai</a>')
       
-      // Add Madurai-specific business keywords
-      .replace(/business website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">business website development in Madurai</a>')
-      .replace(/online presence/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">digital presence for Madurai businesses</a>')
-      .replace(/social media/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">social media marketing in Madurai</a>')
-      .replace(/local business/gi, '<a href="https://www.godivatech.com/about" class="text-primary hover:underline">Madurai local business solutions</a>')
-      .replace(/ecommerce/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">eCommerce website development in Madurai</a>')
-      .replace(/website design/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">best website design in Madurai</a>')
-      .replace(/responsive website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">responsive website design in Madurai</a>')
-      .replace(/professional website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary hover:underline">professional website development in Madurai</a>')
-      .replace(/branding/gi, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary hover:underline">branding services in Madurai</a>')
-      .replace(/content marketing/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary hover:underline">content marketing services in Madurai</a>')
-      .replace(/Tamil Nadu/gi, '<a href="https://www.godivatech.com/about" class="text-primary hover:underline">best IT company in Tamil Nadu</a>')
+      // Add Madurai-specific business keywords - WITHOUT underlines
+      .replace(/business website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary no-underline">business website development in Madurai</a>')
+      .replace(/online presence/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary no-underline">digital presence for Madurai businesses</a>')
+      .replace(/social media/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary no-underline">social media marketing in Madurai</a>')
+      .replace(/local business/gi, '<a href="https://www.godivatech.com/about" class="text-primary no-underline">Madurai local business solutions</a>')
+      .replace(/ecommerce/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary no-underline">eCommerce website development in Madurai</a>')
+      .replace(/website design/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary no-underline">best website design in Madurai</a>')
+      .replace(/responsive website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary no-underline">responsive website design in Madurai</a>')
+      .replace(/professional website/gi, '<a href="https://www.godivatech.com/services/web-development" class="text-primary no-underline">professional website development in Madurai</a>')
+      .replace(/branding/gi, '<a href="https://www.godivatech.com/services/logo-brand-design" class="text-primary no-underline">branding services in Madurai</a>')
+      .replace(/content marketing/gi, '<a href="https://www.godivatech.com/services/digital-marketing" class="text-primary no-underline">content marketing services in Madurai</a>')
+      .replace(/Tamil Nadu/gi, '<a href="https://www.godivatech.com/about" class="text-primary no-underline">best IT company in Tamil Nadu</a>')
       
-      // Replace GodivaTech mentions with SEO optimized links
-      .replace(/GodivaTech/g, '<a href="https://www.godivatech.com/about" class="text-primary hover:underline">GodivaTech - best software company in Madurai</a>')
+      // Replace GodivaTech mentions with SEO optimized links - WITHOUT underlines
+      .replace(/GodivaTech/g, '<a href="https://www.godivatech.com/about" class="text-primary no-underline">GodivaTech - best software company in Madurai</a>')
       
-      // Add external authoritative links
-      .replace(/Google My Business/g, '<a href="https://business.google.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google My Business for Madurai companies</a>')
-      .replace(/Google Maps/g, '<a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google Maps listing for Madurai</a>')
-      .replace(/Facebook/g, '<a href="https://business.facebook.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Facebook marketing for Madurai</a>')
-      .replace(/Instagram/g, '<a href="https://business.instagram.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Instagram marketing for Madurai</a>');
+      // Add external authoritative links - WITHOUT underlines
+      .replace(/Google My Business/g, '<a href="https://business.google.com" target="_blank" rel="noopener noreferrer" class="text-primary no-underline">Google My Business for Madurai companies</a>')
+      .replace(/Google Maps/g, '<a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="text-primary no-underline">Google Maps listing for Madurai</a>')
+      .replace(/Facebook/g, '<a href="https://business.facebook.com" target="_blank" rel="noopener noreferrer" class="text-primary no-underline">Facebook marketing for Madurai</a>')
+      .replace(/Instagram/g, '<a href="https://business.instagram.com" target="_blank" rel="noopener noreferrer" class="text-primary no-underline">Instagram marketing for Madurai</a>');
     
     return processed;
   };
@@ -295,7 +295,7 @@ const BlogPost = () => {
                     if (firstSentence.length > 10 && firstSentence.length < 100) {
                       return (
                         <li key={idx} className="text-primary hover:text-primary/80">
-                          <a href={`#section-${idx}`} className="hover:underline">
+                          <a href={`#section-${idx}`} className="no-underline">
                             {firstSentence.replace(/\*\*/g, '')}
                           </a>
                         </li>
@@ -348,7 +348,7 @@ const BlogPost = () => {
                 Our experienced Madurai-based team can help you implement all the strategies discussed in this article with affordable, result-driven solutions.
               </p>
               <p className="text-neutral-700 mb-6">
-                From <a href="https://www.godivatech.com/services/web-development" className="text-primary hover:underline">expert web development</a> and <a href="https://www.godivatech.com/services/digital-marketing" className="text-primary hover:underline">digital marketing</a> to <a href="https://www.godivatech.com/services/logo-brand-design" className="text-primary hover:underline">professional branding</a>, we provide all the technical services your Madurai business needs to succeed online.
+                From <a href="https://www.godivatech.com/services/web-development" className="text-primary no-underline">expert web development</a> and <a href="https://www.godivatech.com/services/digital-marketing" className="text-primary no-underline">digital marketing</a> to <a href="https://www.godivatech.com/services/logo-brand-design" className="text-primary no-underline">professional branding</a>, we provide all the technical services your Madurai business needs to succeed online.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/contact" className="bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-lg inline-block text-center font-medium">
