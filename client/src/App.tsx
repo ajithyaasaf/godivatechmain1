@@ -1,7 +1,9 @@
 import { Switch, Route, useLocation } from "wouter";
 import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/hooks/use-auth";
+import { FirebaseAuthProvider } from "@/hooks/use-firebase-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
+import { FirebaseProtectedRoute } from "@/components/firebase-protected-route";
 import Layout from "@/components/Layout";
 
 // Public pages
@@ -14,6 +16,7 @@ import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
+import FirebaseAuthPage from "@/pages/firebase-auth";
 
 // Admin pages
 import AdminDashboard from "@/pages/admin";
