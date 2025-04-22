@@ -3,11 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// For debugging only - checking if env vars are loaded
-console.log('Firebase API Key:', import.meta.env.VITE_FIREBASE_API_KEY);
-console.log('Firebase Auth Domain:', import.meta.env.VITE_FIREBASE_AUTH_DOMAIN);
-
-// Firebase configuration using direct values for now
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDzIqWI6AApvWSE22y1Ug7h-8MysAo2fNw",
   authDomain: "godiva-tech.firebaseapp.com",

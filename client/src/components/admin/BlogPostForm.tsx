@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useQuery } from "@tanstack/react-query";
-import { insertBlogPostSchema } from "@shared/schema";
+import { format } from "date-fns";
+import { Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,270 +24,304 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Loader2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useFirestore } from "@/hooks/use-firestore";
+import FileUpload from "@/components/admin/FileUpload";
+import { useCollection } from "@/hooks/use-firestore";
 
-// Extend the blog post schema with validation
-const blogPostFormSchema = insertBlogPostSchema.extend({
+// Form schema for Blog Posts
+const blogPostSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
-  slug: z.string()
-    .min(3, "Slug must be at least 3 characters")
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug can only contain lowercase letters, numbers, and hyphens"),
+  slug: z.string().min(3, "Slug must be at least 3 characters")
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
   excerpt: z.string().min(10, "Excerpt must be at least 10 characters"),
   content: z.string().min(50, "Content must be at least 50 characters"),
-  authorName: z.string().min(2, "Author name must be at least 2 characters"),
+  coverImage: z.string().optional().nullable(),
+  authorName: z.string().min(2, "Author name is required"),
+  authorImage: z.string().optional().nullable(),
+  published: z.boolean().default(false),
+  publishedAt: z.string().optional().nullable(),
+  categoryId: z.string().min(1, "Category is required"),
 });
 
-type BlogPostFormValues = z.infer<typeof blogPostFormSchema>;
+type BlogPostFormValues = z.infer<typeof blogPostSchema>;
 
 interface BlogPostFormProps {
-  post: any;
+  post?: any;
   onSave: (data: any) => void;
   onCancel: () => void;
 }
 
 const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
-  // Fetch categories for the dropdown
-  const { data: categories = [] } = useQuery({
-    queryKey: ['/api/categories'],
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedCoverImageUrl, setUploadedCoverImageUrl] = useState<string | null>(
+    post?.coverImage || null
+  );
+  const [uploadedAuthorImageUrl, setUploadedAuthorImageUrl] = useState<string | null>(
+    post?.authorImage || null
+  );
+  
+  const firestore = useFirestore("blog-posts");
+  const { data: categories } = useCollection("categories");
+  
+  // Format date as ISO string or use current date if publishing for the first time
+  const formatPublishedDate = () => {
+    if (post?.publishedAt) {
+      return post.publishedAt;
+    }
+    
+    return format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
+  };
 
-  // Set up form with default values
+  // Initialize form with existing post data or defaults
   const form = useForm<BlogPostFormValues>({
-    resolver: zodResolver(blogPostFormSchema),
+    resolver: zodResolver(blogPostSchema),
     defaultValues: {
       title: post?.title || "",
       slug: post?.slug || "",
       excerpt: post?.excerpt || "",
       content: post?.content || "",
-      published: post?.published !== undefined ? post.published : true,
+      coverImage: post?.coverImage || "",
       authorName: post?.authorName || "",
-      authorImage: post?.authorImage || null,
-      coverImage: post?.coverImage || null,
-      categoryId: post?.categoryId || null,
+      authorImage: post?.authorImage || "",
+      published: post?.published || false,
+      publishedAt: post?.publishedAt || null,
+      categoryId: post?.categoryId || "",
     },
   });
 
-  // Update form values when post changes
-  useEffect(() => {
-    if (post) {
-      form.reset({
-        title: post.title || "",
-        slug: post.slug || "",
-        excerpt: post.excerpt || "",
-        content: post.content || "",
-        published: post.published !== undefined ? post.published : true,
-        authorName: post.authorName || "",
-        authorImage: post.authorImage || null,
-        coverImage: post.coverImage || null,
-        categoryId: post.categoryId || null,
-      });
-    } else {
-      form.reset({
-        title: "",
-        slug: "",
-        excerpt: "",
-        content: "",
-        published: true,
-        authorName: "",
-        authorImage: null,
-        coverImage: null,
-        categoryId: null,
-      });
-    }
-  }, [post, form.reset]);
-
-  // Generate slug from title
+  // Generate slug from title (only if slug is empty)
   const generateSlug = () => {
     const title = form.getValues("title");
-    if (title) {
+    if (title && !form.getValues("slug")) {
       const slug = title
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-");
       form.setValue("slug", slug);
     }
   };
 
-  // Handle form submission
-  const onSubmit = (values: BlogPostFormValues) => {
-    // For updated publishedAt, we need to ensure it's a valid Date
-    const formattedData = {
-      ...values,
-      publishedAt: values.publishedAt || new Date(),
-    };
-    onSave(formattedData);
+  // Handle cover image upload
+  const handleCoverImageUpload = (url: string) => {
+    setUploadedCoverImageUrl(url);
+    form.setValue("coverImage", url);
+  };
+
+  // Handle cover image removal
+  const handleCoverImageRemove = () => {
+    setUploadedCoverImageUrl(null);
+    form.setValue("coverImage", null);
+  };
+
+  // Handle author image upload
+  const handleAuthorImageUpload = (url: string) => {
+    setUploadedAuthorImageUrl(url);
+    form.setValue("authorImage", url);
+  };
+
+  // Handle author image removal
+  const handleAuthorImageRemove = () => {
+    setUploadedAuthorImageUrl(null);
+    form.setValue("authorImage", null);
+  };
+
+  // Update published date when published status changes
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "published" && value.published) {
+        if (!form.getValues("publishedAt")) {
+          form.setValue("publishedAt", formatPublishedDate());
+        }
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  // Form submission handler
+  const onSubmit = async (values: BlogPostFormValues) => {
+    try {
+      setIsSubmitting(true);
+
+      // Update image paths from uploaded image URLs if available
+      if (uploadedCoverImageUrl) {
+        values.coverImage = uploadedCoverImageUrl;
+      }
+      
+      if (uploadedAuthorImageUrl) {
+        values.authorImage = uploadedAuthorImageUrl;
+      }
+
+      // For Firebase, we'll handle the save here
+      if (post?.id) {
+        // Update existing post
+        await firestore.update(post.id, values);
+      } else {
+        // Create new post
+        await firestore.add(values);
+      }
+
+      // Also call the original onSave for API compatibility
+      onSave(values);
+    } catch (error) {
+      console.error("Error saving blog post:", error);
+      // Form will handle error display via resolver
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-6">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter blog post title"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        // Only auto-generate slug if it's a new post or slug is empty
-                        if (!post || !form.getValues("slug")) {
-                          setTimeout(generateSlug, 300);
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Post title" {...field} onBlur={generateSlug} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <div className="flex items-end gap-2">
-              <FormField
-                control={form.control}
-                name="slug"
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>Slug</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter URL slug" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      This will be used in the URL
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                className="mb-2"
-                onClick={generateSlug}
+          <FormField
+            control={form.control}
+            name="slug"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>URL Slug</FormLabel>
+                <FormControl>
+                  <Input placeholder="post-slug" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Used in the URL (e.g., /blog/post-title)
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <FormField
+          control={form.control}
+          name="excerpt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Excerpt</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Brief summary of the post"
+                  className="min-h-[80px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                A short teaser that appears in blog listings
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="coverImage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cover Image</FormLabel>
+              <FormControl>
+                <div className="mt-2">
+                  <FileUpload
+                    onUploadComplete={handleCoverImageUpload}
+                    folder="blog-covers"
+                    accept="image/*"
+                    buttonText="Upload Cover Image"
+                    showPreview={true}
+                    existingFileUrl={field.value || undefined}
+                    onRemove={handleCoverImageRemove}
+                  />
+                </div>
+              </FormControl>
+              <FormDescription>
+                Featured image for the blog post
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="categoryId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <Select
+                value={field.value}
+                onValueChange={field.onChange}
               >
-                Generate
-              </Button>
-            </div>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories?.map((category: any) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name="excerpt"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Excerpt</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Short description for previews"
-                      className="resize-none"
-                      rows={3}
-                      {...field}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="authorName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Author Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Author's name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="authorImage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Author Image</FormLabel>
+                <FormControl>
+                  <div className="mt-2">
+                    <FileUpload
+                      onUploadComplete={handleAuthorImageUpload}
+                      folder="author-images"
+                      accept="image/*"
+                      buttonText="Upload Author Picture"
+                      showPreview={true}
+                      existingFileUrl={field.value || undefined}
+                      onRemove={handleAuthorImageRemove}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="categoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Category</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value && value !== "none" ? parseInt(value) : null)}
-                    value={field.value ? field.value.toString() : "none"}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">None</SelectItem>
-                      {categories.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id.toString()}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="space-y-6">
-            <FormField
-              control={form.control}
-              name="authorName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Author Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Author name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="authorImage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Author Image URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="URL to author image" {...field} value={field.value || ''} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="coverImage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Cover Image URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="URL to cover image" {...field} value={field.value || ''} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="published"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Published</FormLabel>
-                    <FormDescription>
-                      Make this post visible on the website
-                    </FormDescription>
                   </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <FormField
@@ -297,25 +332,82 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
               <FormLabel>Content</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Write your blog post content here..."
-                  className="min-h-[200px]"
+                  placeholder="Full blog post content..."
+                  className="min-h-[300px]"
                   {...field}
                 />
               </FormControl>
+              <FormDescription>
+                The main content of your blog post
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="published"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Published</FormLabel>
+                  <FormDescription>
+                    Make this post publicly visible
+                  </FormDescription>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {form.watch("published") && (
+            <FormField
+              control={form.control}
+              name="publishedAt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Publication Date</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="datetime-local"
+                      value={field.value ? field.value.substring(0, 16) : ""}
+                      onChange={(e) => {
+                        field.onChange(e.target.value ? new Date(e.target.value).toISOString() : null);
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    When this post was or will be published
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+        </div>
+
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button
             type="submit"
-            disabled={form.formState.isSubmitting}
+            disabled={isSubmitting}
           >
-            {form.formState.isSubmitting ? (
+            {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Saving...

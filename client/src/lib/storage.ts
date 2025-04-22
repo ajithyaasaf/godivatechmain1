@@ -1,67 +1,64 @@
-import { 
-  ref, 
-  uploadBytes, 
-  getDownloadURL, 
-  deleteObject 
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
 } from "firebase/storage";
 import { storage } from "./firebase";
 
 /**
  * Upload a file to Firebase Storage
- * @param file - The file to upload
- * @param path - The path in storage to upload to
- * @param metadata - Optional metadata for the file
- * @returns Promise with the download URL of the uploaded file
+ * @param file File to upload
+ * @param folder Folder path within storage
+ * @returns Promise with download URL and storage path
  */
-export const uploadFile = async (
-  file: File,
-  path: string,
-  metadata?: any
-): Promise<string> => {
+export async function uploadFile(file: File, folder: string = "uploads"): Promise<{ url: string; path: string }> {
   try {
-    // Create a reference to the file in Firebase Storage
+    // Generate a unique filename with timestamp
+    const timestamp = Date.now();
+    const filename = `${timestamp}-${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+    const path = `${folder}/${filename}`;
     const storageRef = ref(storage, path);
-    
+
     // Upload the file
-    const snapshot = await uploadBytes(storageRef, file, metadata);
+    const snapshot = await uploadBytes(storageRef, file);
     
     // Get the download URL
-    const downloadURL = await getDownloadURL(snapshot.ref);
+    const url = await getDownloadURL(snapshot.ref);
     
-    return downloadURL;
+    return { url, path };
   } catch (error) {
     console.error("Error uploading file:", error);
-    throw error;
+    throw new Error("Failed to upload file. Please try again.");
   }
-};
+}
 
 /**
  * Delete a file from Firebase Storage
- * @param path - The path of the file to delete
- * @returns Promise that resolves when the delete is complete
+ * @param path Storage path to the file
+ * @returns Promise that resolves when the file is deleted
  */
-export const deleteFile = async (path: string): Promise<void> => {
+export async function deleteFile(path: string): Promise<void> {
   try {
-    // Create a reference to the file
     const storageRef = ref(storage, path);
-    
-    // Delete the file
     await deleteObject(storageRef);
   } catch (error) {
     console.error("Error deleting file:", error);
-    throw error;
+    throw new Error("Failed to delete file. Please try again.");
   }
-};
+}
 
 /**
- * Generate a unique filename for upload
- * @param originalFilename - The original filename
- * @returns A unique filename with timestamp
+ * Get a download URL for a file in Firebase Storage
+ * @param path Storage path to the file
+ * @returns Promise with download URL
  */
-export const generateUniqueFilename = (originalFilename: string): string => {
-  const extension = originalFilename.split('.').pop() || '';
-  const timestamp = Date.now();
-  const randomString = Math.random().toString(36).substring(2, 8);
-  
-  return `${timestamp}-${randomString}.${extension}`;
-};
+export async function getFileUrl(path: string): Promise<string> {
+  try {
+    const storageRef = ref(storage, path);
+    return await getDownloadURL(storageRef);
+  } catch (error) {
+    console.error("Error getting file URL:", error);
+    throw new Error("Failed to get file URL. Please try again.");
+  }
+}

@@ -1,56 +1,92 @@
 import {
   collection,
   doc,
-  getDocs,
-  getDoc,
   addDoc,
+  getDoc,
+  getDocs,
   updateDoc,
   deleteDoc,
   query,
   where,
   orderBy,
   limit,
+  startAfter,
   DocumentData,
   QueryConstraint,
-  serverTimestamp
+  DocumentReference,
+  Timestamp,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
 
-/**
- * Get all documents from a collection
- * @param collectionName - The name of the collection
- * @param constraints - Optional query constraints (where, orderBy, limit, etc.)
- * @returns Promise with array of documents
- */
-export const getCollection = async (
-  collectionName: string,
-  constraints: QueryConstraint[] = []
-): Promise<DocumentData[]> => {
-  try {
-    const collectionRef = collection(db, collectionName);
-    const q = constraints.length ? query(collectionRef, ...constraints) : query(collectionRef);
-    const querySnapshot = await getDocs(q);
-    
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-  } catch (error) {
-    console.error(`Error getting collection ${collectionName}:`, error);
-    throw error;
-  }
+// Export firebase query constraint helpers for use in hooks
+export const queryConstraints = {
+  where,
+  orderBy,
+  limit,
+  startAfter,
 };
 
 /**
- * Get a single document from a collection
- * @param collectionName - The name of the collection
- * @param documentId - The ID of the document
- * @returns Promise with document data or null if not found
+ * Convert Firebase Timestamp fields to regular Date objects
+ * @param data Firestore document data
+ * @returns Document data with timestamps converted to Date objects
  */
-export const getDocument = async (
+function convertTimestamps(data: any): any {
+  if (!data) return data;
+  
+  const result = { ...data };
+  
+  Object.keys(result).forEach(key => {
+    if (result[key] instanceof Timestamp) {
+      result[key] = result[key].toDate();
+    } else if (typeof result[key] === 'object' && result[key] !== null) {
+      result[key] = convertTimestamps(result[key]);
+    }
+  });
+  
+  return result;
+}
+
+/**
+ * Fetch all documents from a collection
+ * @param collectionName Name of the collection
+ * @param constraints Optional query constraints
+ * @returns Array of documents with their IDs
+ */
+export async function getCollection(
+  collectionName: string,
+  constraints: QueryConstraint[] = []
+): Promise<DocumentData[]> {
+  try {
+    const collectionRef = collection(db, collectionName);
+    const q = constraints.length > 0 
+      ? query(collectionRef, ...constraints)
+      : query(collectionRef);
+    
+    const querySnapshot = await getDocs(q);
+    const documents = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...convertTimestamps(doc.data()),
+    }));
+    
+    return documents;
+  } catch (error) {
+    console.error(`Error fetching collection ${collectionName}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch a single document by ID
+ * @param collectionName Name of the collection
+ * @param documentId Document ID
+ * @returns Document data with its ID
+ */
+export async function getDocument(
   collectionName: string,
   documentId: string
-): Promise<DocumentData | null> => {
+): Promise<DocumentData | null> {
   try {
     const docRef = doc(db, collectionName, documentId);
     const docSnap = await getDoc(docRef);
@@ -58,79 +94,74 @@ export const getDocument = async (
     if (docSnap.exists()) {
       return {
         id: docSnap.id,
-        ...docSnap.data()
+        ...convertTimestamps(docSnap.data()),
       };
     } else {
       return null;
     }
   } catch (error) {
-    console.error(`Error getting document ${documentId} from ${collectionName}:`, error);
+    console.error(`Error fetching document ${documentId} from ${collectionName}:`, error);
     throw error;
   }
-};
+}
 
 /**
  * Add a new document to a collection
- * @param collectionName - The name of the collection
- * @param data - The data to add
- * @param addTimestamp - Whether to add a timestamp
- * @returns Promise with the ID of the new document
+ * @param collectionName Name of the collection
+ * @param data Document data
+ * @returns ID of the newly created document
  */
-export const addDocument = async (
+export async function addDocument(
   collectionName: string,
-  data: DocumentData,
-  addTimestamp = true
-): Promise<string> => {
+  data: DocumentData
+): Promise<string> {
   try {
-    const docData = addTimestamp 
-      ? { ...data, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }
-      : data;
-      
-    const docRef = await addDoc(collection(db, collectionName), docData);
+    // Add created timestamp if not provided
+    if (!data.createdAt) {
+      data.createdAt = serverTimestamp();
+    }
+    
+    const collectionRef = collection(db, collectionName);
+    const docRef = await addDoc(collectionRef, data);
     return docRef.id;
   } catch (error) {
     console.error(`Error adding document to ${collectionName}:`, error);
     throw error;
   }
-};
+}
 
 /**
- * Update a document in a collection
- * @param collectionName - The name of the collection
- * @param documentId - The ID of the document to update
- * @param data - The data to update
- * @param addTimestamp - Whether to add an updated timestamp
- * @returns Promise that resolves when the update is complete
+ * Update an existing document
+ * @param collectionName Name of the collection
+ * @param documentId Document ID
+ * @param data Updated document data
  */
-export const updateDocument = async (
+export async function updateDocument(
   collectionName: string,
   documentId: string,
-  data: DocumentData,
-  addTimestamp = true
-): Promise<void> => {
+  data: DocumentData
+): Promise<void> {
   try {
+    // Add updated timestamp
+    data.updatedAt = serverTimestamp();
+    
     const docRef = doc(db, collectionName, documentId);
-    const updateData = addTimestamp
-      ? { ...data, updatedAt: serverTimestamp() }
-      : data;
-      
-    await updateDoc(docRef, updateData);
+    await updateDoc(docRef, data);
   } catch (error) {
     console.error(`Error updating document ${documentId} in ${collectionName}:`, error);
     throw error;
   }
-};
+}
 
 /**
- * Delete a document from a collection
- * @param collectionName - The name of the collection
- * @param documentId - The ID of the document to delete
- * @returns Promise that resolves when the deletion is complete
+ * Delete a document
+ * @param collectionName Name of the collection
+ * @param documentId Document ID
  */
-export const deleteDocument = async (
+export async function deleteDocument(
   collectionName: string,
   documentId: string
-): Promise<void> => {
+): Promise<void> {
   try {
     const docRef = doc(db, collectionName, documentId);
     await deleteDoc(docRef);
@@ -138,13 +169,17 @@ export const deleteDocument = async (
     console.error(`Error deleting document ${documentId} from ${collectionName}:`, error);
     throw error;
   }
-};
+}
 
 /**
- * Create query constraints for firestore queries
+ * Get a document reference
+ * @param collectionName Name of the collection
+ * @param documentId Document ID
+ * @returns Document reference
  */
-export const queryConstraints = {
-  where,
-  orderBy,
-  limit
-};
+export function getDocumentRef(
+  collectionName: string,
+  documentId: string
+): DocumentReference {
+  return doc(db, collectionName, documentId);
+}

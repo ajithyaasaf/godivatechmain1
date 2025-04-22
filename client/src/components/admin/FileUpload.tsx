@@ -1,164 +1,189 @@
 import { useState, useRef, ChangeEvent } from "react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { uploadFile, generateUniqueFilename } from "@/lib/storage";
-import { Loader2, Upload, X } from "lucide-react";
+import { uploadFile, deleteFile } from "@/lib/storage";
 
 interface FileUploadProps {
-  onUploadComplete: (url: string, path: string) => void;
   folder: string;
+  onUploadComplete: (url: string, path: string) => void;
+  onRemove?: () => void;
   accept?: string;
   buttonText?: string;
   showPreview?: boolean;
   existingFileUrl?: string;
-  onRemove?: () => void;
+  multiple?: boolean;
 }
 
 const FileUpload = ({
-  onUploadComplete,
   folder,
+  onUploadComplete,
+  onRemove,
   accept = "*",
   buttonText = "Upload File",
-  showPreview = true,
+  showPreview = false,
   existingFileUrl,
-  onRemove,
+  multiple = false,
 }: FileUploadProps) => {
-  const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [filePreview, setFilePreview] = useState<string | null>(existingFileUrl || null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(existingFileUrl || null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const isImage = accept.includes("image");
+
+  // Trigger file input click
+  const handleButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  // Handle file selection
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     try {
-      setUploading(true);
-      // Simulate upload progress
-      const progressInterval = setInterval(() => {
-        setProgress((prev) => {
-          const newProgress = prev + Math.random() * 10;
-          return newProgress > 90 ? 90 : newProgress;
-        });
-      }, 200);
+      setIsUploading(true);
+      setUploadError(null);
 
-      // Generate a unique filename to prevent collisions
-      const uniqueFilename = generateUniqueFilename(file.name);
-      const storagePath = `${folder}/${uniqueFilename}`;
-
-      // Upload the file
-      const downloadUrl = await uploadFile(file, storagePath);
-
+      const file = files[0]; // For now, just handle the first file
+      
       // Create a preview for images
-      if (file.type.startsWith("image/") && showPreview) {
-        setFilePreview(downloadUrl);
+      if (isImage) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            setPreviewUrl(e.target.result.toString());
+          }
+        };
+        reader.readAsDataURL(file);
       }
 
-      // Complete the upload
-      clearInterval(progressInterval);
-      setProgress(100);
-      onUploadComplete(downloadUrl, storagePath);
-
-      // Reset the file input
+      // Upload to Firebase Storage
+      const { url, path } = await uploadFile(file, folder);
+      
+      // Pass the URL and path back to the parent component
+      onUploadComplete(url, path);
+      
+      // Clear the input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
     } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("Failed to upload file. Please try again.");
+      console.error("Upload error:", error);
+      setUploadError("Failed to upload file. Please try again.");
+      setPreviewUrl(null);
     } finally {
-      setUploading(false);
-      setProgress(0);
+      setIsUploading(false);
     }
   };
 
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleRemove = () => {
-    setFilePreview(null);
-    if (onRemove) {
-      onRemove();
+  // Handle file removal
+  const handleRemove = async () => {
+    if (!previewUrl) return;
+    
+    try {
+      setIsUploading(true);
+      
+      // If this is a Firebase URL, try to delete the file
+      if (previewUrl.includes("firebasestorage.googleapis.com")) {
+        // Extract the path from the URL
+        const urlObj = new URL(previewUrl);
+        const pathMatch = urlObj.pathname.match(/\/o\/(.+?)(?:\?|$)/);
+        if (pathMatch && pathMatch[1]) {
+          const path = decodeURIComponent(pathMatch[1]);
+          await deleteFile(path);
+        }
+      }
+      
+      // Clear the preview and notify parent
+      setPreviewUrl(null);
+      if (onRemove) onRemove();
+      
+      // Clear the input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      console.error("Error removing file:", error);
+      setUploadError("Failed to remove file. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
-
-  // Determine if it's an image for preview
-  const isImage = filePreview && (
-    filePreview.toLowerCase().endsWith('.jpg') ||
-    filePreview.toLowerCase().endsWith('.jpeg') ||
-    filePreview.toLowerCase().endsWith('.png') ||
-    filePreview.toLowerCase().endsWith('.gif') ||
-    filePreview.toLowerCase().endsWith('.webp')
-  );
 
   return (
-    <div className="space-y-4">
-      <input
-        type="file"
-        className="hidden"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept={accept}
-        disabled={uploading}
-      />
-      
-      {showPreview && filePreview && (
-        <div className="relative rounded-md overflow-hidden border p-1 max-w-xs">
-          {isImage ? (
-            <img 
-              src={filePreview} 
-              alt="File preview" 
-              className="max-h-48 w-auto object-contain mx-auto" 
-            />
+    <div className="space-y-2">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleButtonClick}
+          disabled={isUploading}
+          className="flex-shrink-0"
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Uploading...
+            </>
           ) : (
-            <div className="h-16 flex items-center justify-center bg-muted rounded">
-              <span className="text-sm text-muted-foreground">
-                File uploaded
-              </span>
-            </div>
+            <>
+              <Upload className="mr-2 h-4 w-4" />
+              {buttonText}
+            </>
           )}
-          
+        </Button>
+        
+        {previewUrl && onRemove && (
           <Button
-            variant="outline"
-            size="icon"
-            className="absolute top-2 right-2 h-6 w-6 bg-white opacity-70 hover:opacity-100"
+            type="button"
+            variant="destructive"
+            size="sm"
             onClick={handleRemove}
-            disabled={uploading}
+            disabled={isUploading}
+            className="flex-shrink-0"
           >
-            <X className="h-3 w-3" />
+            <X className="mr-2 h-4 w-4" />
+            Remove
           </Button>
-        </div>
-      )}
-      
-      {uploading && (
-        <div className="space-y-2">
-          <Progress value={progress} className="h-2 w-full" />
-          <p className="text-xs text-muted-foreground">
-            Uploading... {Math.round(progress)}%
-          </p>
-        </div>
-      )}
-      
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={handleButtonClick}
-        disabled={uploading}
-      >
-        {uploading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Uploading...
-          </>
-        ) : (
-          <>
-            <Upload className="mr-2 h-4 w-4" />
-            {buttonText}
-          </>
         )}
-      </Button>
+        
+        {/* Hidden file input */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept={accept}
+          onChange={handleFileChange}
+          multiple={multiple}
+        />
+      </div>
+      
+      {/* Preview for images if showPreview is true */}
+      {showPreview && previewUrl && isImage && (
+        <div className="mt-2 relative">
+          <img
+            src={previewUrl}
+            alt="Preview"
+            className="max-h-48 max-w-full rounded-md object-cover border"
+          />
+        </div>
+      )}
+      
+      {/* Display filename for non-image files */}
+      {previewUrl && !isImage && (
+        <div className="text-sm font-medium mt-2">
+          {previewUrl.split("/").pop()?.split("?")[0]}
+        </div>
+      )}
+      
+      {/* Display upload error if any */}
+      {uploadError && (
+        <div className="text-sm text-destructive mt-2">{uploadError}</div>
+      )}
     </div>
   );
 };
