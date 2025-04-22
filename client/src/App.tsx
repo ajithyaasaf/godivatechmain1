@@ -32,42 +32,55 @@ function App() {
   const isAdminRoute = location.startsWith("/admin");
   
   return (
-    <AuthProvider>
-      {!isAdminRoute && (
-        <Layout>
-          {/* 
-            AnimatePresence from framer-motion allows for exit animations
-            The exitBeforeEnter prop ensures the exiting component finishes animating before the entering component starts
-          */}
-          <AnimatePresence mode="wait" initial={false}>
+    <FirebaseAuthProvider>
+      <AuthProvider>
+        {!isAdminRoute && (
+          <Layout>
             {/* 
-              Key is necessary for AnimatePresence to identify when the route changes
-              Using location as a key forces re-render on route change
+              AnimatePresence from framer-motion allows for exit animations
+              The exitBeforeEnter prop ensures the exiting component finishes animating before the entering component starts
             */}
-            <Switch key={location}>
-              <Route path="/" component={Home} />
-              <Route path="/about" component={About} />
-              <Route path="/services" component={Services} />
-              <Route path="/portfolio" component={Portfolio} />
-              <Route path="/blog" component={Blog} />
-              <Route path="/blog/:slug" component={BlogPost} />
-              <Route path="/contact" component={Contact} />
-              <Route path="/auth" component={AuthPage} />
-              <Route component={NotFound} />
-            </Switch>
-          </AnimatePresence>
-        </Layout>
-      )}
-      
-      {/* Admin routes without Layout wrapper */}
-      {isAdminRoute && (
-        <Switch key={location}>
-          <ProtectedRoute path="/admin" component={AdminDashboard} />
-          <ProtectedRoute path="/admin/blog-posts" component={BlogPostsPage} />
-          <Route component={NotFound} />
-        </Switch>
-      )}
-    </AuthProvider>
+            <AnimatePresence mode="wait" initial={false}>
+              {/* 
+                Key is necessary for AnimatePresence to identify when the route changes
+                Using location as a key forces re-render on route change
+              */}
+              <Switch key={location}>
+                <Route path="/" component={Home} />
+                <Route path="/about" component={About} />
+                <Route path="/services" component={Services} />
+                <Route path="/portfolio" component={Portfolio} />
+                <Route path="/blog" component={Blog} />
+                <Route path="/blog/:slug" component={BlogPost} />
+                <Route path="/contact" component={Contact} />
+                <Route path="/auth" component={AuthPage} />
+                <Route path="/firebase-auth" component={FirebaseAuthPage} />
+                <Route component={NotFound} />
+              </Switch>
+            </AnimatePresence>
+          </Layout>
+        )}
+        
+        {/* Admin routes without Layout wrapper */}
+        {isAdminRoute && (
+          <Switch key={location}>
+            {/* Legacy Passport.js Auth */}
+            <ProtectedRoute path="/admin" component={AdminDashboard} />
+            <ProtectedRoute path="/admin/blog-posts" component={BlogPostsPage} />
+            
+            {/* Firebase Auth - Uncomment the lines below to switch to Firebase Auth */}
+            {/* <FirebaseProtectedRoute path="/admin">
+              <AdminDashboard />
+            </FirebaseProtectedRoute>
+            <FirebaseProtectedRoute path="/admin/blog-posts">
+              <BlogPostsPage />
+            </FirebaseProtectedRoute> */}
+            
+            <Route component={NotFound} />
+          </Switch>
+        )}
+      </AuthProvider>
+    </FirebaseAuthProvider>
   );
 }
 

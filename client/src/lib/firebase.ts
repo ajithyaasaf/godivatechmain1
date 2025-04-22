@@ -3,15 +3,19 @@ import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Firebase configuration using environment variables
+// For debugging only - checking if env vars are loaded
+console.log('Firebase API Key:', import.meta.env.VITE_FIREBASE_API_KEY);
+console.log('Firebase Auth Domain:', import.meta.env.VITE_FIREBASE_AUTH_DOMAIN);
+
+// Firebase configuration using direct values for now
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyDzIqWI6AApvWSE22y1Ug7h-8MysAo2fNw",
+  authDomain: "godiva-tech.firebaseapp.com",
+  projectId: "godiva-tech",
+  storageBucket: "godiva-tech.firebasestorage.app",
+  messagingSenderId: "801444351245",
+  appId: "1:801444351245:web:f030b472d6fb7be3d4f444",
+  measurementId: "G-KHE7CZP6EZ"
 };
 
 // Initialize Firebase
