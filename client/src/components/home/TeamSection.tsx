@@ -19,7 +19,7 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
       <img
         src={member.image}
         alt={`${member.name} - ${member.position}`}
-        className="w-full h-64 object-cover"
+        className="w-full h-64 object-cover object-center"
       />
       <div className="p-6">
         <h3 className="text-2xl font-bold text-primary mb-1 border-b border-primary pb-2">{member.name}</h3>
@@ -63,7 +63,7 @@ const TeamSection = () => {
   const defaultTeamMembers = [
     {
       id: 1,
-      name: "Srinivas Reddy",
+      name: "Ananth",
       position: "Founder & CEO",
       bio: "Founded Godiva Technologies in 2012 with a vision to provide innovative web solutions and digital transformation services to businesses worldwide.",
       image: ceoImage,
