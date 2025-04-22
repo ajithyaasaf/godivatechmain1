@@ -1,54 +1,68 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link, useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import { formatDistanceToNow, format } from "date-fns";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import BlogCard from "@/components/blog/BlogCard";
 import { Button } from "@/components/ui/button";
-
-interface BlogPost {
-  id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  publishedAt: string;
-  coverImage: string;
-  authorName: string;
-  authorImage: string;
-  categoryId: number;
-  category?: {
-    id: number;
-    name: string;
-    slug: string;
-  };
-}
+import type { BlogPost, Category } from "@shared/schema";
+import { 
+  getBlogPostBySlug, 
+  getAllBlogPosts,
+  getCategoryById
+} from "@/lib/firestore";
 
 const BlogPost = () => {
   const { slug } = useParams();
   const [, navigate] = useLocation();
-
-  const { data: blogPosts = [] } = useQuery<BlogPost[]>({
-    queryKey: ['/api/blog-posts'],
-  });
-
-  const post = blogPosts.find(post => post.slug === slug);
-  
-  // Get related posts (same category, excluding current post)
-  const relatedPosts = post 
-    ? blogPosts.filter(p => p.categoryId === post.categoryId && p.id !== post.id).slice(0, 3)
-    : [];
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
+  const [category, setCategory] = useState<Category | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If post not found, redirect to blog listing
-    if (blogPosts.length > 0 && !post) {
-      navigate("/blog");
+    const loadPost = async () => {
+      setLoading(true);
+      try {
+        // Fetch the blog post by slug
+        const fetchedPost = await getBlogPostBySlug(slug || "");
+        
+        if (!fetchedPost) {
+          navigate("/blog");
+          return;
+        }
+        
+        setPost(fetchedPost);
+        
+        // If post has a category, fetch the category details
+        if (fetchedPost.categoryId) {
+          const categoryData = await getCategoryById(fetchedPost.categoryId);
+          if (categoryData) {
+            setCategory(categoryData);
+          }
+        }
+        
+        // Fetch all posts to get related posts
+        const allPosts = await getAllBlogPosts();
+        const related = allPosts
+          .filter(p => p.categoryId === fetchedPost.categoryId && p.id !== fetchedPost.id)
+          .slice(0, 3);
+          
+        setRelatedPosts(related);
+      } catch (error) {
+        console.error("Error loading blog post:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (slug) {
+      loadPost();
     }
     
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-  }, [post, blogPosts, navigate]);
+  }, [slug, navigate]);
 
   if (!post) {
     return <div className="py-20 text-center">Loading...</div>;

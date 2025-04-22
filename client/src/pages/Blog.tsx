@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
@@ -8,29 +7,8 @@ import CategoryFilter from "@/components/blog/CategoryFilter";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import { Button } from "@/components/ui/button";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
-
-interface BlogPost {
-  id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  publishedAt: string;
-  coverImage: string;
-  authorName: string;
-  authorImage: string;
-  categoryId: number;
-  category?: {
-    id: number;
-    name: string;
-    slug: string;
-  };
-}
-
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-}
+import type { BlogPost, Category } from "@shared/schema";
+import { getAllBlogPosts, getAllCategories, getBlogPostsByCategoryId, searchBlogPosts } from "@/lib/firestore";
 
 // Animated empty state component
 const EmptyState = ({ onReset }: { onReset: () => void }) => (
@@ -133,14 +111,78 @@ const Blog = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const postsPerPage = 6;
-
-  const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ['/api/categories'],
-  });
-
-  const { data: blogPosts = [] } = useQuery<BlogPost[]>({
-    queryKey: ['/api/blog-posts'],
-  });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  // Load initial data
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const [postsData, categoriesData] = await Promise.all([
+          getAllBlogPosts(),
+          getAllCategories()
+        ]);
+        
+        setBlogPosts(postsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+  
+  // Handle category changes
+  useEffect(() => {
+    const filterByCategory = async () => {
+      if (activeCategory === null) {
+        // If no category filter, load all posts
+        const posts = await getAllBlogPosts();
+        setBlogPosts(posts);
+      } else if (activeCategory > 0) {
+        // If specific category selected, filter by category
+        const filteredPosts = await getBlogPostsByCategoryId(activeCategory);
+        setBlogPosts(filteredPosts);
+      }
+    };
+    
+    filterByCategory();
+  }, [activeCategory]);
+  
+  // Handle search term changes
+  useEffect(() => {
+    const handleSearch = async () => {
+      if (searchTerm.trim() === '') {
+        // If search term is empty, reset to all posts or filtered by category
+        if (activeCategory === null || activeCategory === 0) {
+          const posts = await getAllBlogPosts();
+          setBlogPosts(posts);
+        } else {
+          const filteredPosts = await getBlogPostsByCategoryId(activeCategory);
+          setBlogPosts(filteredPosts);
+        }
+      } else {
+        // Search posts
+        const searchResults = await searchBlogPosts(searchTerm);
+        
+        // If category is also selected, filter the search results by category
+        if (activeCategory !== null && activeCategory > 0) {
+          setBlogPosts(searchResults.filter(post => post.categoryId === activeCategory));
+        } else {
+          setBlogPosts(searchResults);
+        }
+      }
+    };
+    
+    // Debounce search for better performance
+    const debounceTimer = setTimeout(handleSearch, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [searchTerm, activeCategory]);
 
   // Filter posts by category and search term
   const filteredPosts = blogPosts.filter(post => {

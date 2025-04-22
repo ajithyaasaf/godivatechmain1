@@ -728,5 +728,8 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-// Use DatabaseStorage instead of MemStorage
-export const storage = new DatabaseStorage();
+// Import Firebase Firestore storage implementation
+import { firestoreStorage } from "./firestore-storage";
+
+// Use FirestoreStorage instead of DatabaseStorage
+export const storage = firestoreStorage;
