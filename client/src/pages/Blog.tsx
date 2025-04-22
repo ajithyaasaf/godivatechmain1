@@ -188,11 +188,16 @@ const Blog = () => {
   return (
     <>
       <Helmet>
-        <title>Blog - Latest Tech Insights | GodivaTech</title>
+        <title>Digital Marketing & Web Development Blog | GodivaTech Madurai</title>
         <meta 
           name="description" 
-          content="Stay up-to-date with the latest technology trends and insights from GodivaTech's expert team. Explore our articles on software development, cloud solutions, cybersecurity, and more." 
+          content="Get expert web development, digital marketing, and design tips from Madurai's leading tech company. Practical advice for local businesses to grow online." 
         />
+        <meta name="keywords" content="web development Madurai, digital marketing Madurai, website design Madurai, social media marketing Madurai, mobile app development Tamil Nadu" />
+        <meta property="og:title" content="Digital Marketing & Web Development Blog | GodivaTech Madurai" />
+        <meta property="og:description" content="Expert web development and digital marketing tips for Madurai businesses. Learn how to grow your local business online with GodivaTech's practical guides." />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_IN" />
       </Helmet>
 
       <PageTransition>
@@ -230,10 +235,10 @@ const Blog = () => {
                     transition={{ duration: 0.7 }}
                   >
                     <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                      Latest <span className="text-blue-200">Insights</span> & Articles
+                      Madurai <span className="text-blue-200">Digital Marketing</span> & Web Design Blog
                     </h1>
                     <p className="text-xl text-white/90 mb-8">
-                      Stay up-to-date with the latest technology trends and expert insights from our team.
+                      Expert tips and strategies for Madurai businesses to grow online with web development, digital marketing, and branding solutions.
                     </p>
                   </motion.div>
                   

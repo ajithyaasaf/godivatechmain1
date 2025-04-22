@@ -49,10 +49,10 @@ const NewsletterSection = () => {
         <div className="bg-white rounded-lg shadow-xl p-8 md:p-12 lg:flex items-center justify-between">
           <div className="lg:w-1/2 mb-8 lg:mb-0">
             <h2 className="text-2xl font-bold text-neutral-800 mb-4">
-              Stay updated with our latest insights
+              Get Madurai Digital Marketing Tips & Updates
             </h2>
             <p className="text-neutral-600">
-              Subscribe to our newsletter to receive the latest technology trends, tips, and industry news straight to your inbox.
+              Subscribe to our newsletter for exclusive web development insights, local SEO strategies for Madurai businesses, and special offers on our digital services.
             </p>
           </div>
           <div className="lg:w-1/2">

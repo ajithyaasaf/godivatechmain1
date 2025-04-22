@@ -134,36 +134,36 @@ export const sampleServices = [
 export const sampleTeamMembers = [
   {
     id: 1,
-    name: "Michael Chen",
-    position: "Chief Executive Officer",
-    bio: "20+ years of experience in tech leadership and business transformation.",
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+    name: "Ananth",
+    position: "Founder & CEO",
+    bio: "Madurai-based entrepreneur with over 10 years of experience in web development and digital marketing. Passionate about helping local businesses grow through technology.",
+    image: "/assets/ceo.jpg",
     linkedIn: "https://linkedin.com",
     twitter: "https://twitter.com"
   },
   {
     id: 2,
-    name: "Sarah Johnson",
-    position: "Chief Technology Officer",
-    bio: "Former Google engineer with expertise in cloud architecture and AI.",
+    name: "Priya Ramanathan",
+    position: "Digital Marketing Lead",
+    bio: "Expert in local SEO strategies for Madurai businesses. Has helped numerous companies in Tamil Nadu achieve first-page Google rankings.",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
     linkedIn: "https://linkedin.com",
     twitter: "https://twitter.com"
   },
   {
     id: 3,
-    name: "David Rodriguez",
-    position: "VP of Client Services",
-    bio: "Dedicated to building strong client relationships and delivering results.",
+    name: "Raj Sharma",
+    position: "Lead Developer",
+    bio: "Full-stack developer specializing in responsive websites and mobile applications. Madurai native with deep understanding of local business needs.",
     image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
     linkedIn: "https://linkedin.com",
     twitter: "https://twitter.com"
   },
   {
     id: 4,
-    name: "Emily Patel",
-    position: "Director of Innovation",
-    bio: "Leading our R&D efforts to bring cutting-edge solutions to market.",
+    name: "Lakshmi Venkatesh",
+    position: "Creative Director",
+    bio: "Award-winning designer with expertise in UI/UX and brand identity. Creates compelling visual experiences for businesses across Tamil Nadu.",
     image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
     linkedIn: "https://linkedin.com",
     twitter: "https://twitter.com"
@@ -173,77 +173,77 @@ export const sampleTeamMembers = [
 export const sampleProjects = [
   {
     id: 1,
-    title: "E-Commerce Platform Redesign",
-    description: "Completely redesigned the online shopping experience for a leading retailer, resulting in a 40% increase in conversions.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Software Development",
-    technologies: ["React", "Node.js", "AWS"]
+    title: "Madurai Silks E-Commerce Store",
+    description: "Designed and developed a responsive e-commerce site for a traditional silk saree retailer in Madurai, helping them reach customers across India and internationally.",
+    image: "https://images.unsplash.com/photo-1523381294911-8d3cead13475?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    category: "Web Development",
+    technologies: ["React", "Node.js", "MongoDB"]
   },
   {
     id: 2,
-    title: "Healthcare Data Migration",
-    description: "Migrated a healthcare provider's legacy systems to a secure cloud infrastructure, improving performance by 60%.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Cloud Solutions",
-    technologies: ["Azure", "Kubernetes", "HIPAA"]
+    title: "Madurai Tourism Mobile App",
+    description: "Created an interactive mobile app showcasing Madurai's tourist attractions, local cuisine, and cultural experiences with integrated maps and booking features.",
+    image: "https://images.unsplash.com/photo-1604871000636-074fa5117945?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    category: "Mobile App Development",
+    technologies: ["React Native", "Express", "Google Maps API"]
   },
   {
     id: 3,
-    title: "Predictive Maintenance System",
-    description: "Developed an AI-powered system for a manufacturing company that predicts equipment failures before they occur.",
-    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "AI & Machine Learning",
-    technologies: ["Python", "TensorFlow", "IoT"]
+    title: "Sri Meenakshi Hospital Website",
+    description: "Developed a modern, patient-friendly website for a leading Madurai hospital with online appointment booking and doctor profiles.",
+    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    category: "Web Development",
+    technologies: ["JavaScript", "PHP", "MySQL"]
   },
   {
     id: 4,
-    title: "Financial Services Mobile App",
-    description: "Created a secure mobile banking application with advanced features like biometric authentication and real-time notifications.",
-    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Software Development",
-    technologies: ["React Native", "Node.js", "MongoDB"]
+    title: "Madurai Foods Brand Identity",
+    description: "Created comprehensive brand identity including logo, packaging, and marketing materials for a local food products company exporting Madurai specialties.",
+    image: "https://images.unsplash.com/photo-1583623733237-4d5764a9dc82?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    category: "Logo & Brand Design",
+    technologies: ["Adobe Illustrator", "Photoshop", "Packaging Design"]
   },
   {
     id: 5,
-    title: "Enterprise Resource Planning System",
-    description: "Designed and implemented a custom ERP solution that integrated all departments and streamlined business processes.",
-    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Software Development",
-    technologies: ["Java", "Spring Boot", "PostgreSQL"]
+    title: "Tamil Nadu Handicrafts Social Media Campaign",
+    description: "Managed an integrated social media marketing campaign for a Madurai-based handicrafts cooperative, increasing their online sales by 150% in six months.",
+    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    category: "Digital Marketing",
+    technologies: ["Facebook Ads", "Instagram", "Content Marketing"]
   },
   {
     id: 6,
-    title: "Cybersecurity Infrastructure Upgrade",
-    description: "Strengthened a financial institution's security posture with advanced threat detection and prevention systems.",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-    category: "Cybersecurity",
-    technologies: ["Palo Alto", "Splunk", "AWS Security"]
+    title: "Madurai Real Estate Portal",
+    description: "Built a comprehensive property listing and search platform specifically for Madurai's real estate market with virtual tours and neighborhood insights.",
+    image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    category: "Web Development",
+    technologies: ["React", "Node.js", "PostgreSQL"]
   }
 ];
 
 export const sampleTestimonials = [
   {
     id: 1,
-    name: "Jennifer Miller",
-    position: "Marketing Director",
-    company: "Axon Enterprises",
-    content: "GodivaTech transformed our digital presence with a new website and custom CRM integration. Their team was professional, responsive, and delivered a solution that exceeded our expectations.",
-    image: "https://randomuser.me/api/portraits/women/32.jpg"
+    name: "Venkat Raman",
+    position: "Owner",
+    company: "Madurai Silks",
+    content: "GodivaTech transformed our traditional family business with an e-commerce store that now reaches customers across India and abroad. Our online sales have grown by 85% in just six months. Their understanding of both technology and Madurai's business environment made all the difference.",
+    image: "https://randomuser.me/api/portraits/men/45.jpg"
   },
   {
     id: 2,
-    name: "Robert Thompson",
-    position: "CTO",
-    company: "HealthFirst",
-    content: "Working with GodivaTech on our cloud migration was a game-changer. They made a complex process seamless and helped us achieve significant cost savings while improving performance.",
-    image: "https://randomuser.me/api/portraits/men/32.jpg"
+    name: "Dr. Lakshmi Narayan",
+    position: "Director",
+    company: "Sri Meenakshi Hospital",
+    content: "The website GodivaTech created for our hospital has significantly improved patient experience. The online appointment system has reduced our administrative workload by 40% and patient feedback has been overwhelmingly positive. Their team was professional and understood our unique requirements.",
+    image: "https://randomuser.me/api/portraits/women/32.jpg"
   },
   {
     id: 3,
-    name: "Maria Sanchez",
-    position: "Operations Manager",
-    company: "Global Logistics",
-    content: "The custom software GodivaTech developed for our logistics operations has increased efficiency by 35%. Their ongoing support and continuous improvements have made them a valuable partner.",
-    image: "https://randomuser.me/api/portraits/women/28.jpg"
+    name: "Rahul Mehta",
+    position: "CEO",
+    company: "Madurai Properties",
+    content: "Our real estate portal developed by GodivaTech has revolutionized how we showcase properties in Madurai. The virtual tour feature and neighborhood insights have received excellent feedback from clients. We've seen a 65% increase in qualified leads since launch.",
+    image: "https://randomuser.me/api/portraits/men/28.jpg"
   }
 ];
