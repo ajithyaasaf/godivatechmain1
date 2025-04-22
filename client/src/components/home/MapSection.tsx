@@ -14,7 +14,7 @@ const MapSection = () => {
             Google Maps Integration
           </p>
           <p className="text-neutral-400 text-sm">
-            Our office is located at 123 Tech Center Blvd, Suite 500, San Francisco, CA 94103
+            Our office is located at 261, Vaigai mainroad 4th Street, Sri Nagar, Iyer Bungalow, Madurai 625007
           </p>
         </div>
       </div>
