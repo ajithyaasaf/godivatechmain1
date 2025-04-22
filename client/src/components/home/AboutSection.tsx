@@ -12,11 +12,11 @@ const AboutSection = () => {
             <div className="relative">
               <img 
                 src={founderImage} 
-                alt="Rajesh Kumar - Founder & CEO of GodivaTech" 
+                alt="Ananth - Founder & CEO of GodivaTech" 
                 className="rounded-lg shadow-xl w-full object-cover" 
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 rounded-b-lg">
-                <p className="text-white font-semibold text-lg">Rajesh Kumar</p>
+                <p className="text-white font-semibold text-lg">Ananth</p>
                 <p className="text-white/90 text-sm">Founder & CEO</p>
               </div>
             </div>
