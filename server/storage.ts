@@ -387,13 +387,34 @@ MemStorage.prototype.deleteCategory = async function(id: number): Promise<boolea
   return this.categories.delete(id);
 };
 
-MemStorage.prototype.updateProject = async function(id: number, project: Partial<InsertProject>): Promise<Project | undefined> {
-  const existingProject = this.projects.get(id);
+MemStorage.prototype.updateProject = async function(id: number | string, project: Partial<InsertProject>): Promise<Project | undefined> {
+  // Handle string or number IDs
+  let projectId = id;
+  
+  // Convert string ID to number if it's numeric for consistency with Map keys
+  if (typeof id === 'string' && !isNaN(Number(id))) {
+    projectId = Number(id);
+  }
+  
+  // Try to get the project with the processed ID
+  const existingProject = this.projects.get(projectId);
+  
   if (!existingProject) {
+    // If not found and we have a numeric ID that was originally a string,
+    // try again with the original string ID (for Firebase doc IDs)
+    if (typeof id === 'string' && typeof projectId === 'number') {
+      const stringIdProject = this.projects.get(id);
+      if (stringIdProject) {
+        const updatedProject = { ...stringIdProject, ...project };
+        this.projects.set(id, updatedProject);
+        return updatedProject;
+      }
+    }
     return undefined;
   }
+  
   const updatedProject = { ...existingProject, ...project };
-  this.projects.set(id, updatedProject);
+  this.projects.set(projectId, updatedProject);
   return updatedProject;
 };
 
@@ -585,12 +606,39 @@ export class DatabaseStorage implements IStorage {
     return project;
   }
 
-  async updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined> {
-    const [updated] = await db.update(projects)
-      .set(project)
-      .where(eq(projects.id, id))
-      .returning();
-    return updated;
+  async updateProject(id: number | string, project: Partial<InsertProject>): Promise<Project | undefined> {
+    // Convert string IDs to numbers if they're numeric
+    if (typeof id === 'string') {
+      const numericId = parseInt(id);
+      
+      if (!isNaN(numericId)) {
+        try {
+          const [updated] = await db.update(projects)
+            .set(project)
+            .where(eq(projects.id, numericId))
+            .returning();
+          return updated;
+        } catch (error) {
+          console.error(`Error updating project with ID ${id} (converted to ${numericId}):`, error);
+          return undefined;
+        }
+      } else {
+        console.error(`Cannot convert project ID to a valid number for update: ${id}`);
+        return undefined;
+      }
+    }
+    
+    // Handle numeric IDs directly
+    try {
+      const [updated] = await db.update(projects)
+        .set(project)
+        .where(eq(projects.id, id))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error(`Error updating project with ID ${id}:`, error);
+      return undefined;
+    }
   }
 
   async deleteProject(id: number | string): Promise<boolean> {

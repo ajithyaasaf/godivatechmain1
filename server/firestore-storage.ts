@@ -438,12 +438,21 @@ export class FirestoreStorage {
     }
   }
 
-  async updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined> {
+  async updateProject(id: number | string, project: Partial<InsertProject>): Promise<Project | undefined> {
     try {
-      const projectRef = doc(db, 'projects', id.toString());
+      // Convert to string for document ID
+      const docId = id.toString();
+      console.log(`Attempting to update project with ID: ${docId} in Firestore`);
+      
+      const projectRef = doc(db, 'projects', docId);
       const docSnap = await getDoc(projectRef);
       
-      if (!docSnap.exists()) return undefined;
+      if (!docSnap.exists()) {
+        console.warn(`Project with ID ${docId} not found in Firestore`);
+        return undefined;
+      }
+      
+      console.log(`Project found, updating with new data`, project);
       
       // Update the project
       await updateDoc(projectRef, {
@@ -455,14 +464,19 @@ export class FirestoreStorage {
       const updatedSnap = await getDoc(projectRef);
       const data = updatedSnap.data() as any;
       
+      // Handle numeric vs string IDs correctly
+      const returnId = typeof id === 'string' && !isNaN(Number(id)) ? Number(id) : id;
+      
+      console.log(`Successfully updated project with ID: ${docId} in Firestore`);
+      
       return { 
         ...data,
-        id,
+        id: returnId,
         link: data.link ?? null,
         image: data.image ?? null
       } as Project;
     } catch (error) {
-      console.error("Error updating project:", error);
+      console.error(`Error updating project with ID ${id} in Firestore:`, error);
       return undefined;
     }
   }
