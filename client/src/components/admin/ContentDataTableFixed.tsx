@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { 
   Table, 
@@ -19,8 +19,32 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuItem,
+  DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { 
   Search, 
@@ -28,7 +52,17 @@ import {
   Edit, 
   Trash2, 
   RefreshCw, 
-  ArrowUpDown
+  ArrowUpDown,
+  MoreHorizontal,
+  Download,
+  Filter,
+  Eye,
+  ChevronDown,
+  CheckCircle2,
+  Loader2,
+  AlertCircle,
+  FileText,
+  Copy
 } from 'lucide-react';
 
 interface Column {
@@ -878,48 +912,236 @@ const ContentDataTable = ({
     setIsDialogOpen(true);
   };
   
-  // Filter data based on search query - USING LOCAL DATA
-  const filteredData = localData.filter((item: any) => {
-    if (!searchQuery) return true;
-    
-    // Search across all string fields
-    return Object.keys(item).some(key => {
-      const value = item[key];
-      return typeof value === 'string' && 
-        value.toLowerCase().includes(searchQuery.toLowerCase());
+  // States for sorting
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  
+  // Enhanced sort function with memory
+  const handleSort = useCallback((field: string) => {
+    if (sortField === field) {
+      // Toggle direction if clicking the same field
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // New field, set it and default to ascending
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  }, [sortField, sortDirection]);
+  
+  // Filter data based on search query with sorting - USING LOCAL DATA
+  const filteredData = useMemo(() => {
+    // Step 1: Apply search filter
+    const searchFiltered = localData.filter((item: any) => {
+      if (!searchQuery) return true;
+      
+      // Search across all string fields
+      return Object.keys(item).some(key => {
+        const value = item[key];
+        return typeof value === 'string' && 
+          value.toLowerCase().includes(searchQuery.toLowerCase());
+      });
     });
-  });
+    
+    // Step 2: Apply sorting if a sort field is selected
+    if (sortField) {
+      return [...searchFiltered].sort((a, b) => {
+        // Handle different data types
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+        
+        // Skip sorting if either value is undefined
+        if (aValue === undefined || bValue === undefined) return 0;
+        
+        // Handle different data types
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          // String comparison
+          const comparison = aValue.localeCompare(bValue);
+          return sortDirection === 'asc' ? comparison : -comparison;
+        } else if (typeof aValue === 'number' && typeof bValue === 'number') {
+          // Numeric comparison
+          return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+        } else if (aValue instanceof Date && bValue instanceof Date) {
+          // Date comparison
+          return sortDirection === 'asc' ? aValue.getTime() - bValue.getTime() : bValue.getTime() - aValue.getTime();
+        } else {
+          // Convert to strings for non-comparable types
+          const stringA = String(aValue);
+          const stringB = String(bValue);
+          const comparison = stringA.localeCompare(stringB);
+          return sortDirection === 'asc' ? comparison : -comparison;
+        }
+      });
+    }
+    
+    return searchFiltered;
+  }, [localData, searchQuery, sortField, sortDirection]);
+  
+  // Get counts for data insights
+  const totalItems = localData.length;
+  
+  // Status-related stats (if items have status properties)
+  const hasStatus = localData.some(item => item.status || item.published !== undefined);
+  const activeItems = hasStatus ? localData.filter(item => 
+    item.status === 'active' || item.status === 'published' || item.published === true
+  ).length : null;
+  
+  // Calculate recently added items (in the last 7 days)
+  const recentItems = localData.filter(item => {
+    if (!item.createdAt) return false;
+    const createdDate = new Date(item.createdAt);
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    return createdDate >= sevenDaysAgo;
+  }).length;
+  
+  // Export data function
+  
+  // Export data function
+  const exportData = useCallback(() => {
+    const dataToExport = localData.map(item => {
+      // Create a simplified object without internal fields
+      const exportItem: Record<string, any> = {};
+      
+      // Add only relevant fields for export
+      columns.forEach(column => {
+        if (column.key in item) {
+          exportItem[column.title] = item[column.key];
+        }
+      });
+      
+      return exportItem;
+    });
+    
+    // Convert to JSON
+    const jsonString = JSON.stringify(dataToExport, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    // Create download link
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${title.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    
+    // Cleanup
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export complete",
+      description: `${title} data has been exported as JSON`,
+    });
+  }, [localData, columns, title, toast]);
   
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+      {/* Header section with statistics cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Total {title}</h3>
+              <p className="text-2xl font-bold">{totalItems}</p>
+            </div>
+            <FileText className="h-8 w-8 text-muted-foreground opacity-80" />
+          </CardContent>
+        </Card>
         
-        <div className="flex gap-2">
-          <div className="relative flex-1">
+        {activeItems !== null && (
+          <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-1">Active {title}</h3>
+                <p className="text-2xl font-bold">
+                  {activeItems}
+                  <span className="text-sm font-normal text-muted-foreground ml-1">
+                    ({Math.round((activeItems / totalItems) * 100)}%)
+                  </span>
+                </p>
+              </div>
+              <CheckCircle2 className="h-8 w-8 text-green-500 opacity-80" />
+            </CardContent>
+          </Card>
+        )}
+        
+        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Recently Added</h3>
+              <p className="text-2xl font-bold">{recentItems}</p>
+            </div>
+            <AlertCircle className="h-8 w-8 text-blue-500 opacity-80" />
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Main header with actions */}
+      <div className="flex flex-col sm:flex-row justify-between gap-4">
+        <div className="flex items-center">
+          <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
+          {localIsLoading && (
+            <Badge variant="outline" className="ml-2 bg-amber-50">
+              <Loader2 className="h-3 w-3 animate-spin mr-1" />
+              Syncing...
+            </Badge>
+          )}
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder={`Search ${title.toLowerCase()}...`}
-              className="pl-8 min-w-[200px]"
+              className="pl-8"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           
-          <Button 
-            onClick={handleRefresh} 
-            size="sm" 
-            variant="outline" 
-            title="Refresh data"
-            className="flex items-center"
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  onClick={handleRefresh} 
+                  size="icon"
+                  variant="outline"
+                  className="flex-shrink-0"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Refresh data</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="flex-shrink-0">
+                <Filter className="mr-1 h-4 w-4" />
+                <span className="hidden sm:inline">Actions</span>
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Data actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={exportData}>
+                <Download className="mr-2 h-4 w-4" />
+                Export data
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleRefresh}>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Refresh data
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => openDialog()} size="sm">
+              <Button onClick={() => openDialog()} size="sm" className="flex-shrink-0">
                 <Plus className="mr-1 h-4 w-4" />
                 Add New
               </Button>
@@ -953,13 +1175,25 @@ const ContentDataTable = ({
             <TableRow>
               {columns.map((column) => (
                 <TableHead key={column.key}>
-                  <div className="flex items-center">
+                  <Button
+                    variant="ghost"
+                    onClick={() => handleSort(column.key)}
+                    className="flex items-center p-0 h-auto hover:bg-transparent"
+                  >
                     {column.title}
-                    <ArrowUpDown className="ml-1 h-3 w-3" />
-                  </div>
+                    {sortField === column.key ? (
+                      sortDirection === 'asc' ? (
+                        <ChevronDown className="ml-1 h-3.5 w-3.5 text-primary" />
+                      ) : (
+                        <ChevronDown className="ml-1 h-3.5 w-3.5 text-primary rotate-180" />
+                      )
+                    ) : (
+                      <ArrowUpDown className="ml-1 h-3 w-3 text-muted-foreground opacity-50" />
+                    )}
+                  </Button>
                 </TableHead>
               ))}
-              <TableHead className="w-[100px] text-right">Actions</TableHead>
+              <TableHead className="w-[80px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -1001,22 +1235,76 @@ const ContentDataTable = ({
                           }
                         </TableCell>
                       ))}
-                      <TableCell className="flex justify-end items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openDialog(item)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(item)}
-                          disabled={deleteMutation.isPending}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-[160px]">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            
+                            <DropdownMenuItem onClick={() => openDialog(item)}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            
+                            {/* View button - if this item has a public link */}
+                            {item.link && (
+                              <DropdownMenuItem
+                                onClick={() => window.open(item.link, '_blank')}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                View
+                              </DropdownMenuItem>
+                            )}
+                            
+                            <DropdownMenuSeparator />
+                            
+                            {/* Duplicate button */}
+                            <DropdownMenuItem
+                              onClick={() => {
+                                // Create a duplicate without ID and metadata
+                                const duplicateData = { ...item };
+                                
+                                // Remove any identifiers
+                                delete duplicateData.id;
+                                delete duplicateData.docId;
+                                delete duplicateData.firebaseId;
+                                delete duplicateData.__id;
+                                delete duplicateData.__optimistic;
+                                delete duplicateData.__updating;
+                                
+                                // Adjust title if it exists
+                                if (duplicateData.title) {
+                                  duplicateData.title = `${duplicateData.title} (Copy)`;
+                                }
+                                
+                                // Open the dialog with the duplicate
+                                openDialog(duplicateData);
+                              }}
+                            >
+                              <Copy className="mr-2 h-4 w-4" />
+                              Duplicate
+                            </DropdownMenuItem>
+                            
+                            <DropdownMenuSeparator />
+                            
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onClick={() => handleDelete(item)}
+                              disabled={deleteMutation.isPending}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                              {deleteMutation.isPending && (
+                                <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                              )}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </TableCell>
                     </TableRow>
                   );
