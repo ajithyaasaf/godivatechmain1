@@ -220,10 +220,45 @@ const ContentDataTable = ({
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `${adminApiPath}/${id}`);
-      return id;
+      console.log(`Sending DELETE request to ${adminApiPath}/${id}`);
+      try {
+        const response = await apiRequest("DELETE", `${adminApiPath}/${id}`);
+        console.log(`Response from delete operation:`, response);
+        
+        // Check if response is successful (2xx status code)
+        if (response.ok) {
+          console.log(`Deletion with ID ${id} was successful on server`);
+          let responseData = {};
+          
+          // Try to get response body if there is one
+          try {
+            responseData = await response.json();
+            console.log('Delete response data:', responseData);
+          } catch (e) {
+            // No JSON response (normal for 204 No Content)
+            console.log('No JSON response body');
+          }
+          
+          return id;
+        } else {
+          // Server returned error response
+          let errorMessage = `Server returned ${response.status}`;
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorMessage;
+            console.error('Server delete error:', errorData);
+          } catch (e) {
+            // No JSON error response
+          }
+          throw new Error(errorMessage);
+        }
+      } catch (error) {
+        console.error(`Error in delete mutation for ID ${id}:`, error);
+        throw error;
+      }
     },
     onSuccess: (deletedId) => {
+      console.log(`Delete mutation successful for ID ${deletedId}`);
       toast({
         title: "Deleted successfully",
         description: `${title} has been deleted.`,
@@ -231,13 +266,16 @@ const ContentDataTable = ({
       
       // Immediately update the cache to remove the deleted item
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        return oldData.filter(item => item.id !== deletedId);
+        const newData = oldData.filter(item => item.id !== deletedId);
+        console.log(`Filtered out deleted item. Items before: ${oldData.length}, after: ${newData.length}`);
+        return newData;
       });
       
       // Also invalidate the query to ensure data consistency
       queryClient.invalidateQueries({ queryKey: [apiPath] });
     },
     onError: (error: Error) => {
+      console.error(`Delete mutation error:`, error);
       toast({
         title: "Failed to delete",
         description: error.message,
