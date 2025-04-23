@@ -4,14 +4,14 @@ import { log } from './vite';
 // Configure Cloudinary with environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: "wUw9Seu6drQEIbQ1tAvYeVyqHdU", // Using the provided API key
+  api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
 
 // Verify Cloudinary configuration is present
 const verifyCloudinaryConfig = () => {
-  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_SECRET) {
+  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
     log('Missing Cloudinary environment variables', 'cloudinary');
     return false;
   }
