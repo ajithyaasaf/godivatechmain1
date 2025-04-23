@@ -91,6 +91,12 @@ const AuthPage = () => {
     
     // Handle login
     loginMutation.mutate(values, {
+      onSuccess: () => {
+        // Directly redirect to admin page after successful login
+        const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/admin';
+        sessionStorage.removeItem('redirectAfterLogin');
+        setLocation(redirectPath);
+      },
       onError: (error) => {
         setLoginError(error.message || "Login failed. Please check your credentials and try again.");
       }
@@ -104,6 +110,12 @@ const AuthPage = () => {
     const { confirmPassword, ...registerData } = values;
     
     registerMutation.mutate(registerData, {
+      onSuccess: () => {
+        // Directly redirect to admin page after successful registration
+        const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/admin';
+        sessionStorage.removeItem('redirectAfterLogin');
+        setLocation(redirectPath);
+      },
       onError: (error) => {
         setRegisterError(error.message || "Registration failed. This username may already be taken.");
       }
