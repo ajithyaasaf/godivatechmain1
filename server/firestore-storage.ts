@@ -483,7 +483,7 @@ export class FirestoreStorage {
 
   async deleteProject(id: number | string): Promise<boolean> {
     try {
-      console.log(`Attempting to delete project with ID: ${id}`);
+      console.log(`Attempting to delete project with ID: ${id} (type: ${typeof id})`);
       
       // Validate ID to prevent "null" or undefined
       if (id === null || id === undefined) {
@@ -491,24 +491,52 @@ export class FirestoreStorage {
         return false;
       }
       
-      // Convert number to string if needed
+      // Convert number to string if needed for Firestore document ID
       const documentId = id.toString();
       
-      // Check if the document exists before deleting
+      console.log(`Using document ID: ${documentId} for Firestore deletion`);
+      
+      // Get a reference to the document
       const projectRef = doc(db, 'projects', documentId);
+      
+      // Check if the document exists before deleting
+      console.log(`Checking if document exists in 'projects' collection`);
       const docSnap = await getDoc(projectRef);
       
       if (!docSnap.exists()) {
-        console.warn(`Project with ID ${documentId} not found, cannot delete`);
+        console.warn(`Document 'projects/${documentId}' does not exist in Firestore, cannot delete`);
+        
+        // Try a different lookup approach - check all documents in the collection
+        console.log('Attempting to find project by querying the collection...');
+        const projectsCollection = collection(db, 'projects');
+        const querySnapshot = await getDocs(projectsCollection);
+        
+        console.log(`Found ${querySnapshot.size} projects in collection`);
+        querySnapshot.forEach(doc => {
+          console.log(`Project in collection: id=${doc.id}, data=`, doc.data());
+        });
+        
         return false;
       }
       
-      console.log(`Project found, proceeding with deletion of ID: ${documentId}`);
+      // Log the document data for debugging
+      console.log(`Project found, document data:`, docSnap.data());
+      console.log(`Proceeding with deletion of document 'projects/${documentId}'`);
+      
+      // Perform the deletion
       await deleteDoc(projectRef);
-      console.log(`Project with ID ${documentId} successfully deleted from Firestore`);
-      return true;
+      
+      // Verify deletion was successful by checking if document still exists
+      const verifySnap = await getDoc(projectRef);
+      if (!verifySnap.exists()) {
+        console.log(`Project with ID ${documentId} successfully deleted from Firestore!`);
+        return true;
+      } else {
+        console.error(`Deletion operation did not remove document 'projects/${documentId}'`);
+        return false;
+      }
     } catch (error) {
-      console.error("Error deleting project:", error);
+      console.error(`Error deleting project with ID ${id}:`, error);
       return false;
     }
   }

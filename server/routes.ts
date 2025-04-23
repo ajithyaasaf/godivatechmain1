@@ -579,10 +579,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   };
   
-  // Modified delete handler for projects to broadcast updates
+  // Enhanced delete handler for projects to broadcast updates with better debugging
   app.delete("/api/admin/projects/:id", isAuthenticated, async (req, res) => {
     try {
-      console.log(`Received delete request for project with ID: ${req.params.id}`);
+      console.log(`=== PROJECT DELETION OPERATION ===`);
+      console.log(`Received delete request for project with ID: ${req.params.id} (type: ${typeof req.params.id})`);
       
       if (!req.params.id || req.params.id === 'null' || req.params.id === 'undefined') {
         console.error(`Invalid project ID for deletion: ${req.params.id}`);
@@ -594,28 +595,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Support both numeric and string IDs
       let id: number | string = req.params.id;
+      const originalId = req.params.id;
+      
+      // Log the original ID from the request
+      console.log(`Original ID from request: '${originalId}', type: ${typeof originalId}`);
       
       // Try to parse as a number if it looks like one
       if (!isNaN(Number(id))) {
         id = parseInt(req.params.id);
+        console.log(`Converted string ID to number: ${id}`);
+      } else {
+        console.log(`Using string ID as-is: '${id}'`);
       }
       
-      console.log(`Attempting to delete project with ID: ${id}`);
+      // For debugging, try to find the project before deletion
+      try {
+        const projectInfo = await storage.getProject(Number(id));
+        if (projectInfo) {
+          console.log(`Found project to delete:`, projectInfo);
+        } else {
+          console.log(`No project found with numeric ID ${id} before deletion attempt`);
+          
+          // Try searching all projects to find the right one
+          console.log(`Attempting to find project by searching all projects...`);
+          const allProjects = await storage.getAllProjects();
+          
+          console.log(`Found ${allProjects.length} projects in storage`);
+          const matchingProject = allProjects.find(p => 
+            p.id === id || 
+            p.id === Number(id) || 
+            String(p.id) === String(id) ||
+            (typeof p.id === 'object' && p.id !== null && '_key' in p.id && p.id._key === id)
+          );
+          
+          if (matchingProject) {
+            console.log(`Found matching project:`, matchingProject);
+            // Use the exact ID from the matching project
+            id = matchingProject.id;
+            console.log(`Using exact ID from matching project: ${id} (type: ${typeof id})`);
+          } else {
+            console.warn(`Could not find matching project with any ID format of: ${id}`);
+          }
+        }
+      } catch (searchError) {
+        console.error(`Error when searching for project before deletion:`, searchError);
+      }
+      
+      console.log(`Calling storage.deleteProject with ID: ${id} (type: ${typeof id})`);
       const success = await storage.deleteProject(id);
       
       if (success) {
         console.log(`Successfully deleted project with ID: ${id}, broadcasting update`);
         // Broadcast the deletion to all connected clients
         broadcastUpdate('project_deleted', { id });
+        
         return res.status(200).json({ 
           message: "Project successfully deleted",
           id
         });
       } else {
         console.warn(`Project with ID ${id} could not be deleted or was not found`);
+        
+        // Try with the original ID string if conversion happened
+        if (typeof id === 'number' && originalId !== String(id)) {
+          console.log(`Trying deletion again with original string ID: '${originalId}'`);
+          const retrySuccess = await storage.deleteProject(originalId);
+          
+          if (retrySuccess) {
+            console.log(`Successfully deleted project with original ID: ${originalId}, broadcasting update`);
+            broadcastUpdate('project_deleted', { id: originalId });
+            
+            return res.status(200).json({ 
+              message: "Project successfully deleted using original ID",
+              id: originalId
+            });
+          }
+        }
+        
         return res.status(404).json({ 
           message: "Project not found or could not be deleted",
-          id
+          id,
+          originalId: req.params.id
         });
       }
     } catch (error) {
