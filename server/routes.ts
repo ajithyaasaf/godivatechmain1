@@ -646,22 +646,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Modify project update endpoint to broadcast changes
+  // Modify project update endpoint to broadcast changes - supporting both number and string IDs
   app.put("/api/admin/projects/:id", isAuthenticated, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const project = await storage.updateProject(id, req.body);
-      if (!project) {
-        return res.status(404).json({ message: "Project not found" });
+      // Support both numeric and string IDs
+      let id: number | string = req.params.id;
+      
+      if (!req.params.id || req.params.id === 'null' || req.params.id === 'undefined') {
+        console.error(`Invalid project ID for update: ${req.params.id}`);
+        return res.status(400).json({ 
+          message: "Invalid project ID provided for update",
+          received: req.params.id
+        });
       }
       
+      // Try to parse as a number if it looks like one
+      if (!isNaN(Number(id))) {
+        id = parseInt(req.params.id);
+      }
+      
+      console.log(`Attempting to update project with ID: ${id}`);
+      const project = await storage.updateProject(id, req.body);
+      
+      if (!project) {
+        console.warn(`Project with ID ${id} not found for update`);
+        return res.status(404).json({ 
+          message: "Project not found",
+          id
+        });
+      }
+      
+      console.log(`Successfully updated project with ID: ${id}, broadcasting update`);
       // Broadcast the update to all connected clients
       broadcastUpdate('project_updated', project);
       
       res.json(project);
     } catch (error) {
       console.error("Error updating project:", error);
-      res.status(500).json({ message: "Failed to update project" });
+      res.status(500).json({ 
+        message: "Failed to update project due to server error",
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
   
