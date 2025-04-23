@@ -379,22 +379,49 @@ const ContentDataTable = ({
     if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
       console.log("Deleting item:", item);
       
-      // For Firebase/Firestore documents, look for either id or docId
+      // Enhanced ID detection for Firebase/Firestore documents
       let itemId = null;
       
       if (item && typeof item === 'object') {
-        // Check for various ID formats
-        if (item.id !== undefined && item.id !== null) {
-          itemId = item.id;
-        } else if (item.docId !== undefined && item.docId !== null) {
+        // Detailed logging to debug ID issues
+        console.log(`Item data for deletion:`, {
+          id: item.id,
+          idType: typeof item.id,
+          docId: item.docId,
+          firebaseId: item.firebaseId,
+          __id: item.__id,
+          endpoint
+        });
+        
+        // Prioritize Firestore-specific IDs
+        if (item.firebaseId !== undefined && item.firebaseId !== null) {
+          console.log(`Using firebaseId for deletion: ${item.firebaseId}`);
+          itemId = item.firebaseId;
+        }
+        // Then try docId which is also a Firestore ID
+        else if (item.docId !== undefined && item.docId !== null) {
+          console.log(`Using docId for deletion: ${item.docId}`);
           itemId = item.docId;
-        } else if (item.__id !== undefined && item.__id !== null) {
+        }
+        // Finally use regular id
+        else if (item.id !== undefined && item.id !== null) {
+          console.log(`Using id for deletion: ${item.id} (type: ${typeof item.id})`);
+          itemId = item.id;
+        }
+        // Legacy ID format
+        else if (item.__id !== undefined && item.__id !== null) {
+          console.log(`Using __id for deletion: ${item.__id}`);
           itemId = item.__id;
-        } else if (endpoint === '/projects' && item.createdAt && item.title) {
-          // For projects, we might need to retrieve ID from the server or generate one
-          // Use the createdAt timestamp or other unique identifier
-          console.log("Attempting to find project ID for Firebase document:", item);
-          itemId = 1; // This is a fallback - your project logic in server-side should handle this
+        }
+        // Special case for projects with Firebase document IDs
+        else if (endpoint === '/projects' && item.createdAt && item.title) {
+          console.error("Could not find ID for project. This should not happen with the updated data format.");
+          toast({
+            title: "Delete failed",
+            description: "Could not identify the project ID. This is likely a data format issue. Please contact support.",
+            variant: "destructive",
+          });
+          return;
         }
       }
       
@@ -407,6 +434,8 @@ const ContentDataTable = ({
         });
         return;
       }
+      
+      console.log(`Proceeding with deletion using ID: ${itemId} (type: ${typeof itemId})`)
       
       console.log(`Deleting ${title} with ID:`, itemId);
       deleteMutation.mutate(itemId);

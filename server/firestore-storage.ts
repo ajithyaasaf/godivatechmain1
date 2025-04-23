@@ -370,11 +370,19 @@ export class FirestoreStorage {
       const q = query(projectsRef, orderBy('title'));
       const querySnapshot = await getDocs(q);
       
+      console.log(`Found ${querySnapshot.size} projects in Firestore collection`);
+      
       return querySnapshot.docs.map(docSnap => {
         const data = docSnap.data() as any;
+        // Use the actual document ID as the project ID
+        const projectId = docSnap.id;
+        console.log(`Processing project: id=${projectId}, title=${data.title}`);
+        
         return { 
           ...data,
-          id: parseInt(docSnap.id),
+          id: projectId, // Use the Firebase document ID directly
+          docId: projectId, // Also store the document ID in docId for reference
+          firebaseId: projectId, // Additional field to make it clear this is a Firebase ID
           link: data.link ?? null,
           image: data.image ?? null
         } as Project;
@@ -385,34 +393,69 @@ export class FirestoreStorage {
     }
   }
 
-  async getProject(id: number): Promise<Project | undefined> {
+  async getProject(id: number | string): Promise<Project | undefined> {
     try {
-      const docRef = doc(db, 'projects', id.toString());
+      // Convert id to string for document ID
+      const docId = id.toString(); 
+      console.log(`Fetching project with document ID: ${docId}`);
+      
+      const docRef = doc(db, 'projects', docId);
       const docSnap = await getDoc(docRef);
       
-      if (!docSnap.exists()) return undefined;
+      if (!docSnap.exists()) {
+        console.log(`No project document found with ID: ${docId}`);
+        
+        // If the ID looks numeric and doesn't exist, try querying all projects to find by numeric ID
+        if (!isNaN(Number(id))) {
+          console.log(`Trying to find project by numeric ID: ${id}`);
+          const allProjects = await this.getAllProjects();
+          const projectWithNumericId = allProjects.find(p => {
+            const numericId = p.id && typeof p.id === 'string' ? parseInt(p.id) : null;
+            return numericId === Number(id);
+          });
+          
+          if (projectWithNumericId) {
+            console.log(`Found project with numeric ID match: ${projectWithNumericId.id}, title: ${projectWithNumericId.title}`);
+            return projectWithNumericId;
+          }
+        }
+        
+        return undefined;
+      }
       
       const data = docSnap.data() as any;
+      console.log(`Found project with document ID: ${docId}, title: ${data.title}`);
+      
       return { 
         ...data,
-        id,
+        id: docId, // Use the document ID as is
+        docId: docId, // Also include the doc ID separately
+        firebaseId: docId, // Explicit field indicating this is a Firebase ID
         link: data.link ?? null,
         image: data.image ?? null
       } as Project;
     } catch (error) {
-      console.error("Error getting project:", error);
+      console.error(`Error getting project with ID ${id}:`, error);
       return undefined;
     }
   }
 
   async createProject(insertProject: InsertProject): Promise<Project> {
     try {
-      const nextId = await this.getNextId('projects');
+      console.log('Creating new project in Firestore with data:', insertProject);
+      
+      // Use Firestore's auto-generated document ID instead of numeric ID
+      const projectsCollection = collection(db, 'projects');
+      const newDocRef = doc(projectsCollection); // This creates a reference with an auto-generated ID
+      const newDocId = newDocRef.id;
+      
+      console.log(`Generated new Firestore document ID: ${newDocId}`);
       
       // Create the project with required fields - matching schema properties
-      const project: Project = {
+      // Use the Firestore document ID as the project ID
+      const projectData = {
         ...insertProject,
-        id: nextId,
+        // Include these properties but not in the 'id' field which is handled specially
         link: insertProject.link ?? null,
         image: insertProject.image ?? null,
         gallery: insertProject.gallery ?? null,
@@ -425,11 +468,23 @@ export class FirestoreStorage {
         solutionDescription: insertProject.solutionDescription ?? null,
         resultsDescription: insertProject.resultsDescription ?? null,
         featured: insertProject.featured ?? false,
-        order: insertProject.order ?? null
+        order: insertProject.order ?? null,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       };
       
-      const projectRef = doc(db, 'projects', nextId.toString());
-      await setDoc(projectRef, project);
+      // Set the document with the auto-generated ID
+      await setDoc(newDocRef, projectData);
+      
+      console.log(`Successfully created project with ID: ${newDocId}`);
+      
+      // Return the project with the Firestore document ID
+      const project: Project = {
+        ...projectData,
+        id: newDocId, // Use the Firebase document ID
+        docId: newDocId, // Also include document ID explicitly 
+        firebaseId: newDocId // Additional field to be explicit
+      } as Project;
       
       return project;
     } catch (error) {
