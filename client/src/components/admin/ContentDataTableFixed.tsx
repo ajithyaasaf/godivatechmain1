@@ -369,9 +369,13 @@ const ContentDataTable = ({
                 console.error('Could not read error response body:', textError);
               }
               
-              // For 5xx errors, retry
-              if (response.status >= 500 && currentRetry < maxRetries) {
-                lastError = new Error(errorMessage);
+              // For server errors (5xx) or if HTML error page was detected, retry
+              const isHtmlErrorPage = errorMessage.includes('<!DOCTYPE html>') || 
+                                     errorMessage.includes('Server error');
+                                     
+              if ((response.status >= 500 || isHtmlErrorPage) && currentRetry < maxRetries) {
+                lastError = new Error(`Server error (${response.status}). Retrying...`);
+                console.log(`Server returned error ${response.status}, will retry (${currentRetry + 1}/${maxRetries})`);
                 currentRetry++;
                 await new Promise(resolve => setTimeout(resolve, 1000 * currentRetry)); // Exponential backoff
                 continue; // Try again

@@ -585,6 +585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`=== PROJECT DELETION OPERATION ===`);
       console.log(`Received delete request for project with ID: ${req.params.id} (type: ${typeof req.params.id})`);
       
+      // Validate the ID parameter
       if (!req.params.id || req.params.id === 'null' || req.params.id === 'undefined') {
         console.error(`Invalid project ID for deletion: ${req.params.id}`);
         return res.status(400).json({ 
@@ -593,95 +594,128 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Support both numeric and string IDs
-      let id: number | string = req.params.id;
+      // Support both numeric and string IDs for flexibility
+      let id = req.params.id;
       const originalId = req.params.id;
       
       // Log the original ID from the request
       console.log(`Original ID from request: '${originalId}', type: ${typeof originalId}`);
       
-      // Try to parse as a number if it looks like one
-      if (!isNaN(Number(id))) {
-        id = parseInt(req.params.id);
-        console.log(`Converted string ID to number: ${id}`);
-      } else {
-        console.log(`Using string ID as-is: '${id}'`);
-      }
-      
-      // For debugging, try to find the project before deletion
+      // Before proceeding, find the actual project document
       try {
-        const projectInfo = await storage.getProject(Number(id));
-        if (projectInfo) {
-          console.log(`Found project to delete:`, projectInfo);
-        } else {
-          console.log(`No project found with numeric ID ${id} before deletion attempt`);
-          
-          // Try searching all projects to find the right one
-          console.log(`Attempting to find project by searching all projects...`);
-          const allProjects = await storage.getAllProjects();
-          
-          console.log(`Found ${allProjects.length} projects in storage`);
-          const matchingProject = allProjects.find(p => 
-            p.id === id || 
-            p.id === Number(id) || 
-            String(p.id) === String(id) ||
-            (typeof p.id === 'object' && p.id !== null && '_key' in p.id && p.id._key === id)
-          );
-          
-          if (matchingProject) {
-            console.log(`Found matching project:`, matchingProject);
-            // Use the exact ID from the matching project
-            id = matchingProject.id;
-            console.log(`Using exact ID from matching project: ${id} (type: ${typeof id})`);
-          } else {
-            console.warn(`Could not find matching project with any ID format of: ${id}`);
-          }
+        console.log(`Attempting to find project in database...`);
+        const allProjects = await storage.getAllProjects();
+        
+        console.log(`Found ${allProjects.length} projects in storage`);
+        
+        if (allProjects.length === 0) {
+          console.warn('No projects found in database');
+          return res.status(404).json({ 
+            message: "No projects found in database",
+            id: originalId
+          });
         }
-      } catch (searchError) {
-        console.error(`Error when searching for project before deletion:`, searchError);
-      }
-      
-      console.log(`Calling storage.deleteProject with ID: ${id} (type: ${typeof id})`);
-      const success = await storage.deleteProject(id);
-      
-      if (success) {
-        console.log(`Successfully deleted project with ID: ${id}, broadcasting update`);
-        // Broadcast the deletion to all connected clients
-        broadcastUpdate('project_deleted', { id });
         
-        return res.status(200).json({ 
-          message: "Project successfully deleted",
-          id
-        });
-      } else {
-        console.warn(`Project with ID ${id} could not be deleted or was not found`);
-        
-        // Try with the original ID string if conversion happened
-        if (typeof id === 'number' && originalId !== String(id)) {
-          console.log(`Trying deletion again with original string ID: '${originalId}'`);
-          const retrySuccess = await storage.deleteProject(originalId);
+        // Look for projects with matching ID in any format
+        const matchingProject = allProjects.find(p => {
+          // Try multiple matching approaches for compatibility with different ID formats
+          const stringMatch = p.id !== undefined && String(p.id) === String(id);
+          const numericMatch = p.id !== undefined && typeof p.id === 'number' && p.id === Number(id);
           
-          if (retrySuccess) {
-            console.log(`Successfully deleted project with original ID: ${originalId}, broadcasting update`);
+          // Safely check for object with _key property
+          const objectMatch = p.id !== undefined && 
+                             typeof p.id === 'object' && 
+                             p.id !== null && 
+                             (p.id as any)._key !== undefined && 
+                             (p.id as any)._key === id;
+          
+          // For Firestore documents, check document ID
+          const firestoreMatch = (p as any).docId !== undefined && (p as any).docId === id;
+          
+          return stringMatch || numericMatch || objectMatch || firestoreMatch;
+        });
+        
+        if (matchingProject) {
+          console.log(`Found matching project:`, {
+            id: matchingProject.id,
+            title: matchingProject.title,
+            docId: 'docId' in matchingProject ? matchingProject.docId : undefined
+          });
+          
+          // Try both IDs for deletion
+          let specificId = matchingProject.id;
+          let docId = 'docId' in matchingProject ? matchingProject.docId : null;
+          
+          // Try deleting with document ID first if available
+          if (docId) {
+            console.log(`Attempting to delete project with document ID: ${docId}`);
+            const docSuccess = await storage.deleteProject(docId);
+            
+            if (docSuccess) {
+              console.log(`Successfully deleted project with document ID: ${docId}`);
+              broadcastUpdate('project_deleted', { id: specificId, docId });
+              
+              return res.status(200).json({ 
+                message: "Project successfully deleted",
+                id: specificId,
+                docId
+              });
+            }
+          }
+          
+          // If document ID deletion failed or wasn't available, try regular ID
+          console.log(`Attempting to delete project with ID: ${specificId} (type: ${typeof specificId})`);
+          const idSuccess = await storage.deleteProject(specificId);
+          
+          if (idSuccess) {
+            console.log(`Successfully deleted project with ID: ${specificId}`);
+            broadcastUpdate('project_deleted', { id: specificId });
+            
+            return res.status(200).json({ 
+              message: "Project successfully deleted",
+              id: specificId
+            });
+          }
+          
+          // If both attempts failed, try one more time with the original ID string
+          console.log(`Attempting to delete project with original ID: ${originalId}`);
+          const originalSuccess = await storage.deleteProject(originalId);
+          
+          if (originalSuccess) {
+            console.log(`Successfully deleted project with original ID: ${originalId}`);
             broadcastUpdate('project_deleted', { id: originalId });
             
             return res.status(200).json({ 
-              message: "Project successfully deleted using original ID",
+              message: "Project successfully deleted",
               id: originalId
             });
           }
+          
+          // If we reached here, all deletion attempts failed
+          console.error(`Failed to delete project after multiple attempts`);
+          return res.status(500).json({ 
+            message: "Failed to delete project after multiple attempts",
+            id: originalId
+          });
+        } else {
+          console.warn(`No matching project found with ID: ${id}`);
+          return res.status(404).json({ 
+            message: "Project not found",
+            id: originalId
+          });
         }
-        
-        return res.status(404).json({ 
-          message: "Project not found or could not be deleted",
-          id,
-          originalId: req.params.id
+      } catch (searchError) {
+        console.error(`Error when searching for project:`, searchError);
+        return res.status(500).json({ 
+          message: "Error searching for project",
+          error: searchError instanceof Error ? searchError.message : String(searchError)
         });
       }
     } catch (error) {
-      console.error("Error deleting project:", error);
-      res.status(500).json({ 
-        message: "Failed to delete project due to server error",
+      console.error("Error in project deletion route:", error);
+      // Send a clean JSON response even for 500 errors - avoid HTML error pages
+      return res.status(500).json({ 
+        message: "Server error during project deletion",
         error: error instanceof Error ? error.message : String(error)
       });
     }
