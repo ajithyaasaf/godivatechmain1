@@ -186,9 +186,9 @@ const ContentDataTable = ({
     },
   });
   
-  // Update mutation
+  // Update mutation - handling both number and string IDs
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+    mutationFn: async ({ id, data }: { id: number | string; data: any }) => {
       const res = await apiRequest("PUT", `${adminApiPath}/${id}`, data);
       return { id, updatedData: await res.json() };
     },
@@ -201,9 +201,18 @@ const ContentDataTable = ({
       setSelectedItem(null);
       
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        return oldData.map(item => 
-          item.id === id ? { ...item, ...updatedData } : item
-        );
+        // Handle both string and number IDs
+        const itemId = typeof id === 'string' && !isNaN(Number(id)) 
+          ? Number(id) 
+          : id;
+          
+        return oldData.map(item => {
+          // Try to match exactly, or convert both to strings for comparison
+          if (item.id === itemId || String(item.id) === String(itemId)) {
+            return { ...item, ...updatedData };
+          }
+          return item;
+        });
       });
       
       queryClient.invalidateQueries({ queryKey: [apiPath] });
@@ -217,9 +226,9 @@ const ContentDataTable = ({
     },
   });
   
-  // Delete mutation
+  // Delete mutation - handling both number and string IDs
   const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: number | string) => {
       console.log(`Sending DELETE request to ${adminApiPath}/${id}`);
       try {
         const response = await apiRequest("DELETE", `${adminApiPath}/${id}`);
@@ -261,7 +270,16 @@ const ContentDataTable = ({
       });
       
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        const newData = oldData.filter(item => item.id !== deletedId);
+        // Handle both string and number IDs
+        const itemId = typeof deletedId === 'string' && !isNaN(Number(deletedId)) 
+          ? Number(deletedId) 
+          : deletedId;
+          
+        const newData = oldData.filter(item => {
+          // Try to match exactly, or convert both to strings
+          return item.id !== itemId && String(item.id) !== String(itemId);
+        });
+        
         console.log(`Filtered out deleted item. Items before: ${oldData.length}, after: ${newData.length}`);
         return newData;
       });
@@ -278,11 +296,34 @@ const ContentDataTable = ({
     },
   });
   
-  // Handler for adding/editing items
+  // Handler for adding/editing items - supporting various ID types
   const handleSave = (formData: any) => {
     if (selectedItem) {
-      const itemWithId = selectedItem as { id: number };
-      updateMutation.mutate({ id: itemWithId.id, data: formData });
+      let itemId: number | string | null = null;
+      
+      // Extract ID from the selected item, checking various formats
+      if (typeof selectedItem === 'object' && selectedItem !== null) {
+        if (selectedItem.id !== undefined && selectedItem.id !== null) {
+          itemId = selectedItem.id;
+        } else if (selectedItem.docId !== undefined && selectedItem.docId !== null) {
+          itemId = selectedItem.docId;
+        } else if (selectedItem.__id !== undefined && selectedItem.__id !== null) {
+          itemId = selectedItem.__id;
+        }
+      }
+      
+      if (itemId === null) {
+        console.error("Could not determine item ID for update:", selectedItem);
+        toast({
+          title: "Update failed",
+          description: "Could not identify the item to update. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      console.log(`Updating ${title} with ID:`, itemId);
+      updateMutation.mutate({ id: itemId, data: formData });
     } else {
       createMutation.mutate(formData);
     }
