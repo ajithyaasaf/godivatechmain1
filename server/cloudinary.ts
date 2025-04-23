@@ -11,7 +11,7 @@ cloudinary.config({
 
 // Verify Cloudinary configuration is present
 const verifyCloudinaryConfig = () => {
-  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_SECRET) {
     log('Missing Cloudinary environment variables', 'cloudinary');
     return false;
   }
