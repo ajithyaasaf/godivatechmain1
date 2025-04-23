@@ -65,41 +65,93 @@ const ContentDataTable = ({
     queryKey: [apiPath],
   });
   
-  // Setup Firebase real-time listener for the collection
+  // Setup WebSocket for real-time updates
   useEffect(() => {
-    // Remove the leading '/api/' and trailing 's' to match Firebase collection name
-    const collectionName = endpoint.replace(/^\//, '').replace(/s$/, '');
-    console.log(`Setting up real-time listener for ${collectionName} collection`);
+    console.log(`Setting up WebSocket for ${title} real-time updates`);
     
-    // Create a query against the collection
-    const q = query(collection(db, collectionName));
+    // Create WebSocket connection
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
     
-    // Set up the real-time listener
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      console.log(`Real-time update for ${collectionName} collection received`);
-      
-      const updatedData: any[] = [];
-      querySnapshot.forEach((doc) => {
-        // Include the document ID as the item ID
-        // Handle the case where the ID might be a string in Firestore
-        const docId = doc.id;
-        const idAsNumber = !isNaN(parseInt(docId)) ? parseInt(docId) : 0;
-        const item = { id: idAsNumber, ...doc.data() };
-        updatedData.push(item);
-      });
-      
-      // Update the cache with the latest data from Firebase
-      queryClient.setQueryData([apiPath], updatedData);
-    }, (error: Error) => {
-      console.error(`Error setting up real-time listener for ${collectionName}:`, error);
+    const socket = new WebSocket(wsUrl);
+    
+    // Connection opened
+    socket.addEventListener('open', () => {
+      console.log(`WebSocket connection established for ${title}`);
     });
     
-    // Cleanup the listener when the component unmounts
+    // Listen for messages
+    socket.addEventListener('message', (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        console.log(`WebSocket message received:`, message);
+        
+        // Handle different types of updates
+        if (message.type === 'project_deleted' && endpoint === '/projects') {
+          console.log('Project deleted, updating UI:', message.data.id);
+          // Update the cache by removing the deleted item
+          queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+            return oldData.filter(item => item.id !== message.data.id);
+          });
+          
+          toast({
+            title: "Project deleted",
+            description: "A project has been deleted by another user",
+          });
+        } 
+        else if (message.type === 'project_created' && endpoint === '/projects') {
+          console.log('Project created, updating UI:', message.data);
+          // Update the cache with the new project
+          queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+            // Avoid duplication if the item already exists
+            if (oldData.some(item => item.id === message.data.id)) {
+              return oldData;
+            }
+            return [...oldData, message.data];
+          });
+          
+          toast({
+            title: "Project created",
+            description: "A new project has been added",
+          });
+        }
+        else if (message.type === 'project_updated' && endpoint === '/projects') {
+          console.log('Project updated, updating UI:', message.data);
+          // Update the cache with the updated project
+          queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+            return oldData.map(item => 
+              item.id === message.data.id ? { ...item, ...message.data } : item
+            );
+          });
+          
+          toast({
+            title: "Project updated",
+            description: "A project has been updated",
+          });
+        }
+      } catch (error) {
+        console.error('Error handling WebSocket message:', error);
+      }
+    });
+    
+    // Handle errors
+    socket.addEventListener('error', (error) => {
+      console.error(`WebSocket error for ${title}:`, error);
+    });
+    
+    // Handle socket closing
+    socket.addEventListener('close', () => {
+      console.log(`WebSocket connection closed for ${title}`);
+    });
+    
+    // Cleanup the WebSocket when the component unmounts
     return () => {
-      console.log(`Cleaning up real-time listener for ${collectionName}`);
-      unsubscribe();
+      console.log(`Closing WebSocket for ${title}`);
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.close();
+      }
     };
-  }, [endpoint, apiPath]);
+  }, [endpoint, apiPath, title]);
   
   // Create mutation
   const createMutation = useMutation({

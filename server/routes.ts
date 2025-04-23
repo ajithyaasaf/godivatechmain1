@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { z } from "zod";
 import { 
@@ -522,6 +523,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
-
+  
+  // Create WebSocket server
+  const wss = new WebSocketServer({ 
+    server: httpServer, 
+    path: '/ws' 
+  });
+  
+  // WebSocket connection handling
+  wss.on('connection', (ws) => {
+    console.log('Client connected to WebSocket');
+    
+    // Send an initial message to confirm connection
+    ws.send(JSON.stringify({ type: 'connection', message: 'Connected to GodivaTech WebSocket server' }));
+    
+    // Listen for messages from client
+    ws.on('message', (message) => {
+      try {
+        const parsedMessage = JSON.parse(message.toString());
+        console.log('Received message:', parsedMessage);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    });
+    
+    // Handle disconnect
+    ws.on('close', () => {
+      console.log('Client disconnected from WebSocket');
+    });
+  });
+  
+  // Helper function to broadcast data to all connected clients
+  const broadcastUpdate = (type: string, data: any) => {
+    console.log(`Broadcasting ${type} update to ${wss.clients.size} clients`);
+    
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ 
+          type, 
+          data,
+          timestamp: new Date().toISOString()
+        }));
+      }
+    });
+  };
+  
+  // Modified delete handler for projects to broadcast updates
+  app.delete("/api/admin/projects/:id", isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const success = await storage.deleteProject(id);
+      
+      if (success) {
+        // Broadcast the deletion to all connected clients
+        broadcastUpdate('project_deleted', { id });
+      }
+      
+      res.status(204).end();
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      res.status(500).json({ message: "Failed to delete project" });
+    }
+  });
+  
+  // Modify project post endpoint to broadcast changes
+  app.post("/api/admin/projects", isAuthenticated, async (req, res) => {
+    try {
+      const validatedData = insertProjectSchema.parse(req.body);
+      const project = await storage.createProject(validatedData);
+      
+      // Broadcast the creation to all connected clients
+      broadcastUpdate('project_created', project);
+      
+      res.status(201).json(project);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+      }
+      console.error("Error creating project:", error);
+      res.status(500).json({ message: "Failed to create project" });
+    }
+  });
+  
+  // Modify project update endpoint to broadcast changes
+  app.put("/api/admin/projects/:id", isAuthenticated, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const project = await storage.updateProject(id, req.body);
+      if (!project) {
+        return res.status(404).json({ message: "Project not found" });
+      }
+      
+      // Broadcast the update to all connected clients
+      broadcastUpdate('project_updated', project);
+      
+      res.json(project);
+    } catch (error) {
+      console.error("Error updating project:", error);
+      res.status(500).json({ message: "Failed to update project" });
+    }
+  });
+  
   return httpServer;
 }
