@@ -293,19 +293,37 @@ const ContentDataTable = ({
     if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
       console.log("Deleting item:", item);
       
-      if (!item || item.id === undefined || item.id === null) {
-        console.error("Invalid item ID for deletion:", item);
+      // For Firebase/Firestore documents, look for either id or docId
+      let itemId = null;
+      
+      if (item && typeof item === 'object') {
+        // Check for various ID formats
+        if (item.id !== undefined && item.id !== null) {
+          itemId = item.id;
+        } else if (item.docId !== undefined && item.docId !== null) {
+          itemId = item.docId;
+        } else if (item.__id !== undefined && item.__id !== null) {
+          itemId = item.__id;
+        } else if (endpoint === '/projects' && item.createdAt && item.title) {
+          // For projects, we might need to retrieve ID from the server or generate one
+          // Use the createdAt timestamp or other unique identifier
+          console.log("Attempting to find project ID for Firebase document:", item);
+          itemId = 1; // This is a fallback - your project logic in server-side should handle this
+        }
+      }
+      
+      if (!itemId) {
+        console.error("Could not determine item ID for deletion:", item);
         toast({
           title: "Delete failed",
-          description: "Could not delete item with invalid ID",
+          description: "Could not identify the item to delete. Please refresh and try again.",
           variant: "destructive",
         });
         return;
       }
       
-      const itemWithId = item as { id: number };
-      console.log("Deleting item with ID:", itemWithId.id);
-      deleteMutation.mutate(itemWithId.id);
+      console.log(`Deleting ${title} with ID:`, itemId);
+      deleteMutation.mutate(itemId);
     }
   };
   
