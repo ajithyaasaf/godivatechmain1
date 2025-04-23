@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import { Express, Request, Response, NextFunction } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
@@ -41,8 +41,11 @@ export function setupAuth(app: Express) {
     store: storage.sessionStore,
     cookie: {
       secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
-    }
+      maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days for persistent sessions
+      httpOnly: true,
+      sameSite: 'lax'
+    },
+    rolling: true // Reset expiration on every response
   };
 
   app.set("trust proxy", 1);
@@ -85,7 +88,27 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
-    res.status(200).json(req.user);
+    // Check if the request includes a rememberMe flag
+    const rememberMe = req.body.rememberMe === true;
+    
+    // If rememberMe is true, set a longer session
+    if (rememberMe && req.session.cookie) {
+      // Set session to last for 30 days
+      req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
+      console.log('Remember Me enabled, extending session to 30 days');
+    } else if (req.session.cookie) {
+      // Standard session length (shorter)
+      req.session.cookie.maxAge = 2 * 60 * 60 * 1000; // 2 hours
+      console.log('Standard session length of 2 hours set');
+    }
+    
+    // Save the session explicitly to ensure cookie is set properly
+    req.session.save((err) => {
+      if (err) {
+        console.error('Error saving session:', err);
+      }
+      res.status(200).json(req.user);
+    });
   });
 
   app.post("/api/logout", (req, res, next) => {
@@ -110,7 +133,7 @@ export function setupAuth(app: Express) {
 }
 
 // Middleware to check if the user is authenticated
-export function isAuthenticated(req: Express.Request, res: Express.Response, next: Express.NextFunction) {
+export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
   if (req.isAuthenticated()) {
     return next();
   }
