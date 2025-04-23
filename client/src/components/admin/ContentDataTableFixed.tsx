@@ -111,6 +111,11 @@ const ContentDataTable = ({
                 // Handle deletion
                 if (action === 'deleted') {
                   queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                    if (!oldData || !Array.isArray(oldData)) {
+                      console.warn('Invalid data in query cache, cannot update UI');
+                      return oldData;
+                    }
+                    
                     // Handle both string and number IDs
                     const itemId = message.data.id;
                     
@@ -120,16 +125,15 @@ const ContentDataTable = ({
                       const idMatch = item.id !== itemId && String(item.id) !== String(itemId);
                       return idMatch;
                     });
-                    console.log(`Filtered out deleted item. Items before: ${beforeCount}, after: ${newData.length}`);
+                    console.log(`WebSocket: Filtered out deleted item. Items before: ${beforeCount}, after: ${newData.length}`);
                     
                     return newData;
                   });
                   
-                  // Force a refetch to ensure UI is synced with server
-                  setTimeout(() => {
-                    console.log('Performing additional refetch to ensure data consistency');
-                    refetch();
-                  }, 500);
+                  // Force immediate refetch to ensure UI is synced with server
+                  console.log('WebSocket: Immediately refetching data after deletion');
+                  queryClient.invalidateQueries({ queryKey: [apiPath] });
+                  queryClient.refetchQueries({ queryKey: [apiPath], exact: true });
                   
                   toast({
                     title: `${contentType.replace('_', ' ')} deleted`,
@@ -139,9 +143,17 @@ const ContentDataTable = ({
                 // Handle creation
                 else if (action === 'created') {
                   queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                    if (!oldData || !Array.isArray(oldData)) {
+                      console.warn('Invalid data in query cache, cannot update UI for creation');
+                      return oldData;
+                    }
+                    
+                    // Check if item already exists to avoid duplicates
                     if (oldData.some(item => item.id === message.data.id || String(item.id) === String(message.data.id))) {
                       return oldData;
                     }
+                    
+                    console.log(`WebSocket: Adding new item to UI. Items before: ${oldData.length}, after: ${oldData.length + 1}`);
                     return [...oldData, message.data];
                   });
                   
@@ -150,19 +162,29 @@ const ContentDataTable = ({
                     description: `A new ${contentType.replace('_', ' ')} has been added`,
                   });
                   
-                  // Force a refetch to ensure UI is synced with server
-                  setTimeout(() => refetch(), 200);
+                  // Force immediate refetch to ensure UI is synced with server
+                  console.log('WebSocket: Immediately refetching data after creation');
+                  queryClient.invalidateQueries({ queryKey: [apiPath] });
+                  queryClient.refetchQueries({ queryKey: [apiPath], exact: true });
                 }
                 // Handle updates
                 else if (action === 'updated') {
                   queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-                    return oldData.map(item => {
+                    if (!oldData || !Array.isArray(oldData)) {
+                      console.warn('Invalid data in query cache, cannot update UI for update');
+                      return oldData;
+                    }
+                    
+                    const newData = oldData.map(item => {
                       // Match using both exact and string conversion approaches
                       if (item.id === message.data.id || String(item.id) === String(message.data.id)) {
+                        console.log(`WebSocket: Updating item with ID ${item.id} in UI`);
                         return { ...item, ...message.data };
                       }
                       return item;
                     });
+                    
+                    return newData;
                   });
                   
                   toast({
@@ -170,8 +192,10 @@ const ContentDataTable = ({
                     description: `A ${contentType.replace('_', ' ')} has been updated`,
                   });
                   
-                  // Force a refetch to ensure UI is synced with server
-                  setTimeout(() => refetch(), 200);
+                  // Force immediate refetch to ensure UI is synced with server
+                  console.log('WebSocket: Immediately refetching data after update');
+                  queryClient.invalidateQueries({ queryKey: [apiPath] });
+                  queryClient.refetchQueries({ queryKey: [apiPath], exact: true });
                 }
               }
             }
@@ -314,7 +338,13 @@ const ContentDataTable = ({
         description: `${title} has been deleted.`,
       });
       
+      // Immediately update the UI by removing the deleted item from the query cache
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!oldData || !Array.isArray(oldData)) {
+          console.warn('Invalid data in query cache, cannot update UI');
+          return oldData;
+        }
+        
         // Handle both string and number IDs
         const itemId = typeof deletedId === 'string' && !isNaN(Number(deletedId)) 
           ? Number(deletedId) 
@@ -322,14 +352,19 @@ const ContentDataTable = ({
           
         const newData = oldData.filter(item => {
           // Try to match exactly, or convert both to strings
-          return item.id !== itemId && String(item.id) !== String(itemId);
+          const idMatch = item.id !== itemId && String(item.id) !== String(itemId);
+          return idMatch;
         });
         
         console.log(`Filtered out deleted item. Items before: ${oldData.length}, after: ${newData.length}`);
         return newData;
       });
       
+      // Force refetch to ensure consistency - this will update the UI with the latest data from the server
       queryClient.invalidateQueries({ queryKey: [apiPath] });
+      
+      // Immediately trigger a refetch for this specific endpoint to ensure data consistency
+      queryClient.refetchQueries({ queryKey: [apiPath], exact: true });
     },
     onError: (error: Error) => {
       console.error(`Delete mutation error:`, error);
