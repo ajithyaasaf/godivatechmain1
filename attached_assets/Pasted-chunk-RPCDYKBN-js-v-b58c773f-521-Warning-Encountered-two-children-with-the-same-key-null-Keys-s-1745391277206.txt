@@ -1,0 +1,22 @@
+chunk-RPCDYKBN.js?v=b58c773f:521 Warning: Encountered two children with the same key, `null`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at tbody
+    at _c5 (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.dev/src/components/ui/table.tsx:55:12)
+    at table
+    at div
+    at _c (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.dev/src/components/ui/table.tsx:20:11)
+    at div
+    at div
+    at ContentDataTable (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.dev/src/components/admin/ContentDataTable.tsx?t=1745391090870:43:3)
+    at div
+    at main
+    at div
+    at AdminLayout (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.dev/src/components/admin/AdminLayout.tsx?t=1745391090870:75:24)
+    at ProjectsPage
+    at Route (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b58c773f:323:16)
+    at ProtectedRoute (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.dev/src/lib/protected-route.tsx?t=1745391090870:22:3)
+    at Switch (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.d…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=b58c773f:379:17)
+    at AuthProvider (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.dev/src/hooks/use-auth.tsx?t=1745391090870:27:32)
+    at App (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.dev/src/App.tsx?t=1745391090870&v=O0Uy_PDsE48S1z_wQ64Gz:43:22)
+    at Provider (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.d…unner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=b58c773f:38:15)
+    at TooltipProvider (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.d…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=b58c773f:61:5)
+    at QueryClientProvider (https://177e842a-a61c-410d-b94f-266c6fa8e644-00-ru09qzt24n0x.sisko.replit.d…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=b58c773f:2805:3)

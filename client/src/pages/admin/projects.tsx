@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import AdminLayout from "@/components/admin/AdminLayout";
-import ContentDataTable from "@/components/admin/ContentDataTable";
+import ContentDataTable from "@/components/admin/ContentDataTableFixed";
 import ProjectForm from "@/components/admin/ProjectForm";
 
 const ProjectsPage = () => {

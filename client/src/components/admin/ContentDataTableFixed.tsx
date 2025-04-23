@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState, useEffect } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { 
   Table, 
   TableBody, 
@@ -10,23 +10,25 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { 
-  ArrowUpDown, 
-  Check, 
-  Edit, 
-  Plus, 
-  Search, 
-  Trash2, 
-  X,
-  RefreshCw
-} from "lucide-react";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest, queryClient } from "@/lib/queryClient";
-import { collection, onSnapshot, query } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { apiRequest, queryClient } from '@/lib/queryClient';
+
+import { 
+  Search, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  RefreshCw, 
+  ArrowUpDown
+} from 'lucide-react';
 
 interface Column {
   key: string;
@@ -45,58 +47,52 @@ interface ContentDataTableProps {
   ) => React.ReactNode;
 }
 
-const ContentDataTable = ({ 
-  title, 
-  endpoint, 
-  columns, 
-  renderForm 
+const ContentDataTable = ({
+  title,
+  endpoint,
+  columns,
+  renderForm,
 }: ContentDataTableProps) => {
   const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
-  // API endpoint paths
+  // Construct API paths
   const apiPath = `/api${endpoint}`;
   const adminApiPath = `/api/admin${endpoint}`;
   
-  // Fetch data with React Query
+  // Fetch data
   const { data = [], isLoading, refetch } = useQuery<any[]>({
     queryKey: [apiPath],
   });
   
-  // Setup WebSocket for real-time updates
+  // WebSocket connection
   useEffect(() => {
     console.log(`Setting up WebSocket for ${title} real-time updates`);
     
-    // Create WebSocket connection - using absolute URL with current host
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.host;
-    // Important: Include the /ws path in the URL
-    const wsUrl = `${protocol}//${host}/ws`;
+    let socket: WebSocket | null = null;
     
-    console.log(`Attempting to connect to WebSocket at: ${wsUrl}`);
-    
-    let socket: WebSocket;
-    
+    // Create WebSocket connection
     try {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.host;
+      const wsUrl = `${protocol}//${host}/ws`;
+      
+      console.log(`Connecting to WebSocket at: ${wsUrl}`);
       socket = new WebSocket(wsUrl);
       
-      // Connection opened
       socket.addEventListener('open', () => {
         console.log(`WebSocket connection established for ${title}`);
       });
       
-      // Listen for messages
       socket.addEventListener('message', (event) => {
         try {
           const message = JSON.parse(event.data);
           console.log(`WebSocket message received:`, message);
           
-          // Handle different types of updates
           if (message.type === 'project_deleted' && endpoint === '/projects') {
             console.log('Project deleted, updating UI:', message.data.id);
-            // Update the cache by removing the deleted item
             queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
               return oldData.filter(item => item.id !== message.data.id);
             });
@@ -108,9 +104,7 @@ const ContentDataTable = ({
           } 
           else if (message.type === 'project_created' && endpoint === '/projects') {
             console.log('Project created, updating UI:', message.data);
-            // Update the cache with the new project
             queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-              // Avoid duplication if the item already exists
               if (oldData.some(item => item.id === message.data.id)) {
                 return oldData;
               }
@@ -124,7 +118,6 @@ const ContentDataTable = ({
           }
           else if (message.type === 'project_updated' && endpoint === '/projects') {
             console.log('Project updated, updating UI:', message.data);
-            // Update the cache with the updated project
             queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
               return oldData.map(item => 
                 item.id === message.data.id ? { ...item, ...message.data } : item
@@ -141,28 +134,25 @@ const ContentDataTable = ({
         }
       });
       
-      // Handle errors
       socket.addEventListener('error', (error) => {
         console.error(`WebSocket error for ${title}:`, error);
       });
       
-      // Handle socket closing
       socket.addEventListener('close', (event) => {
         console.log(`WebSocket connection closed for ${title} with code ${event.code}`);
       });
     } catch (error) {
-      console.error(`Error setting up WebSocket for ${title}:`, error);
+      console.error(`Error creating WebSocket connection for ${title}:`, error);
     }
     
-    // Cleanup the WebSocket when the component unmounts
+    // Cleanup function
     return () => {
-      console.log(`Cleaning up WebSocket for ${title}`);
       if (socket && socket.readyState === WebSocket.OPEN) {
-        console.log(`Closing WebSocket connection for ${title}`);
+        console.log(`Closing WebSocket for ${title}`);
         socket.close();
       }
     };
-  }, [endpoint, apiPath, title]);
+  }, [apiPath, endpoint, title]);
   
   // Create mutation
   const createMutation = useMutation({
@@ -175,14 +165,12 @@ const ContentDataTable = ({
         title: "Created successfully",
         description: `${title} has been created.`,
       });
-      // Close dialog and refetch data
       setIsDialogOpen(false);
       setSelectedItem(null);
-      // Immediately update the cache with the new data
+      
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
         return [...oldData, newData];
       });
-      // Also invalidate the query to ensure data consistency
       queryClient.invalidateQueries({ queryKey: [apiPath] });
     },
     onError: (error: Error) => {
@@ -205,18 +193,15 @@ const ContentDataTable = ({
         title: "Updated successfully",
         description: `${title} has been updated.`,
       });
-      // Close dialog and update cache immediately
       setIsDialogOpen(false);
       setSelectedItem(null);
       
-      // Update the cache with the updated data
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
         return oldData.map(item => 
           item.id === id ? { ...item, ...updatedData } : item
         );
       });
       
-      // Also invalidate the query to ensure data consistency
       queryClient.invalidateQueries({ queryKey: [apiPath] });
     },
     onError: (error: Error) => {
@@ -236,23 +221,19 @@ const ContentDataTable = ({
         const response = await apiRequest("DELETE", `${adminApiPath}/${id}`);
         console.log(`Response from delete operation:`, response);
         
-        // Check if response is successful (2xx status code)
         if (response.ok) {
           console.log(`Deletion with ID ${id} was successful on server`);
           let responseData = {};
           
-          // Try to get response body if there is one
           try {
             responseData = await response.json();
             console.log('Delete response data:', responseData);
           } catch (e) {
-            // No JSON response (normal for 204 No Content)
             console.log('No JSON response body');
           }
           
           return id;
         } else {
-          // Server returned error response
           let errorMessage = `Server returned ${response.status}`;
           try {
             const errorData = await response.json();
@@ -275,14 +256,12 @@ const ContentDataTable = ({
         description: `${title} has been deleted.`,
       });
       
-      // Immediately update the cache to remove the deleted item
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
         const newData = oldData.filter(item => item.id !== deletedId);
         console.log(`Filtered out deleted item. Items before: ${oldData.length}, after: ${newData.length}`);
         return newData;
       });
       
-      // Also invalidate the query to ensure data consistency
       queryClient.invalidateQueries({ queryKey: [apiPath] });
     },
     onError: (error: Error) => {
@@ -298,11 +277,9 @@ const ContentDataTable = ({
   // Handler for adding/editing items
   const handleSave = (formData: any) => {
     if (selectedItem) {
-      // Update existing item
       const itemWithId = selectedItem as { id: number };
       updateMutation.mutate({ id: itemWithId.id, data: formData });
     } else {
-      // Create new item
       createMutation.mutate(formData);
     }
   };
@@ -450,9 +427,9 @@ const ContentDataTable = ({
               </TableRow>
             ) : (
               filteredData.map((item: any) => (
-                <TableRow key={item.id}>
+                <TableRow key={item.id || `item-${Math.random().toString(36).substr(2, 9)}`}>
                   {columns.map((column) => (
-                    <TableCell key={`${item.id}-${column.key}`}>
+                    <TableCell key={`${item.id || Math.random().toString(36).substr(2, 9)}-${column.key}`}>
                       {column.render 
                         ? column.render(item[column.key], item) 
                         : item[column.key]
