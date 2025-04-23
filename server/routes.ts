@@ -571,18 +571,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Modified delete handler for projects to broadcast updates
   app.delete("/api/admin/projects/:id", isAuthenticated, async (req, res) => {
     try {
+      console.log(`Received delete request for project with ID: ${req.params.id}`);
+      
+      if (!req.params.id || req.params.id === 'null' || req.params.id === 'undefined') {
+        console.error(`Invalid project ID for deletion: ${req.params.id}`);
+        return res.status(400).json({ 
+          message: "Invalid project ID provided for deletion",
+          received: req.params.id
+        });
+      }
+      
       const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        console.error(`Cannot parse project ID for deletion: ${req.params.id}`);
+        return res.status(400).json({ 
+          message: "Project ID must be a valid number",
+          received: req.params.id
+        });
+      }
+      
+      console.log(`Attempting to delete project with parsed ID: ${id}`);
       const success = await storage.deleteProject(id);
       
       if (success) {
+        console.log(`Successfully deleted project with ID: ${id}, broadcasting update`);
         // Broadcast the deletion to all connected clients
         broadcastUpdate('project_deleted', { id });
+        return res.status(200).json({ 
+          message: "Project successfully deleted",
+          id
+        });
+      } else {
+        console.warn(`Project with ID ${id} could not be deleted or was not found`);
+        return res.status(404).json({ 
+          message: "Project not found or could not be deleted",
+          id
+        });
       }
-      
-      res.status(204).end();
     } catch (error) {
       console.error("Error deleting project:", error);
-      res.status(500).json({ message: "Failed to delete project" });
+      res.status(500).json({ 
+        message: "Failed to delete project due to server error",
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
   

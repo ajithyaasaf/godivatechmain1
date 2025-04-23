@@ -261,7 +261,20 @@ const ContentDataTable = ({
   // Handler for deleting items
   const handleDelete = (item: any) => {
     if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
+      console.log("Deleting item:", item);
+      
+      if (!item || item.id === undefined || item.id === null) {
+        console.error("Invalid item ID for deletion:", item);
+        toast({
+          title: "Delete failed",
+          description: "Could not delete item with invalid ID",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const itemWithId = item as { id: number };
+      console.log("Deleting item with ID:", itemWithId.id);
       deleteMutation.mutate(itemWithId.id);
     }
   };

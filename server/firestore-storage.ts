@@ -414,7 +414,17 @@ export class FirestoreStorage {
         ...insertProject,
         id: nextId,
         link: insertProject.link ?? null,
-        image: insertProject.image ?? null
+        image: insertProject.image ?? null,
+        gallery: insertProject.gallery ?? null,
+        fullDescription: insertProject.fullDescription ?? null,
+        showcaseUrl: insertProject.showcaseUrl ?? null,
+        videoUrl: insertProject.videoUrl ?? null,
+        clientName: insertProject.clientName ?? null,
+        clientUrl: insertProject.clientUrl ?? null,
+        featured: insertProject.featured ?? false,
+        completed: insertProject.completed ?? true,
+        completionDate: insertProject.completionDate ?? null,
+        order: insertProject.order ?? null
       };
       
       const projectRef = doc(db, 'projects', nextId.toString());
@@ -458,8 +468,26 @@ export class FirestoreStorage {
 
   async deleteProject(id: number): Promise<boolean> {
     try {
-      const docRef = doc(db, 'projects', id.toString());
-      await deleteDoc(docRef);
+      console.log(`Attempting to delete project with ID: ${id}`);
+      
+      // Validate ID to prevent "null" or undefined
+      if (id === null || id === undefined || isNaN(id)) {
+        console.error(`Invalid project ID for deletion: ${id}`);
+        return false;
+      }
+      
+      // Check if the document exists before deleting
+      const projectRef = doc(db, 'projects', id.toString());
+      const docSnap = await getDoc(projectRef);
+      
+      if (!docSnap.exists()) {
+        console.warn(`Project with ID ${id} not found, cannot delete`);
+        return false;
+      }
+      
+      console.log(`Project found, proceeding with deletion of ID: ${id}`);
+      await deleteDoc(projectRef);
+      console.log(`Project with ID ${id} successfully deleted from Firestore`);
       return true;
     } catch (error) {
       console.error("Error deleting project:", error);
