@@ -467,19 +467,19 @@ Object.defineProperty(MemStorage.prototype, 'sessionStore', {
 });
 
 // Database storage implementation
+// Only use db for type compatibility - actual operations will use Firebase
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
-import connectPg from "connect-pg-simple";
-import { pool } from "./db";
+import session from "express-session";
 
 export class DatabaseStorage implements IStorage {
   sessionStore: session.SessionStore;
   
   constructor() {
-    // Initialize session store
-    this.sessionStore = new (connectPg(session))({
-      pool,
-      createTableIfMissing: true
+    // Use MemoryStore instead of PostgreSQL for sessions
+    const MemoryStore = require('memorystore')(session);
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // prune expired entries every 24h
     });
   }
   

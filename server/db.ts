@@ -1,15 +1,18 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+// This file is now a shim for Firebase
+// Import schema for type reference only
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
+// Create mock DB objects to prevent errors when importing this file
+// All actual database operations will go through firestore-storage.ts
+const mockDb = {
+  select: () => mockDb,
+  from: () => mockDb,
+  where: () => mockDb,
+  orderBy: () => mockDb,
+  insert: () => mockDb,
+  values: () => mockDb,
+  returning: () => [{}],
+  delete: () => mockDb,
+};
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
-
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+export const db = mockDb;
