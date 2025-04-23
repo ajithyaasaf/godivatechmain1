@@ -52,7 +52,7 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
   const { toast } = useToast();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -61,7 +61,16 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const userInitial = user?.username?.charAt(0).toUpperCase() || 'A';
 
   const handleLogout = () => {
-    logoutMutation.mutate();
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        // Directly navigate to auth page after successful logout
+        console.log("Logout successful, redirecting to auth page");
+        // Force redirect to auth page
+        setTimeout(() => {
+          window.location.href = '/auth';
+        }, 100);
+      }
+    });
   };
 
   const closeMobileNav = () => {

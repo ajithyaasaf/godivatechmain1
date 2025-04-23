@@ -90,6 +90,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Logout successful",
         description: "You have been logged out successfully",
       });
+      
+      // Redirect to auth page after successful logout (this will be used if no onSuccess handler is provided)
+      // We don't use this directly because we want to let components handle their own redirection
+      // But this serves as a fallback
+      if (window.location.pathname.startsWith('/admin')) {
+        setTimeout(() => {
+          window.location.href = '/auth';
+        }, 100);
+      }
     },
     onError: (error: Error) => {
       toast({
