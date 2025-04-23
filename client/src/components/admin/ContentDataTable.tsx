@@ -67,7 +67,7 @@ const ContentDataTable = ({
   
   // Setup WebSocket for real-time updates
   useEffect(() => {
-    console.log(`Setting up WebSocket for ${title} real-time updates`);
+    console.log(`Setting up enhanced WebSocket for ${title} real-time updates`);
     
     // Create WebSocket connection - using absolute URL with current host
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -77,154 +77,276 @@ const ContentDataTable = ({
     
     console.log(`Attempting to connect to WebSocket at: ${wsUrl}`);
     
-    let socket: WebSocket;
+    let socket: WebSocket | null = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+    let reconnectTimer: NodeJS.Timeout | null = null;
     
-    try {
-      socket = new WebSocket(wsUrl);
+    // Function to create and connect the WebSocket
+    const connectWebSocket = () => {
+      try {
+        // Close existing socket if it exists
+        if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+          socket.close();
+        }
       
-      // Connection opened
-      socket.addEventListener('open', () => {
-        console.log(`WebSocket connection established for ${title}`);
-      });
-      
-      // Listen for messages with enhanced content type handling
-      socket.addEventListener('message', (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          console.log(`WebSocket message received:`, message);
+        // Create a new socket
+        socket = new WebSocket(wsUrl);
+        
+        // Connection opened
+        socket.addEventListener('open', () => {
+          console.log(`WebSocket connection established for ${title}`);
+          reconnectAttempts = 0; // Reset reconnect attempts on successful connection
           
-          // Generic message matcher for any content type
-          const contentTypeMatch = message.type?.match(/^(\w+)_(deleted|created|updated)$/);
-          
-          if (contentTypeMatch) {
-            const [_, contentType, action] = contentTypeMatch;
+          // Send a ping to verify the connection
+          try {
+            socket.send(JSON.stringify({ 
+              type: 'ping', 
+              component: title,
+              timestamp: new Date().toISOString() 
+            }));
+          } catch (pingError) {
+            console.warn(`Failed to send initial ping: ${pingError}`);
+          }
+        });
+        
+        // Listen for messages with improved handling for all CRUD operations
+        socket.addEventListener('message', (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            console.log(`WebSocket message received:`, message);
             
-            // Match the contentType to the correct endpoint
-            const matchingEndpoint = contentType === 'project' ? '/projects' : 
-                                   contentType === 'service' ? '/services' : 
-                                   contentType === 'team_member' ? '/team-members' : 
-                                   contentType === 'testimonial' ? '/testimonials' : 
-                                   contentType === 'blog_post' ? '/blog-posts' : 
-                                   contentType === 'category' ? '/categories' : 
-                                   contentType === 'subscriber' ? '/subscribers' : 
-                                   contentType === 'contact_message' ? '/contact-messages' : null;
+            // Generic message matcher for any content type
+            const contentTypeMatch = message.type?.match(/^(\w+)_(deleted|created|updated)$/);
             
-            // Check if this message is relevant to this component's endpoint
-            if (matchingEndpoint === endpoint) {
-              console.log(`${contentType} ${action}, updating UI:`, message.data);
+            if (contentTypeMatch) {
+              const [_, contentType, action] = contentTypeMatch;
               
-              // Handle deletion
-              if (action === 'deleted') {
-                queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-                  if (!oldData || !Array.isArray(oldData)) {
-                    console.warn('Invalid data in query cache, cannot update UI');
-                    return oldData;
-                  }
-                  
-                  // Handle both string and number IDs
-                  const itemId = message.data.id;
-                  
-                  // Log before and after counts
-                  const beforeCount = oldData.length;
-                  const newData = oldData.filter(item => {
-                    const idMatch = item.id !== itemId && String(item.id) !== String(itemId);
-                    return idMatch;
-                  });
-                  console.log(`WebSocket: Filtered out deleted item. Items before: ${beforeCount}, after: ${newData.length}`);
-                  
-                  return newData;
-                });
+              // Match the contentType to the correct endpoint
+              const matchingEndpoint = contentType === 'project' ? '/projects' : 
+                                     contentType === 'service' ? '/services' : 
+                                     contentType === 'team_member' ? '/team-members' : 
+                                     contentType === 'testimonial' ? '/testimonials' : 
+                                     contentType === 'blog_post' ? '/blog-posts' : 
+                                     contentType === 'category' ? '/categories' : 
+                                     contentType === 'subscriber' ? '/subscribers' : 
+                                     contentType === 'contact_message' ? '/contact-messages' : null;
+              
+              // Check if this message is relevant to this component's endpoint
+              if (matchingEndpoint === endpoint) {
+                console.log(`${contentType} ${action}, updating UI IMMEDIATELY:`, message.data);
                 
-                toast({
-                  title: `${contentType.replace('_', ' ')} deleted`,
-                  description: `A ${contentType.replace('_', ' ')} has been deleted by another user`,
-                });
-                
-                // Force immediate refetch to ensure UI is synced with server
-                queryClient.invalidateQueries({ queryKey: [apiPath] });
-              }
-              // Handle creation
-              else if (action === 'created') {
-                queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-                  if (!oldData || !Array.isArray(oldData)) {
-                    console.warn('Invalid data in query cache, cannot update UI for creation');
-                    return oldData;
-                  }
-                  
-                  // Check if item already exists to avoid duplicates
-                  if (oldData.some(item => item.id === message.data.id || String(item.id) === String(message.data.id))) {
-                    return oldData;
-                  }
-                  
-                  console.log(`WebSocket: Adding new item to UI. Items before: ${oldData.length}, after: ${oldData.length + 1}`);
-                  return [...oldData, message.data];
-                });
-                
-                toast({
-                  title: `${contentType.replace('_', ' ')} created`,
-                  description: `A new ${contentType.replace('_', ' ')} has been added`,
-                });
-                
-                // Force immediate refetch to ensure UI is synced with server
-                queryClient.invalidateQueries({ queryKey: [apiPath] });
-              }
-              // Handle updates
-              else if (action === 'updated') {
-                queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-                  if (!oldData || !Array.isArray(oldData)) {
-                    console.warn('Invalid data in query cache, cannot update UI for update');
-                    return oldData;
-                  }
-                  
-                  const newData = oldData.map(item => {
-                    // Match using both exact and string conversion approaches
-                    if (item.id === message.data.id || String(item.id) === String(message.data.id)) {
-                      console.log(`WebSocket: Updating item with ID ${item.id} in UI`);
-                      return { ...item, ...message.data };
-                    }
-                    return item;
-                  });
-                  
-                  return newData;
-                });
-                
-                toast({
-                  title: `${contentType.replace('_', ' ')} updated`,
-                  description: `A ${contentType.replace('_', ' ')} has been updated`,
-                });
-                
-                // Force immediate refetch to ensure UI is synced with server
-                queryClient.invalidateQueries({ queryKey: [apiPath] });
+                // Handle deletion
+                if (action === 'deleted') {
+                  handleRealtimeDelete(message);
+                }
+                // Handle creation
+                else if (action === 'created') {
+                  handleRealtimeCreate(message);
+                }
+                // Handle updates
+                else if (action === 'updated') {
+                  handleRealtimeUpdate(message);
+                }
               }
             }
+          } catch (error) {
+            console.error('Error handling WebSocket message:', error);
           }
-        } catch (error) {
-          console.error('Error handling WebSocket message:', error);
+        });
+        
+        // Handle errors
+        socket.addEventListener('error', (error) => {
+          console.error(`WebSocket error for ${title}:`, error);
+        });
+        
+        // Handle socket closing with reconnect logic
+        socket.addEventListener('close', (event) => {
+          console.log(`WebSocket connection closed for ${title} with code ${event.code} - reason: ${event.reason || 'No reason provided'}`);
+          
+          // If not a normal closure and we haven't exceeded max reconnect attempts, try to reconnect
+          if (event.code !== 1000 && reconnectAttempts < maxReconnectAttempts) {
+            reconnectAttempts++;
+            
+            // Exponential backoff for reconnection attempts (1s, 2s, 4s, 8s, 16s)
+            const delay = Math.min(1000 * Math.pow(2, reconnectAttempts - 1), 16000);
+            
+            console.log(`Will attempt to reconnect WebSocket (${reconnectAttempts}/${maxReconnectAttempts}) after ${delay}ms delay`);
+            
+            if (reconnectTimer) clearTimeout(reconnectTimer);
+            reconnectTimer = setTimeout(connectWebSocket, delay);
+          } else if (reconnectAttempts >= maxReconnectAttempts) {
+            console.warn(`Giving up on WebSocket reconnection after ${reconnectAttempts} attempts`);
+          }
+        });
+      } catch (error) {
+        console.error(`Error setting up WebSocket for ${title}:`, error);
+      }
+    };
+    
+    // Handler functions for each type of real-time update
+    const handleRealtimeDelete = (message: any) => {
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!oldData || !Array.isArray(oldData)) {
+          console.warn('Invalid data in query cache, cannot update UI for deletion');
+          return oldData;
         }
+        
+        // Handle all possible ID types (numeric, string, Firebase docId)
+        const itemId = message.data.id;
+        const docId = message.data.docId; // For Firebase document IDs
+        
+        // Log before count
+        const beforeCount = oldData.length;
+        
+        // Filter out the deleted item using multiple ID matching approaches
+        const newData = oldData.filter(item => {
+          // Regular ID matching (handles both number and string IDs)
+          const regularIdMatch = String(item.id) !== String(itemId);
+          
+          // Firebase document ID matching if available
+          const docIdMatch = !docId || !item.docId || item.docId !== docId;
+          
+          // Keep the item only if both checks pass
+          return regularIdMatch && docIdMatch;
+        });
+        
+        // Log the result
+        console.log(`WebSocket DELETE: Removed item from UI. Items before: ${beforeCount}, after: ${newData.length}`);
+        
+        return newData;
       });
       
-      // Handle errors
-      socket.addEventListener('error', (error) => {
-        console.error(`WebSocket error for ${title}:`, error);
+      // Show a toast notification
+      toast({
+        title: `${title} deleted`,
+        description: `A ${title.toLowerCase()} has been deleted in real-time`,
+        variant: "default"
       });
       
-      // Handle socket closing
-      socket.addEventListener('close', (event) => {
-        console.log(`WebSocket connection closed for ${title} with code ${event.code}`);
+      // Force a refetch to ensure consistency
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 300);
+    };
+    
+    const handleRealtimeCreate = (message: any) => {
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!oldData || !Array.isArray(oldData)) {
+          console.warn('Invalid data in query cache, cannot update UI for creation');
+          return [message.data]; // If no existing data, just use the new item
+        }
+        
+        // Check if the item already exists to avoid duplicates
+        const exists = oldData.some(item => {
+          // Check standard ID match
+          if (String(item.id) === String(message.data.id)) {
+            return true;
+          }
+          
+          // Check Firebase document ID match if available
+          if (item.docId && message.data.docId && item.docId === message.data.docId) {
+            return true;
+          }
+          
+          // Check temporary ID from optimistic updates
+          if (item.tempId && item.tempId === message.data.tempId) {
+            return true;
+          }
+          
+          return false;
+        });
+        
+        if (exists) {
+          console.log(`WebSocket CREATE: Item already exists in UI, not adding duplicate`);
+          return oldData;
+        }
+        
+        // Add the new item
+        console.log(`WebSocket CREATE: Adding new item to UI. Items before: ${oldData.length}, after: ${oldData.length + 1}`);
+        return [...oldData, message.data];
       });
-    } catch (error) {
-      console.error(`Error setting up WebSocket for ${title}:`, error);
-    }
+      
+      // Show a toast notification
+      toast({
+        title: `New ${title} added`,
+        description: `A new ${title.toLowerCase()} has been added in real-time`,
+        variant: "default"
+      });
+      
+      // Force a refetch to ensure consistency
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 300);
+    };
+    
+    const handleRealtimeUpdate = (message: any) => {
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!oldData || !Array.isArray(oldData)) {
+          console.warn('Invalid data in query cache, cannot update UI for update');
+          return oldData;
+        }
+        
+        let updated = false;
+        
+        // Update the matching item
+        const newData = oldData.map(item => {
+          // Check all possible ID matching approaches
+          if (
+            String(item.id) === String(message.data.id) || 
+            (item.docId && message.data.docId && item.docId === message.data.docId)
+          ) {
+            updated = true;
+            console.log(`WebSocket UPDATE: Updating item with ID ${item.id} in UI`);
+            
+            // Return merged item, preserving any fields from both objects
+            return { 
+              ...item,        // Keep original properties 
+              ...message.data, // Apply new properties from update
+              __optimistic: undefined // Clear optimistic flag if present
+            };
+          }
+          return item;
+        });
+        
+        if (!updated) {
+          console.log(`WebSocket UPDATE: No matching item found to update`);
+        }
+        
+        return newData;
+      });
+      
+      // Show a toast notification
+      toast({
+        title: `${title} updated`,
+        description: `A ${title.toLowerCase()} has been updated in real-time`,
+        variant: "default"
+      });
+      
+      // Force a refetch to ensure consistency
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 300);
+    };
+    
+    // Start the WebSocket connection
+    connectWebSocket();
     
     // Cleanup the WebSocket when the component unmounts
     return () => {
       console.log(`Cleaning up WebSocket for ${title}`);
-      if (socket && socket.readyState === WebSocket.OPEN) {
+      
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
+      
+      if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
         console.log(`Closing WebSocket connection for ${title}`);
-        socket.close();
+        socket.close(1000, "Component unmounting"); // 1000 = normal closure
       }
     };
-  }, [endpoint, apiPath, title]);
+  }, [endpoint, apiPath, title, queryClient, toast]);
   
   // Create mutation with optimistic updates and duplicate prevention
   const createMutation = useMutation({

@@ -756,22 +756,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Modify project post endpoint to broadcast changes
+  // Enhanced project create endpoint with better WebSocket broadcasting
   app.post("/api/admin/projects", isAuthenticated, async (req, res) => {
     try {
+      console.log(`=== PROJECT CREATION OPERATION ===`);
+      
+      // Validate the input data
       const validatedData = insertProjectSchema.parse(req.body);
+      console.log(`Creating new project with title: "${validatedData.title}"`);
+      
+      // Create the project in storage
       const project = await storage.createProject(validatedData);
+      console.log(`Successfully created project with ID: ${project.id}, docId: ${(project as any).docId || 'N/A'}`);
       
       // Broadcast the creation to all connected clients
-      broadcastUpdate('project_created', project);
+      console.log(`Broadcasting project_created event to connected clients`);
+      try {
+        broadcastUpdate('project_created', project);
+      } catch (wsError) {
+        console.error("Error broadcasting project creation:", wsError);
+      }
       
+      // Return the created project
       res.status(201).json(project);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: "Invalid data", errors: error.errors });
+        console.error("Validation error creating project:", error.errors);
+        return res.status(400).json({ 
+          message: "Invalid project data", 
+          errors: error.errors 
+        });
       }
       console.error("Error creating project:", error);
-      res.status(500).json({ message: "Failed to create project" });
+      res.status(500).json({ 
+        message: "Failed to create project",
+        error: error instanceof Error ? error.message : String(error)
+      });
     }
   });
   
