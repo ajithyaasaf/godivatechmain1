@@ -524,33 +524,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
   
-  // Create WebSocket server
+  // Create WebSocket server with explicit path
+  console.log('Setting up WebSocket server on path: /ws');
   const wss = new WebSocketServer({ 
     server: httpServer, 
-    path: '/ws' 
+    path: '/ws',
+    // Add more options for debugging
+    clientTracking: true,
+    perMessageDeflate: false
   });
   
   // WebSocket connection handling
-  wss.on('connection', (ws) => {
-    console.log('Client connected to WebSocket');
+  wss.on('connection', (ws, req) => {
+    const clientIp = req.socket.remoteAddress;
+    const url = req.url || 'unknown';
+    console.log(`Client connected to WebSocket from ${clientIp}, URL: ${url}`);
     
     // Send an initial message to confirm connection
-    ws.send(JSON.stringify({ type: 'connection', message: 'Connected to GodivaTech WebSocket server' }));
+    ws.send(JSON.stringify({ 
+      type: 'connection', 
+      message: 'Connected to GodivaTech WebSocket server',
+      timestamp: new Date().toISOString()
+    }));
     
     // Listen for messages from client
     ws.on('message', (message) => {
       try {
         const parsedMessage = JSON.parse(message.toString());
-        console.log('Received message:', parsedMessage);
+        console.log(`Received WebSocket message:`, parsedMessage);
       } catch (error) {
         console.error('Error parsing WebSocket message:', error);
       }
     });
     
     // Handle disconnect
-    ws.on('close', () => {
-      console.log('Client disconnected from WebSocket');
+    ws.on('close', (code, reason) => {
+      console.log(`Client disconnected from WebSocket with code ${code}${reason ? `, reason: ${reason}` : ''}`);
     });
+    
+    // Handle errors
+    ws.on('error', (error) => {
+      console.error('WebSocket connection error:', error);
+    });
+  });
+  
+  // Log any server errors
+  wss.on('error', (error) => {
+    console.error('WebSocket server error:', error);
   });
   
   // Helper function to broadcast data to all connected clients
