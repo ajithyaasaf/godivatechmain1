@@ -250,67 +250,110 @@ const ContentDataTable = ({
     };
   }, [apiPath, endpoint, title, toast]);
   
-  // Create mutation with optimistic updates
+  // Rewritten create mutation to prevent duplicates
   const createMutation = useMutation({
     mutationFn: async (newItem: any) => {
-      const res = await apiRequest("POST", adminApiPath, newItem);
-      return await res.json();
-    },
-    // Add optimistic UI update before server responds
-    onMutate: async (newData) => {
-      console.log(`Optimistically creating new ${title}:`, newData);
+      console.log(`Creating new ${title} with data:`, newItem);
       
-      // Cancel any outgoing refetches
+      // Handle pre-check for duplicates
+      const existingData = queryClient.getQueryData<any[]>([apiPath]) || [];
+      
+      // Basic duplicate check based on title if it exists
+      if (newItem.title && existingData.some(item => 
+        item.title && item.title.toLowerCase() === newItem.title.toLowerCase())) {
+        console.warn(`Potential duplicate item detected: ${newItem.title}`);
+        // We'll still proceed but log a warning
+      }
+      
+      const res = await apiRequest("POST", adminApiPath, newItem);
+      const data = await res.json();
+      console.log(`Server response for create:`, data);
+      return data;
+    },
+    
+    // Simplified optimistic update
+    onMutate: async (newData) => {
+      console.log(`Optimistically creating new ${title}`);
+      
+      // Cancel any outgoing refetches to avoid overwriting our optimistic update
       await queryClient.cancelQueries({ queryKey: [apiPath] });
       
-      // Snapshot the previous value
+      // Snapshot the previous value for potential rollback
       const previousData = queryClient.getQueryData([apiPath]);
       
-      // Create a temporary optimistic item
+      // Create a temporary optimistic item with a unique tempId
+      const optimisticId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const optimisticItem = {
         ...newData,
-        id: `temp-${Date.now()}`,
-        __optimistic: true // Flag to identify optimistic item
+        id: optimisticId,
+        tempId: optimisticId, // Additional identifier to help with removal
+        __optimistic: true,
+        __timestamp: Date.now()
       };
       
-      // Add the optimistic item to the cache
+      // FIRST UPDATE: Add to local state (this guarantees UI update)
+      setLocalData(current => [...current, optimisticItem]);
+      
+      // SECOND UPDATE: Add to React Query cache
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
         return [...(oldData || []), optimisticItem];
       });
       
-      // Return context
+      // Return context for potential rollback
       return { previousData, optimisticItem };
     },
+    
     onSuccess: (newData, variables, context) => {
       console.log(`Successfully created new ${title}:`, newData);
       
+      // Close the dialog and clear selection
+      setIsDialogOpen(false);
+      setSelectedItem(null);
+      
+      // Show success message
       toast({
         title: "Created successfully",
         description: `${title} has been created.`,
       });
       
-      setIsDialogOpen(false);
-      setSelectedItem(null);
+      // IMPORTANT: Avoid duplicate handling by tracking what we've added
+      const optimisticItemId = context?.optimisticItem?.tempId;
       
-      // Replace the optimistic item with the real server data
+      // Update both our local state and the React Query cache
+      setLocalData(current => {
+        const withoutOptimistic = current.filter(item => 
+          item.tempId !== optimisticItemId && !item.__optimistic
+        );
+        return [...withoutOptimistic, newData];
+      });
+      
+      // Update the React Query cache
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
         if (!Array.isArray(oldData)) return [newData];
         
-        // Filter out the optimistic entry and add the real one
-        return oldData
-          .filter(item => !item.__optimistic)
-          .concat(newData);
+        // Remove our optimistic item by its unique tempId and any other optimistic items
+        const withoutOptimistic = oldData.filter(item => 
+          item.tempId !== optimisticItemId && !item.__optimistic
+        );
+        
+        return [...withoutOptimistic, newData];
       });
       
-      // Refetch to ensure consistency
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: [apiPath] });
-      }, 300);
+      // Skip the refetch to prevent potential duplicates
+      // We've already manually updated both local state and query cache
     },
+    
     onError: (error: Error, variables, context) => {
+      console.error(`Error creating ${title}:`, error);
+      
       // Roll back to the previous state if available
       if (context?.previousData) {
         queryClient.setQueryData([apiPath], context.previousData);
+        
+        // Also update local state to match
+        if (Array.isArray(context.previousData)) {
+          setLocalData(context.previousData);
+        }
       }
       
       toast({

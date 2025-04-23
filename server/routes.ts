@@ -391,8 +391,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.post("/api/admin/projects", isAuthenticated, async (req, res) => {
     try {
+      console.log("Project creation request received:", req.body);
+      
+      // Validate the input data
       const validatedData = insertProjectSchema.parse(req.body);
+      
+      // Check for duplicate projects before creating
+      const existingProjects = await storage.getAllProjects();
+      
+      console.log(`Checking against ${existingProjects.length} existing projects`);
+      
+      // Check for duplicates based on title
+      const isDuplicate = existingProjects.some(existingProject => 
+        existingProject.title && 
+        validatedData.title && 
+        existingProject.title.toLowerCase() === validatedData.title.toLowerCase()
+      );
+      
+      if (isDuplicate) {
+        console.log(`Duplicate project detected: "${validatedData.title}"`);
+        return res.status(409).json({ 
+          message: "A project with this title already exists",
+          status: "duplicate"
+        });
+      }
+      
+      console.log("Creating new project:", validatedData);
       const project = await storage.createProject(validatedData);
+      
+      // Broadcast to WebSocket clients if available
+      if (wss) {
+        try {
+          const message = {
+            type: 'project_created',
+            data: project
+          };
+          
+          console.log(`Broadcasting project_created event to ${wss.clients.size} clients`);
+          
+          wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+              client.send(JSON.stringify(message));
+            }
+          });
+        } catch (wsError) {
+          console.error("Error broadcasting project creation:", wsError);
+        }
+      }
+      
+      console.log("Project created successfully:", project);
       res.status(201).json(project);
     } catch (error) {
       if (error instanceof z.ZodError) {
