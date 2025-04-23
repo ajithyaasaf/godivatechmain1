@@ -495,19 +495,82 @@ export class FirestoreStorage {
 
   async updateProject(id: number | string, project: Partial<InsertProject>): Promise<Project | undefined> {
     try {
-      // Convert to string for document ID
-      const docId = id.toString();
-      console.log(`Attempting to update project with ID: ${docId} in Firestore`);
+      // Enhanced logging
+      console.log(`=== FIRESTORE PROJECT UPDATE ===`);
+      console.log(`Attempting to update project with ID: ${id} (type: ${typeof id}) in Firestore`);
       
+      // Always convert to string for document ID (Firebase document IDs are always strings)
+      const docId = id.toString();
+      
+      // First check if the document exists
       const projectRef = doc(db, 'projects', docId);
       const docSnap = await getDoc(projectRef);
       
       if (!docSnap.exists()) {
-        console.warn(`Project with ID ${docId} not found in Firestore`);
-        return undefined;
+        console.warn(`Project with direct document ID ${docId} not found in Firestore, searching all projects...`);
+        
+        // Try finding the project by querying all projects
+        const projectsCollection = collection(db, 'projects');
+        const querySnapshot = await getDocs(projectsCollection);
+        
+        console.log(`Found ${querySnapshot.size} projects in Firestore collection to search through`);
+        
+        // Check for different possible matches
+        let foundDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+        
+        querySnapshot.forEach(docSnapshot => {
+          const data = docSnapshot.data();
+          
+          // Log each document for debugging
+          console.log(`Checking project: id=${docSnapshot.id}, title=${data.title || 'unknown'}`);
+          
+          // Check for ID matches in various formats
+          if (
+            docSnapshot.id === docId || // Direct document ID match
+            (data.id && String(data.id) === String(id)) || // ID property match
+            (data.id && typeof data.id === 'number' && 
+              typeof id === 'string' && !isNaN(Number(id)) && 
+              data.id === Number(id)) // Numeric ID match
+          ) {
+            console.log(`✓ Found matching project: id=${docSnapshot.id}, title=${data.title || 'unknown'}`);
+            foundDoc = docSnapshot;
+          }
+        });
+        
+        if (!foundDoc) {
+          console.warn(`No matching project found for ID: ${id} in any format`);
+          return undefined;
+        }
+        
+        // Use the found document reference for the update
+        console.log(`Using found document ID: ${foundDoc.id} for update operation`);
+        const foundDocRef = doc(db, 'projects', foundDoc.id);
+        
+        // Update existing fields but add an updatedAt timestamp
+        await updateDoc(foundDocRef, {
+          ...project,
+          updatedAt: serverTimestamp()
+        });
+        
+        // Get the updated document
+        const updatedSnap = await getDoc(foundDocRef);
+        const data = updatedSnap.data() as any;
+        
+        console.log(`Successfully updated project with document ID: ${foundDoc.id} in Firestore`);
+        
+        // Return the updated project with the correct IDs preserved
+        return { 
+          ...data,
+          id: id, // Keep the original ID
+          docId: foundDoc.id, // Include the Firestore document ID
+          firebaseId: foundDoc.id, // For compatibility
+          link: data.link ?? null,
+          image: data.image ?? null
+        } as Project;
       }
       
-      console.log(`Project found, updating with new data`, project);
+      // If we made it here, the document was found with the direct ID
+      console.log(`Project found using direct document ID, updating with new data`, project);
       
       // Update the project
       await updateDoc(projectRef, {
@@ -519,14 +582,14 @@ export class FirestoreStorage {
       const updatedSnap = await getDoc(projectRef);
       const data = updatedSnap.data() as any;
       
-      // Handle numeric vs string IDs correctly
-      const returnId = typeof id === 'string' && !isNaN(Number(id)) ? Number(id) : id;
+      console.log(`Successfully updated project with document ID: ${docId} in Firestore`);
       
-      console.log(`Successfully updated project with ID: ${docId} in Firestore`);
-      
+      // Return the updated project with correct IDs
       return { 
         ...data,
-        id: returnId,
+        id: id, // Preserve the original ID that was passed in
+        docId: docId, // Include the Firestore document ID
+        firebaseId: docId, // For compatibility
         link: data.link ?? null,
         image: data.image ?? null
       } as Project;

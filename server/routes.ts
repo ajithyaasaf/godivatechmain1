@@ -450,19 +450,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.put("/api/admin/projects/:id", isAuthenticated, async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const project = await storage.updateProject(id, req.body);
-      if (!project) {
-        return res.status(404).json({ message: "Project not found" });
-      }
-      res.json(project);
-    } catch (error) {
-      console.error("Error updating project:", error);
-      res.status(500).json({ message: "Failed to update project" });
-    }
-  });
+  // Project update endpoint moved to the enhanced version below with WebSocket broadcast support
   
   // The project delete handler was moved below to include WebSocket broadcast functionality
   
@@ -787,12 +775,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Modify project update endpoint to broadcast changes - supporting both number and string IDs
+  // Enhanced project update endpoint with Firebase document ID support and WebSocket broadcasting
   app.put("/api/admin/projects/:id", isAuthenticated, async (req, res) => {
     try {
-      // Support both numeric and string IDs
-      let id: number | string = req.params.id;
+      console.log(`=== PROJECT UPDATE OPERATION ===`);
+      console.log(`Received update request for project with ID: ${req.params.id} (type: ${typeof req.params.id})`);
       
+      // Always keep the original ID as a string for Firebase IDs
+      const originalId = req.params.id;
+      
+      // Validate the ID parameter
       if (!req.params.id || req.params.id === 'null' || req.params.id === 'undefined') {
         console.error(`Invalid project ID for update: ${req.params.id}`);
         return res.status(400).json({ 
@@ -801,31 +793,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Try to parse as a number if it looks like one
-      if (!isNaN(Number(id))) {
-        id = parseInt(req.params.id);
-      }
-      
-      console.log(`Attempting to update project with ID: ${id}`);
-      const project = await storage.updateProject(id, req.body);
-      
-      if (!project) {
-        console.warn(`Project with ID ${id} not found for update`);
-        return res.status(404).json({ 
-          message: "Project not found",
-          id
+      // Before proceeding, find the actual project document - don't convert to numbers for Firebase IDs
+      try {
+        console.log(`Attempting to find project in database...`);
+        const allProjects = await storage.getAllProjects();
+        
+        console.log(`Found ${allProjects.length} projects in storage for update operation`);
+        
+        if (allProjects.length === 0) {
+          console.warn('No projects found in database');
+          return res.status(404).json({ 
+            message: "No projects found in database",
+            id: originalId
+          });
+        }
+        
+        // Look for projects with matching ID in any format
+        const matchingProject = allProjects.find(p => {
+          // Try multiple matching approaches for compatibility with different ID formats
+          const stringMatch = p.id !== undefined && String(p.id) === String(originalId);
+          const numericMatch = p.id !== undefined && 
+                              typeof p.id === 'number' && 
+                              !isNaN(Number(originalId)) && 
+                              p.id === Number(originalId);
+          
+          // For Firestore documents, check document ID specifically
+          const firestoreMatch = (p as any).docId !== undefined && (p as any).docId === originalId;
+          
+          return stringMatch || numericMatch || firestoreMatch;
+        });
+        
+        if (matchingProject) {
+          console.log(`Found matching project for update:`, {
+            id: matchingProject.id,
+            title: matchingProject.title,
+            docId: 'docId' in matchingProject ? matchingProject.docId : undefined
+          });
+          
+          // Determine the most accurate ID to use for the update
+          let updateId = originalId; // Default to the original ID from the URL
+          
+          // If we have a Firestore document ID, prioritize it
+          if ('docId' in matchingProject && matchingProject.docId) {
+            console.log(`Using Firebase document ID for update: ${matchingProject.docId}`);
+            updateId = matchingProject.docId;
+          }
+          
+          console.log(`Attempting to update project with final ID: ${updateId}`);
+          const project = await storage.updateProject(updateId, req.body);
+          
+          if (!project) {
+            console.warn(`Project with ID ${updateId} not found or could not be updated`);
+            return res.status(404).json({ 
+              message: "Project not found or could not be updated",
+              id: updateId
+            });
+          }
+          
+          console.log(`Successfully updated project with ID: ${updateId}, broadcasting update`);
+          // Broadcast the update to all connected clients
+          broadcastUpdate('project_updated', project);
+          
+          res.json(project);
+        } else {
+          console.warn(`No matching project found with ID: ${originalId} for update`);
+          return res.status(404).json({ 
+            message: "Project not found",
+            id: originalId
+          });
+        }
+      } catch (searchError) {
+        console.error(`Error when searching for project:`, searchError);
+        return res.status(500).json({ 
+          message: "Error searching for project",
+          error: searchError instanceof Error ? searchError.message : String(searchError)
         });
       }
-      
-      console.log(`Successfully updated project with ID: ${id}, broadcasting update`);
-      // Broadcast the update to all connected clients
-      broadcastUpdate('project_updated', project);
-      
-      res.json(project);
     } catch (error) {
-      console.error("Error updating project:", error);
-      res.status(500).json({ 
-        message: "Failed to update project due to server error",
+      console.error("Error in project update route:", error);
+      // Send a clean JSON response even for 500 errors - avoid HTML error pages
+      return res.status(500).json({ 
+        message: "Server error during project update",
         error: error instanceof Error ? error.message : String(error)
       });
     }
