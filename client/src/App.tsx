@@ -71,47 +71,170 @@ function App() {
         {/* Admin routes without Layout wrapper */}
         {isAdminRoute && (
           <Switch key={location}>
-            {/* Legacy Passport.js Auth */}
-            <ProtectedRoute path="/admin" exact component={AdminDashboard} />
-            <ProtectedRoute path="/admin/blog-posts" component={BlogPostsPage} />
-            <ProtectedRoute path="/admin/categories" component={CategoriesPage} />
-            <ProtectedRoute path="/admin/services" component={ServicesPage} />
-            <ProtectedRoute path="/admin/team-members" component={TeamMembersPage} />
-            <ProtectedRoute path="/admin/testimonials" component={TestimonialsPage} />
-            <ProtectedRoute path="/admin/projects" component={ProjectsPage} />
-            <ProtectedRoute path="/admin/contact-messages" component={ContactMessagesPage} />
-            <ProtectedRoute path="/admin/subscribers" component={SubscribersPage} />
+            {/* Dual Authentication - accepts both traditional and Firebase auth */}
+            <Route path="/admin" exact>
+              {() => {
+                // Use legacy auth first
+                const legacyRoute = <ProtectedRoute path="/admin" exact component={AdminDashboard} />;
+                // Use Firebase auth as a fallback
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <AdminDashboard />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
             
-            {/* Firebase Auth - Uncomment the lines below to switch to Firebase Auth */}
-            {/* 
-            <FirebaseProtectedRoute path="/admin" exact>
-              <AdminDashboard />
-            </FirebaseProtectedRoute>
-            <FirebaseProtectedRoute path="/admin/blog-posts">
-              <BlogPostsPage />
-            </FirebaseProtectedRoute>
-            <FirebaseProtectedRoute path="/admin/categories">
-              <CategoriesPage />
-            </FirebaseProtectedRoute>
-            <FirebaseProtectedRoute path="/admin/services">
-              <ServicesPage />
-            </FirebaseProtectedRoute>
-            <FirebaseProtectedRoute path="/admin/team-members">
-              <TeamMembersPage />
-            </FirebaseProtectedRoute>
-            <FirebaseProtectedRoute path="/admin/testimonials">
-              <TestimonialsPage />
-            </FirebaseProtectedRoute>
-            <FirebaseProtectedRoute path="/admin/projects">
-              <ProjectsPage />
-            </FirebaseProtectedRoute>
-            <FirebaseProtectedRoute path="/admin/contact-messages">
-              <ContactMessagesPage />
-            </FirebaseProtectedRoute>
-            <FirebaseProtectedRoute path="/admin/subscribers">
-              <SubscribersPage />
-            </FirebaseProtectedRoute>
-            */}
+            <Route path="/admin/blog-posts">
+              {() => {
+                const legacyRoute = <ProtectedRoute path="/admin/blog-posts" component={BlogPostsPage} />;
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <BlogPostsPage />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
+            
+            <Route path="/admin/categories">
+              {() => {
+                const legacyRoute = <ProtectedRoute path="/admin/categories" component={CategoriesPage} />;
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <CategoriesPage />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
+            
+            <Route path="/admin/services">
+              {() => {
+                const legacyRoute = <ProtectedRoute path="/admin/services" component={ServicesPage} />;
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <ServicesPage />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
+            
+            <Route path="/admin/team-members">
+              {() => {
+                const legacyRoute = <ProtectedRoute path="/admin/team-members" component={TeamMembersPage} />;
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <TeamMembersPage />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
+            
+            <Route path="/admin/testimonials">
+              {() => {
+                const legacyRoute = <ProtectedRoute path="/admin/testimonials" component={TestimonialsPage} />;
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <TestimonialsPage />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
+            
+            <Route path="/admin/projects">
+              {() => {
+                const legacyRoute = <ProtectedRoute path="/admin/projects" component={ProjectsPage} />;
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <ProjectsPage />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
+            
+            <Route path="/admin/contact-messages">
+              {() => {
+                const legacyRoute = <ProtectedRoute path="/admin/contact-messages" component={ContactMessagesPage} />;
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <ContactMessagesPage />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
+            
+            <Route path="/admin/subscribers">
+              {() => {
+                const legacyRoute = <ProtectedRoute path="/admin/subscribers" component={SubscribersPage} />;
+                const firebaseRoute = (
+                  <FirebaseProtectedRoute>
+                    <SubscribersPage />
+                  </FirebaseProtectedRoute>
+                );
+                
+                return (
+                  <>
+                    {legacyRoute}
+                    {firebaseRoute}
+                  </>
+                );
+              }}
+            </Route>
             
             <Route component={NotFound} />
           </Switch>
