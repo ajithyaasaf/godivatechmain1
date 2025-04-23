@@ -68,7 +68,7 @@ const ContentDataTable = ({
       const res = await apiRequest("POST", adminApiPath, newItem);
       return await res.json();
     },
-    onSuccess: () => {
+    onSuccess: (newData) => {
       toast({
         title: "Created successfully",
         description: `${title} has been created.`,
@@ -76,6 +76,11 @@ const ContentDataTable = ({
       // Close dialog and refetch data
       setIsDialogOpen(false);
       setSelectedItem(null);
+      // Immediately update the cache with the new data
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        return [...oldData, newData];
+      });
+      // Also invalidate the query to ensure data consistency
       queryClient.invalidateQueries({ queryKey: [apiPath] });
     },
     onError: (error: Error) => {
@@ -91,16 +96,25 @@ const ContentDataTable = ({
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: any }) => {
       const res = await apiRequest("PUT", `${adminApiPath}/${id}`, data);
-      return await res.json();
+      return { id, updatedData: await res.json() };
     },
-    onSuccess: () => {
+    onSuccess: ({ id, updatedData }) => {
       toast({
         title: "Updated successfully",
         description: `${title} has been updated.`,
       });
-      // Close dialog and refetch data
+      // Close dialog and update cache immediately
       setIsDialogOpen(false);
       setSelectedItem(null);
+      
+      // Update the cache with the updated data
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        return oldData.map(item => 
+          item.id === id ? { ...item, ...updatedData } : item
+        );
+      });
+      
+      // Also invalidate the query to ensure data consistency
       queryClient.invalidateQueries({ queryKey: [apiPath] });
     },
     onError: (error: Error) => {
@@ -116,12 +130,20 @@ const ContentDataTable = ({
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       await apiRequest("DELETE", `${adminApiPath}/${id}`);
+      return id;
     },
-    onSuccess: () => {
+    onSuccess: (deletedId) => {
       toast({
         title: "Deleted successfully",
         description: `${title} has been deleted.`,
       });
+      
+      // Immediately update the cache to remove the deleted item
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        return oldData.filter(item => item.id !== deletedId);
+      });
+      
+      // Also invalidate the query to ensure data consistency
       queryClient.invalidateQueries({ queryKey: [apiPath] });
     },
     onError: (error: Error) => {

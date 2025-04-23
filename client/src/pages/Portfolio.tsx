@@ -63,7 +63,7 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
         <div className="flex flex-wrap gap-2 mb-4">
           {project.technologies.map((tech, idx) => (
             <span
-              key={idx}
+              key={`tech-${project.id}-${tech}-${idx}`}
               className="bg-neutral-100 text-neutral-700 text-xs font-medium px-2.5 py-1 rounded-full"
             >
               {tech}
@@ -302,7 +302,7 @@ const Portfolio = () => {
               >
                 {categories.map((category, index) => (
                   <motion.button
-                    key={index}
+                    key={`filter-category-${category}-${index}`}
                     onClick={() => setActiveFilter(category === 'All' ? null : category)}
                     className={`py-2 px-6 rounded-full text-sm font-medium transition-all duration-300 ${
                       (category === 'All' && activeFilter === null) || category === activeFilter
@@ -371,7 +371,7 @@ const Portfolio = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {methodologySteps.map((step, index) => (
                   <MethodologyStep 
-                    key={index}
+                    key={`methodology-step-${step.title}-${index}`}
                     number={step.number}
                     title={step.title}
                     description={step.description}
