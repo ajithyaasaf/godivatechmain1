@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { 
   Table, 
@@ -20,10 +20,13 @@ import {
   Plus, 
   Search, 
   Trash2, 
-  X 
+  X,
+  RefreshCw
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { collection, onSnapshot, query } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface Column {
   key: string;
@@ -57,10 +60,46 @@ const ContentDataTable = ({
   const apiPath = `/api${endpoint}`;
   const adminApiPath = `/api/admin${endpoint}`;
   
-  // Fetch data
-  const { data = [], isLoading, refetch } = useQuery({
+  // Fetch data with React Query
+  const { data = [], isLoading, refetch } = useQuery<any[]>({
     queryKey: [apiPath],
   });
+  
+  // Setup Firebase real-time listener for the collection
+  useEffect(() => {
+    // Remove the leading '/api/' and trailing 's' to match Firebase collection name
+    const collectionName = endpoint.replace(/^\//, '').replace(/s$/, '');
+    console.log(`Setting up real-time listener for ${collectionName} collection`);
+    
+    // Create a query against the collection
+    const q = query(collection(db, collectionName));
+    
+    // Set up the real-time listener
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      console.log(`Real-time update for ${collectionName} collection received`);
+      
+      const updatedData: any[] = [];
+      querySnapshot.forEach((doc) => {
+        // Include the document ID as the item ID
+        // Handle the case where the ID might be a string in Firestore
+        const docId = doc.id;
+        const idAsNumber = !isNaN(parseInt(docId)) ? parseInt(docId) : 0;
+        const item = { id: idAsNumber, ...doc.data() };
+        updatedData.push(item);
+      });
+      
+      // Update the cache with the latest data from Firebase
+      queryClient.setQueryData([apiPath], updatedData);
+    }, (error: Error) => {
+      console.error(`Error setting up real-time listener for ${collectionName}:`, error);
+    });
+    
+    // Cleanup the listener when the component unmounts
+    return () => {
+      console.log(`Cleaning up real-time listener for ${collectionName}`);
+      unsubscribe();
+    };
+  }, [endpoint, apiPath]);
   
   // Create mutation
   const createMutation = useMutation({
@@ -159,7 +198,8 @@ const ContentDataTable = ({
   const handleSave = (formData: any) => {
     if (selectedItem) {
       // Update existing item
-      updateMutation.mutate({ id: selectedItem.id, data: formData });
+      const itemWithId = selectedItem as { id: number };
+      updateMutation.mutate({ id: itemWithId.id, data: formData });
     } else {
       // Create new item
       createMutation.mutate(formData);
@@ -169,8 +209,21 @@ const ContentDataTable = ({
   // Handler for deleting items
   const handleDelete = (item: any) => {
     if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
-      deleteMutation.mutate(item.id);
+      const itemWithId = item as { id: number };
+      deleteMutation.mutate(itemWithId.id);
     }
+  };
+  
+  // Handler for manual refresh
+  const handleRefresh = () => {
+    console.log(`Manually refreshing ${title} data...`);
+    queryClient.invalidateQueries({ queryKey: [apiPath] });
+    refetch();
+    
+    toast({
+      title: "Refreshed",
+      description: `${title} data has been refreshed.`,
+    });
   };
   
   // Open dialog with a selected item or empty for new item
@@ -180,7 +233,7 @@ const ContentDataTable = ({
   };
   
   // Filter data based on search query
-  const filteredData = data.filter((item: any) => {
+  const filteredData = (data as any[]).filter((item: any) => {
     if (!searchQuery) return true;
     
     // Search across all string fields
@@ -207,6 +260,16 @@ const ContentDataTable = ({
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+          
+          <Button 
+            onClick={handleRefresh} 
+            size="sm" 
+            variant="outline" 
+            title="Refresh data"
+            className="flex items-center"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
