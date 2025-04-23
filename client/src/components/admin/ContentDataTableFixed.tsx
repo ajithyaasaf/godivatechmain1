@@ -227,26 +227,69 @@ const ContentDataTable = ({
     };
   }, [apiPath, endpoint, title, toast]);
   
-  // Create mutation
+  // Create mutation with optimistic updates
   const createMutation = useMutation({
     mutationFn: async (newItem: any) => {
       const res = await apiRequest("POST", adminApiPath, newItem);
       return await res.json();
     },
-    onSuccess: (newData) => {
+    // Add optimistic UI update before server responds
+    onMutate: async (newData) => {
+      console.log(`Optimistically creating new ${title}:`, newData);
+      
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: [apiPath] });
+      
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData([apiPath]);
+      
+      // Create a temporary optimistic item
+      const optimisticItem = {
+        ...newData,
+        id: `temp-${Date.now()}`,
+        __optimistic: true // Flag to identify optimistic item
+      };
+      
+      // Add the optimistic item to the cache
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        return [...(oldData || []), optimisticItem];
+      });
+      
+      // Return context
+      return { previousData, optimisticItem };
+    },
+    onSuccess: (newData, variables, context) => {
+      console.log(`Successfully created new ${title}:`, newData);
+      
       toast({
         title: "Created successfully",
         description: `${title} has been created.`,
       });
+      
       setIsDialogOpen(false);
       setSelectedItem(null);
       
+      // Replace the optimistic item with the real server data
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        return [...oldData, newData];
+        if (!Array.isArray(oldData)) return [newData];
+        
+        // Filter out the optimistic entry and add the real one
+        return oldData
+          .filter(item => !item.__optimistic)
+          .concat(newData);
       });
-      queryClient.invalidateQueries({ queryKey: [apiPath] });
+      
+      // Refetch to ensure consistency
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 300);
     },
-    onError: (error: Error) => {
+    onError: (error: Error, variables, context) => {
+      // Roll back to the previous state if available
+      if (context?.previousData) {
+        queryClient.setQueryData([apiPath], context.previousData);
+      }
+      
       toast({
         title: "Failed to create",
         description: error.message,
@@ -255,38 +298,95 @@ const ContentDataTable = ({
     },
   });
   
-  // Update mutation - handling both number and string IDs
+  // Update mutation with optimistic updates
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number | string; data: any }) => {
       const res = await apiRequest("PUT", `${adminApiPath}/${id}`, data);
       return { id, updatedData: await res.json() };
     },
-    onSuccess: ({ id, updatedData }) => {
-      toast({
-        title: "Updated successfully",
-        description: `${title} has been updated.`,
-      });
-      setIsDialogOpen(false);
-      setSelectedItem(null);
+    // Add optimistic update before server responds
+    onMutate: async ({ id, data }) => {
+      console.log(`Optimistically updating ${title} with ID:`, id);
       
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: [apiPath] });
+      
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData([apiPath]);
+      
+      // Apply optimistic update
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!Array.isArray(oldData)) return oldData;
+        
         // Handle both string and number IDs
         const itemId = typeof id === 'string' && !isNaN(Number(id)) 
           ? Number(id) 
           : id;
           
         return oldData.map(item => {
-          // Try to match exactly, or convert both to strings for comparison
-          if (item.id === itemId || String(item.id) === String(itemId)) {
-            return { ...item, ...updatedData };
-          }
-          return item;
+          // Match by multiple ID formats for compatibility
+          const isMatch = 
+            item.id === itemId || 
+            String(item.id) === String(itemId) ||
+            (item.docId && item.docId === id) ||
+            (item.firebaseId && item.firebaseId === id);
+          
+          // Update the item with optimistic flag
+          return isMatch 
+            ? { ...item, ...data, __updating: true } 
+            : item;
         });
       });
       
-      queryClient.invalidateQueries({ queryKey: [apiPath] });
+      // Return context
+      return { previousData, id };
     },
-    onError: (error: Error) => {
+    onSuccess: ({ id, updatedData }, variables, context) => {
+      console.log(`Successfully updated ${title} with ID:`, id);
+      
+      toast({
+        title: "Updated successfully",
+        description: `${title} has been updated.`,
+      });
+      
+      setIsDialogOpen(false);
+      setSelectedItem(null);
+      
+      // Apply the confirmed server update and remove optimistic flag
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!Array.isArray(oldData)) return oldData;
+        
+        // Handle both string and number IDs
+        const itemId = typeof id === 'string' && !isNaN(Number(id)) 
+          ? Number(id) 
+          : id;
+          
+        return oldData.map(item => {
+          // Match by multiple ID formats
+          const isMatch = 
+            item.id === itemId || 
+            String(item.id) === String(itemId) ||
+            (item.docId && item.docId === id) ||
+            (item.firebaseId && item.firebaseId === id);
+          
+          // Remove __updating flag and apply server data
+          return isMatch 
+            ? { ...item, ...updatedData, __updating: undefined } 
+            : item;
+        });
+      });
+      
+      // Final refetch to ensure consistency
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 300);
+    },
+    onError: (error: Error, variables, context) => {
+      // Roll back to the previous state
+      if (context?.previousData) {
+        queryClient.setQueryData([apiPath], context.previousData);
+      }
+      
       toast({
         title: "Failed to update",
         description: error.message,
@@ -295,7 +395,7 @@ const ContentDataTable = ({
     },
   });
   
-  // Delete mutation - handling both number and string IDs
+  // Enhanced delete mutation with optimistic updates for immediate UI response
   const deleteMutation = useMutation({
     mutationFn: async (id: number | string) => {
       console.log(`Sending DELETE request to ${adminApiPath}/${id}`);
@@ -411,48 +511,87 @@ const ContentDataTable = ({
         throw error;
       }
     },
-    onSuccess: (deletedId) => {
-      console.log(`Delete mutation successful for ID ${deletedId}`);
-      toast({
-        title: "Deleted successfully",
-        description: `${title} has been deleted.`,
-      });
+    // ENHANCED WITH OPTIMISTIC UI UPDATES
+    // Immediately update UI even before server responds
+    onMutate: async (deletedId) => {
+      console.log(`Running optimistic update for deletion of ID: ${deletedId}`);
       
-      // Immediately update the UI by removing the deleted item from the query cache
+      // Cancel any outgoing refetches to avoid overwriting our optimistic update
+      await queryClient.cancelQueries({ queryKey: [apiPath] });
+      
+      // Snapshot the previous value for rollback if needed
+      const previousData = queryClient.getQueryData([apiPath]);
+      
+      // Optimistically update by removing the item from cache immediately
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        if (!oldData || !Array.isArray(oldData)) {
-          console.warn('Invalid data in query cache, cannot update UI');
-          return oldData;
-        }
+        if (!Array.isArray(oldData)) return oldData;
         
-        // Handle both string and number IDs
+        // Handle both string and number IDs for comparison
         const itemId = typeof deletedId === 'string' && !isNaN(Number(deletedId)) 
           ? Number(deletedId) 
           : deletedId;
           
         const newData = oldData.filter(item => {
+          // Check all possible ID formats
+          const normalizedItemId = item.id || item.docId || item.firebaseId || item.__id;
+          const normalizedDeletedId = typeof itemId === 'string' && !isNaN(Number(itemId)) 
+                                    ? Number(itemId) 
+                                    : itemId;
+          
           // Try to match exactly, or convert both to strings for comparison
-          const idMatch = item.id !== itemId && String(item.id) !== String(itemId);
-          return idMatch;
+          return normalizedItemId !== normalizedDeletedId && 
+                 String(normalizedItemId) !== String(normalizedDeletedId);
         });
         
-        console.log(`Filtered out deleted item. Items before: ${oldData.length}, after: ${newData.length}`);
+        console.log(`Optimistic update: Filtered out item ${deletedId}. Items before: ${oldData.length}, after: ${newData.length}`);
         return newData;
       });
       
-      // Force refetch to ensure consistency
-      queryClient.invalidateQueries({ queryKey: [apiPath] });
-      
-      // Immediately trigger a refetch for this specific endpoint to ensure data consistency
-      queryClient.refetchQueries({ queryKey: [apiPath], exact: true });
+      // Return context with the snapshotted value
+      return { previousData };
     },
-    onError: (error: Error) => {
+    // If the deletion is successful
+    onSuccess: (deletedId, _, context) => {
+      console.log(`Delete mutation successful for ID ${deletedId}`);
+      
+      toast({
+        title: "Deleted successfully",
+        description: `${title} has been deleted.`,
+      });
+      
+      // Final UI refresh to ensure consistency with server
+      // Use a delay to ensure WebSocket messages don't override our state
+      setTimeout(() => {
+        // Force refresh the data from server (but don't show loading state)
+        queryClient.invalidateQueries({ 
+          queryKey: [apiPath],
+          refetchType: 'all' 
+        });
+      }, 200);
+    },
+    // If the mutation fails, roll back optimistic updates
+    onError: (error: Error, deletedId, context: any) => {
       console.error(`Delete mutation error:`, error);
+      
+      // Rollback to the previous state
+      if (context?.previousData) {
+        console.log('Rolling back optimistic update due to error');
+        queryClient.setQueryData([apiPath], context.previousData);
+      }
+      
       toast({
         title: "Failed to delete",
         description: error.message,
         variant: "destructive",
       });
+    },
+    // Always refetch once after mutation completes, successful or not
+    onSettled: () => {
+      console.log('Delete mutation settled, refreshing data');
+      // Final cleanup, query again to ensure UI is in sync with server
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 500);
     },
   });
   
