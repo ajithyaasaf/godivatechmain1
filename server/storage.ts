@@ -46,7 +46,7 @@ export interface IStorage {
   getProject(id: number): Promise<Project | undefined>;
   createProject(project: InsertProject): Promise<Project>;
   updateProject(id: number, project: Partial<InsertProject>): Promise<Project | undefined>;
-  deleteProject(id: number): Promise<boolean>;
+  deleteProject(id: number | string): Promise<boolean>;
   
   // Services methods
   getAllServices(): Promise<Service[]>;
@@ -397,8 +397,13 @@ MemStorage.prototype.updateProject = async function(id: number, project: Partial
   return updatedProject;
 };
 
-MemStorage.prototype.deleteProject = async function(id: number): Promise<boolean> {
-  return this.projects.delete(id);
+MemStorage.prototype.deleteProject = async function(id: number | string): Promise<boolean> {
+  if (typeof id === 'string' && !isNaN(Number(id))) {
+    // Convert string ID to number if it's a valid number
+    return this.projects.delete(Number(id));
+  }
+  // For string IDs or numeric IDs, try direct deletion
+  return this.projects.delete(typeof id === 'string' ? id : Number(id));
 };
 
 MemStorage.prototype.updateService = async function(id: number, service: Partial<InsertService>): Promise<Service | undefined> {
@@ -588,9 +593,18 @@ export class DatabaseStorage implements IStorage {
     return updated;
   }
 
-  async deleteProject(id: number): Promise<boolean> {
-    await db.delete(projects).where(eq(projects.id, id));
-    return true;
+  async deleteProject(id: number | string): Promise<boolean> {
+    // Convert string IDs to numbers if they're numeric
+    const numericId = typeof id === 'string' ? parseInt(id) : id;
+    
+    // Only proceed if we have a valid number
+    if (!isNaN(numericId)) {
+      await db.delete(projects).where(eq(projects.id, numericId));
+      return true;
+    }
+    
+    console.error(`Cannot convert project ID to a valid number for deletion: ${id}`);
+    return false;
   }
   
   // Services methods

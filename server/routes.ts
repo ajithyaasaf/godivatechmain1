@@ -592,17 +592,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      const id = parseInt(req.params.id);
+      // Support both numeric and string IDs
+      let id: number | string = req.params.id;
       
-      if (isNaN(id)) {
-        console.error(`Cannot parse project ID for deletion: ${req.params.id}`);
-        return res.status(400).json({ 
-          message: "Project ID must be a valid number",
-          received: req.params.id
-        });
+      // Try to parse as a number if it looks like one
+      if (!isNaN(Number(id))) {
+        id = parseInt(req.params.id);
       }
       
-      console.log(`Attempting to delete project with parsed ID: ${id}`);
+      console.log(`Attempting to delete project with ID: ${id}`);
       const success = await storage.deleteProject(id);
       
       if (success) {
