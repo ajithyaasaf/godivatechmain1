@@ -92,43 +92,88 @@ const ContentDataTable = ({
             const message = JSON.parse(event.data);
             console.log(`WebSocket message received:`, message);
             
-            if (message.type === 'project_deleted' && endpoint === '/projects') {
-              console.log('Project deleted, updating UI:', message.data.id);
-              queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-                return oldData.filter(item => item.id !== message.data.id);
-              });
+            // Generic message matcher for any content type
+            const contentTypeMatch = message.type?.match(/^(\w+)_(deleted|created|updated)$/);
+            
+            if (contentTypeMatch) {
+              const [_, contentType, action] = contentTypeMatch;
+              const matchingEndpoint = contentType === 'project' ? '/projects' : 
+                                      contentType === 'service' ? '/services' : 
+                                      contentType === 'team_member' ? '/team-members' : 
+                                      contentType === 'testimonial' ? '/testimonials' : 
+                                      contentType === 'blog_post' ? '/blog-posts' : 
+                                      contentType === 'category' ? '/categories' : null;
               
-              toast({
-                title: "Project deleted",
-                description: "A project has been deleted by another user",
-              });
-            } 
-            else if (message.type === 'project_created' && endpoint === '/projects') {
-              console.log('Project created, updating UI:', message.data);
-              queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-                if (oldData.some(item => item.id === message.data.id)) {
-                  return oldData;
+              // Check if this message is relevant to this component's endpoint
+              if (matchingEndpoint === endpoint) {
+                console.log(`${contentType} ${action}, updating UI:`, message.data);
+                
+                // Handle deletion
+                if (action === 'deleted') {
+                  queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                    // Handle both string and number IDs
+                    const itemId = message.data.id;
+                    
+                    // Log before and after counts
+                    const beforeCount = oldData.length;
+                    const newData = oldData.filter(item => {
+                      const idMatch = item.id !== itemId && String(item.id) !== String(itemId);
+                      return idMatch;
+                    });
+                    console.log(`Filtered out deleted item. Items before: ${beforeCount}, after: ${newData.length}`);
+                    
+                    return newData;
+                  });
+                  
+                  // Force a refetch to ensure UI is synced with server
+                  setTimeout(() => {
+                    console.log('Performing additional refetch to ensure data consistency');
+                    refetch();
+                  }, 500);
+                  
+                  toast({
+                    title: `${contentType.replace('_', ' ')} deleted`,
+                    description: `A ${contentType.replace('_', ' ')} has been deleted by another user`,
+                  });
                 }
-                return [...oldData, message.data];
-              });
-              
-              toast({
-                title: "Project created",
-                description: "A new project has been added",
-              });
-            }
-            else if (message.type === 'project_updated' && endpoint === '/projects') {
-              console.log('Project updated, updating UI:', message.data);
-              queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-                return oldData.map(item => 
-                  item.id === message.data.id ? { ...item, ...message.data } : item
-                );
-              });
-              
-              toast({
-                title: "Project updated",
-                description: "A project has been updated",
-              });
+                // Handle creation
+                else if (action === 'created') {
+                  queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                    if (oldData.some(item => item.id === message.data.id || String(item.id) === String(message.data.id))) {
+                      return oldData;
+                    }
+                    return [...oldData, message.data];
+                  });
+                  
+                  toast({
+                    title: `${contentType.replace('_', ' ')} created`,
+                    description: `A new ${contentType.replace('_', ' ')} has been added`,
+                  });
+                  
+                  // Force a refetch to ensure UI is synced with server
+                  setTimeout(() => refetch(), 200);
+                }
+                // Handle updates
+                else if (action === 'updated') {
+                  queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                    return oldData.map(item => {
+                      // Match using both exact and string conversion approaches
+                      if (item.id === message.data.id || String(item.id) === String(message.data.id)) {
+                        return { ...item, ...message.data };
+                      }
+                      return item;
+                    });
+                  });
+                  
+                  toast({
+                    title: `${contentType.replace('_', ' ')} updated`,
+                    description: `A ${contentType.replace('_', ' ')} has been updated`,
+                  });
+                  
+                  // Force a refetch to ensure UI is synced with server
+                  setTimeout(() => refetch(), 200);
+                }
+              }
             }
           } catch (error) {
             console.error('Error handling WebSocket message:', error);
