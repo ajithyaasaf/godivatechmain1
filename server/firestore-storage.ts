@@ -409,7 +409,7 @@ export class FirestoreStorage {
     try {
       const nextId = await this.getNextId('projects');
       
-      // Create the project with required fields
+      // Create the project with required fields - matching schema properties
       const project: Project = {
         ...insertProject,
         id: nextId,
@@ -417,13 +417,14 @@ export class FirestoreStorage {
         image: insertProject.image ?? null,
         gallery: insertProject.gallery ?? null,
         fullDescription: insertProject.fullDescription ?? null,
-        showcaseUrl: insertProject.showcaseUrl ?? null,
-        videoUrl: insertProject.videoUrl ?? null,
         clientName: insertProject.clientName ?? null,
-        clientUrl: insertProject.clientUrl ?? null,
-        featured: insertProject.featured ?? false,
-        completed: insertProject.completed ?? true,
         completionDate: insertProject.completionDate ?? null,
+        githubLink: insertProject.githubLink ?? null,
+        testimonial: insertProject.testimonial ?? null,
+        challengeDescription: insertProject.challengeDescription ?? null,
+        solutionDescription: insertProject.solutionDescription ?? null,
+        resultsDescription: insertProject.resultsDescription ?? null,
+        featured: insertProject.featured ?? false,
         order: insertProject.order ?? null
       };
       
@@ -856,6 +857,7 @@ export class FirestoreStorage {
       const contactMessage: ContactMessage = {
         ...insertContactMessage,
         id: nextId,
+        phone: insertContactMessage.phone ?? null,
         createdAt: new Date()
       };
       
