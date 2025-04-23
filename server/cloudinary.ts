@@ -1,23 +1,29 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { log } from './vite';
 
+// Trim any potential whitespace from environment variables
+const cloudName = process.env.CLOUDINARY_CLOUD_NAME?.trim();
+const apiKey = process.env.CLOUDINARY_API_KEY?.trim();
+const apiSecret = process.env.CLOUDINARY_API_SECRET?.trim();
+
 // Configure Cloudinary with environment variables
 console.log('Cloudinary Config:', {
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY ? 'Exists (not shown)' : 'Missing',
-  api_secret: process.env.CLOUDINARY_API_SECRET ? 'Exists (not shown)' : 'Missing'
+  cloud_name: cloudName,
+  api_key: apiKey ? 'Exists (not shown)' : 'Missing',
+  api_secret: apiSecret ? 'Exists (not shown)' : 'Missing'
 });
 
+// Configure Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: cloudName,
+  api_key: apiKey,
+  api_secret: apiSecret,
   secure: true,
 });
 
 // Verify Cloudinary configuration is present
 const verifyCloudinaryConfig = () => {
-  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  if (!cloudName || !apiKey || !apiSecret) {
     log('Missing Cloudinary environment variables', 'cloudinary');
     return false;
   }
@@ -32,9 +38,9 @@ export const uploadImage = async (file: string, folder = 'portfolio'): Promise<s
 
   // Re-apply configuration to ensure it's using the latest values
   cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret,
     secure: true,
   });
 
@@ -82,9 +88,9 @@ export const deleteImage = async (imageUrl: string): Promise<boolean> => {
 
   // Re-apply configuration to ensure it's using the latest values
   cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret,
     secure: true,
   });
 
