@@ -299,33 +299,109 @@ const ContentDataTable = ({
   const deleteMutation = useMutation({
     mutationFn: async (id: number | string) => {
       console.log(`Sending DELETE request to ${adminApiPath}/${id}`);
+      
       try {
-        const response = await apiRequest("DELETE", `${adminApiPath}/${id}`);
-        console.log(`Response from delete operation:`, response);
+        // Added timeout and retry logic
+        const maxRetries = 2;
+        let currentRetry = 0;
+        let lastError = null;
         
-        if (response.ok) {
-          console.log(`Deletion with ID ${id} was successful on server`);
-          let responseData = {};
-          
+        while (currentRetry <= maxRetries) {
           try {
-            responseData = await response.json();
-            console.log('Delete response data:', responseData);
-          } catch (e) {
-            console.log('No JSON response body');
+            // If this is a retry, log it
+            if (currentRetry > 0) {
+              console.log(`Retry attempt ${currentRetry}/${maxRetries} for deletion of ID: ${id}`);
+            }
+            
+            // Make the delete request with a reasonable timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            const response = await fetch(`${adminApiPath}/${id}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log(`Response from delete operation:`, response);
+            
+            if (response.ok) {
+              console.log(`Deletion with ID ${id} was successful on server`);
+              let responseData = {};
+              
+              try {
+                const text = await response.text();
+                if (text) {
+                  responseData = JSON.parse(text);
+                  console.log('Delete response data:', responseData);
+                } else {
+                  console.log('Empty response body (successful)');
+                }
+              } catch (parseError) {
+                console.log('Non-JSON response body:', parseError);
+              }
+              
+              return id;
+            } else {
+              // Server returned an error
+              let errorMessage = `Server returned ${response.status}`;
+              try {
+                const text = await response.text();
+                if (text) {
+                  try {
+                    const errorData = JSON.parse(text);
+                    errorMessage = errorData.message || errorMessage;
+                    console.error('Server delete error:', errorData);
+                  } catch (parseError) {
+                    // Non-JSON error response - could be HTML
+                    if (text.includes('<!DOCTYPE html>')) {
+                      errorMessage = `Server error (${response.status}). The server may be experiencing issues.`;
+                      console.error('Server returned HTML error page instead of JSON');
+                    } else {
+                      errorMessage = text || errorMessage;
+                    }
+                  }
+                }
+              } catch (textError) {
+                console.error('Could not read error response body:', textError);
+              }
+              
+              // For 5xx errors, retry
+              if (response.status >= 500 && currentRetry < maxRetries) {
+                lastError = new Error(errorMessage);
+                currentRetry++;
+                await new Promise(resolve => setTimeout(resolve, 1000 * currentRetry)); // Exponential backoff
+                continue; // Try again
+              }
+              
+              throw new Error(errorMessage);
+            }
+          } catch (fetchError) {
+            lastError = fetchError;
+            
+            // For network errors, retry
+            if (
+              fetchError instanceof Error && (
+                fetchError instanceof TypeError || 
+                fetchError.name === 'AbortError'
+              )
+            ) {
+              if (currentRetry < maxRetries) {
+                currentRetry++;
+                await new Promise(resolve => setTimeout(resolve, 1000 * currentRetry));
+                continue; // Try again
+              }
+            }
+            
+            throw fetchError; // Rethrow if max retries exceeded or not a network error
           }
-          
-          return id;
-        } else {
-          let errorMessage = `Server returned ${response.status}`;
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorMessage;
-            console.error('Server delete error:', errorData);
-          } catch (e) {
-            // No JSON error response
-          }
-          throw new Error(errorMessage);
         }
+        
+        // If we get here, we've exhausted retries
+        throw lastError || new Error('Failed to delete after multiple attempts');
       } catch (error) {
         console.error(`Error in delete mutation for ID ${id}:`, error);
         throw error;
@@ -351,7 +427,7 @@ const ContentDataTable = ({
           : deletedId;
           
         const newData = oldData.filter(item => {
-          // Try to match exactly, or convert both to strings
+          // Try to match exactly, or convert both to strings for comparison
           const idMatch = item.id !== itemId && String(item.id) !== String(itemId);
           return idMatch;
         });
@@ -360,7 +436,7 @@ const ContentDataTable = ({
         return newData;
       });
       
-      // Force refetch to ensure consistency - this will update the UI with the latest data from the server
+      // Force refetch to ensure consistency
       queryClient.invalidateQueries({ queryKey: [apiPath] });
       
       // Immediately trigger a refetch for this specific endpoint to ensure data consistency
