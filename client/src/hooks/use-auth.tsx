@@ -7,6 +7,7 @@ import {
 import { insertUserSchema, User, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 type AuthContextType = {
   user: User | null;
@@ -17,11 +18,12 @@ type AuthContextType = {
   registerMutation: UseMutationResult<User, Error, InsertUser>;
 };
 
-type LoginData = Pick<InsertUser, "username" | "password">;
+type LoginData = Pick<InsertUser, "username" | "password"> & { rememberMe?: boolean };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const {
     data: user,
     error,
@@ -42,6 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Login successful",
         description: "You have been logged in successfully",
       });
+      
+      // Redirect to admin page after successful login
+      const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/admin';
+      sessionStorage.removeItem('redirectAfterLogin');
+      setLocation(redirectPath);
     },
     onError: (error: Error) => {
       toast({
