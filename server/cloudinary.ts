@@ -48,13 +48,22 @@ export const uploadImage = async (file: string, folder = 'portfolio'): Promise<s
     // For files that are already URLs (from the client)
     if (file.startsWith('data:image')) {
       console.log('Uploading base64 image to Cloudinary folder:', folder);
-      // Upload the base64 image data
-      const result = await cloudinary.uploader.upload(file, {
-        folder,
-        resource_type: 'auto',
-      });
-      console.log('Successfully uploaded to Cloudinary:', result.secure_url);
-      return result.secure_url;
+      // Upload the base64 image data with more detailed logging
+      console.log('Image data length:', file.length);
+      console.log('Image data type:', file.substring(0, 30) + '...');
+      
+      try {
+        const result = await cloudinary.uploader.upload(file, {
+          folder,
+          resource_type: 'auto',
+        });
+        console.log('Successfully uploaded to Cloudinary:', result.secure_url);
+        return result.secure_url;
+      } catch (uploadError) {
+        console.error('Specific upload error:', uploadError.message);
+        console.error('Error details:', uploadError);
+        throw uploadError;
+      }
     } else if (file.startsWith('http')) {
       // If it's already a URL, check if it's a Cloudinary URL
       if (file.includes('cloudinary.com')) {
@@ -64,15 +73,22 @@ export const uploadImage = async (file: string, folder = 'portfolio'): Promise<s
       
       console.log('Uploading URL to Cloudinary folder:', folder);
       // Upload from external URL
-      const result = await cloudinary.uploader.upload(file, {
-        folder,
-        resource_type: 'auto',
-      });
-      console.log('Successfully uploaded URL to Cloudinary:', result.secure_url);
-      return result.secure_url;
+      try {
+        const result = await cloudinary.uploader.upload(file, {
+          folder,
+          resource_type: 'auto',
+        });
+        console.log('Successfully uploaded URL to Cloudinary:', result.secure_url);
+        return result.secure_url;
+      } catch (uploadError) {
+        console.error('Specific URL upload error:', uploadError.message);
+        console.error('Error details:', uploadError);
+        throw uploadError;
+      }
     }
     
     // If it's neither a data URL nor an HTTP URL, it's not supported
+    console.error('Unsupported image format. File starts with:', file.substring(0, 30));
     throw new Error('Unsupported image format');
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
