@@ -2,6 +2,12 @@ import { v2 as cloudinary } from 'cloudinary';
 import { log } from './vite';
 
 // Configure Cloudinary with environment variables
+console.log('Cloudinary Config:', {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY ? 'Exists (not shown)' : 'Missing',
+  api_secret: process.env.CLOUDINARY_API_SECRET ? 'Exists (not shown)' : 'Missing'
+});
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -24,26 +30,39 @@ export const uploadImage = async (file: string, folder = 'portfolio'): Promise<s
     throw new Error('Cloudinary configuration is missing');
   }
 
+  // Re-apply configuration to ensure it's using the latest values
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
+  });
+
   try {
     // For files that are already URLs (from the client)
     if (file.startsWith('data:image')) {
+      console.log('Uploading base64 image to Cloudinary folder:', folder);
       // Upload the base64 image data
       const result = await cloudinary.uploader.upload(file, {
         folder,
         resource_type: 'auto',
       });
+      console.log('Successfully uploaded to Cloudinary:', result.secure_url);
       return result.secure_url;
     } else if (file.startsWith('http')) {
       // If it's already a URL, check if it's a Cloudinary URL
       if (file.includes('cloudinary.com')) {
+        console.log('Image is already in Cloudinary:', file);
         return file; // Already a Cloudinary URL, just return it
       }
       
+      console.log('Uploading URL to Cloudinary folder:', folder);
       // Upload from external URL
       const result = await cloudinary.uploader.upload(file, {
         folder,
         resource_type: 'auto',
       });
+      console.log('Successfully uploaded URL to Cloudinary:', result.secure_url);
       return result.secure_url;
     }
     
@@ -61,6 +80,14 @@ export const deleteImage = async (imageUrl: string): Promise<boolean> => {
     return false;
   }
 
+  // Re-apply configuration to ensure it's using the latest values
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
+  });
+
   try {
     // Extract the public_id from the URL
     const urlParts = imageUrl.split('/');
@@ -71,6 +98,7 @@ export const deleteImage = async (imageUrl: string): Promise<boolean> => {
     // Find the folder in the URL (after upload/)
     const uploadIndex = urlParts.findIndex(part => part === 'upload');
     if (uploadIndex === -1 || uploadIndex + 1 >= urlParts.length) {
+      console.log('Could not find upload path in URL:', imageUrl);
       return false;
     }
     
@@ -78,7 +106,9 @@ export const deleteImage = async (imageUrl: string): Promise<boolean> => {
     const folders = urlParts.slice(uploadIndex + 1, urlParts.length - 1);
     const publicId = [...folders, filename].join('/');
     
+    console.log('Deleting image from Cloudinary, public ID:', publicId);
     await cloudinary.uploader.destroy(publicId);
+    console.log('Successfully deleted image from Cloudinary:', publicId);
     return true;
   } catch (error) {
     console.error('Error deleting from Cloudinary:', error);
