@@ -87,54 +87,116 @@ const ContentDataTable = ({
         console.log(`WebSocket connection established for ${title}`);
       });
       
-      // Listen for messages
+      // Listen for messages with enhanced content type handling
       socket.addEventListener('message', (event) => {
         try {
           const message = JSON.parse(event.data);
           console.log(`WebSocket message received:`, message);
           
-          // Handle different types of updates
-          if (message.type === 'project_deleted' && endpoint === '/projects') {
-            console.log('Project deleted, updating UI:', message.data.id);
-            // Update the cache by removing the deleted item
-            queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-              return oldData.filter(item => item.id !== message.data.id);
-            });
+          // Generic message matcher for any content type
+          const contentTypeMatch = message.type?.match(/^(\w+)_(deleted|created|updated)$/);
+          
+          if (contentTypeMatch) {
+            const [_, contentType, action] = contentTypeMatch;
             
-            toast({
-              title: "Project deleted",
-              description: "A project has been deleted by another user",
-            });
-          } 
-          else if (message.type === 'project_created' && endpoint === '/projects') {
-            console.log('Project created, updating UI:', message.data);
-            // Update the cache with the new project
-            queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-              // Avoid duplication if the item already exists
-              if (oldData.some(item => item.id === message.data.id)) {
-                return oldData;
+            // Match the contentType to the correct endpoint
+            const matchingEndpoint = contentType === 'project' ? '/projects' : 
+                                   contentType === 'service' ? '/services' : 
+                                   contentType === 'team_member' ? '/team-members' : 
+                                   contentType === 'testimonial' ? '/testimonials' : 
+                                   contentType === 'blog_post' ? '/blog-posts' : 
+                                   contentType === 'category' ? '/categories' : 
+                                   contentType === 'subscriber' ? '/subscribers' : 
+                                   contentType === 'contact_message' ? '/contact-messages' : null;
+            
+            // Check if this message is relevant to this component's endpoint
+            if (matchingEndpoint === endpoint) {
+              console.log(`${contentType} ${action}, updating UI:`, message.data);
+              
+              // Handle deletion
+              if (action === 'deleted') {
+                queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                  if (!oldData || !Array.isArray(oldData)) {
+                    console.warn('Invalid data in query cache, cannot update UI');
+                    return oldData;
+                  }
+                  
+                  // Handle both string and number IDs
+                  const itemId = message.data.id;
+                  
+                  // Log before and after counts
+                  const beforeCount = oldData.length;
+                  const newData = oldData.filter(item => {
+                    const idMatch = item.id !== itemId && String(item.id) !== String(itemId);
+                    return idMatch;
+                  });
+                  console.log(`WebSocket: Filtered out deleted item. Items before: ${beforeCount}, after: ${newData.length}`);
+                  
+                  return newData;
+                });
+                
+                toast({
+                  title: `${contentType.replace('_', ' ')} deleted`,
+                  description: `A ${contentType.replace('_', ' ')} has been deleted by another user`,
+                });
+                
+                // Force immediate refetch to ensure UI is synced with server
+                queryClient.invalidateQueries({ queryKey: [apiPath] });
               }
-              return [...oldData, message.data];
-            });
-            
-            toast({
-              title: "Project created",
-              description: "A new project has been added",
-            });
-          }
-          else if (message.type === 'project_updated' && endpoint === '/projects') {
-            console.log('Project updated, updating UI:', message.data);
-            // Update the cache with the updated project
-            queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-              return oldData.map(item => 
-                item.id === message.data.id ? { ...item, ...message.data } : item
-              );
-            });
-            
-            toast({
-              title: "Project updated",
-              description: "A project has been updated",
-            });
+              // Handle creation
+              else if (action === 'created') {
+                queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                  if (!oldData || !Array.isArray(oldData)) {
+                    console.warn('Invalid data in query cache, cannot update UI for creation');
+                    return oldData;
+                  }
+                  
+                  // Check if item already exists to avoid duplicates
+                  if (oldData.some(item => item.id === message.data.id || String(item.id) === String(message.data.id))) {
+                    return oldData;
+                  }
+                  
+                  console.log(`WebSocket: Adding new item to UI. Items before: ${oldData.length}, after: ${oldData.length + 1}`);
+                  return [...oldData, message.data];
+                });
+                
+                toast({
+                  title: `${contentType.replace('_', ' ')} created`,
+                  description: `A new ${contentType.replace('_', ' ')} has been added`,
+                });
+                
+                // Force immediate refetch to ensure UI is synced with server
+                queryClient.invalidateQueries({ queryKey: [apiPath] });
+              }
+              // Handle updates
+              else if (action === 'updated') {
+                queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                  if (!oldData || !Array.isArray(oldData)) {
+                    console.warn('Invalid data in query cache, cannot update UI for update');
+                    return oldData;
+                  }
+                  
+                  const newData = oldData.map(item => {
+                    // Match using both exact and string conversion approaches
+                    if (item.id === message.data.id || String(item.id) === String(message.data.id)) {
+                      console.log(`WebSocket: Updating item with ID ${item.id} in UI`);
+                      return { ...item, ...message.data };
+                    }
+                    return item;
+                  });
+                  
+                  return newData;
+                });
+                
+                toast({
+                  title: `${contentType.replace('_', ' ')} updated`,
+                  description: `A ${contentType.replace('_', ' ')} has been updated`,
+                });
+                
+                // Force immediate refetch to ensure UI is synced with server
+                queryClient.invalidateQueries({ queryKey: [apiPath] });
+              }
+            }
           }
         } catch (error) {
           console.error('Error handling WebSocket message:', error);
@@ -164,167 +226,544 @@ const ContentDataTable = ({
     };
   }, [endpoint, apiPath, title]);
   
-  // Create mutation
+  // Create mutation with optimistic updates and duplicate prevention
   const createMutation = useMutation({
     mutationFn: async (newItem: any) => {
+      console.log(`Creating new ${title} with data:`, newItem);
+      
+      // Handle pre-check for duplicates
+      const existingData = queryClient.getQueryData<any[]>([apiPath]) || [];
+      
+      // Basic duplicate check based on title if it exists
+      if (newItem.title && existingData.some(item => 
+        item.title && item.title.toLowerCase() === newItem.title.toLowerCase())) {
+        console.warn(`Potential duplicate item detected: ${newItem.title}`);
+        // We'll still proceed but log a warning
+      }
+      
       const res = await apiRequest("POST", adminApiPath, newItem);
-      return await res.json();
+      const data = await res.json();
+      console.log(`Server response for create:`, data);
+      return data;
     },
-    onSuccess: (newData) => {
+    
+    // Add optimistic update before server responds
+    onMutate: async (newData) => {
+      console.log(`Optimistically creating new ${title}`);
+      
+      // Cancel any outgoing refetches to avoid overwriting our optimistic update
+      await queryClient.cancelQueries({ queryKey: [apiPath] });
+      
+      // Snapshot the previous value for potential rollback
+      const previousData = queryClient.getQueryData([apiPath]);
+      
+      // Create a temporary optimistic item with a unique tempId
+      const optimisticId = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const optimisticItem = {
+        ...newData,
+        id: optimisticId,
+        tempId: optimisticId, // Additional identifier to help with removal
+        __optimistic: true,
+        __timestamp: Date.now()
+      };
+      
+      // Update the React Query cache
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        return [...(oldData || []), optimisticItem];
+      });
+      
+      // Return context for potential rollback
+      return { previousData, optimisticItem };
+    },
+    
+    onSuccess: (newData, variables, context) => {
+      console.log(`Successfully created new ${title}:`, newData);
+      
+      // Close the dialog and clear selection
+      setIsDialogOpen(false);
+      setSelectedItem(null);
+      
+      // Show success message
       toast({
         title: "Created successfully",
         description: `${title} has been created.`,
       });
-      // Close dialog and refetch data
-      setIsDialogOpen(false);
-      setSelectedItem(null);
-      // Immediately update the cache with the new data
+      
+      // IMPORTANT: Avoid duplicate handling by tracking what we've added
+      const optimisticItemId = context?.optimisticItem?.tempId;
+      
+      // Update the React Query cache
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        return [...oldData, newData];
+        if (!Array.isArray(oldData)) return [newData];
+        
+        // Remove our optimistic item by its unique tempId and any other optimistic items
+        const withoutOptimistic = oldData.filter(item => 
+          item.tempId !== optimisticItemId && !item.__optimistic
+        );
+        
+        return [...withoutOptimistic, newData];
       });
-      // Also invalidate the query to ensure data consistency
-      queryClient.invalidateQueries({ queryKey: [apiPath] });
+      
+      // Refetch after a delay to ensure we have the latest data
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 300);
     },
-    onError: (error: Error) => {
+    
+    onError: (error: Error, variables, context) => {
+      console.error(`Error creating ${title}:`, error);
+      
+      // Roll back to the previous state if available
+      if (context?.previousData) {
+        queryClient.setQueryData([apiPath], context.previousData);
+      }
+      
       toast({
         title: "Failed to create",
         description: error.message,
         variant: "destructive",
       });
     },
+    
+    // Always refetch once after mutation completes
+    onSettled: () => {
+      console.log('Create mutation settled, refreshing data');
+      // Final cleanup, query again to ensure UI is in sync with server
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 500);
+    },
   });
   
-  // Update mutation
+  // Update mutation with optimistic updates and ID type flexibility
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+    mutationFn: async ({ id, data }: { id: number | string; data: any }) => {
+      console.log(`Updating ${title} with ID ${id} and data:`, data);
       const res = await apiRequest("PUT", `${adminApiPath}/${id}`, data);
-      return { id, updatedData: await res.json() };
+      const updatedData = await res.json();
+      console.log(`Server response for update:`, updatedData);
+      return { id, updatedData };
+    },
+    // Add optimistic update before server responds
+    onMutate: async ({ id, data }) => {
+      console.log(`Optimistically updating ${title} with ID:`, id);
+      
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: [apiPath] });
+      
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData([apiPath]);
+      
+      // Apply optimistic update
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!Array.isArray(oldData)) return oldData;
+        
+        // Handle both string and number IDs
+        const itemId = typeof id === 'string' && !isNaN(Number(id)) 
+          ? Number(id) 
+          : id;
+          
+        return oldData.map(item => {
+          // Use multiple methods to match IDs across different formats
+          if (
+            item.id === itemId || 
+            String(item.id) === String(itemId) ||
+            (item.docId && item.docId === id) ||
+            (item.firebaseId && item.firebaseId === id)
+          ) {
+            console.log(`Found item to update optimistically:`, item);
+            return { ...item, ...data, __optimistic: true };
+          }
+          return item;
+        });
+      });
+      
+      // Return context for rollback if needed
+      return { previousData };
     },
     onSuccess: ({ id, updatedData }) => {
+      console.log(`Update successful for ID ${id}:`, updatedData);
+      
       toast({
         title: "Updated successfully",
         description: `${title} has been updated.`,
       });
+      
       // Close dialog and update cache immediately
       setIsDialogOpen(false);
       setSelectedItem(null);
       
-      // Update the cache with the updated data
+      // Update the cache with the actual server data
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        return oldData.map(item => 
-          item.id === id ? { ...item, ...updatedData } : item
-        );
+        if (!Array.isArray(oldData)) return oldData;
+        
+        // Remove any optimistic flag and update with actual data
+        return oldData.map(item => {
+          // Match using different ID methods
+          const normalizedId = typeof id === 'string' && !isNaN(Number(id)) ? Number(id) : id;
+          const normalizedItemId = item.id || item.docId || item.firebaseId;
+          
+          if (
+            normalizedItemId === normalizedId || 
+            String(normalizedItemId) === String(normalizedId)
+          ) {
+            // Keep any properties from the original item that weren't included in the update
+            return { 
+              ...item, 
+              ...updatedData,
+              __optimistic: undefined // Remove flag
+            };
+          }
+          
+          return item;
+        });
       });
       
       // Also invalidate the query to ensure data consistency
-      queryClient.invalidateQueries({ queryKey: [apiPath] });
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 300);
     },
-    onError: (error: Error) => {
+    onError: (error: Error, variables, context) => {
+      console.error(`Error updating ${title}:`, error);
+      
+      // Revert to the previous state if we have it
+      if (context?.previousData) {
+        console.log('Rolling back optimistic update due to error');
+        queryClient.setQueryData([apiPath], context.previousData);
+      }
+      
       toast({
         title: "Failed to update",
         description: error.message,
         variant: "destructive",
       });
     },
+    // Final cleanup regardless of outcome
+    onSettled: () => {
+      // Refetch after a delay to ensure we have the latest data
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 500);
+    },
   });
   
-  // Delete mutation
+  // Delete mutation with enhanced error handling and retries
   const deleteMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: number | string) => {
       console.log(`Sending DELETE request to ${adminApiPath}/${id}`);
+      
       try {
-        const response = await apiRequest("DELETE", `${adminApiPath}/${id}`);
-        console.log(`Response from delete operation:`, response);
+        // Added timeout and retry logic
+        const maxRetries = 2;
+        let currentRetry = 0;
+        let lastError = null;
         
-        // Check if response is successful (2xx status code)
-        if (response.ok) {
-          console.log(`Deletion with ID ${id} was successful on server`);
-          let responseData = {};
-          
-          // Try to get response body if there is one
+        while (currentRetry <= maxRetries) {
           try {
-            responseData = await response.json();
-            console.log('Delete response data:', responseData);
-          } catch (e) {
-            // No JSON response (normal for 204 No Content)
-            console.log('No JSON response body');
+            // If this is a retry, log it
+            if (currentRetry > 0) {
+              console.log(`Retry attempt ${currentRetry}/${maxRetries} for deletion of ID: ${id}`);
+            }
+            
+            // Make the delete request with a reasonable timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
+            const response = await fetch(`${adminApiPath}/${id}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            console.log(`Response from delete operation:`, response);
+            
+            if (response.ok) {
+              console.log(`Deletion with ID ${id} was successful on server`);
+              let responseData = {};
+              
+              try {
+                const text = await response.text();
+                if (text) {
+                  responseData = JSON.parse(text);
+                  console.log('Delete response data:', responseData);
+                } else {
+                  console.log('Empty response body (successful)');
+                }
+              } catch (parseError) {
+                console.log('Non-JSON response body:', parseError);
+              }
+              
+              return id;
+            } else {
+              // Server returned an error
+              let errorMessage = `Server returned ${response.status}`;
+              try {
+                const text = await response.text();
+                if (text) {
+                  try {
+                    const errorData = JSON.parse(text);
+                    errorMessage = errorData.message || errorMessage;
+                    console.error('Server delete error:', errorData);
+                  } catch (parseError) {
+                    // Non-JSON error response - could be HTML
+                    if (text.includes('<!DOCTYPE html>')) {
+                      errorMessage = `Server error (${response.status}). The server may be experiencing issues.`;
+                      console.error('Server returned HTML error page instead of JSON');
+                    } else {
+                      errorMessage = text || errorMessage;
+                    }
+                  }
+                }
+              } catch (textError) {
+                console.error('Could not read error response body:', textError);
+              }
+              
+              // For server errors (5xx) or if HTML error page was detected, retry
+              const isHtmlErrorPage = errorMessage.includes('<!DOCTYPE html>') || 
+                                     errorMessage.includes('Server error');
+                                     
+              if ((response.status >= 500 || isHtmlErrorPage) && currentRetry < maxRetries) {
+                lastError = new Error(`Server error (${response.status}). Retrying...`);
+                console.log(`Server returned error ${response.status}, will retry (${currentRetry + 1}/${maxRetries})`);
+                currentRetry++;
+                await new Promise(resolve => setTimeout(resolve, 1000 * currentRetry)); // Exponential backoff
+                continue; // Try again
+              }
+              
+              throw new Error(errorMessage);
+            }
+          } catch (fetchError) {
+            lastError = fetchError;
+            
+            // For network errors, retry
+            if (
+              fetchError instanceof Error && (
+                fetchError instanceof TypeError || 
+                fetchError.name === 'AbortError'
+              )
+            ) {
+              if (currentRetry < maxRetries) {
+                currentRetry++;
+                await new Promise(resolve => setTimeout(resolve, 1000 * currentRetry));
+                continue; // Try again
+              }
+            }
+            
+            throw fetchError; // Rethrow if max retries exceeded or not a network error
           }
-          
-          return id;
-        } else {
-          // Server returned error response
-          let errorMessage = `Server returned ${response.status}`;
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorMessage;
-            console.error('Server delete error:', errorData);
-          } catch (e) {
-            // No JSON error response
-          }
-          throw new Error(errorMessage);
         }
+        
+        // If we get here, we've exhausted retries
+        throw lastError || new Error('Failed to delete after multiple attempts');
       } catch (error) {
         console.error(`Error in delete mutation for ID ${id}:`, error);
         throw error;
       }
     },
-    onSuccess: (deletedId) => {
+    // ENHANCED WITH OPTIMISTIC UI UPDATES
+    // Immediately update UI even before server responds
+    onMutate: async (deletedId) => {
+      console.log(`Running optimistic update for deletion of ID: ${deletedId}`);
+      
+      // Cancel any outgoing refetches to avoid overwriting our optimistic update
+      await queryClient.cancelQueries({ queryKey: [apiPath] });
+      
+      // Snapshot the previous value for rollback if needed
+      const previousData = queryClient.getQueryData([apiPath]);
+      
+      // Optimistically update by removing the item from cache immediately
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!Array.isArray(oldData)) return oldData;
+        
+        // Handle both string and number IDs for comparison
+        const itemId = typeof deletedId === 'string' && !isNaN(Number(deletedId)) 
+          ? Number(deletedId) 
+          : deletedId;
+          
+        const newData = oldData.filter(item => {
+          // Check all possible ID formats
+          const normalizedItemId = item.id || item.docId || item.firebaseId || item.__id;
+          const normalizedDeletedId = typeof itemId === 'string' && !isNaN(Number(itemId)) 
+                                    ? Number(itemId) 
+                                    : itemId;
+          
+          // Try to match exactly, or convert both to strings for comparison
+          return normalizedItemId !== normalizedDeletedId && 
+                 String(normalizedItemId) !== String(normalizedDeletedId);
+        });
+        
+        console.log(`Optimistic update: Filtered out item ${deletedId}. Items before: ${oldData.length}, after: ${newData.length}`);
+        return newData;
+      });
+      
+      // Return context with the snapshotted value
+      return { previousData };
+    },
+    // If the deletion is successful
+    onSuccess: (deletedId, _, context) => {
       console.log(`Delete mutation successful for ID ${deletedId}`);
+      
       toast({
         title: "Deleted successfully",
         description: `${title} has been deleted.`,
       });
       
-      // Immediately update the cache to remove the deleted item
-      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        const newData = oldData.filter(item => item.id !== deletedId);
-        console.log(`Filtered out deleted item. Items before: ${oldData.length}, after: ${newData.length}`);
-        return newData;
-      });
-      
-      // Also invalidate the query to ensure data consistency
-      queryClient.invalidateQueries({ queryKey: [apiPath] });
+      // Final UI refresh to ensure consistency with server
+      // Use a delay to ensure WebSocket messages don't override our state
+      setTimeout(() => {
+        // Force refresh the data from server (but don't show loading state)
+        queryClient.invalidateQueries({ 
+          queryKey: [apiPath],
+          refetchType: 'all' 
+        });
+      }, 200);
     },
-    onError: (error: Error) => {
+    // If the mutation fails, roll back optimistic updates
+    onError: (error: Error, deletedId, context: any) => {
       console.error(`Delete mutation error:`, error);
+      
+      // Rollback to the previous state
+      if (context?.previousData) {
+        console.log('Rolling back optimistic update due to error');
+        queryClient.setQueryData([apiPath], context.previousData);
+      }
+      
       toast({
         title: "Failed to delete",
         description: error.message,
         variant: "destructive",
       });
     },
+    // Always refetch once after mutation completes, successful or not
+    onSettled: () => {
+      console.log('Delete mutation settled, refreshing data');
+      // Final cleanup, query again to ensure UI is in sync with server
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: [apiPath] });
+      }, 500);
+    },
   });
   
-  // Handler for adding/editing items
+  // Handler for adding/editing items - supporting various ID types
   const handleSave = (formData: any) => {
+    console.log(`handleSave called with form data:`, formData);
+    
     if (selectedItem) {
       // Update existing item
-      const itemWithId = selectedItem as { id: number };
-      updateMutation.mutate({ id: itemWithId.id, data: formData });
-    } else {
-      // Create new item
-      createMutation.mutate(formData);
-    }
-  };
-  
-  // Handler for deleting items
-  const handleDelete = (item: any) => {
-    if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
-      console.log("Deleting item:", item);
+      console.log(`Updating existing item:`, selectedItem);
       
-      if (!item || item.id === undefined || item.id === null) {
-        console.error("Invalid item ID for deletion:", item);
+      // Enhanced ID detection for various backend systems
+      let itemId = null;
+      
+      if (selectedItem && typeof selectedItem === 'object') {
+        // Prioritize Firestore-specific IDs
+        if (selectedItem.firebaseId !== undefined && selectedItem.firebaseId !== null) {
+          console.log(`Using firebaseId for update: ${selectedItem.firebaseId}`);
+          itemId = selectedItem.firebaseId;
+        }
+        // Then try docId which is also a Firestore ID
+        else if (selectedItem.docId !== undefined && selectedItem.docId !== null) {
+          console.log(`Using docId for update: ${selectedItem.docId}`);
+          itemId = selectedItem.docId;
+        }
+        // Finally use regular id
+        else if (selectedItem.id !== undefined && selectedItem.id !== null) {
+          console.log(`Using id for update: ${selectedItem.id} (type: ${typeof selectedItem.id})`);
+          itemId = selectedItem.id;
+        }
+        // Legacy ID format
+        else if (selectedItem.__id !== undefined && selectedItem.__id !== null) {
+          console.log(`Using __id for update: ${selectedItem.__id}`);
+          itemId = selectedItem.__id;
+        }
+      }
+      
+      if (!itemId) {
+        console.error("Could not find valid ID in selected item:", selectedItem);
         toast({
-          title: "Delete failed",
-          description: "Could not delete item with invalid ID",
+          title: "Update failed",
+          description: "Could not identify the item ID for update",
           variant: "destructive",
         });
         return;
       }
       
-      const itemWithId = item as { id: number };
-      console.log("Deleting item with ID:", itemWithId.id);
-      deleteMutation.mutate(itemWithId.id);
+      // Keep track of original item fields to avoid losing data
+      // that wasn't included in the form (like special IDs, timestamps, etc.)
+      updateMutation.mutate({ 
+        id: itemId, 
+        data: {
+          ...formData,
+          // Keep any special fields
+          ...(selectedItem.firebaseId && { firebaseId: selectedItem.firebaseId }),
+          ...(selectedItem.docId && { docId: selectedItem.docId }),
+          ...(selectedItem.__id && { __id: selectedItem.__id }),
+        } 
+      });
+    } else {
+      // Create new item
+      console.log(`Creating new item with data:`, formData);
+      createMutation.mutate(formData);
+    }
+  };
+  
+  // Handler for deleting items with enhanced ID detection
+  const handleDelete = (item: any) => {
+    if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
+      console.log("Deleting item:", item);
+      
+      // Enhanced ID detection for Firebase/Firestore documents
+      let itemId = null;
+      
+      if (item && typeof item === 'object') {
+        // Detailed logging to debug ID issues
+        console.log(`Item data for deletion:`, {
+          id: item.id,
+          idType: typeof item.id,
+          docId: item.docId,
+          firebaseId: item.firebaseId,
+          __id: item.__id,
+          endpoint
+        });
+        
+        // Prioritize Firestore-specific IDs
+        if (item.firebaseId !== undefined && item.firebaseId !== null) {
+          console.log(`Using firebaseId for deletion: ${item.firebaseId}`);
+          itemId = item.firebaseId;
+        }
+        // Then try docId which is also a Firestore ID
+        else if (item.docId !== undefined && item.docId !== null) {
+          console.log(`Using docId for deletion: ${item.docId}`);
+          itemId = item.docId;
+        }
+        // Finally use regular id
+        else if (item.id !== undefined && item.id !== null) {
+          console.log(`Using id for deletion: ${item.id} (type: ${typeof item.id})`);
+          itemId = item.id;
+        }
+        // Legacy ID format
+        else if (item.__id !== undefined && item.__id !== null) {
+          console.log(`Using __id for deletion: ${item.__id}`);
+          itemId = item.__id;
+        }
+      }
+      
+      if (!itemId) {
+        console.error("Invalid item ID for deletion:", item);
+        toast({
+          title: "Delete failed",
+          description: "Could not identify the item ID for deletion",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      console.log(`Deleting item with ID: ${itemId}`);
+      deleteMutation.mutate(itemId);
     }
   };
   
