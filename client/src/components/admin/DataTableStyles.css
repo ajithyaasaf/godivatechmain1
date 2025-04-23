@@ -1,6 +1,27 @@
+/* Enterprise-level DataTable styles */
+
 /* Animation styles for item deletion */
 .deleting-row {
   transition: all 0.5s ease-in-out;
+  animation: fadeOutRow 0.8s ease forwards;
+}
+
+@keyframes fadeOutRow {
+  0% {
+    opacity: 1;
+    background-color: rgba(239, 68, 68, 0.05);
+    transform: translateX(0);
+  }
+  70% {
+    opacity: 0.3;
+    background-color: rgba(239, 68, 68, 0.1);
+    transform: translateX(5px);
+  }
+  100% {
+    opacity: 0;
+    max-height: 0;
+    transform: translateX(-10px);
+  }
 }
 
 .fade-out-height {
@@ -12,12 +33,176 @@
   overflow: hidden;
 }
 
+/* Item state styles */
 .optimistic-item {
   opacity: 0.7;
   background-color: rgba(0, 0, 0, 0.03);
+  animation: pulseOptimistic 2s infinite alternate;
 }
 
 .updating-item {
   opacity: 0.8;
   background-color: rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+}
+
+.updating-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+/* Data table cell hover effects */
+tr:hover td {
+  background-color: rgba(0, 0, 0, 0.02);
+  transition: background-color 0.2s ease;
+}
+
+/* Table hover state */
+.hover-highlight:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+/* Sort button transition */
+.sort-button {
+  transition: transform 0.2s ease;
+}
+
+.sort-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Loading states */
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes pulseOptimistic {
+  0% {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* Card hover transitions */
+.card-hover-effect {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 4px 6px -2px rgba(0, 0, 0, 0.025);
+}
+
+/* Status indicators */
+.status-active {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: rgb(6, 95, 70);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-inactive {
+  background-color: rgba(107, 114, 128, 0.1);
+  color: rgb(55, 65, 81);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-pending {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: rgb(146, 64, 14);
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Table customization */
+.enterprise-table {
+  border-spacing: 0;
+  width: 100%;
+}
+
+.enterprise-table th {
+  background-color: rgba(243, 244, 246, 0.5);
+  text-align: left;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: rgb(55, 65, 81);
+  border-bottom: 1px solid rgba(229, 231, 235, 1);
+}
+
+.enterprise-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+  color: rgb(75, 85, 99);
+}
+
+/* Bulk action highlight row */
+.highlight-selected-row {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Empty state styling */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: rgb(107, 114, 128);
+  background-color: rgba(243, 244, 246, 0.2);
+  border-radius: 0.5rem;
+}
+
+.empty-state svg {
+  color: rgb(156, 163, 175);
+  margin-bottom: 1rem;
+  height: 3rem;
+  width: 3rem;
+}
+
+.empty-state h3 {
+  font-weight: 500;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  color: rgb(55, 65, 81);
+}
+
+.empty-state p {
+  font-size: 0.875rem;
+  max-width: 24rem;
+}
+
+/* Tooltips for truncated content */
+.truncate-with-tooltip {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  position: relative;
+  display: inline-block;
 }

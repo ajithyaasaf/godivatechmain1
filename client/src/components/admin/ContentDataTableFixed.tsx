@@ -995,8 +995,6 @@ const ContentDataTable = ({
   }).length;
   
   // Export data function
-  
-  // Export data function
   const exportData = useCallback(() => {
     const dataToExport = localData.map(item => {
       // Create a simplified object without internal fields
@@ -1163,8 +1161,8 @@ const ContentDataTable = ({
         </div>
       </div>
       
-      <div className="rounded-md border">
-        <Table>
+      <div className="rounded-md border shadow-sm">
+        <Table className="enterprise-table">
           <TableCaption>
             {filteredData.length 
               ? `A list of ${filteredData.length} ${title.toLowerCase()}`
@@ -1178,7 +1176,7 @@ const ContentDataTable = ({
                   <Button
                     variant="ghost"
                     onClick={() => handleSort(column.key)}
-                    className="flex items-center p-0 h-auto hover:bg-transparent"
+                    className="flex items-center p-0 h-auto hover:bg-transparent sort-button"
                   >
                     {column.title}
                     {sortField === column.key ? (
@@ -1205,13 +1203,30 @@ const ContentDataTable = ({
               </TableRow>
             ) : filteredData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length + 1} className="text-center py-8">
-                  No {title.toLowerCase()} found
-                  {searchQuery && (
-                    <>
-                      {" "}for "<span className="font-semibold">{searchQuery}</span>"
-                    </>
-                  )}
+                <TableCell colSpan={columns.length + 1} className="p-0">
+                  <div className="empty-state py-12">
+                    <FileText className="h-12 w-12 text-muted-foreground opacity-40" />
+                    <h3>No {title.toLowerCase()} found</h3>
+                    {searchQuery ? (
+                      <p>
+                        No results match your search for "<span className="font-semibold">{searchQuery}</span>".
+                        Try using different keywords or clear your search.
+                      </p>
+                    ) : (
+                      <p>
+                        Get started by creating your first {title.toLowerCase()} using the "Add New" button above.
+                      </p>
+                    )}
+                    {searchQuery && (
+                      <Button
+                        variant="outline"
+                        className="mt-4"
+                        onClick={() => setSearchQuery('')}
+                      >
+                        Clear Search
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
@@ -1225,7 +1240,7 @@ const ContentDataTable = ({
                     <TableRow 
                       id={`row-${rowIdentifier}`} 
                       key={rowIdentifier} 
-                      className={rowClass}
+                      className={`hover-highlight ${rowClass}`}
                     >
                       {columns.map((column) => (
                         <TableCell key={`${rowIdentifier}-${column.key}`}>
