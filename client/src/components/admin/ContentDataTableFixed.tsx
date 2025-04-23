@@ -9,6 +9,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
+import './DataTableStyles.css';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -628,7 +629,7 @@ const ContentDataTable = ({
     }
   };
   
-  // Handler for deleting items
+  // Enhanced handler for deleting items with guaranteed UI update
   const handleDelete = (item: any) => {
     if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
       console.log("Deleting item:", item);
@@ -689,10 +690,81 @@ const ContentDataTable = ({
         return;
       }
       
-      console.log(`Proceeding with deletion using ID: ${itemId} (type: ${typeof itemId})`)
+      console.log(`Proceeding with deletion using ID: ${itemId} (type: ${typeof itemId})`);
       
-      console.log(`Deleting ${title} with ID:`, itemId);
-      deleteMutation.mutate(itemId);
+      // STEP 1: Pre-deletion UI update - Immediately update the UI before server responds
+      // Find the DOM element for this row and apply a fading out effect
+      try {
+        // Create a unique row identifier based on multiple possible ID properties
+        const rowIdentifier = item.id || item.docId || item.firebaseId || item.__id;
+        const rowElement = document.getElementById(`row-${rowIdentifier}`);
+        
+        if (rowElement) {
+          console.log(`Found row element, applying visual feedback`);
+          // Add a CSS class for visual feedback
+          rowElement.classList.add('deleting-row');
+          
+          // Apply immediate visual feedback animation
+          rowElement.style.transition = 'opacity 0.5s ease, height 0.5s ease, padding 0.5s ease';
+          rowElement.style.opacity = '0.3';
+          
+          // Force immediate visual update without waiting for React
+          setTimeout(() => {
+            // Hard-force immediate UI update by hiding the row
+            rowElement.style.height = '0';
+            rowElement.style.overflow = 'hidden';
+            rowElement.style.padding = '0';
+            rowElement.style.border = 'none';
+          }, 100);
+        }
+      } catch (uiError) {
+        console.log('Could not apply direct DOM manipulation:', uiError);
+      }
+      
+      // STEP 2: Apply optimistic update in React Query cache
+      // We're already handling this in the mutation, but we'll force it here as well
+      queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+        if (!Array.isArray(oldData)) return oldData;
+        
+        // Create a normalized version of our target ID for comparison
+        const normalizedItemId = String(itemId);
+        
+        // Immediately filter out the deleted item from the cache
+        return oldData.filter(item => {
+          const itemIdentifiers = [
+            String(item.id || ''),
+            String(item.docId || ''),
+            String(item.firebaseId || ''),
+            String(item.__id || '')
+          ];
+          
+          // If any of the item's identifiers match our target ID, filter it out
+          return !itemIdentifiers.includes(normalizedItemId);
+        });
+      });
+      
+      // STEP 3: Trigger the actual server deletion
+      console.log(`Initiating server deletion for ${title} with ID:`, itemId);
+      
+      // We wrap the deletion in a try-catch to handle any potential errors
+      try {
+        deleteMutation.mutate(itemId);
+      } catch (error) {
+        console.error(`Error triggering deletion mutation:`, error);
+        
+        // If the mutation fails, ensure we tell the user clearly
+        toast({
+          title: "Delete operation issue",
+          description: `There was a problem with the deletion. Please refresh the page.`,
+          variant: "destructive",
+        });
+        
+        // Force a manual data refresh as a failsafe
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: [apiPath] });
+          refetch();
+        }, 500);
+      }
     }
   };
   
@@ -817,35 +889,47 @@ const ContentDataTable = ({
                 </TableCell>
               </TableRow>
             ) : (
-              filteredData.map((item: any) => (
-                <TableRow key={item.id || `item-${Math.random().toString(36).substr(2, 9)}`}>
-                  {columns.map((column) => (
-                    <TableCell key={`${item.id || Math.random().toString(36).substr(2, 9)}-${column.key}`}>
-                      {column.render 
-                        ? column.render(item[column.key], item) 
-                        : item[column.key]
-                      }
-                    </TableCell>
-                  ))}
-                  <TableCell className="flex justify-end items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => openDialog(item)}
+              <>
+                {filteredData.map((item: any) => {
+                  // Generate a consistent row ID for direct DOM access during deletion
+                  const rowIdentifier = item.id || item.docId || item.firebaseId || item.__id || `temp-${Math.random().toString(36).substr(2, 9)}`;
+                  const rowClass = item.__optimistic ? 'optimistic-item' : item.__updating ? 'updating-item' : '';
+                  
+                  return (
+                    <TableRow 
+                      id={`row-${rowIdentifier}`} 
+                      key={rowIdentifier} 
+                      className={rowClass}
                     >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(item)}
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
+                      {columns.map((column) => (
+                        <TableCell key={`${rowIdentifier}-${column.key}`}>
+                          {column.render 
+                            ? column.render(item[column.key], item) 
+                            : item[column.key]
+                          }
+                        </TableCell>
+                      ))}
+                      <TableCell className="flex justify-end items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openDialog(item)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(item)}
+                          disabled={deleteMutation.isPending}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </>
             )}
           </TableBody>
         </Table>
