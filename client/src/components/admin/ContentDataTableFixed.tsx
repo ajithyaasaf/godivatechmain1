@@ -73,76 +73,80 @@ const ContentDataTable = ({
     
     let socket: WebSocket | null = null;
     
-    // Create WebSocket connection
-    try {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const host = window.location.host;
-      const wsUrl = `${protocol}//${host}/ws`;
-      
-      console.log(`Connecting to WebSocket at: ${wsUrl}`);
-      socket = new WebSocket(wsUrl);
-      
-      socket.addEventListener('open', () => {
-        console.log(`WebSocket connection established for ${title}`);
-      });
-      
-      socket.addEventListener('message', (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          console.log(`WebSocket message received:`, message);
-          
-          if (message.type === 'project_deleted' && endpoint === '/projects') {
-            console.log('Project deleted, updating UI:', message.data.id);
-            queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-              return oldData.filter(item => item.id !== message.data.id);
-            });
+    // Only setup WebSocket in browser environment with valid window location
+    if (typeof window !== 'undefined' && window.location && window.location.host) {
+      try {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const host = window.location.host;
+        const wsUrl = `${protocol}//${host}/ws`;
+        
+        console.log(`Connecting to WebSocket at: ${wsUrl}`);
+        socket = new WebSocket(wsUrl);
+        
+        socket.addEventListener('open', () => {
+          console.log(`WebSocket connection established for ${title}`);
+        });
+        
+        socket.addEventListener('message', (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            console.log(`WebSocket message received:`, message);
             
-            toast({
-              title: "Project deleted",
-              description: "A project has been deleted by another user",
-            });
-          } 
-          else if (message.type === 'project_created' && endpoint === '/projects') {
-            console.log('Project created, updating UI:', message.data);
-            queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-              if (oldData.some(item => item.id === message.data.id)) {
-                return oldData;
-              }
-              return [...oldData, message.data];
-            });
-            
-            toast({
-              title: "Project created",
-              description: "A new project has been added",
-            });
+            if (message.type === 'project_deleted' && endpoint === '/projects') {
+              console.log('Project deleted, updating UI:', message.data.id);
+              queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                return oldData.filter(item => item.id !== message.data.id);
+              });
+              
+              toast({
+                title: "Project deleted",
+                description: "A project has been deleted by another user",
+              });
+            } 
+            else if (message.type === 'project_created' && endpoint === '/projects') {
+              console.log('Project created, updating UI:', message.data);
+              queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                if (oldData.some(item => item.id === message.data.id)) {
+                  return oldData;
+                }
+                return [...oldData, message.data];
+              });
+              
+              toast({
+                title: "Project created",
+                description: "A new project has been added",
+              });
+            }
+            else if (message.type === 'project_updated' && endpoint === '/projects') {
+              console.log('Project updated, updating UI:', message.data);
+              queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
+                return oldData.map(item => 
+                  item.id === message.data.id ? { ...item, ...message.data } : item
+                );
+              });
+              
+              toast({
+                title: "Project updated",
+                description: "A project has been updated",
+              });
+            }
+          } catch (error) {
+            console.error('Error handling WebSocket message:', error);
           }
-          else if (message.type === 'project_updated' && endpoint === '/projects') {
-            console.log('Project updated, updating UI:', message.data);
-            queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-              return oldData.map(item => 
-                item.id === message.data.id ? { ...item, ...message.data } : item
-              );
-            });
-            
-            toast({
-              title: "Project updated",
-              description: "A project has been updated",
-            });
-          }
-        } catch (error) {
-          console.error('Error handling WebSocket message:', error);
-        }
-      });
-      
-      socket.addEventListener('error', (error) => {
-        console.error(`WebSocket error for ${title}:`, error);
-      });
-      
-      socket.addEventListener('close', (event) => {
-        console.log(`WebSocket connection closed for ${title} with code ${event.code}`);
-      });
-    } catch (error) {
-      console.error(`Error creating WebSocket connection for ${title}:`, error);
+        });
+        
+        socket.addEventListener('error', (error) => {
+          console.error(`WebSocket error for ${title}:`, error);
+        });
+        
+        socket.addEventListener('close', (event) => {
+          console.log(`WebSocket connection closed for ${title} with code ${event.code}`);
+        });
+      } catch (error) {
+        console.error(`Error creating WebSocket connection for ${title}:`, error);
+      }
+    } else {
+      console.log(`WebSocket setup skipped - not in a browser environment or missing host information`);
     }
     
     // Cleanup function
@@ -152,7 +156,7 @@ const ContentDataTable = ({
         socket.close();
       }
     };
-  }, [apiPath, endpoint, title]);
+  }, [apiPath, endpoint, title, toast]);
   
   // Create mutation
   const createMutation = useMutation({
