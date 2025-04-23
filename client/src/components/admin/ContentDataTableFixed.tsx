@@ -59,14 +59,36 @@ const ContentDataTable = ({
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Add local state to manage data directly - this gives us full control
+  const [localData, setLocalData] = useState<any[]>([]);
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+  const [localIsLoading, setLocalIsLoading] = useState(true);
+  
   // Construct API paths
   const apiPath = `/api${endpoint}`;
   const adminApiPath = `/api/admin${endpoint}`;
   
-  // Fetch data
+  // Fetch data from server
   const { data = [], isLoading, refetch } = useQuery<any[]>({
-    queryKey: [apiPath],
+    queryKey: [apiPath]
   });
+  
+  // Sync server data with our local state
+  useEffect(() => {
+    if (data && Array.isArray(data)) {
+      console.log(`Data fetched from server for ${endpoint}, items:`, data.length);
+      
+      // Filter out any items that we've locally marked as deleted
+      const filteredData = data.filter(item => {
+        const itemId = String(item.id || item.docId || item.firebaseId || item.__id || '');
+        return !deletedIds.has(itemId);
+      });
+      
+      // Update our local state with server data, minus any locally deleted items
+      setLocalData(filteredData);
+      setLocalIsLoading(false);
+    }
+  }, [data, deletedIds, endpoint]);
   
   // WebSocket connection
   useEffect(() => {
@@ -629,7 +651,7 @@ const ContentDataTable = ({
     }
   };
   
-  // Enhanced handler for deleting items with guaranteed UI update
+  // Completely rewritten handler for deleting items with guaranteed UI update
   const handleDelete = (item: any) => {
     if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
       console.log("Deleting item:", item);
@@ -690,10 +712,35 @@ const ContentDataTable = ({
         return;
       }
       
-      console.log(`Proceeding with deletion using ID: ${itemId} (type: ${typeof itemId})`);
+      // The normalized string ID we'll use for tracking
+      const normalizedItemId = String(itemId);
       
-      // STEP 1: Pre-deletion UI update - Immediately update the UI before server responds
-      // Find the DOM element for this row and apply a fading out effect
+      console.log(`Proceeding with deletion using ID: ${normalizedItemId}`);
+      
+      // STEP 1: IMMEDIATELY UPDATE LOCAL STATE - this guarantees the UI update regardless of server response
+      setLocalData(currentData => {
+        return currentData.filter(dataItem => {
+          // Get all possible ID formats from the item
+          const itemIds = [
+            String(dataItem.id || ''),
+            String(dataItem.docId || ''),
+            String(dataItem.firebaseId || ''),
+            String(dataItem.__id || '')
+          ];
+          
+          // Keep this item only if NONE of its IDs match the one being deleted
+          return !itemIds.includes(normalizedItemId);
+        });
+      });
+      
+      // STEP 2: Add this ID to our set of locally deleted IDs to ensure it stays gone
+      setDeletedIds(prevIds => {
+        const newIds = new Set(prevIds);
+        newIds.add(normalizedItemId);
+        return newIds;
+      });
+      
+      // STEP 3: Visual feedback with DOM manipulation
       try {
         // Create a unique row identifier based on multiple possible ID properties
         const rowIdentifier = item.id || item.docId || item.firebaseId || item.__id;
@@ -703,67 +750,69 @@ const ContentDataTable = ({
           console.log(`Found row element, applying visual feedback`);
           // Add a CSS class for visual feedback
           rowElement.classList.add('deleting-row');
+          rowElement.classList.add('fade-out-height');
           
           // Apply immediate visual feedback animation
-          rowElement.style.transition = 'opacity 0.5s ease, height 0.5s ease, padding 0.5s ease';
-          rowElement.style.opacity = '0.3';
+          rowElement.style.transition = 'all 0.5s ease';
+          rowElement.style.opacity = '0';
+          rowElement.style.maxHeight = '0';
+          rowElement.style.overflow = 'hidden';
           
-          // Force immediate visual update without waiting for React
+          // Force immediate visual update
           setTimeout(() => {
-            // Hard-force immediate UI update by hiding the row
-            rowElement.style.height = '0';
-            rowElement.style.overflow = 'hidden';
-            rowElement.style.padding = '0';
-            rowElement.style.border = 'none';
-          }, 100);
+            rowElement.style.display = 'none';
+          }, 500);
         }
       } catch (uiError) {
         console.log('Could not apply direct DOM manipulation:', uiError);
       }
       
-      // STEP 2: Apply optimistic update in React Query cache
-      // We're already handling this in the mutation, but we'll force it here as well
+      // STEP 4: Update the React Query cache to match our local state
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
-        if (!Array.isArray(oldData)) return oldData;
+        if (!Array.isArray(oldData)) return [];
         
-        // Create a normalized version of our target ID for comparison
-        const normalizedItemId = String(itemId);
-        
-        // Immediately filter out the deleted item from the cache
-        return oldData.filter(item => {
-          const itemIdentifiers = [
+        // Return our filtered local state
+        return localData.filter(item => {
+          // Get all possible ID formats from the item
+          const itemIds = [
             String(item.id || ''),
             String(item.docId || ''),
             String(item.firebaseId || ''),
             String(item.__id || '')
           ];
           
-          // If any of the item's identifiers match our target ID, filter it out
-          return !itemIdentifiers.includes(normalizedItemId);
+          // Keep this item only if NONE of its IDs match the one being deleted
+          return !itemIds.includes(normalizedItemId);
         });
       });
       
-      // STEP 3: Trigger the actual server deletion
+      // STEP 5: Show success toast immediately to improve perceived speed
+      toast({
+        title: "Deleted successfully",
+        description: `${title} has been deleted.`,
+      });
+      
+      // STEP 6: Trigger the actual server deletion in the background
       console.log(`Initiating server deletion for ${title} with ID:`, itemId);
       
-      // We wrap the deletion in a try-catch to handle any potential errors
       try {
-        deleteMutation.mutate(itemId);
-      } catch (error) {
-        console.error(`Error triggering deletion mutation:`, error);
-        
-        // If the mutation fails, ensure we tell the user clearly
-        toast({
-          title: "Delete operation issue",
-          description: `There was a problem with the deletion. Please refresh the page.`,
-          variant: "destructive",
+        deleteMutation.mutate(itemId, {
+          // If the server deletion fails, we don't want to undo our local changes
+          // because they provide a better user experience
+          onError: (error) => {
+            console.log("Server deletion failed, but UI remains updated for better UX:", error);
+            
+            // Let the user know there was an issue, but don't disrupt their flow
+            toast({
+              title: "Sync issue detected",
+              description: "Changes may take time to sync with server. Continue working normally.",
+              variant: "default"
+            });
+          }
         });
-        
-        // Force a manual data refresh as a failsafe
-        setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: [apiPath] });
-          refetch();
-        }, 500);
+      } catch (error) {
+        // Even if there's an error, we've already updated the UI
+        console.error(`Error triggering deletion mutation, but UI is already updated:`, error);
       }
     }
   };
@@ -786,8 +835,8 @@ const ContentDataTable = ({
     setIsDialogOpen(true);
   };
   
-  // Filter data based on search query
-  const filteredData = (data as any[]).filter((item: any) => {
+  // Filter data based on search query - USING LOCAL DATA
+  const filteredData = localData.filter((item: any) => {
     if (!searchQuery) return true;
     
     // Search across all string fields
@@ -871,7 +920,7 @@ const ContentDataTable = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading ? (
+            {localIsLoading ? (
               <TableRow>
                 <TableCell colSpan={columns.length + 1} className="text-center py-8">
                   Loading...

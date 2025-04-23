@@ -1,56 +1,23 @@
-/* Styles for data table animations and effects */
-
-/* Row deletion animation */
+/* Animation styles for item deletion */
 .deleting-row {
-  opacity: 0.3;
-  transition: all 0.3s ease-out;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.5s ease-in-out;
 }
 
-.deleting-row::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 0, 0, 0.05);
-  pointer-events: none;
+.fade-out-height {
+  opacity: 0;
+  max-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden;
 }
 
 .optimistic-item {
   opacity: 0.7;
-  background-color: rgba(0, 0, 255, 0.03);
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
 .updating-item {
   opacity: 0.8;
-  background-color: rgba(255, 165, 0, 0.03);
-}
-
-/* Fade-in animation for new rows */
-@keyframes fadeIn {
-  from { 
-    opacity: 0; 
-    transform: translateY(10px);
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0);
-  }
-}
-
-.data-table-row-new {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-/* Smooth height transition for rows being deleted */
-.fade-out-height {
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-  transition: all 0.5s cubic-bezier(0, 1, 0, 1);
+  background-color: rgba(0, 0, 0, 0.02);
 }
