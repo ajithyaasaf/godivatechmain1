@@ -1036,7 +1036,7 @@ const ContentDataTable = ({
     <div className="space-y-4">
       {/* Header section with statistics cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow card-hover-effect">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-1">Total {title}</h3>
@@ -1047,7 +1047,7 @@ const ContentDataTable = ({
         </Card>
         
         {activeItems !== null && (
-          <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+          <Card className="bg-white shadow-sm hover:shadow-md transition-shadow card-hover-effect">
             <CardContent className="p-4 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">Active {title}</h3>
@@ -1063,7 +1063,7 @@ const ContentDataTable = ({
           </Card>
         )}
         
-        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow card-hover-effect">
           <CardContent className="p-4 flex items-center justify-between">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-1">Recently Added</h3>
@@ -1197,8 +1197,23 @@ const ContentDataTable = ({
           <TableBody>
             {localIsLoading ? (
               <TableRow>
-                <TableCell colSpan={columns.length + 1} className="text-center py-8">
-                  Loading...
+                <TableCell colSpan={columns.length + 1} className="p-0">
+                  <div className="py-8 px-4">
+                    <div className="flex items-center justify-center mb-4">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary mr-2" />
+                      <p className="text-sm text-muted-foreground">Loading {title.toLowerCase()}...</p>
+                    </div>
+                    
+                    {/* Skeleton loader */}
+                    <div className="space-y-3">
+                      {Array(3).fill(0).map((_, i) => (
+                        <div key={i} className="flex items-center gap-4">
+                          <div className="h-5 w-3/4 bg-slate-100 rounded animate-pulse"></div>
+                          <div className="h-5 w-1/5 bg-slate-100 rounded animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : filteredData.length === 0 ? (
@@ -1244,10 +1259,25 @@ const ContentDataTable = ({
                     >
                       {columns.map((column) => (
                         <TableCell key={`${rowIdentifier}-${column.key}`}>
-                          {column.render 
-                            ? column.render(item[column.key], item) 
-                            : item[column.key]
-                          }
+                          {column.render ? (
+                            column.render(item[column.key], item)
+                          ) : typeof item[column.key] === 'string' && item[column.key]?.length > 40 ? (
+                            // Show tooltip for long text
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span className="truncate-with-tooltip">
+                                    {item[column.key]?.substring(0, 40)}...
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="max-w-xs break-words">{item[column.key]}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          ) : (
+                            item[column.key]
+                          )}
                         </TableCell>
                       ))}
                       <TableCell className="text-right">
