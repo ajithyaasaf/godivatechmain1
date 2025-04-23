@@ -1,7 +1,7 @@
 import { useState, useRef, ChangeEvent } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { uploadFile, deleteFile } from "@/lib/storage";
+import { apiRequest } from "@/lib/queryClient";
 
 interface FileUploadProps {
   folder: string;
@@ -49,22 +49,43 @@ const FileUpload = ({
 
       const file = files[0]; // For now, just handle the first file
       
-      // Create a preview for images
+      // Create a preview for images and prepare for upload
+      let imageBase64 = '';
       if (isImage) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            setPreviewUrl(e.target.result.toString());
-          }
-        };
+        
+        // Create a promise to wait for the FileReader to complete
+        const readAsDataURLPromise = new Promise<string>((resolve, reject) => {
+          reader.onload = (e) => {
+            if (e.target?.result) {
+              const result = e.target.result.toString();
+              setPreviewUrl(result);
+              resolve(result);
+            } else {
+              reject(new Error("Failed to read file"));
+            }
+          };
+          reader.onerror = () => reject(reader.error);
+        });
+        
         reader.readAsDataURL(file);
+        imageBase64 = await readAsDataURLPromise;
       }
-
-      // Upload to Firebase Storage
-      const { url, path } = await uploadFile(file, folder);
       
-      // Pass the URL and path back to the parent component
-      onUploadComplete(url, path);
+      // Upload to Cloudinary via our API
+      const response = await apiRequest('POST', '/api/upload', {
+        image: imageBase64,
+        folder: folder || 'portfolio'
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+      
+      const { url } = await response.json();
+      
+      // Pass the URL back to the parent component
+      onUploadComplete(url, url); // Using URL as path since we don't need storage paths with Cloudinary
       
       // Clear the input
       if (fileInputRef.current) {
@@ -86,17 +107,6 @@ const FileUpload = ({
     try {
       setIsUploading(true);
       
-      // If this is a Firebase URL, try to delete the file
-      if (previewUrl.includes("firebasestorage.googleapis.com")) {
-        // Extract the path from the URL
-        const urlObj = new URL(previewUrl);
-        const pathMatch = urlObj.pathname.match(/\/o\/(.+?)(?:\?|$)/);
-        if (pathMatch && pathMatch[1]) {
-          const path = decodeURIComponent(pathMatch[1]);
-          await deleteFile(path);
-        }
-      }
-      
       // Clear the preview and notify parent
       setPreviewUrl(null);
       if (onRemove) onRemove();
@@ -105,6 +115,10 @@ const FileUpload = ({
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      
+      // Note: We're not actually deleting from Cloudinary here
+      // This would require implementing a delete endpoint with proper security
+      // For now, we're just removing the reference in our application
     } catch (error) {
       console.error("Error removing file:", error);
       setUploadError("Failed to remove file. Please try again.");

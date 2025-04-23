@@ -14,10 +14,28 @@ import {
   insertTestimonialSchema
 } from "@shared/schema";
 import { setupAuth, isAuthenticated } from "./auth";
+import { uploadImage, deleteImage } from "./cloudinary";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
+  
+  // Image Upload API
+  app.post("/api/upload", isAuthenticated, async (req, res) => {
+    try {
+      const { image, folder } = req.body;
+      
+      if (!image) {
+        return res.status(400).json({ message: "No image provided" });
+      }
+      
+      const uploadedUrl = await uploadImage(image, folder || 'portfolio');
+      res.json({ url: uploadedUrl });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ message: "Failed to upload image" });
+    }
+  });
   
   // API routes for the GodivaTech website
   
