@@ -84,19 +84,41 @@ export const projects = pgTable("projects", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description").notNull(),
+  fullDescription: text("full_description"), // Detailed project description
   image: text("image"),
+  gallery: text("gallery").array(), // Additional images for project gallery
   category: text("category").notNull(),
   technologies: text("technologies").array().notNull(),
   link: text("link"),
+  githubLink: text("github_link"), // Link to GitHub repository
+  clientName: text("client_name"), // Client or company name
+  completionDate: text("completion_date"), // When the project was completed
+  featured: boolean("featured").default(false), // Whether to show as featured project
+  testimonial: text("testimonial"), // Client testimonial about the project
+  challengeDescription: text("challenge_description"), // Description of challenges faced
+  solutionDescription: text("solution_description"), // Description of solutions implemented
+  resultsDescription: text("results_description"), // Description of results achieved
+  order: integer("order").default(0), // For manual ordering of projects
 });
 
 export const insertProjectSchema = createInsertSchema(projects).pick({
   title: true,
   description: true,
+  fullDescription: true,
   image: true,
+  gallery: true,
   category: true,
   technologies: true,
   link: true,
+  githubLink: true,
+  clientName: true,
+  completionDate: true,
+  featured: true,
+  testimonial: true,
+  challengeDescription: true,
+  solutionDescription: true,
+  resultsDescription: true,
+  order: true,
 });
 
 export type InsertProject = z.infer<typeof insertProjectSchema>;
