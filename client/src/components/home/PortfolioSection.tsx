@@ -21,7 +21,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
         <img
           src={project.image}
           alt={project.title}
-          className="w-full h-64 object-cover"
+          className="w-full h-64 object-contain bg-white"
         />
         <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
           {project.category}

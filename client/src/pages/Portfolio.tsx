@@ -48,7 +48,7 @@ const ProjectCard = ({ project, index }: { project: Project; index: number }) =>
         <img
           src={project.image}
           alt={project.title}
-          className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-64 object-contain bg-white transition-transform duration-500 group-hover:scale-105"
         />
         
         <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
