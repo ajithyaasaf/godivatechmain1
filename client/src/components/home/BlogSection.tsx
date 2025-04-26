@@ -5,16 +5,11 @@ import { Button } from "@/components/ui/button";
 import BlogCard from "../blog/BlogCard";
 import CategoryFilter from "../blog/CategoryFilter";
 
-interface BlogPost {
-  id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  publishedAt: string;
-  coverImage: string;
-  authorName: string;
-  authorImage: string;
-  categoryId: number;
+// Import the BlogPost type from schema
+import type { BlogPost as BaseBlogPost } from "@shared/schema";
+
+// Extend the BlogPost type to include a category property
+interface ExtendedBlogPost extends BaseBlogPost {
   category?: {
     id: number;
     name: string;
@@ -35,7 +30,7 @@ const BlogSection = () => {
     queryKey: ['/api/categories'],
   });
 
-  const { data: blogPosts = [] } = useQuery<BlogPost[]>({
+  const { data: blogPosts = [] } = useQuery<ExtendedBlogPost[]>({
     queryKey: ['/api/blog-posts'],
   });
 
@@ -108,14 +103,17 @@ const BlogSection = () => {
     { id: 4, name: "AI & Machine Learning", slug: "ai-machine-learning" }
   ];
 
+  // Ensure "All Topics" category has a unique ID
+  const allTopicsCategory = { id: -1, name: "All Topics", slug: "all" };
   const displayCategories = categories.length > 0 
-    ? [{ id: 0, name: "All Topics", slug: "all" }, ...categories] 
+    ? [allTopicsCategory, ...categories] 
     : defaultCategories;
 
   const finalPosts = displayPosts.length > 0 ? displayPosts : defaultPosts;
 
   const handleCategoryChange = (categoryId: number | null) => {
-    setActiveCategory(categoryId);
+    // If the "All Topics" category is selected (-1), set to null
+    setActiveCategory(categoryId === -1 ? null : categoryId);
   };
 
   return (
