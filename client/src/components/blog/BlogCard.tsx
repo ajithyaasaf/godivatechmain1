@@ -1,16 +1,7 @@
 import React from "react";
 import { Link } from "wouter";
 import { formatDistanceToNow, format } from "date-fns";
-import type { BlogPost, Category } from "@shared/schema";
-
-// Extend the BlogPost type to include a category property
-interface ExtendedBlogPost extends BlogPost {
-  category?: {
-    id: number;
-    name: string;
-    slug: string;
-  };
-}
+import type { ExtendedBlogPost } from "@shared/schema";
 
 const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
   const formattedDate = formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true });

@@ -60,6 +60,26 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type BlogPost = typeof blogPosts.$inferSelect;
 
+// Extended BlogPost type that includes category information
+export interface ExtendedBlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  published: boolean;
+  authorName: string;
+  authorImage: string | null;
+  coverImage: string | null;
+  publishedAt: Date | string;
+  categoryId: number | null;
+  category?: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+}
+
 export const testimonials = pgTable("testimonials", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),

@@ -5,17 +5,8 @@ import { Button } from "@/components/ui/button";
 import BlogCard from "../blog/BlogCard";
 import CategoryFilter from "../blog/CategoryFilter";
 
-// Import the BlogPost type from schema
-import type { BlogPost as BaseBlogPost } from "@shared/schema";
-
-// Extend the BlogPost type to include a category property
-interface ExtendedBlogPost extends BaseBlogPost {
-  category?: {
-    id: number;
-    name: string;
-    slug: string;
-  };
-}
+// Import the ExtendedBlogPost type from schema
+import type { ExtendedBlogPost } from "@shared/schema";
 
 interface Category {
   id: number;
@@ -43,12 +34,14 @@ const BlogSection = () => {
   const displayPosts = filteredPosts.slice(0, 3);
 
   // Default blog posts in case API doesn't return data
-  const defaultPosts = [
+  const defaultPosts: ExtendedBlogPost[] = [
     {
       id: 1,
       title: "The Future of Edge Computing in 2023 and Beyond",
       slug: "future-of-edge-computing",
       excerpt: "Explore how edge computing is revolutionizing data processing and enabling new applications in IoT, autonomous vehicles, and more.",
+      content: "Full content of the article goes here...",
+      published: true,
       publishedAt: "2023-06-15T00:00:00.000Z",
       coverImage: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       authorName: "Sarah Johnson",
@@ -65,6 +58,8 @@ const BlogSection = () => {
       title: "5 Essential Cybersecurity Measures Every Business Needs",
       slug: "essential-cybersecurity-measures",
       excerpt: "Learn about the critical security controls that can protect your organization from the most common cyber threats.",
+      content: "Full content of the article goes here...",
+      published: true,
       publishedAt: "2023-05-28T00:00:00.000Z",
       coverImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       authorName: "David Rodriguez",
@@ -81,6 +76,8 @@ const BlogSection = () => {
       title: "How AI is Transforming Customer Service Experiences",
       slug: "ai-transforming-customer-service",
       excerpt: "Discover how artificial intelligence is revolutionizing customer support through chatbots, sentiment analysis, and predictive service.",
+      content: "Full content of the article goes here...",
+      published: true,
       publishedAt: "2023-05-10T00:00:00.000Z",
       coverImage: "https://images.unsplash.com/photo-1607798748738-b15c40d33d57?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       authorName: "Emily Patel",
