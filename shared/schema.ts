@@ -71,7 +71,8 @@ export interface ExtendedBlogPost {
   authorName: string;
   authorImage: string | null;
   coverImage: string | null;
-  publishedAt: Date | string;
+  // publishedAt can be Date or string since it might come from API as string
+  publishedAt: string | Date;
   categoryId: number | null;
   category?: {
     id: number;

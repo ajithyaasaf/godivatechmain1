@@ -93,7 +93,7 @@ const BlogSection = () => {
 
   // Default categories in case API doesn't return data
   const defaultCategories = [
-    { id: 0, name: "All Topics", slug: "all" },
+    { id: -1, name: "All Topics", slug: "all" },
     { id: 1, name: "Technology Trends", slug: "technology-trends" },
     { id: 2, name: "Cloud Computing", slug: "cloud-computing" },
     { id: 3, name: "Cybersecurity", slug: "cybersecurity" },
