@@ -1,0 +1,32 @@
+chunk-RPCDYKBN.js?v=1be4001c:521 Warning: Encountered two children with the same key, `null`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at section
+    at BlogSection (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.dev/src/components/home/BlogSection.tsx?t=1745651744029:26:47)
+    at div
+    at MotionComponent (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…unner/workspace/node_modules/.vite/deps/framer-motion.js?v=1be4001c:945:40)
+    at TransitionItem (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.dev/src/components/PageTransition.tsx:206:34)
+    at div
+    at div
+    at MotionComponent (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…unner/workspace/node_modules/.vite/deps/framer-motion.js?v=1be4001c:945:40)
+    at PageTransition (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.dev/src/components/PageTransition.tsx:21:27)
+    at Home
+    at Route (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1be4001c:323:16)
+    at Switch (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=1be4001c:379:17)
+    at PresenceChild (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…unner/workspace/node_modules/.vite/deps/framer-motion.js?v=1be4001c:121:24)
+    at AnimatePresence (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…unner/workspace/node_modules/.vite/deps/framer-motion.js?v=1be4001c:210:26)
+    at main
+    at div
+    at div
+    at Layout (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.dev/src/components/Layout.tsx:23:19)
+    at AuthProvider (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.dev/src/hooks/use-auth.tsx:27:32)
+    at App (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.dev/src/App.tsx?t=1745651754928&v=R8OEtcBXIsJ-Ag_-okEQb:43:22)
+    at Provider (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…unner/workspace/node_modules/.vite/deps/chunk-5AJU3CG7.js?v=1be4001c:38:15)
+    at TooltipProvider (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…rkspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=1be4001c:61:5)
+    at QueryClientProvider (https://ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.…rkspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1be4001c:2805:3)
+iframe.js:310 Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (ed80d416-6fe4-465e-9aa6-9452d63057a8-00-3tgjzxmc57i3b.sisko.replit.dev) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> Authorized domains tab.
+main.tsx:15 Firestore initialization check complete
+firebase_firestore.js?v=1be4001c:2142 
+ POST https://firestore.googleapis.com/google.firestore.v1.Firestore/Listen/chann…WQ7eSs&SID=3s8CrEYcaAhrK_34fUfoCg&RID=89321&TYPE=terminate&zx=7exczdvxp75v net::ERR_BLOCKED_BY_CLIENT
+﻿
+

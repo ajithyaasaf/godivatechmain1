@@ -130,8 +130,11 @@ const BlogSection = () => {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {finalPosts.map((post) => (
-            <BlogCard key={post.id} post={post} />
+          {finalPosts.map((post, index) => (
+            <BlogCard 
+              key={post.id ? `post-${post.id}` : `post-${post.slug}-${index}`} 
+              post={post} 
+            />
           ))}
         </div>
 
