@@ -90,6 +90,11 @@ const TestimonialsSection = () => {
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+  
+  // Separate useEffect for auto-scrolling to avoid conditional hook issues
+  useEffect(() => {
     // Auto-scroll testimonials on larger screens
     if (!isSmallScreen) {
       const interval = setInterval(() => {
@@ -100,11 +105,8 @@ const TestimonialsSection = () => {
       
       return () => {
         clearInterval(interval);
-        window.removeEventListener('resize', checkScreenSize);
       };
     }
-    
-    return () => window.removeEventListener('resize', checkScreenSize);
   }, [displayTestimonials.length, isSmallScreen]);
   
   // Animation variants for section heading
