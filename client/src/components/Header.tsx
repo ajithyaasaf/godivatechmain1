@@ -119,7 +119,10 @@ const DesktopNavItem: React.FC<{
   if (item.hasMegaMenu) {
     return (
       <button
-        onClick={toggleMegaMenu}
+        onClick={(e) => {
+          e.stopPropagation(); // Stop event propagation
+          if (toggleMegaMenu) toggleMegaMenu();
+        }}
         className={`px-3 py-2 font-medium rounded-md flex items-center transition-all duration-300 ${
           isActive || isMegaMenuOpen
             ? "text-primary bg-primary/5" 
@@ -177,6 +180,7 @@ const MegaMenu: React.FC<{
         transition={{ duration: 0.3 }}
         role="menu"
         aria-orientation="vertical"
+        onClick={(e) => e.stopPropagation()} // Stop propagation of clicks within megamenu
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -184,7 +188,10 @@ const MegaMenu: React.FC<{
               <Link
                 key={index}
                 href={service.path}
-                onClick={onClose}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent the click from closing the menu
+                  onClose(); // Explicitly close the menu
+                }}
                 className="flex p-4 rounded-lg hover:bg-neutral-50 transition-colors group"
                 role="menuitem"
               >
@@ -205,12 +212,15 @@ const MegaMenu: React.FC<{
           
           <div className="mt-6 pt-6 border-t border-neutral-100 flex justify-between items-center">
             <div className="text-sm text-neutral-500">
-              Need a custom solution? <Link href="/contact" className="text-primary font-medium">Contact our team →</Link>
+              Need a custom solution? <Link href="/contact" className="text-primary font-medium" onClick={(e) => e.stopPropagation()}>Contact our team →</Link>
             </div>
             <Button 
               size="sm" 
               variant="ghost"
-              onClick={onClose}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent propagation
+                onClose(); // Close the menu
+              }}
               className="text-neutral-500"
               role="menuitem"
             >
@@ -484,18 +494,38 @@ const Header: React.FC = () => {
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
   const toggleMegaMenu = () => setIsMegaMenuOpen(!isMegaMenuOpen);
 
-  // Close megamenu when clicking elsewhere
+  // Handle clicks outside the megamenu to close it, but prevent immediate closure
   useEffect(() => {
-    const handleClickOutside = () => {
+    // Create a ref to track if we're handling the initial click that opens the menu
+    let isInitialClick = false;
+    
+    const handleClickOutside = (event: MouseEvent) => {
+      // If it's the initial click that just opened the menu, ignore it
+      if (isInitialClick) {
+        isInitialClick = false;
+        return;
+      }
+      
+      // Otherwise, close the menu on subsequent clicks outside
       if (isMegaMenuOpen) {
         setIsMegaMenuOpen(false);
       }
     };
     
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
+    if (isMegaMenuOpen) {
+      // Set flag to ignore the initial click
+      isInitialClick = true;
+      
+      // Add the listener with a slight delay to avoid the initial click
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      }, 100);
+      
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('click', handleClickOutside);
+      };
+    }
   }, [isMegaMenuOpen]);
 
   // Scroll detection
