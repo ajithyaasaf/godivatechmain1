@@ -29,7 +29,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No image provided" });
       }
       
-      const uploadedUrl = await uploadImage(image, folder || 'portfolio');
+      const uploadedUrl = await uploadImage(image, folder || 'godivatech/portfolio');
       res.json({ url: uploadedUrl });
     } catch (error) {
       console.error("Error uploading image:", error);

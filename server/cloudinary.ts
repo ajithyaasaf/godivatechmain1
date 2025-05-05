@@ -31,7 +31,7 @@ const verifyCloudinaryConfig = () => {
 };
 
 // Upload a file to Cloudinary
-export const uploadImage = async (file: string, folder = 'portfolio'): Promise<string> => {
+export const uploadImage = async (file: string, folder = 'godivatech/portfolio'): Promise<string> => {
   if (!verifyCloudinaryConfig()) {
     throw new Error('Cloudinary configuration is missing');
   }

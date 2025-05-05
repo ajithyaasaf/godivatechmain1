@@ -75,7 +75,7 @@ const FileUpload = ({
       // Upload to Cloudinary via our API
       const response = await apiRequest('POST', '/api/upload', {
         image: imageBase64,
-        folder: folder || 'portfolio'
+        folder: folder || 'godivatech/portfolio'
       });
       
       if (!response.ok) {
