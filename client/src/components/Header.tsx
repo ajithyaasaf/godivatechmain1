@@ -572,47 +572,47 @@ const Header: React.FC = () => {
     { path: "/contact", label: "Contact", icon: Palette }
   ];
 
-  // Services for mega menu
+  // Services for mega menu - Aligned with enterprise services
   const serviceItems: ServiceItem[] = [
     { 
       icon: Globe, 
       title: "Web Design & Development", 
-      description: "Custom websites with responsive designs",
+      description: "Custom websites with responsive designs optimized for all devices",
       path: "/services/web-design-development",
       color: "text-blue-500"
     },
     { 
       icon: Palette, 
       title: "Branding & Logo Design", 
-      description: "Custom branding and visual identity for businesses",
+      description: "Comprehensive brand identity systems for businesses",
       path: "/services/branding-logo-design",
       color: "text-cyan-500"
     },
     { 
       icon: Layers, 
       title: "Digital Marketing", 
-      description: "SEO, SMM, content marketing and more",
+      description: "Strategic marketing solutions to boost your online presence",
       path: "/services/digital-marketing",
       color: "text-indigo-500"
     },
     { 
       icon: Box, 
       title: "E-commerce Solutions", 
-      description: "Online stores with secure payment processing",
+      description: "End-to-end platforms with secure payment processing",
       path: "/services/ecommerce-solutions",
       color: "text-purple-500"
     },
     { 
       icon: Database, 
       title: "Web Hosting & Maintenance", 
-      description: "Reliable hosting and ongoing website maintenance",
+      description: "Reliable hosting with ongoing support and security updates",
       path: "/services/web-hosting-maintenance",
       color: "text-green-500"
     },
     { 
       icon: CircleUser, 
       title: "UI/UX Design", 
-      description: "User-centered design for better user experiences",
+      description: "User-centered design enhancing usability and engagement",
       path: "/services/ui-ux-design",
       color: "text-rose-500"
     }
