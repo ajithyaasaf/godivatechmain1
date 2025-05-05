@@ -52,7 +52,7 @@ const Footer = () => {
                 <img 
                   src={godivaLogo} 
                   alt="GodivaTech Logo" 
-                  className="h-10 w-auto invert brightness-150"
+                  className="h-10 w-auto"
                 />
               </motion.span>
             </div>
@@ -86,12 +86,12 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6 relative pl-3 border-l-2 border-primary">Services</h3>
             <ul className="space-y-3">
               {[
-                "Web Development",
-                "Digital Marketing",
-                "Mobile App Development",
-                "Poster Design",
-                "UI/UX Design",
-                "Logo & Brand Design"
+                { name: "Web Development", slug: "web-design-development" },
+                { name: "Digital Marketing", slug: "digital-marketing" },
+                { name: "E-commerce", slug: "ecommerce-solutions" },
+                { name: "Web Hosting", slug: "web-hosting-maintenance" },
+                { name: "UI/UX Design", slug: "ui-ux-design" },
+                { name: "Branding & Logo Design", slug: "branding-logo-design" }
               ].map((service, index) => (
                 <motion.li 
                   key={index}
@@ -99,11 +99,11 @@ const Footer = () => {
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <Link
-                    href="/services"
+                    href={`/services/${service.slug}`}
                     className="text-neutral-300 hover:text-white transition-colors flex items-center"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/70 mr-2"></span>
-                    {service}
+                    {service.name}
                   </Link>
                 </motion.li>
               ))}
