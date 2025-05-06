@@ -2,25 +2,29 @@ import React, { useRef } from "react";
 import { Link } from "wouter";
 import { 
   ChevronRight, Code, Cloud, Users, Shield, BarChart, BrainCircuit,
-  ArrowRight, ArrowUpRight, Check
+  ArrowRight, ArrowUpRight, Check, Globe, Smartphone, Laptop, PenTool,
+  Palette, Layout, Target, Megaphone, LineChart, MonitorSmartphone
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useAnimateOnScroll, slideInUpVariants } from "@/hooks/use-animation";
 import { TransitionItem } from "@/components/PageTransition";
 
-// Explicit mapping of service types to icon components to avoid lowercase tag errors
+// Enhanced mapping of service types to modern icon components
 const getIconForService = (serviceName: string) => {
   const iconMap: Record<string, React.ElementType> = {
-    'web-development': Code,
-    'digital-marketing': Cloud, 
-    'app-development': Users,
-    'poster-design': Shield,
-    'ui-ux-design': BarChart,
-    'logo-brand-design': BrainCircuit
+    'web-development': Globe,
+    'digital-marketing': Megaphone, 
+    'app-development': Smartphone,
+    'poster-design': PenTool,
+    'ui-ux-design': Layout,
+    'logo-brand-design': Palette,
+    'e-commerce': MonitorSmartphone,
+    'seo': Target,
+    'analytics': LineChart
   };
   
-  return iconMap[serviceName] || Code;
+  return iconMap[serviceName] || Globe;
 };
 
 interface ServiceCardProps { 
@@ -40,17 +44,31 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   return (
     <motion.div 
-      className="bg-white backdrop-blur-sm rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-all duration-300 border border-neutral-100 h-full"
-      whileHover={{ y: -8, backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
+      className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden group 
+                hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 
+                border border-white/60 h-full relative z-10"
+      whileHover={{ 
+        y: -8, 
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01)'
+      }}
     >
-      <div className="p-8 flex flex-col h-full">
-        {/* Icon with animated background */}
+      {/* Card hover effect - subtle gradient border */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl z-0"></div>
+      
+      <div className="p-8 flex flex-col h-full relative z-10">
+        {/* Modern Icon with enhanced design elements */}
         <div className="relative mb-6 w-16 h-16">
+          {/* Base gradient background */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-indigo-500/20 shadow-lg"></div>
+          
+          {/* Animated pulse effect */}
           <motion.div 
-            className="absolute inset-0 rounded-2xl bg-primary/10 z-0"
+            className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary/5 to-indigo-400/10"
             animate={{ 
               scale: [1, 1.1, 1],
               rotate: [0, 5, 0],
+              opacity: [0.5, 0.8, 0.5],
             }}
             transition={{ 
               duration: 6, 
@@ -59,24 +77,69 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               delay: index * 0.5
             }}
           />
+          
+          {/* Light gleam effect */}
+          <motion.div 
+            className="absolute inset-0 bg-gradient-to-tr from-primary/0 via-white/40 to-primary/0 rounded-2xl blur-sm"
+            animate={{
+              rotate: [0, 180],
+              scale: [0.9, 1.1, 0.9],
+              opacity: [0, 0.3, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: index * 0.3
+            }}
+          />
+          
+          {/* Micro dots pattern */}
+          <div className="absolute inset-0 opacity-20 
+                         [background-image:radial-gradient(#4f46e530_1px,transparent_1px)] 
+                         [background-size:5px_5px] rounded-2xl"></div>
+          
+          {/* Icon with glow effect */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
             {Icon && typeof Icon === 'function' && (
-              <Icon className="text-primary h-7 w-7 group-hover:scale-110 transition-all duration-300" />
+              <div className="relative">
+                {/* Shadow/glow effect */}
+                <div className="absolute -inset-1 text-primary opacity-50 blur-[2px]">
+                  <Icon className="h-7 w-7" />
+                </div>
+                
+                {/* Main icon */}
+                <Icon className="text-primary h-7 w-7 relative z-10 group-hover:scale-110 
+                               transition-all duration-300 drop-shadow-sm" />
+              </div>
             )}
           </div>
         </div>
         
-        {/* Content */}
+        {/* Enhanced Content */}
         <div className="flex-grow">
-          <h3 className="text-xl font-bold text-neutral-800 mb-3 group-hover:text-primary transition-colors">
-            {title}
-          </h3>
-          <p className="text-neutral-600 mb-6 line-clamp-3">
+          {/* Title with hover animation */}
+          <div className="relative inline-block mb-3">
+            <h3 className="text-xl font-bold text-neutral-800 group-hover:text-primary transition-colors">
+              {title}
+            </h3>
+            {/* Animated accent line */}
+            <motion.div 
+              className="absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-primary to-indigo-500 origin-left"
+              initial={{ width: "0%" }}
+              whileInView={{ width: "30%" }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
+            />
+          </div>
+          
+          {/* Description with improved typography */}
+          <p className="text-neutral-600 mb-6 line-clamp-3 leading-relaxed">
             {description}
           </p>
         </div>
         
-        {/* Learn more link */}
+        {/* Enhanced Learn More button */}
         <div className="mt-auto pt-4">
           <motion.div
             className="inline-block relative overflow-hidden"
@@ -85,24 +148,33 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           >
             <Link 
               href={`/services/${slug}`} 
-              className="inline-flex items-center text-primary font-medium"
+              className="group inline-flex items-center"
             >
-              <span className="relative">
+              {/* Modern button with gradient and glow effect */}
+              <span className="relative px-4 py-1.5 rounded-full bg-gradient-to-r from-primary/10 to-indigo-500/10 
+                border border-primary/20 text-primary font-medium
+                group-hover:from-primary/15 group-hover:to-indigo-500/15 
+                group-hover:border-primary/30 transition-all duration-300
+                shadow-sm group-hover:shadow-md group-hover:shadow-primary/5">
                 Learn More
+                
+                {/* Subtle shine effect */}
                 <motion.span 
-                  className="absolute -bottom-1 left-0 w-full h-[2px] bg-primary origin-left" 
-                  initial={{ scaleX: 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  initial={{ left: "-100%" }}
+                  whileHover={{ left: ["100%"] }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
                 />
               </span>
+              
+              {/* Animated arrow icon */}
               <motion.div
-                className="ml-2"
+                className="ml-2 bg-white shadow-sm rounded-full p-1 border border-primary/10"
                 initial={{ x: 0 }}
-                whileHover={{ x: 5 }}
+                whileHover={{ x: 5, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                <ArrowUpRight className="h-4 w-4" />
+                <ArrowUpRight className="h-3 w-3 text-primary" />
               </motion.div>
             </Link>
           </motion.div>
@@ -125,48 +197,48 @@ const ServiceSection = () => {
     queryKey: ['/api/services'],
   });
 
-  // Use predefined services from footer if API doesn't return data
+  // Use predefined services with modern icons if API doesn't return data
   const defaultServices: ServiceType[] = [
     {
       id: 1,
       title: "Web Development",
       description: "Create affordable, responsive websites for your business that work on all devices and help your brand stand out online.",
-      icon: Code,
+      icon: Globe,
       slug: "web-development"
     },
     {
       id: 2,
       title: "Digital Marketing",
       description: "Boost your online presence with our comprehensive digital marketing strategies including SEO, social media management, and online advertising.",
-      icon: Cloud,
+      icon: Megaphone,
       slug: "digital-marketing"
     },
     {
       id: 3,
       title: "Mobile App Development",
       description: "Build custom mobile applications for Android and iOS platforms that connect you with your customers wherever they are.",
-      icon: Users,
+      icon: Smartphone,
       slug: "app-development"
     },
     {
       id: 4,
       title: "Poster Design",
       description: "Craft eye-catching posters and marketing materials that effectively communicate your message and attract customer attention.",
-      icon: Shield,
+      icon: PenTool,
       slug: "poster-design"
     },
     {
       id: 5,
       title: "UI/UX Design",
       description: "Create intuitive and engaging user interfaces that provide exceptional user experiences and keep customers coming back.",
-      icon: BarChart,
+      icon: Layout,
       slug: "ui-ux-design"
     },
     {
       id: 6,
       title: "Logo & Brand Design",
       description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
-      icon: BrainCircuit,
+      icon: Palette,
       slug: "logo-brand-design"
     }
   ];
