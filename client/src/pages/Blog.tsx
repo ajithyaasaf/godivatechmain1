@@ -234,20 +234,46 @@ const Blog = () => {
     setPage(1);
   };
 
+  // Create structured data for SEO
+  const structuredData = [
+    getOrganizationData(),
+    getWebPageData(
+      "Digital Marketing & Web Development Blog | Best SEO Tips for Madurai Businesses",
+      "Get expert web development, digital marketing, and SEO tips from Madurai's leading tech company. Practical advice for local businesses to grow online presence.",
+      "https://godivatech.com/blog"
+    ),
+    getBreadcrumbData([
+      { name: "Home", item: "https://godivatech.com/" },
+      { name: "Blog", item: "https://godivatech.com/blog" }
+    ])
+  ];
+
+  // Add blog posts to structured data if available
+  if (blogPosts.length > 0) {
+    const latestPost = blogPosts[0];
+    structuredData.push(
+      getBlogPostData(
+        latestPost.title,
+        latestPost.excerpt,
+        `https://godivatech.com/blog/${latestPost.slug}`,
+        latestPost.coverImage || "https://godivatech.com/assets/blog-default.jpg",
+        new Date(latestPost.publishedAt).toISOString(),
+        new Date(latestPost.publishedAt).toISOString(),
+        latestPost.authorName,
+        latestPost.authorImage
+      )
+    );
+  }
+
   return (
     <>
-      <Helmet>
-        <title>Digital Marketing & Web Development Blog | GodivaTech Madurai</title>
-        <meta 
-          name="description" 
-          content="Get expert web development, digital marketing, and design tips from Madurai's leading tech company. Practical advice for local businesses to grow online." 
-        />
-        <meta name="keywords" content="web development Madurai, digital marketing Madurai, website design Madurai, social media marketing Madurai, mobile app development Tamil Nadu" />
-        <meta property="og:title" content="Digital Marketing & Web Development Blog | GodivaTech Madurai" />
-        <meta property="og:description" content="Expert web development and digital marketing tips for Madurai businesses. Learn how to grow your local business online with GodivaTech's practical guides." />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_IN" />
-      </Helmet>
+      <SEO
+        title="Digital Marketing & Web Development Blog | Best SEO Tips for Madurai Businesses"
+        description="Get expert web development, digital marketing, and SEO tips from Madurai's leading tech company. Practical advice for Madurai businesses to grow online."
+        keywords={blogKeywords}
+        canonicalUrl="/blog"
+        structuredData={structuredData}
+      />
 
       <PageTransition>
         <div className="relative">

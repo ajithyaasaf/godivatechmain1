@@ -1,7 +1,6 @@
 import React, { useEffect, createElement } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
-import { Helmet } from "react-helmet";
 import { 
   ArrowLeft, ArrowRight, CheckCircle, Clock, 
   Users, Briefcase, Sparkles, Globe, Palette, Cloud, 
@@ -12,6 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import CTASection from "@/components/home/CTASection";
+import SEO from "@/components/SEO";
+import { servicesKeywords } from "@/lib/seoKeywords";
+import { 
+  getOrganizationData, 
+  getWebPageData,
+  getBreadcrumbData,
+  getServiceData
+} from "@/lib/structuredData";
 
 // Helper function to get icon based on slug
 const getIconForService = (slug: string) => {
@@ -227,12 +234,35 @@ const ServiceDetail = () => {
     );
   }
 
+  // Create structured data for SEO
+  const structuredData = [
+    getOrganizationData(),
+    getWebPageData(
+      `${serviceData.title} | Best ${serviceData.title} in Madurai, Tamil Nadu`,
+      `${serviceData.description} Affordable and professional ${serviceData.title.toLowerCase()} services in Madurai for local businesses.`,
+      `https://godivatech.com/services/${serviceData.slug}`
+    ),
+    getBreadcrumbData([
+      { name: "Home", item: "https://godivatech.com/" },
+      { name: "Services", item: "https://godivatech.com/services" },
+      { name: serviceData.title, item: `https://godivatech.com/services/${serviceData.slug}` }
+    ]),
+    getServiceData(
+      serviceData.title,
+      serviceData.description,
+      `https://godivatech.com/services/${serviceData.slug}`
+    )
+  ];
+  
   return (
     <PageTransition>
-      <Helmet>
-        <title>{serviceData.title} | GodivaTech Services</title>
-        <meta name="description" content={serviceData.description} />
-      </Helmet>
+      <SEO
+        title={`${serviceData.title} | Best ${serviceData.title} Services in Madurai`}
+        description={`${serviceData.description} Professional and affordable ${serviceData.title.toLowerCase()} services in Madurai designed for local businesses.`}
+        keywords={`${serviceData.title.toLowerCase()} Madurai, best ${serviceData.title.toLowerCase()} services Tamil Nadu, web development Madurai, digital marketing Madurai, app development Madurai`}
+        canonicalUrl={`/services/${serviceData.slug}`}
+        structuredData={structuredData}
+      />
       
       <div className="relative">
         {/* Hero section */}
