@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, LazyMotion, domAnimation, m } from "framer-motion";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
 import { portfolioKeywords } from "@/lib/seoKeywords";
+import OptimizedImage from "@/components/ui/optimized-image";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -23,121 +24,103 @@ interface Project {
   link?: string;
 }
 
-// Project card component with animation
-const ProjectCard = ({ project, index }: { project: Project; index: number }) => {
+// Project card component with animation - optimized with memo and LazyMotion
+const ProjectCard = memo(({ project, index }: { project: Project; index: number }) => {
   return (
-    <motion.div
-      className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-100 h-full"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ 
-        duration: 0.6,
-        delay: index * 0.1 + 0.2,
-        ease: [0.25, 0.1, 0.25, 1.0] 
-      }}
-      whileHover={{ y: -8 }}
-    >
-      <div className="relative overflow-hidden group">
-        <motion.div 
-          className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          whileHover={{ opacity: 1 }}
-        >
-          <motion.span 
-            className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1"
-            initial={{ scale: 0.8, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.1 }}
+    <LazyMotion features={domAnimation}>
+      <m.div
+        className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-neutral-100 h-full"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ 
+          duration: 0.6,
+          delay: index * 0.1 + 0.2,
+          ease: [0.25, 0.1, 0.25, 1.0] 
+        }}
+        whileHover={{ y: -8 }}
+      >
+        <div className="relative overflow-hidden group">
+          <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300">
+              View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
+            </div>
+          </div>
+          
+          <OptimizedImage
+            src={project.image}
+            alt={project.title}
+            className="w-full h-64 object-contain bg-white transition-transform duration-500 group-hover:scale-105"
+            width={800}
+            height={600}
+            priority={index < 3}
+          />
+          
+          <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+            {project.category}
+          </div>
+        </div>
+        <div className="p-6">
+          <h3 className="text-lg font-bold text-neutral-800 mb-2 group-hover:text-primary transition-colors">
+            {project.title}
+          </h3>
+          <p className="text-neutral-600 mb-4 text-sm">{project.description}</p>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {project.technologies.map((tech, idx) => (
+              <span
+                key={`tech-${project.id}-${tech}-${idx}`}
+                className="bg-neutral-100 text-neutral-700 text-xs font-medium px-2.5 py-1 rounded-full"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+          <a
+            href={project.link || "#"}
+            className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors text-sm group"
           >
-            View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
-          </motion.span>
-        </motion.div>
-        
-        <img
-          src={project.image}
-          alt={project.title}
-          className="w-full h-64 object-contain bg-white transition-transform duration-500 group-hover:scale-105"
-        />
-        
-        <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
-          {project.category}
-        </div>
-      </div>
-      <div className="p-6">
-        <h3 className="text-lg font-bold text-neutral-800 mb-2 group-hover:text-primary transition-colors">
-          {project.title}
-        </h3>
-        <p className="text-neutral-600 mb-4 text-sm">{project.description}</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {project.technologies.map((tech, idx) => (
-            <span
-              key={`tech-${project.id}-${tech}-${idx}`}
-              className="bg-neutral-100 text-neutral-700 text-xs font-medium px-2.5 py-1 rounded-full"
-            >
-              {tech}
+            <span className="relative">
+              View Case Study
+              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary origin-left group-hover:w-full transition-all duration-300" />
             </span>
-          ))}
+            <ArrowRight className="ml-1 h-3.5 w-3.5" />
+          </a>
         </div>
-        <a
-          href={project.link || "#"}
-          className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors text-sm"
-        >
-          <span className="relative">
-            View Case Study
-            <motion.span 
-              className="absolute -bottom-1 left-0 w-full h-[2px] bg-primary origin-left"
-              initial={{ scaleX: 0 }}
-              whileHover={{ scaleX: 1 }}
-              transition={{ duration: 0.3 }}
-            />
-          </span>
-          <ArrowRight className="ml-1 h-3.5 w-3.5" />
-        </a>
-      </div>
-    </motion.div>
+      </m.div>
+    </LazyMotion>
   );
-};
+});
 
-// Methodology step component
-const MethodologyStep = ({ number, title, description, delay }: { 
+// Methodology step component - optimized with memo and LazyMotion
+const MethodologyStep = memo(({ number, title, description, delay }: { 
   number: number; 
   title: string; 
   description: string;
   delay: number;
 }) => (
-  <motion.div 
-    className="bg-white p-8 rounded-xl shadow-lg text-center border border-neutral-100 h-full"
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6, delay }}
-    whileHover={{ y: -10, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.1)" }}
-  >
-    <motion.div 
-      className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative"
-      whileHover={{ scale: 1.1 }}
-      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+  <LazyMotion features={domAnimation}>
+    <m.div 
+      className="bg-white p-8 rounded-xl shadow-lg text-center border border-neutral-100 h-full"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay }}
+      whileHover={{ y: -10, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.1)" }}
     >
-      <motion.div 
-        className="absolute inset-0 rounded-full bg-primary/5"
-        animate={{ 
-          scale: [1, 1.2, 1], 
-          opacity: [0.7, 0.2, 0.7] 
-        }}
-        transition={{ 
-          duration: 2, 
-          repeat: Infinity,
-          repeatType: "loop" 
-        }}
-      />
-      <span className="text-xl font-bold text-primary relative z-10">{number}</span>
-    </motion.div>
-    <h3 className="text-xl font-semibold text-neutral-800 mb-3">{title}</h3>
-    <p className="text-neutral-600">
-      {description}
-    </p>
-  </motion.div>
-);
+      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative hover:scale-110 transition-transform duration-300">
+        {/* Pulse effect using CSS animation instead of JS animation */}
+        <div 
+          className="absolute inset-0 rounded-full bg-primary/5 animate-pulse"
+        />
+        <span className="text-xl font-bold text-primary relative z-10">{number}</span>
+      </div>
+      <h3 className="text-xl font-semibold text-neutral-800 mb-3">{title}</h3>
+      <p className="text-neutral-600">
+        {description}
+      </p>
+    </m.div>
+  </LazyMotion>
+));
 
 const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
@@ -294,44 +277,38 @@ const Portfolio = () => {
             {/* Content */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="text-center max-w-3xl mx-auto text-white">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7 }}
-                >
-                  <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-                    Our Project <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-indigo-200">Portfolio</span>
-                  </h1>
-                  <p className="text-xl text-white/90 mb-6">
-                    Explore our successful projects and see how we've helped businesses across various industries achieve their goals through innovative technology solutions.
-                  </p>
-                </motion.div>
-                
-                {/* Animated highlight */}
-                <motion.div
-                  className="mt-8 inline-block bg-white/10 backdrop-blur-sm px-6 py-3 rounded-lg border border-white/20"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.3 }}
-                >
-                  <span className="font-medium">
-                    Delivering excellence across {categories.length - 1} specialized service areas
-                  </span>
-                </motion.div>
+                <LazyMotion features={domAnimation}>
+                  <m.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7 }}
+                  >
+                    <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                      Our Project <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-indigo-200">Portfolio</span>
+                    </h1>
+                    <p className="text-xl text-white/90 mb-6">
+                      Explore our successful projects and see how we've helped businesses across various industries achieve their goals through innovative technology solutions.
+                    </p>
+                  </m.div>
+                  
+                  {/* Animated highlight */}
+                  <m.div
+                    className="mt-8 inline-block bg-white/10 backdrop-blur-sm px-6 py-3 rounded-lg border border-white/20"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7, delay: 0.3 }}
+                  >
+                    <span className="font-medium">
+                      Delivering excellence across {categories.length - 1} specialized service areas
+                    </span>
+                  </m.div>
+                </LazyMotion>
               </div>
             </div>
             
-            {/* Decorative elements */}
-            <motion.div 
-              className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/30 rounded-full blur-3xl"
-              animate={{ y: [0, 15, 0], opacity: [0.2, 0.3, 0.2] }}
-              transition={{ duration: 7, repeat: Infinity, repeatType: "reverse" }}
-            />
-            <motion.div 
-              className="absolute top-1/4 -right-10 w-60 h-60 bg-indigo-500/30 rounded-full blur-3xl"
-              animate={{ y: [0, -20, 0], opacity: [0.2, 0.3, 0.2] }}
-              transition={{ duration: 10, repeat: Infinity, repeatType: "reverse", delay: 1 }}
-            />
+            {/* Decorative elements with CSS animations instead of JS for better performance */}
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/30 rounded-full blur-3xl animate-float-slow" />
+            <div className="absolute top-1/4 -right-10 w-60 h-60 bg-indigo-500/30 rounded-full blur-3xl animate-float-reverse" />
           </section>
         </TransitionItem>
 
