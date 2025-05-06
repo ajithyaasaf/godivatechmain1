@@ -442,30 +442,9 @@ const Services = () => {
               </div>
             </div>
             
-            {/* Decorative elements */}
-            <motion.div 
-              className="absolute -bottom-16 -left-16 w-32 h-32 bg-white opacity-10 rounded-full blur-xl"
-              animate={{
-                y: [0, -30, 0],
-                opacity: [0.1, 0.15, 0.1],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-            />
-            <motion.div 
-              className="absolute -bottom-32 -right-20 w-64 h-64 bg-indigo-300 opacity-10 rounded-full blur-3xl"
-              animate={{
-                y: [0, -40, 0],
-              }}
-              transition={{
-                duration: 12,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-            />
+            {/* Decorative elements - replaced JS animations with CSS animations */}
+            <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-white opacity-10 rounded-full blur-xl animate-float-blob"></div>
+            <div className="absolute -bottom-32 -right-20 w-64 h-64 bg-indigo-300 opacity-10 rounded-full blur-3xl animate-float-slow"></div>
           </section>
         </TransitionItem>
 
@@ -619,101 +598,85 @@ const Services = () => {
                 
                 <div className="relative mt-10 lg:mt-0">
                   <div className="relative">
-                    <motion.div 
-                      className="absolute -top-10 -left-10 w-64 h-64 bg-primary opacity-5 rounded-full"
-                      animate={{
-                        scale: [1, 1.1, 1],
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        repeatType: "reverse"
-                      }}
-                    />
+                    {/* Replaced JS animation with CSS animation */}
+                    <div className="absolute -top-10 -left-10 w-64 h-64 bg-primary opacity-5 rounded-full animate-pulse-slow"></div>
                     
-                    <motion.div 
-                      className="relative z-10 bg-gradient-to-br from-primary to-purple-700 rounded-2xl shadow-xl p-8 text-white"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      <div className="mb-6">
-                        <div className="bg-white/10 h-16 w-16 rounded-full flex items-center justify-center mb-4">
-                          <Sparkles className="h-8 w-8 text-white" />
+                    <LazyMotion features={domAnimation}>
+                      <m.div 
+                        className="relative z-10 bg-gradient-to-br from-primary to-purple-700 rounded-2xl shadow-xl p-8 text-white"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                      >
+                        <div className="mb-6">
+                          <div className="bg-white/10 h-16 w-16 rounded-full flex items-center justify-center mb-4 relative overflow-hidden">
+                            <div className="absolute inset-0 bg-white/5 animate-pulse-slow"></div>
+                            <Sparkles className="h-8 w-8 text-white relative z-10" />
+                          </div>
+                          <h3 className="text-2xl font-bold mb-2">Why Choose Us?</h3>
+                          <p className="text-white/80">Our approach delivers substantial benefits over traditional service providers.</p>
                         </div>
-                        <h3 className="text-2xl font-bold mb-2">Why Choose Us?</h3>
-                        <p className="text-white/80">Our approach delivers substantial benefits over traditional service providers.</p>
-                      </div>
                       
-                      <ul className="space-y-4">
-                        <li className="flex items-start">
-                          <div className="mr-4 text-white">
-                            <CheckCircle className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold">Expert Team</h4>
-                            <p className="text-white/80 text-sm">Skilled professionals with deep industry experience</p>
-                          </div>
-                        </li>
+                        <ul className="space-y-4">
+                          <li className="flex items-start">
+                            <div className="mr-4 text-white">
+                              <CheckCircle className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">Expert Team</h4>
+                              <p className="text-white/80 text-sm">Skilled professionals with deep industry experience</p>
+                            </div>
+                          </li>
+                          
+                          <li className="flex items-start">
+                            <div className="mr-4 text-white">
+                              <CheckCircle className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">Transparent Process</h4>
+                              <p className="text-white/80 text-sm">Clear communication and milestone-based development</p>
+                            </div>
+                          </li>
+                          
+                          <li className="flex items-start">
+                            <div className="mr-4 text-white">
+                              <CheckCircle className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">Local Understanding</h4>
+                              <p className="text-white/80 text-sm">Deep knowledge of Madurai market and customer needs</p>
+                            </div>
+                          </li>
+                          
+                          <li className="flex items-start">
+                            <div className="mr-4 text-white">
+                              <CheckCircle className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold">Result Focused</h4>
+                              <p className="text-white/80 text-sm">Commitment to delivering measurable business outcomes</p>
+                            </div>
+                          </li>
+                        </ul>
                         
-                        <li className="flex items-start">
-                          <div className="mr-4 text-white">
-                            <CheckCircle className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold">Transparent Process</h4>
-                            <p className="text-white/80 text-sm">Clear communication and milestone-based development</p>
-                          </div>
-                        </li>
-                        
-                        <li className="flex items-start">
-                          <div className="mr-4 text-white">
-                            <CheckCircle className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold">Local Understanding</h4>
-                            <p className="text-white/80 text-sm">Deep knowledge of Madurai market and customer needs</p>
-                          </div>
-                        </li>
-                        
-                        <li className="flex items-start">
-                          <div className="mr-4 text-white">
-                            <CheckCircle className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <h4 className="font-semibold">Result Focused</h4>
-                            <p className="text-white/80 text-sm">Commitment to delivering measurable business outcomes</p>
-                          </div>
-                        </li>
-                      </ul>
-                      
-                      <div className="mt-8">
-                        <Button 
-                          asChild 
-                          className="bg-white hover:bg-white/90 text-primary rounded-full px-6"
-                        >
-                          <Link href="/about" className="flex items-center">
-                            About Our Team
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </div>
-                    </motion.div>
+                        <div className="mt-8">
+                          <Button 
+                            asChild 
+                            className="bg-white hover:bg-white/90 text-primary rounded-full px-6"
+                          >
+                            <Link href="/about" className="flex items-center">
+                              About Our Team
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </div>
+                      </m.div>
+                    </LazyMotion>
                   </div>
                   
-                  <motion.div 
-                    className="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-500 opacity-5 rounded-full"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                    }}
-                    transition={{
-                      duration: 10,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                      delay: 1
-                    }}
-                  />
+                  {/* Replaced JS animation with CSS animation */}
+                  <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-500 opacity-5 rounded-full animate-float-blob"></div>
                 </div>
               </div>
             </div>
