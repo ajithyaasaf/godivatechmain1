@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useMemo, memo } from "react";
+import { motion, LazyMotion, domAnimation, m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import SEO from "@/components/SEO";
@@ -24,73 +24,75 @@ import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import { useQuery } from "@tanstack/react-query";
 
-// Industry card component with animation
-const IndustryCard = ({ icon: Icon, title, description, index }: { 
+// Industry card component with animation - optimized with memo and CSS animations
+const IndustryCard = memo(({ icon: Icon, title, description, index }: { 
   icon: React.ElementType, 
   title: string, 
   description: string,
   index: number
 }) => {
   return (
-    <motion.div 
-      className="bg-white rounded-xl shadow-lg p-8 border border-neutral-100 h-full"
-      whileHover={{ y: -8, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    >
-      <div className="relative w-16 h-16 mb-6">
-        <motion.div 
-          className="absolute inset-0 rounded-xl bg-primary/10 z-0"
-          animate={{ 
-            scale: [1, 1.1, 1],
-            rotate: [0, index % 2 === 0 ? 5 : -5, 0],
-          }}
-          transition={{ 
-            duration: 6, 
-            repeat: Infinity,
-            repeatType: "reverse",
-            delay: index * 0.3
-          }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          <Icon className="text-primary h-7 w-7" />
+    <LazyMotion features={domAnimation}>
+      <m.div 
+        className="bg-white rounded-xl shadow-lg p-8 border border-neutral-100 h-full transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 300, 
+          damping: 20,
+          delay: index * 0.1
+        }}
+      >
+        <div className="relative w-16 h-16 mb-6">
+          <div 
+            className={`absolute inset-0 rounded-xl bg-primary/10 z-0 ${index % 2 === 0 ? 'animate-pulse-slow' : 'animate-float-slow'}`}
+          />
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <Icon className="text-primary h-7 w-7" />
+          </div>
         </div>
-      </div>
-      <h3 className="text-xl font-bold text-neutral-800 mb-3">{title}</h3>
-      <p className="text-neutral-600">
-        {description}
-      </p>
-    </motion.div>
+        <h3 className="text-xl font-bold text-neutral-800 mb-3">{title}</h3>
+        <p className="text-neutral-600">
+          {description}
+        </p>
+      </m.div>
+    </LazyMotion>
   );
-};
+});
 
-// Service approach step component
-const ServiceStep = ({ number, title, description, delay }: {
+// Service approach step component - optimized with memo and LazyMotion
+const ServiceStep = memo(({ number, title, description, delay }: {
   number: number;
   title: string;
   description: string;
   delay: number;
 }) => (
-  <motion.div 
-    className="flex items-start"
-    initial={{ opacity: 0, x: -20 }}
-    whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6, delay }}
-  >
-    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xl font-bold mr-4 shrink-0">
-      {number}
-    </div>
-    <div>
-      <h3 className="text-xl font-semibold text-neutral-800 mb-2">{title}</h3>
-      <p className="text-neutral-600">
-        {description}
-      </p>
-    </div>
-  </motion.div>
-);
+  <LazyMotion features={domAnimation}>
+    <m.div 
+      className="flex items-start"
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, delay }}
+    >
+      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xl font-bold mr-4 shrink-0 relative">
+        <div className="absolute inset-0 rounded-full bg-primary/5 animate-pulse-slow"></div>
+        <span className="relative z-10">{number}</span>
+      </div>
+      <div>
+        <h3 className="text-xl font-semibold text-neutral-800 mb-2">{title}</h3>
+        <p className="text-neutral-600">
+          {description}
+        </p>
+      </div>
+    </m.div>
+  </LazyMotion>
+));
 
-// Service Card component for main services section
-const EnterpriseServiceCard = ({ 
+// Service Card component for main services section - optimized with memo and LazyMotion
+const EnterpriseServiceCard = memo(({ 
   icon: Icon, 
   title, 
   description, 
@@ -106,78 +108,66 @@ const EnterpriseServiceCard = ({
   index: number;
 }) => {
   return (
-    <motion.div 
-      className="bg-white rounded-xl shadow-xl overflow-hidden group border border-neutral-100 hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-    >
-      <div className="p-8 flex-grow flex flex-col">
-        <div className="mb-6 relative">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-            <Icon className="text-primary h-8 w-8" />
+    <LazyMotion features={domAnimation}>
+      <m.div 
+        className="bg-white rounded-xl shadow-xl overflow-hidden group border border-neutral-100 hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: index * 0.1 }}
+      >
+        <div className="p-8 flex-grow flex flex-col">
+          <div className="mb-6 relative">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+              <Icon className="text-primary h-8 w-8" />
+            </div>
+            <div 
+              className="absolute top-0 right-0 w-20 h-20 opacity-10 animate-pulse-slow"
+              style={{
+                background: `radial-gradient(circle at center, var(--primary) 0%, transparent 70%)`,
+              }}
+            />
           </div>
-          <motion.div 
-            className="absolute top-0 right-0 w-20 h-20 opacity-10"
-            animate={{
-              scale: [1, 1.1, 1],
-              rotate: [0, 10, 0],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-            style={{
-              background: `radial-gradient(circle at center, var(--primary) 0%, transparent 70%)`,
-            }}
-          />
-        </div>
-        
-        <h3 className="text-2xl font-bold text-neutral-800 mb-4 group-hover:text-primary transition-colors">
-          {title}
-        </h3>
-        
-        <p className="text-neutral-600 mb-6">
-          {description}
-        </p>
-        
-        {features.length > 0 && (
-          <div className="space-y-3 mb-6">
-            {features.map((feature, idx) => (
-              <div key={idx} className="flex items-start">
-                <div className="text-primary mr-3 mt-1">
-                  <CheckCircle2 className="h-5 w-5" />
+          
+          <h3 className="text-2xl font-bold text-neutral-800 mb-4 group-hover:text-primary transition-colors">
+            {title}
+          </h3>
+          
+          <p className="text-neutral-600 mb-6">
+            {description}
+          </p>
+          
+          {features.length > 0 && (
+            <div className="space-y-3 mb-6">
+              {features.map((feature, idx) => (
+                <div key={idx} className="flex items-start">
+                  <div className="text-primary mr-3 mt-1">
+                    <CheckCircle2 className="h-5 w-5" />
+                  </div>
+                  <span className="text-neutral-700">{feature}</span>
                 </div>
-                <span className="text-neutral-700">{feature}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        
-        <div className="mt-auto pt-4">
-          <Link 
-            href={path} 
-            className="inline-flex items-center text-primary font-medium group/link"
-          >
-            <span>Learn More</span>
-            <motion.div
-              className="ml-2"
-              initial={{ x: 0 }}
-              whileHover={{ x: 5 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              ))}
+            </div>
+          )}
+          
+          <div className="mt-auto pt-4">
+            <Link 
+              href={path} 
+              className="inline-flex items-center text-primary font-medium group/link"
             >
-              <ArrowRight className="h-4 w-4" />
-            </motion.div>
-          </Link>
+              <span>Learn More</span>
+              <span className="ml-2 transform group-hover/link:translate-x-1 transition-transform duration-300">
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+          </div>
         </div>
-      </div>
-      
-      <div className="h-1.5 w-full bg-gradient-to-r from-primary via-primary to-indigo-600 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
-    </motion.div>
+        
+        <div className="h-1.5 w-full bg-gradient-to-r from-primary via-primary to-indigo-600 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500" />
+      </m.div>
+    </LazyMotion>
   );
-};
+});
 
 interface ServiceType {
   id: number;
@@ -385,16 +375,9 @@ const Services = () => {
             {/* Animated background patterns */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 right-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgZD0iTTMwMCwzMDAgTDMwMCw1MCBBMjUwLDI1MCAwIDEgMSAxMDEuOTY0NzksNDUzLjAzMzAxIi8+PC9zdmc+')]"></div>
-              <motion.div 
-                className="absolute inset-0"
-                animate={{
-                  backgroundPosition: ['0% 0%', '100% 100%'],
-                }}
-                transition={{
-                  duration: 20,
-                  repeat: Infinity,
-                  repeatType: 'reverse',
-                }}
+              {/* Replaced JavaScript animation with CSS animation for better performance */}
+              <div 
+                className="absolute inset-0 animate-slide-pattern"
                 style={{
                   backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
                   backgroundSize: '30px 30px',
