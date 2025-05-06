@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, memo, useMemo } from "react";
 import { Link } from "wouter";
 import { 
   ChevronRight, Code, Cloud, Users, Shield, BarChart, BrainCircuit,
@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useAnimateOnScroll, slideInUpVariants } from "@/hooks/use-animation";
 import { TransitionItem } from "@/components/PageTransition";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 // Enhanced mapping of service types to modern icon components
 const getIconForService = (serviceName: string) => {
@@ -35,13 +36,18 @@ interface ServiceCardProps {
   index: number;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ 
+// Optimized ServiceCard with better performance
+const ServiceCard: React.FC<ServiceCardProps> = memo(({ 
   icon: Icon, 
   title, 
   description, 
   slug,
   index
 }) => {
+  // Pre-compute animation delays based on index
+  const pulseDelay = useMemo(() => Math.min(index * 0.2, 1.5), [index]);
+  const gleamDelay = useMemo(() => Math.min(index * 0.1, 0.8), [index]);
+  
   return (
     <motion.div 
       className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden group 
@@ -50,61 +56,65 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       whileHover={{ 
         y: -8, 
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.01)'
       }}
+      // Using GPU-accelerated properties for better performance
+      style={{ willChange: "transform" }}
     >
       {/* Card hover effect - subtle gradient border */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl z-0"></div>
       
       <div className="p-8 flex flex-col h-full relative z-10">
-        {/* Modern Icon with enhanced design elements */}
+        {/* Modern Icon with optimized design elements */}
         <div className="relative mb-6 w-16 h-16 flex items-center justify-center">
-          {/* Base gradient background with border */}
+          {/* Static gradient background with border - no animation needed */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-indigo-500/20 shadow-md border border-primary/10"></div>
           
-          {/* Animated pulse effect */}
+          {/* Simplified and optimized pulse effect */}
           <motion.div 
             className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary/5 to-indigo-400/10"
             animate={{ 
-              scale: [1, 1.1, 1],
-              rotate: [0, 5, 0],
-              opacity: [0.5, 0.8, 0.5],
+              scale: [1, 1.05, 1],
+              opacity: [0.5, 0.7, 0.5],
             }}
             transition={{ 
-              duration: 6, 
+              duration: 8, 
               repeat: Infinity,
               repeatType: "reverse",
-              delay: index * 0.5
+              delay: pulseDelay,
+              // Using ease-in-out instead of more complex easing
+              ease: "easeInOut"
             }}
+            // Use GPU acceleration for better performance
+            style={{ willChange: "transform, opacity" }}
           />
           
-          {/* Light gleam effect */}
+          {/* Simplified gleam effect with reduced animation complexity */}
           <motion.div 
-            className="absolute inset-0 bg-gradient-to-tr from-primary/0 via-white/40 to-primary/0 rounded-2xl blur-sm"
+            className="absolute inset-0 bg-gradient-to-tr from-primary/0 via-white/30 to-primary/0 rounded-2xl blur-sm"
             animate={{
-              rotate: [0, 180],
-              scale: [0.9, 1.1, 0.9],
-              opacity: [0, 0.3, 0],
+              opacity: [0, 0.2, 0],
             }}
             transition={{
-              duration: 8,
+              duration: 10, // Slower animation for better performance
               repeat: Infinity,
               repeatType: "reverse",
-              delay: index * 0.3
+              delay: gleamDelay,
+              ease: "easeInOut"
             }}
+            style={{ willChange: "opacity" }}
           />
           
-          {/* Micro dots pattern */}
+          {/* Micro dots pattern - static, no animation */}
           <div className="absolute inset-0 opacity-20 
                          [background-image:radial-gradient(#4f46e530_1px,transparent_1px)] 
                          [background-size:5px_5px] rounded-2xl"></div>
           
-          {/* Icon with glow effect - using fixed positioning */}
+          {/* Icon with simplified glow effect */}
           <div className="relative z-10 flex items-center justify-center">
             {Icon && (
               <div className="relative">
-                {/* Shadow/glow effect */}
-                <div className="absolute inset-0 text-primary opacity-50 blur-[2px] scale-125 translate-y-[2px]">
+                {/* Static shadow effect instead of animated */}
+                <div className="absolute inset-0 text-primary opacity-40 blur-[2px] scale-125 translate-y-[2px]">
                   <Icon className="h-7 w-7" />
                 </div>
                 
@@ -123,13 +133,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             <h3 className="text-xl font-bold text-neutral-800 group-hover:text-primary transition-colors">
               {title}
             </h3>
-            {/* Animated accent line */}
+            {/* Optimized accent line animation */}
             <motion.div 
               className="absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-primary to-indigo-500 origin-left"
-              initial={{ width: "0%" }}
+              initial={{ width: 0 }}
               whileInView={{ width: "30%" }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
+              viewport={{ once: true, margin: "-10%" }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             />
           </div>
           
@@ -139,50 +149,37 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
           </p>
         </div>
         
-        {/* Enhanced Learn More button */}
+        {/* Enhanced Learn More button with optimized animations */}
         <div className="mt-auto pt-4">
-          <motion.div
-            className="inline-block relative overflow-hidden"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          <div
+            className="inline-block relative overflow-hidden group"
           >
             <Link 
               href={`/services/${slug}`} 
               className="group inline-flex items-center"
             >
-              {/* Modern button with gradient and glow effect */}
+              {/* Modern button with gradient effect */}
               <span className="relative px-4 py-1.5 rounded-full bg-gradient-to-r from-primary/10 to-indigo-500/10 
                 border border-primary/20 text-primary font-medium
                 group-hover:from-primary/15 group-hover:to-indigo-500/15 
                 group-hover:border-primary/30 transition-all duration-300
                 shadow-sm group-hover:shadow-md group-hover:shadow-primary/5">
                 Learn More
-                
-                {/* Subtle shine effect */}
-                <motion.span 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  initial={{ left: "-100%" }}
-                  whileHover={{ left: ["100%"] }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                />
               </span>
               
-              {/* Animated arrow icon */}
-              <motion.div
-                className="ml-2 bg-white shadow-sm rounded-full p-1 border border-primary/10"
-                initial={{ x: 0 }}
-                whileHover={{ x: 5, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              {/* Static arrow icon with CSS-based hover effect */}
+              <span
+                className="ml-2 bg-white shadow-sm rounded-full p-1 border border-primary/10 transform group-hover:translate-x-1 transition-transform duration-300"
               >
                 <ArrowUpRight className="h-3 w-3 text-primary" />
-              </motion.div>
+              </span>
             </Link>
-          </motion.div>
+          </div>
         </div>
       </div>
     </motion.div>
   );
-};
+});
 
 interface ServiceType {
   id: number;
@@ -277,31 +274,16 @@ const ServiceSection = () => {
         <div className="absolute inset-0 opacity-[0.15] 
           [background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]" />
         
-        {/* Animated gradient circles */}
-        <motion.div 
-          className="absolute top-1/4 -left-10 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10" 
-          animate={{
-            y: [0, 50, 0],
-            opacity: [0.1, 0.15, 0.1],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
+        {/* Static gradient circles - using CSS instead of heavy animations */}
+        <div 
+          className="absolute top-1/4 -left-10 w-72 h-72 bg-gradient-to-br from-blue-500/15 to-blue-400/5 
+                     rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-float-slow" 
+          style={{ willChange: "transform" }}
         />
-        <motion.div 
-          className="absolute -bottom-20 right-1/3 w-72 h-72 bg-primary rounded-full mix-blend-multiply filter blur-3xl opacity-10" 
-          animate={{
-            y: [0, -30, 0],
-            opacity: [0.1, 0.15, 0.1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            repeatType: "reverse",
-            delay: 5
-          }}
+        <div 
+          className="absolute -bottom-20 right-1/3 w-72 h-72 bg-gradient-to-br from-primary/15 to-indigo-400/5
+                     rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-float-reverse" 
+          style={{ willChange: "transform", animationDelay: "2s" }}
         />
         
         {/* Grid lines */}
