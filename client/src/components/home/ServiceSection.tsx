@@ -7,12 +7,12 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { useAnimateOnScroll, slideInUpVariants } from "@/hooks/use-animation";
 import { TransitionItem } from "@/components/PageTransition";
-import { LazyMotion, domAnimation, m } from "framer-motion";
 
 // Enhanced mapping of service types to modern icon components
-const getIconForService = (serviceName: string) => {
+const getIconForService = (serviceName: string): React.ElementType => {
   const iconMap: Record<string, React.ElementType> = {
     'web-development': Globe,
     'digital-marketing': Megaphone, 
@@ -36,72 +36,54 @@ interface ServiceCardProps {
   index: number;
 }
 
-// Optimized ServiceCard with better performance
-const ServiceCard: React.FC<ServiceCardProps> = memo(({ 
+// Optimized ServiceCard with better performance using pure CSS animations
+const ServiceCard = memo(({ 
   icon: Icon, 
   title, 
   description, 
   slug,
   index
-}) => {
-  // Pre-compute animation delays based on index
+}: ServiceCardProps) => {
+  // Pre-compute animation delays based on index to stagger animations
   const pulseDelay = useMemo(() => Math.min(index * 0.2, 1.5), [index]);
   const gleamDelay = useMemo(() => Math.min(index * 0.1, 0.8), [index]);
   
   return (
-    <motion.div 
+    <div 
       className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden group 
                 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 
-                border border-white/60 h-full relative z-10"
-      whileHover={{ 
-        y: -8, 
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-      }}
-      // Using GPU-accelerated properties for better performance
+                border border-white/60 h-full relative z-10
+                hover:translate-y-[-8px]"
       style={{ willChange: "transform" }}
     >
       {/* Card hover effect - subtle gradient border */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-indigo-500/10 
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl z-0"></div>
       
       <div className="p-8 flex flex-col h-full relative z-10">
         {/* Modern Icon with optimized design elements */}
         <div className="relative mb-6 w-16 h-16 flex items-center justify-center">
           {/* Static gradient background with border - no animation needed */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-indigo-500/20 shadow-md border border-primary/10"></div>
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-indigo-500/20 
+                          shadow-md border border-primary/10"></div>
           
-          {/* Simplified and optimized pulse effect */}
-          <motion.div 
-            className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary/5 to-indigo-400/10"
-            animate={{ 
-              scale: [1, 1.05, 1],
-              opacity: [0.5, 0.7, 0.5],
+          {/* Simplified and optimized pulse effect - Using CSS Animation */}
+          <div 
+            className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-primary/5 to-indigo-400/10 animate-pulse-slow"
+            style={{ 
+              willChange: "transform, opacity",
+              animationDelay: `${pulseDelay}s` 
             }}
-            transition={{ 
-              duration: 8, 
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: pulseDelay,
-              // Using ease-in-out instead of more complex easing
-              ease: "easeInOut"
-            }}
-            // Use GPU acceleration for better performance
-            style={{ willChange: "transform, opacity" }}
           />
           
-          {/* Simplified gleam effect with reduced animation complexity */}
-          <motion.div 
-            className="absolute inset-0 bg-gradient-to-tr from-primary/0 via-white/30 to-primary/0 rounded-2xl blur-sm"
-            animate={{
-              opacity: [0, 0.2, 0],
+          {/* Simplified gleam effect with reduced animation complexity - Using CSS */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-tr from-primary/0 via-white/30 to-primary/0 
+                      rounded-2xl blur-sm animate-gleam"
+            style={{ 
+              willChange: "opacity",
+              animationDelay: `${gleamDelay}s` 
             }}
-            transition={{
-              duration: 10, // Slower animation for better performance
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: gleamDelay,
-              ease: "easeInOut"
-            }}
-            style={{ willChange: "opacity" }}
           />
           
           {/* Micro dots pattern - static, no animation */}
@@ -133,13 +115,10 @@ const ServiceCard: React.FC<ServiceCardProps> = memo(({
             <h3 className="text-xl font-bold text-neutral-800 group-hover:text-primary transition-colors">
               {title}
             </h3>
-            {/* Optimized accent line animation */}
-            <motion.div 
-              className="absolute -bottom-1 left-0 h-[2px] bg-gradient-to-r from-primary to-indigo-500 origin-left"
-              initial={{ width: 0 }}
-              whileInView={{ width: "30%" }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
+            {/* Optimized accent line with CSS */}
+            <div 
+              className="absolute -bottom-1 left-0 h-[2px] w-0 bg-gradient-to-r from-primary to-indigo-500 origin-left
+                        group-hover:w-[30%] transition-all duration-300"
             />
           </div>
           
@@ -151,9 +130,7 @@ const ServiceCard: React.FC<ServiceCardProps> = memo(({
         
         {/* Enhanced Learn More button with optimized animations */}
         <div className="mt-auto pt-4">
-          <div
-            className="inline-block relative overflow-hidden group"
-          >
+          <div className="inline-block relative overflow-hidden group">
             <Link 
               href={`/services/${slug}`} 
               className="group inline-flex items-center"
@@ -169,7 +146,8 @@ const ServiceCard: React.FC<ServiceCardProps> = memo(({
               
               {/* Static arrow icon with CSS-based hover effect */}
               <span
-                className="ml-2 bg-white shadow-sm rounded-full p-1 border border-primary/10 transform group-hover:translate-x-1 transition-transform duration-300"
+                className="ml-2 bg-white shadow-sm rounded-full p-1 border border-primary/10 transform 
+                           group-hover:translate-x-1 transition-transform duration-300"
               >
                 <ArrowUpRight className="h-3 w-3 text-primary" />
               </span>
@@ -177,9 +155,11 @@ const ServiceCard: React.FC<ServiceCardProps> = memo(({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 });
+
+ServiceCard.displayName = "ServiceCard";
 
 interface ServiceType {
   id: number;
@@ -189,13 +169,13 @@ interface ServiceType {
   slug: string;
 }
 
-const ServiceSection = () => {
+function ServiceSection() {
   const { data: services = [] } = useQuery<ServiceType[]>({
     queryKey: ['/api/services'],
   });
 
-  // Use predefined services with modern icons if API doesn't return data
-  const defaultServices: ServiceType[] = [
+  // Use memoized predefined services to prevent unnecessary re-renders
+  const defaultServices = useMemo<ServiceType[]>(() => [
     {
       id: 1,
       title: "Web Development",
@@ -238,7 +218,7 @@ const ServiceSection = () => {
       icon: Palette,
       slug: "logo-brand-design"
     }
-  ];
+  ], []);
 
   const displayServices: ServiceType[] = services.length > 0 ? services : defaultServices;
 
@@ -297,13 +277,9 @@ const ServiceSection = () => {
           {/* Section header */}
           <div className="text-center mb-16 max-w-3xl mx-auto">
             <div className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
-              <motion.span 
-                className="text-primary font-semibold text-sm"
-                animate={{ opacity: [0.7, 1, 0.7] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
+              <span className="text-primary font-semibold text-sm animate-pulse-slow">
                 OUR EXPERTISE
-              </motion.span>
+              </span>
             </div>
             
             <h2 className="text-4xl md:text-5xl font-bold text-neutral-800 mb-6 tracking-tight leading-tight">
@@ -315,20 +291,21 @@ const ServiceSection = () => {
             </p>
           </div>
 
-          {/* Services grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-            {displayServices.map((service: ServiceType, index: number) => (
-              <AnimatePresence key={service.id || index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
+          {/* Services grid - optimized with LazyMotion */}
+          <LazyMotion features={domAnimation} strict>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+              {displayServices.map((service: ServiceType, index: number) => (
+                <m.div
+                  key={service.id || index}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
+                  viewport={{ once: true, margin: "-10%" }}
                   transition={{ 
-                    duration: 0.7, 
-                    delay: 0.15 * index,
-                    ease: [0.25, 0.1, 0.25, 1]
+                    duration: 0.5, 
+                    delay: Math.min(0.1 * index, 0.5), // Cap max delay
+                    ease: "easeOut"
                   }}
-                  exit={{ opacity: 0, y: 10 }}
+                  style={{ willChange: "transform, opacity" }}
                 >
                   <ServiceCard 
                     icon={getIconForService(service.slug)}
@@ -337,92 +314,88 @@ const ServiceSection = () => {
                     slug={service.slug}
                     index={index}
                   />
-                </motion.div>
-              </AnimatePresence>
-            ))}
-          </div>
-          
-          {/* Features highlight */}
-          <motion.div 
-            className="rounded-2xl bg-gradient-to-r from-primary/5 to-indigo-500/5 p-10 backdrop-blur-sm border border-white/40 shadow-lg"
-            whileInView={{ opacity: [0, 1], y: [20, 0] }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.7 }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-              <div>
-                <h3 className="text-2xl font-bold text-neutral-800 mb-6">Why Choose GodivaTech Services?</h3>
-                <p className="text-neutral-600 mb-8">
-                  With over a decade of experience, our team is dedicated to providing affordable and high-quality technology solutions tailored to your specific business needs.
-                </p>
-                
-                <ul className="space-y-3">
-                  {keyFeatures.map((feature, idx) => (
-                    <motion.li 
-                      key={idx}
-                      className="flex items-start"
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.1 * idx + 0.3, duration: 0.5 }}
-                    >
-                      <div className="mr-3 mt-1 bg-primary/10 rounded-full p-1">
-                        <Check className="h-4 w-4 text-primary" />
-                      </div>
-                      <span className="text-neutral-700">{feature}</span>
-                    </motion.li>
-                  ))}
-                </ul>
-                
-                <motion.div 
-                  className="mt-8"
-                  whileInView={{ opacity: [0, 1], y: [10, 0] }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.8, duration: 0.5 }}
-                >
-                  <Link 
-                    href="/services" 
-                    className="inline-flex items-center rounded-full bg-primary text-white px-6 py-3 font-medium hover:bg-primary/90 transition-colors shadow-sm hover:shadow-md"
-                  >
-                    View All Services
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </motion.div>
-              </div>
-              
-              <div className="lg:pl-10">
-                <motion.div 
-                  className="rounded-2xl overflow-hidden border-4 border-white/80 shadow-xl relative"
-                  whileInView={{ 
-                    opacity: [0, 1],
-                    y: [20, 0], 
-                    rotateY: [10, 0], 
-                    rotateX: [-5, 0]
-                  }}
-                  transition={{ 
-                    duration: 0.8, 
-                    delay: 0.3,
-                    ease: "easeOut"
-                  }}
-                  viewport={{ once: true }}
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  <img 
-                    src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
-                    alt="Technology team collaboration"
-                    className="w-full h-auto"
-                  />
-                  
-                  {/* Overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent opacity-60 mix-blend-overlay" />
-                </motion.div>
-              </div>
+                </m.div>
+              ))}
             </div>
-          </motion.div>
+          </LazyMotion>
+          
+          {/* Features highlight - with performance optimizations */}
+          <LazyMotion features={domAnimation}>
+            <m.div 
+              className="rounded-2xl bg-gradient-to-r from-primary/5 to-indigo-500/5 p-10 backdrop-blur-sm border border-white/40 shadow-lg"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-10%" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              style={{ willChange: "transform, opacity" }}
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <div>
+                  <h3 className="text-2xl font-bold text-neutral-800 mb-6">Why Choose GodivaTech Services?</h3>
+                  <p className="text-neutral-600 mb-8">
+                    With over a decade of experience, our team is dedicated to providing affordable and high-quality technology solutions tailored to your specific business needs.
+                  </p>
+                  
+                  <ul className="space-y-3">
+                    {keyFeatures.map((feature, idx) => (
+                      <m.li 
+                        key={idx}
+                        className="flex items-start"
+                        initial={{ opacity: 0, x: -5 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ 
+                          delay: Math.min(0.1 * idx, 0.3), 
+                          duration: 0.3 
+                        }}
+                      >
+                        <div className="mr-3 mt-1 bg-primary/10 rounded-full p-1">
+                          <Check className="h-4 w-4 text-primary" />
+                        </div>
+                        <span className="text-neutral-700">{feature}</span>
+                      </m.li>
+                    ))}
+                  </ul>
+                  
+                  <div className="mt-8 transition-all duration-300 hover:translate-y-[-2px]">
+                    <Link 
+                      href="/services" 
+                      className="inline-flex items-center rounded-full bg-primary text-white px-6 py-3 font-medium hover:bg-primary/90 transition-colors shadow-sm hover:shadow-md"
+                    >
+                      View All Services
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+                
+                <div className="lg:pl-10">
+                  <m.div 
+                    className="rounded-2xl overflow-hidden border-4 border-white/80 shadow-xl relative"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    style={{ willChange: "transform, opacity" }}
+                  >
+                    <img 
+                      src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                      alt="Technology team collaboration"
+                      className="w-full h-auto"
+                      loading="lazy" 
+                      decoding="async"
+                    />
+                    
+                    {/* Static overlay gradient instead of animated */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent opacity-60 mix-blend-overlay" />
+                  </m.div>
+                </div>
+              </div>
+            </m.div>
+          </LazyMotion>
         </div>
       </TransitionItem>
     </section>
   );
 };
 
-export default ServiceSection;
+export default memo(ServiceSection);
