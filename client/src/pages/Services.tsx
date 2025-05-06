@@ -2,7 +2,13 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
-import { Helmet } from "react-helmet";
+import SEO from "@/components/SEO";
+import { servicesKeywords } from "@/lib/seoKeywords";
+import { 
+  getOrganizationData, 
+  getWebPageData,
+  getBreadcrumbData 
+} from "@/lib/structuredData";
 import { 
   Activity, Heart, BarChart4, CheckCircle, Building2, Truck,
   GraduationCap, ArrowRight, Globe, Layers, Code, Cloud, 
@@ -278,12 +284,24 @@ const Services = () => {
   
   return (
     <PageTransition>
-      <Helmet>
-        <title>Enterprise IT Services & Solutions | GodivaTech</title>
-        <meta name="description" content="Explore GodivaTech's comprehensive range of enterprise IT services including web development, digital marketing, branding, and cloud solutions for businesses." />
-        <meta name="keywords" content="IT services, enterprise solutions, web development, digital marketing, branding, cloud services" />
-        <link rel="canonical" href="https://godivatech.com/services" />
-      </Helmet>
+      <SEO
+        title="Best Web Development & Digital Marketing Services in Madurai | GodivaTech"
+        description="GodivaTech offers affordable web development, app development, and digital marketing services in Madurai. Get custom IT solutions at competitive prices for your business."
+        keywords={servicesKeywords}
+        canonicalUrl="/services"
+        structuredData={[
+          getOrganizationData(),
+          getWebPageData(
+            "Best Web Development & Digital Marketing Services in Madurai | GodivaTech",
+            "GodivaTech offers affordable web development, app development, and digital marketing services in Madurai. Get custom IT solutions at competitive prices for your business.",
+            "https://godivatech.com/services"
+          ),
+          getBreadcrumbData([
+            { name: "Home", item: "https://godivatech.com/" },
+            { name: "Services", item: "https://godivatech.com/services" }
+          ])
+        ]}
+      />
       
       <div className="relative">
         {/* Hero section */}
