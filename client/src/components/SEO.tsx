@@ -12,6 +12,12 @@ interface SEOProps {
   twitterCard?: 'summary' | 'summary_large_image';
   structuredData?: Record<string, any>[];
   children?: React.ReactNode;
+  
+  // Article-specific metadata
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  section?: string;
 }
 
 /**
@@ -34,6 +40,10 @@ const SEO: React.FC<SEOProps> = ({
   ogLocale = 'en_IN',
   twitterCard = 'summary_large_image',
   structuredData = [],
+  publishedTime,
+  modifiedTime,
+  author,
+  section,
   children
 }) => {
   // Default domain for canonical URLs and images
@@ -65,6 +75,20 @@ const SEO: React.FC<SEOProps> = ({
       {canonical && <meta property="og:url" content={canonical} />}
       <meta property="og:site_name" content="GodivaTech" />
       <meta property="og:locale" content={ogLocale} />
+      
+      {/* Article-specific Open Graph tags */}
+      {ogType === 'article' && publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+      )}
+      {ogType === 'article' && modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+      )}
+      {ogType === 'article' && author && (
+        <meta property="article:author" content={author} />
+      )}
+      {ogType === 'article' && section && (
+        <meta property="article:section" content={section} />
+      )}
       
       {/* Twitter */}
       <meta name="twitter:card" content={twitterCard} />

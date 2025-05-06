@@ -166,7 +166,9 @@ const BlogPost = () => {
         ogImage={post.coverImage || undefined}
         ogType="article"
         publishedTime={new Date(post.publishedAt).toISOString()}
+        modifiedTime={new Date(post.publishedAt).toISOString()}
         author={post.authorName}
+        section={category?.name || 'Digital Services'}
       />
 
       <section className="bg-white pt-20 pb-12">
