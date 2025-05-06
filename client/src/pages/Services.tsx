@@ -444,7 +444,7 @@ const Services = () => {
             
             {/* Decorative elements - replaced JS animations with CSS animations */}
             <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-white opacity-10 rounded-full blur-xl animate-float-blob"></div>
-            <div className="absolute -bottom-32 -right-20 w-64 h-64 bg-indigo-300 opacity-10 rounded-full blur-3xl animate-float-slow"></div>
+            <div className="absolute -bottom-32 -right-20 w-64 h-64 bg-indigo-300 opacity-10 rounded-full blur-3xl animate-float-reverse"></div>
           </section>
         </TransitionItem>
 
@@ -691,35 +691,37 @@ const Services = () => {
             
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="text-center mb-16">
-                <motion.div 
-                  className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10"
-                  initial={{ opacity: 0, y: -10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <span className="text-primary font-semibold text-sm">INDUSTRIES</span>
-                </motion.div>
-                
-                <motion.h2 
-                  className="text-4xl font-bold text-gray-900 mb-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                  Tailored Solutions for Every Industry
-                </motion.h2>
-                
-                <motion.p 
-                  className="text-xl text-gray-600 max-w-3xl mx-auto"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  We specialize in creating industry-specific solutions that address the unique challenges and opportunities of your business sector.
-                </motion.p>
+                <LazyMotion features={domAnimation}>
+                  <m.div 
+                    className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10"
+                    initial={{ opacity: 0, y: -10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <span className="text-primary font-semibold text-sm">INDUSTRIES</span>
+                  </m.div>
+                  
+                  <m.h2 
+                    className="text-4xl font-bold text-gray-900 mb-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                  >
+                    Tailored Solutions for Every Industry
+                  </m.h2>
+                  
+                  <m.p 
+                    className="text-xl text-gray-600 max-w-3xl mx-auto"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    We specialize in creating industry-specific solutions that address the unique challenges and opportunities of your business sector.
+                  </m.p>
+                </LazyMotion>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -735,24 +737,26 @@ const Services = () => {
               </div>
               
               <div className="mt-16 text-center">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <p className="text-gray-600 mb-6">Don't see your industry? We serve many other sectors as well!</p>
-                  <Button 
-                    asChild 
-                    variant="outline"
-                    className="border-primary text-primary hover:bg-primary/5 rounded-full px-8"
+                <LazyMotion features={domAnimation}>
+                  <m.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
                   >
-                    <Link href="/contact" className="flex items-center">
-                      Contact Us For Details
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </motion.div>
+                    <p className="text-gray-600 mb-6">Don't see your industry? We serve many other sectors as well!</p>
+                    <Button 
+                      asChild 
+                      variant="outline"
+                      className="border-primary text-primary hover:bg-primary/5 rounded-full px-8"
+                    >
+                      <Link href="/contact" className="flex items-center">
+                        Contact Us For Details
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </m.div>
+                </LazyMotion>
               </div>
             </div>
           </section>
@@ -771,72 +775,78 @@ const Services = () => {
             
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="text-center mb-16">
-                <motion.div 
-                  className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10"
-                  initial={{ opacity: 0, y: -10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <span className="text-primary font-semibold text-sm">FREQUENTLY ASKED QUESTIONS</span>
-                </motion.div>
-                
-                <motion.h2 
-                  className="text-4xl font-bold text-gray-900 mb-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                  Common Questions About Our IT Services
-                </motion.h2>
-                
-                <motion.p 
-                  className="text-xl text-gray-600 max-w-3xl mx-auto"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  Get answers to the most common questions about our services in Madurai
-                </motion.p>
-              </div>
-              
-              <div className="max-w-4xl mx-auto">
-                {getCommonServiceFAQs("IT Services", "Madurai").map((faq, index) => (
-                  <motion.div
-                    key={`faq-${index}`}
-                    className="mb-8 border-b border-gray-200 pb-8 last:border-0"
+                <LazyMotion features={domAnimation}>
+                  <m.div 
+                    className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10"
+                    initial={{ opacity: 0, y: -10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <span className="text-primary font-semibold text-sm">FREQUENTLY ASKED QUESTIONS</span>
+                  </m.div>
+                  
+                  <m.h2 
+                    className="text-4xl font-bold text-gray-900 mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.1 * index }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
                   >
-                    <h3 className="text-2xl font-bold text-gray-800 mb-4">{faq.question}</h3>
-                    <p className="text-gray-600">{faq.answer}</p>
-                  </motion.div>
-                ))}
+                    Common Questions About Our IT Services
+                  </m.h2>
+                  
+                  <m.p 
+                    className="text-xl text-gray-600 max-w-3xl mx-auto"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    Get answers to the most common questions about our services in Madurai
+                  </m.p>
+                </LazyMotion>
+              </div>
+              
+              <div className="max-w-4xl mx-auto">
+                <LazyMotion features={domAnimation}>
+                  {getCommonServiceFAQs("IT Services", "Madurai").map((faq, index) => (
+                    <m.div
+                      key={`faq-${index}`}
+                      className="mb-8 border-b border-gray-200 pb-8 last:border-0"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 * index }}
+                    >
+                      <h3 className="text-2xl font-bold text-gray-800 mb-4">{faq.question}</h3>
+                      <p className="text-gray-600">{faq.answer}</p>
+                    </m.div>
+                  ))}
+                </LazyMotion>
               </div>
               
               <div className="mt-16 text-center">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <p className="text-gray-600 mb-6">Have more questions about our services in Madurai?</p>
-                  <Button 
-                    asChild 
-                    size="lg"
-                    className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 shadow-md"
+                <LazyMotion features={domAnimation}>
+                  <m.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
                   >
-                    <Link href="/contact" className="flex items-center">
-                      Contact Us Today
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </motion.div>
+                    <p className="text-gray-600 mb-6">Have more questions about our services in Madurai?</p>
+                    <Button 
+                      asChild 
+                      size="lg"
+                      className="bg-primary hover:bg-primary/90 text-white rounded-full px-8 shadow-md"
+                    >
+                      <Link href="/contact" className="flex items-center">
+                        Contact Us Today
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </m.div>
+                </LazyMotion>
               </div>
             </div>
           </section>

@@ -87,6 +87,16 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(20px)" },
         },
+        "float-blob": {
+          "0%, 100%": { 
+            transform: "translateY(0) scale(1)", 
+            opacity: "0.1" 
+          },
+          "50%": { 
+            transform: "translateY(-15px) scale(1.05)", 
+            opacity: "0.15" 
+          },
+        },
         "pulse-slow": {
           "0%, 100%": { 
             transform: "scale(1)", 
@@ -119,6 +129,7 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "float-slow": "float-slow 20s ease-in-out infinite",
         "float-reverse": "float-reverse 25s ease-in-out infinite",
+        "float-blob": "float-blob 8s ease-in-out infinite",
         "pulse-slow": "pulse-slow 8s ease-in-out infinite",
         "gleam": "gleam 10s ease-in-out infinite",
         "fade-in": "fade-in 0.5s ease-out",
