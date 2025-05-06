@@ -5,8 +5,6 @@
  * of the GodivaTech website, improving Core Web Vitals and mobile experience.
  */
 
-import { locationKeywords } from './seoKeywords';
-
 /**
  * Interface for mobile-optimized metadata
  */
@@ -41,60 +39,45 @@ export const createMobileAppStructuredData = (
   pageUrl: string,
   pageTitle: string,
   appData: {
-    iosAppId?: string;
-    androidAppId?: string;
-    appDescription?: string;
-    appName?: string;
-    appRating?: number;
-    appReviews?: number;
-    appPrice?: string;
-    appCurrency?: string;
+    name: string;
+    description: string;
+    appId?: string;
+    platform?: 'iOS' | 'Android' | 'Web';
+    version?: string;
+    rating?: number;
+    reviews?: number;
   },
   categoryName?: string
 ) => {
-  const { 
-    iosAppId, 
-    androidAppId, 
-    appDescription = 'GodivaTech Mobile App offers convenient access to our services and portfolio.',
-    appName = 'GodivaTech',
-    appRating = 4.7,
-    appReviews = 128,
-    appPrice = '0',
-    appCurrency = 'INR'
-  } = appData;
-
-  const baseData = {
+  return {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": appName,
+    "name": appData.name,
+    "description": appData.description,
     "applicationCategory": categoryName || "BusinessApplication",
-    "operatingSystem": "iOS, Android",
-    "description": appDescription,
+    "operatingSystem": appData.platform || "Web",
+    "url": pageUrl,
     "offers": {
       "@type": "Offer",
-      "price": appPrice,
-      "priceCurrency": appCurrency
+      "price": "0",
+      "priceCurrency": "INR"
     },
-    "aggregateRating": {
+    "aggregateRating": appData.rating ? {
       "@type": "AggregateRating",
-      "ratingValue": appRating.toString(),
-      "ratingCount": appReviews.toString()
+      "ratingValue": appData.rating.toString(),
+      "reviewCount": appData.reviews?.toString() || "10"
+    } : undefined,
+    "author": {
+      "@type": "Organization",
+      "name": "GodivaTech",
+      "url": "https://godivatech.com/"
     },
-    "url": pageUrl
+    "sameAs": [
+      "https://www.facebook.com/godivatech",
+      "https://twitter.com/godivatech",
+      "https://www.instagram.com/godivatech/"
+    ]
   };
-
-  // Add platform-specific data
-  const appData2: Record<string, any> = { ...baseData };
-  
-  if (iosAppId) {
-    appData2.downloadUrl = `https://apps.apple.com/app/id${iosAppId}`;
-  }
-  
-  if (androidAppId) {
-    appData2.downloadUrl = `https://play.google.com/store/apps/details?id=${androidAppId}`;
-  }
-
-  return appData2;
 };
 
 /**
@@ -109,7 +92,7 @@ export const createMobileFAQStructuredData = (
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": questions.map((q) => ({
+    "mainEntity": questions.map(q => ({
       "@type": "Question",
       "name": q.question,
       "acceptedAnswer": {
@@ -129,45 +112,17 @@ export const createMobileFAQStructuredData = (
  */
 export const createMobileBreadcrumbStructuredData = (
   items: Array<{ name: string; url: string }>,
-  cityName = 'Madurai'
+  cityName: string = 'Madurai'
 ) => {
-  // For mobile, enhance breadcrumbs with local neighborhood data
-  const enhancedItems = items.map((item, index) => {
-    let name = item.name;
-    
-    // For service pages, enhance with neighborhood data
-    if (
-      index > 0 && 
-      ["Web Development", "App Development", "Digital Marketing", "SEO", "Branding"].includes(name)
-    ) {
-      // Map services to neighborhoods
-      const serviceMap: Record<string, string[]> = {
-        "Web Development": locationKeywords.neighborhoods.webDevelopment,
-        "App Development": locationKeywords.neighborhoods.mobileApp,
-        "Digital Marketing": locationKeywords.neighborhoods.digitalMarketing,
-        "SEO": locationKeywords.neighborhoods.digitalMarketing,
-        "Branding": locationKeywords.neighborhoods.branding
-      };
-      
-      const neighborhoods = serviceMap[name] || [];
-      if (neighborhoods.length > 0) {
-        // Use the first neighborhood for this service
-        name = `${name} in ${neighborhoods[0]}, ${cityName}`;
-      }
-    }
-    
-    return {
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": name,
-      "item": item.url
-    };
-  });
-
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    "itemListElement": enhancedItems
+    "itemListElement": items.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.name.includes(cityName) ? item.name : `${item.name} in ${cityName}`,
+      "item": item.url
+    }))
   };
 };
 
@@ -186,20 +141,20 @@ export const createMobileImageStructuredData = (
   width: number = 1200,
   height: number = 630
 ) => {
-  // Mobile-first indexing prefers WebP format
-  const imageUrl = image.includes('cloudinary') && !image.includes('f_webp') 
-    ? `${image.replace('/upload/', '/upload/f_webp,q_auto,w_')}`
-    : image;
-
   return {
     "@context": "https://schema.org",
     "@type": "ImageObject",
-    "contentUrl": imageUrl,
+    "contentUrl": image,
     "description": alt,
-    "width": width.toString(),
-    "height": height.toString(),
-    "representativeOfPage": true, // Indicates this is a primary image
-    "caption": alt
+    "name": alt,
+    "height": height,
+    "width": width,
+    "encodingFormat": image.toLowerCase().endsWith('png') ? "image/png" : "image/jpeg",
+    "about": {
+      "@type": "Thing",
+      "name": alt,
+      "description": alt
+    }
   };
 };
 
@@ -214,45 +169,46 @@ export const createMobileServiceStructuredData = (
   serviceData: {
     name: string;
     description: string;
-    category: string;
+    category?: string;
     image?: string;
+    provider?: string;
+    neighborhood?: string;
+    cityName?: string;
   },
   pageUrl: string
 ) => {
-  // Map service to neighborhood for local targeting
-  const serviceMap: Record<string, string[]> = {
-    "Web Development": locationKeywords.neighborhoods.webDevelopment,
-    "Mobile App Development": locationKeywords.neighborhoods.mobileApp,
-    "Digital Marketing": locationKeywords.neighborhoods.digitalMarketing,
-    "SEO": locationKeywords.neighborhoods.digitalMarketing,
-    "Branding": locationKeywords.neighborhoods.branding,
-    "Software Development": locationKeywords.neighborhoods.software
-  };
+  const cityName = serviceData.cityName || "Madurai";
+  const neighborhood = serviceData.neighborhood || "Anna Nagar";
   
-  const neighborhoods = serviceMap[serviceData.name] || [];
-  const areaServed = neighborhoods.length > 0 
-    ? neighborhoods.map(n => `${n}, Madurai`) 
-    : ["Madurai, Tamil Nadu"];
-
   return {
     "@context": "https://schema.org",
     "@type": "Service",
     "name": serviceData.name,
     "description": serviceData.description,
     "provider": {
-      "@type": "LocalBusiness",
-      "name": "GodivaTech",
+      "@type": "Organization",
+      "name": serviceData.provider || "GodivaTech",
+      "url": "https://godivatech.com",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Madurai",
+        "addressLocality": cityName,
         "addressRegion": "Tamil Nadu",
-        "addressCountry": "India"
+        "postalCode": "625020",
+        "streetAddress": neighborhood,
+        "addressCountry": "IN"
       }
     },
-    "areaServed": areaServed,
-    "serviceType": serviceData.category,
+    "areaServed": {
+      "@type": "City",
+      "name": cityName,
+      "containsPlace": {
+        "@type": "Neighborhood",
+        "name": neighborhood
+      }
+    },
+    "serviceType": serviceData.category || "Technology Services",
     "url": pageUrl,
-    "image": serviceData.image || "https://godivatech.com/images/service-default.jpg"
+    "image": serviceData.image || "https://godivatech.com/images/services-overview.jpg"
   };
 };
 
@@ -265,26 +221,30 @@ export const createMobileServiceStructuredData = (
  */
 export const getMobileImageSrcSet = (
   baseUrl: string,
-  widths = [375, 640, 768, 1024, 1280]
+  alt: string
 ) => {
-  // For Cloudinary images, create a proper srcset
-  if (baseUrl.includes('cloudinary')) {
-    const basePath = baseUrl.split('/upload/')[0] + '/upload/';
-    const imagePath = baseUrl.split('/upload/')[1];
+  // If using Cloudinary
+  if (baseUrl.includes('cloudinary.com') && baseUrl.includes('upload')) {
+    const widths = [320, 480, 640, 768, 1024, 1280];
     
-    const srcset = widths
-      .map(width => `${basePath}w_${width},q_auto,f_auto/${imagePath} ${width}w`)
-      .join(', ');
-      
-    const sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw';
+    // Create srcset with Cloudinary transformations
+    const srcset = widths.map(width => {
+      const transformedUrl = baseUrl.replace('/upload/', `/upload/w_${width},q_auto,f_auto/`);
+      return `${transformedUrl} ${width}w`;
+    }).join(',');
     
-    return { srcset, sizes };
+    return {
+      srcset,
+      sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+      alt
+    };
   }
   
-  // For regular images, use a simpler approach
+  // For regular images
   return {
-    srcset: `${baseUrl} 1200w`,
-    sizes: '100vw'
+    srcset: `${baseUrl} 1x, ${baseUrl} 2x`,
+    sizes: "100vw",
+    alt
   };
 };
 
@@ -295,42 +255,36 @@ export const getMobileImageSrcSet = (
  * @returns Object with Core Web Vitals metrics
  */
 export const getCoreWebVitalsForService = (serviceName: string) => {
-  // These would typically be pulled from a monitoring service
-  // For now, using placeholder values based on service
-  const webVitalsMap: Record<string, any> = {
-    "Web Development": {
+  // These would normally come from an analytics API
+  // Using static values for demonstration
+  const defaultMetrics = {
+    desktopScore: 92,
+    mobileScore: 85,
+    fcp: "1.2s",
+    lcp: "2.4s",
+    fid: "70ms",
+    cls: "0.08"
+  };
+  
+  // Service-specific optimizations could be added here
+  const serviceSpecificMetrics: Record<string, any> = {
+    "Web Design & Development": {
       desktopScore: 95,
-      mobileScore: 88,
-      fcp: "1.2s",
-      lcp: "2.1s",
+      mobileScore: 90,
+      fcp: "0.9s",
+      lcp: "2.1s", 
       fid: "50ms",
       cls: "0.05"
     },
-    "Mobile App Development": {
-      desktopScore: 92,
-      mobileScore: 85,
-      fcp: "1.5s",
-      lcp: "2.3s",
-      fid: "70ms",
-      cls: "0.08"
-    },
     "Digital Marketing": {
-      desktopScore: 97,
-      mobileScore: 90,
-      fcp: "1.0s",
-      lcp: "1.8s",
-      fid: "40ms",
-      cls: "0.03"
-    },
-    "default": {
       desktopScore: 94,
-      mobileScore: 87,
-      fcp: "1.3s",
+      mobileScore: 88,
+      fcp: "1.0s",
       lcp: "2.2s",
       fid: "60ms",
       cls: "0.06"
     }
   };
   
-  return webVitalsMap[serviceName] || webVitalsMap["default"];
+  return serviceSpecificMetrics[serviceName] || defaultMetrics;
 };

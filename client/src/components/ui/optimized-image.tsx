@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { getMobileImageSrcSet } from "@/lib/mobileOptimization";
+import React, { useState, useEffect } from 'react';
+import { getMobileImageSrcSet, createMobileImageStructuredData } from '@/lib/mobileOptimization';
 
 interface OptimizedImageProps {
   src: string;
@@ -30,13 +30,13 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   alt,
   width,
   height,
-  className = "",
+  className = '',
   priority = false,
-  lazyBoundary = "200px",
-  sizes = "100vw",
-  mobileSizes = "(max-width: 640px) 100vw, (max-width: 768px) 80vw, 50vw",
+  lazyBoundary = '200px',
+  sizes = '100vw',
   quality = 80,
-  placeholder,
+  placeholder = 'empty',
+  mobileSizes,
   format = 'auto',
   objectFit = 'cover',
   blur = false,
@@ -44,13 +44,15 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   seoCaption,
   shouldGenerateStructuredData = false
 }) => {
-  const [loaded, setLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  
-  // Detect mobile devices on client side
+
+  // Detect mobile devices for serving optimized content
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const userAgent = navigator.userAgent.toLowerCase();
+      const mobileKeywords = ['android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+      const isMobileDevice = mobileKeywords.some(keyword => userAgent.indexOf(keyword) !== -1) || window.innerWidth < 768;
+      setIsMobile(isMobileDevice);
     };
     
     checkMobile();
@@ -60,138 +62,95 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       window.removeEventListener('resize', checkMobile);
     };
   }, []);
-
-  // Generate srcset for responsive images using the utility
-  const { srcset, sizes: generatedSizes } = useMemo(() => {
-    if (src.includes('cloudinary')) {
-      const widths = isMobile ? [375, 640, 768] : [640, 768, 1024, 1280, 1536];
-      return getMobileImageSrcSet(src, widths);
+  
+  // Transform image URL based on format preference
+  const getOptimizedSrc = () => {
+    // Handle Cloudinary transformations
+    if (src.includes('cloudinary.com') && format !== 'original') {
+      if (format === 'webp') {
+        return src.replace('/upload/', `/upload/f_webp,q_${quality}/`);
+      } else {
+        return src.replace('/upload/', `/upload/q_${quality},f_auto/`);
+      }
     }
-    return { srcset: '', sizes: '' };
-  }, [src, isMobile]);
-
-  // Generate responsive src based on screen size
-  const getResponsiveSrc = () => {
-    // If it's already a Cloudinary URL, add transformations
-    if (src.includes('cloudinary.com')) {
-      const baseUrl = src.split('/upload/')[0] + '/upload/';
-      const imagePath = src.split('/upload/')[1];
-      
-      // Determine optimal format based on props
-      const formatStr = format === 'webp' ? 'f_webp' : 
-                        format === 'auto' ? 'f_auto' : '';
-      
-      // Use blur effect if specified
-      const blurStr = blur ? 'e_blur:300,' : '';
-      
-      // Quality settings based on device and priority
-      const qualityStr = isMobile ? 
-        (priority ? `q_${Math.min(quality, 80)},` : 'q_auto:low,') :
-        (priority ? `q_${quality},` : 'q_auto:good,');
-      
-      // Width and DPR settings based on device
-      const widthStr = width ? `w_${width},` : 'w_auto,';
-      const dprStr = isMobile ? 'dpr_1.2,' : 'dpr_auto,';
-      
-      // Complete transformation string
-      const transforms = `${qualityStr}${formatStr ? formatStr + ',' : ''}${blurStr}${widthStr}${dprStr}c_limit`;
-      
-      return `${baseUrl}${transforms}/${imagePath}`;
-    }
-    
-    // For non-Cloudinary images, return as is
     return src;
   };
-
-  // Determine if image should be loaded eagerly or lazily
-  const loadingStrategy = priority ? "eager" : "lazy";
-  const fetchPriority = priority ? "high" : "auto";
   
-  // Aspect ratio container to prevent CLS
-  const hasAspectRatio = width && height;
-  const aspectRatio = hasAspectRatio ? width / height : undefined;
-  
-  // Mobile improvements for Core Web Vitals
-  const mobileOptimizations = isMobile ? {
-    // Use lower quality and smaller images for mobile
-    sizes: mobileSizes,
-    // Avoid layout shifts using fixed aspect ratio for mobile
-    style: hasAspectRatio ? {
-      aspectRatio: aspectRatio?.toString(),
-      height: 'auto',
-      maxHeight: `${height}px`,
-      width: '100%'
-    } : undefined
-  } : {};
-  
-  // Object fit property based on preference
-  const objectFitClass = hasAspectRatio ? `object-${objectFit}` : '';
-  
-  // Improve LCP by using the 'fetchpriority' HTML attribute
-  const lcpAttributes = priority && !preventLcp ? {
-    'fetchpriority': 'high' as const,
-    'importance': 'high' as const
-  } : {};
-  
-  // SEO markup for images (especially for Google Discover)
-  const imageCaption = seoCaption || alt;
-  
-  return (
-    <figure className={className}>
-      <div 
-        className={`overflow-hidden ${hasAspectRatio ? 'relative' : ''}`}
-        style={hasAspectRatio ? { 
-          aspectRatio: aspectRatio?.toString(),
-          position: 'relative',
-          backgroundColor: 'rgba(0,0,0,0.02)'
-        } : undefined}
-        aria-label={alt}
-      >
-        {placeholder && !loaded && (
-          <div
-            className="absolute inset-0 flex items-center justify-center bg-neutral-50 animate-pulse"
-            style={{
-              aspectRatio: aspectRatio?.toString()
-            }}
-          />
-        )}
-        
-        <img
-          src={getResponsiveSrc()}
-          alt={alt}
-          width={width}
-          height={height}
-          loading={loadingStrategy}
-          decoding="async"
-          onLoad={() => setLoaded(true)}
-          className={`${loaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 max-w-full h-auto ${hasAspectRatio ? `absolute top-0 left-0 w-full h-full ${objectFitClass}` : ''}`}
-          sizes={isMobile ? mobileSizes : sizes}
-          srcSet={srcset ? srcset : undefined}
-          {...lcpAttributes}
-          {...mobileOptimizations}
-        />
-      </div>
+  // Get srcset for responsive images
+  const getSrcSet = () => {
+    // For cloudinary images
+    if (src.includes('cloudinary.com') && src.includes('upload')) {
+      const widths = [320, 480, 640, 768, 1024, 1280];
+      const cloudinarySrcSet = widths.map(w => {
+        const transformedUrl = src.replace('/upload/', `/upload/w_${w},q_${quality},f_auto/`);
+        return `${transformedUrl} ${w}w`;
+      }).join(', ');
       
-      {/* Add caption for image SEO */}
-      {(imageCaption && shouldGenerateStructuredData) && (
-        <figcaption className="text-xs text-neutral-500 mt-1 text-center">
-          {imageCaption}
+      return cloudinarySrcSet;
+    }
+    
+    // For other images
+    return '';
+  };
+  
+  // Loading strategy based on priority and position
+  const loading = priority ? 'eager' : 'lazy';
+  
+  // Additional CSS classes for blur effect
+  const blurClass = blur ? 'transition-opacity duration-500 blur-sm hover:blur-none' : '';
+  
+  // Apply sizes based on device
+  const responsiveSizes = isMobile && mobileSizes ? mobileSizes : sizes;
+
+  // Set appropriate CSS class for object-fit
+  const objectFitClass = 
+    objectFit === 'cover' ? 'object-cover' :
+    objectFit === 'contain' ? 'object-contain' :
+    objectFit === 'fill' ? 'object-fill' : '';
+  
+  // Add special treatment for LCP (Largest Contentful Paint) images
+  const lcpAttributes: Record<string, string> = !preventLcp && priority ? {
+    'fetchpriority': 'high',
+    'importance': 'high'
+  } : {};
+  
+  const optimizedSrc = getOptimizedSrc();
+  const srcSet = getSrcSet();
+
+  return (
+    <figure className={`relative ${className}`}>
+      <img
+        src={optimizedSrc}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={loading}
+        sizes={responsiveSizes}
+        srcSet={srcSet || undefined}
+        className={`${objectFitClass} ${blurClass} w-full h-full`}
+        {...lcpAttributes}
+      />
+      
+      {seoCaption && (
+        <figcaption className="text-sm text-gray-600 mt-2 italic">
+          {seoCaption}
         </figcaption>
       )}
       
-      {/* Add structured data for images to improve SEO for Google Discover */}
       {shouldGenerateStructuredData && (
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ImageObject",
-            "contentUrl": getResponsiveSrc(),
-            "description": alt,
-            "width": width,
-            "height": height,
-            "caption": imageCaption
-          }, null, 0)}
-        </script>
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ 
+            __html: JSON.stringify(
+              createMobileImageStructuredData(
+                optimizedSrc, 
+                alt, 
+                width || 1200, 
+                height || 630
+              )
+            )
+          }}
+        />
       )}
     </figure>
   );
