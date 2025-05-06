@@ -1,8 +1,9 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRightIcon } from "lucide-react";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 interface Project {
   id: number;
@@ -14,14 +15,26 @@ interface Project {
   link?: string;
 }
 
-const ProjectCard = ({ project }: { project: Project }) => {
+// Optimized with memoization to prevent unnecessary re-renders
+const ProjectCard = memo(({ project, index }: { project: Project; index: number }) => {
+  // Pre-calculate any values used in rendering to avoid calculations during re-renders
+  const animationDelay = useMemo(() => Math.min(index * 0.1, 0.4), [index]);
+  
   return (
-    <div className="bg-neutral-50 rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow duration-300">
+    <div 
+      className="bg-neutral-50 rounded-lg overflow-hidden shadow hover:shadow-lg transition-all duration-300 transform hover:translate-y-[-3px]"
+      style={{ 
+        willChange: "transform, box-shadow",
+        animationDelay: `${animationDelay}s`
+      }}
+    >
       <div className="relative">
         <img
           src={project.image}
           alt={project.title}
           className="w-full h-64 object-contain bg-white"
+          loading="lazy" // Add lazy loading for images
+          decoding="async" // Add async decoding for images
         />
         <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
           {project.category}
@@ -29,7 +42,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
       </div>
       <div className="p-6">
         <h3 className="text-xl font-semibold text-neutral-800 mb-2">{project.title}</h3>
-        <p className="text-neutral-600 mb-4">{project.description}</p>
+        <p className="text-neutral-600 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">{project.description}</p>
         <div className="flex flex-wrap gap-2 mb-4">
           {project.technologies.map((tech, index) => (
             <span
@@ -42,22 +55,27 @@ const ProjectCard = ({ project }: { project: Project }) => {
         </div>
         <Link
           href={project.link || "/portfolio"}
-          className="text-primary font-medium hover:text-primary/90 transition duration-150 flex items-center"
+          className="text-primary font-medium hover:text-primary/90 transition duration-150 flex items-center group"
         >
-          View Case Study <ChevronRightIcon className="ml-2 h-4 w-4" />
+          View Case Study 
+          <ChevronRightIcon className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
     </div>
   );
-};
+});
 
-const PortfolioSection = () => {
+// Add displayName for React DevTools
+ProjectCard.displayName = "ProjectCard";
+
+// Memoize the entire section component for better performance
+const PortfolioSection = memo(() => {
   const { data: projects = [] } = useQuery<Project[]>({
     queryKey: ['/api/projects'],
   });
 
-  // Default projects in case API doesn't return data
-  const defaultProjects = [
+  // Memoize default projects to avoid recreating on each render
+  const defaultProjects = useMemo(() => [
     {
       id: 1,
       title: "Tilted – Email Campaign",
@@ -106,38 +124,79 @@ const PortfolioSection = () => {
       category: "Marketing",
       technologies: ["Event Promotion", "Community Outreach", "Visual Design"]
     }
-  ];
+  ], []);
 
-  const displayProjects = projects.length > 0 ? projects : defaultProjects;
+  // Memoize calculated value to avoid unnecessary re-calculations
+  const displayProjects = useMemo(() => 
+    projects.length > 0 ? projects : defaultProjects
+  , [projects, defaultProjects]);
 
   return (
-    <section id="portfolio" className="py-20 bg-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-neutral-800 mb-4">Explore our recent projects</h2>
-          <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-            Take a look at our diverse portfolio of successful marketing and web development projects for various clients.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Button
-            asChild
-            variant="outline"
-            className="bg-white border border-primary text-primary hover:bg-primary hover:text-white"
+    <section id="portfolio" className="py-20 bg-white relative">
+      {/* Subtle background pattern for visual interest without heavy animations */}
+      <div className="absolute inset-0 opacity-5 
+        [background-image:linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] 
+        [background-size:6rem_6rem]" />
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <LazyMotion features={domAnimation} strict>
+          <m.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <Link href="/portfolio">View All Projects</Link>
-          </Button>
-        </div>
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Explore our recent projects</h2>
+            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+              Take a look at our diverse portfolio of successful marketing and web development projects for various clients.
+            </p>
+          </m.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {displayProjects.map((project, index) => (
+              <m.div
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: Math.min(0.1 * index, 0.3), 
+                  ease: "easeOut" 
+                }}
+                style={{ willChange: "transform, opacity" }}
+              >
+                <ProjectCard 
+                  project={project} 
+                  index={index}
+                />
+              </m.div>
+            ))}
+          </div>
+
+          <m.div 
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Button
+              asChild
+              variant="outline"
+              className="bg-white border border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-300"
+            >
+              <Link href="/portfolio">View All Projects</Link>
+            </Button>
+          </m.div>
+        </LazyMotion>
       </div>
     </section>
   );
-};
+});
+
+// Add displayName for React DevTools
+PortfolioSection.displayName = "PortfolioSection";
 
 export default PortfolioSection;

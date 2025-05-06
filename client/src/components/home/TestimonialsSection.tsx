@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 
 interface Testimonial {
   id: number;
@@ -11,14 +11,24 @@ interface Testimonial {
   image: string;
 }
 
-const TestimonialCard = ({ testimonial, index }: { testimonial: Testimonial, index: number }) => {
+// Optimized with memoization to prevent unnecessary renders
+const TestimonialCard = memo(({ testimonial, index, isActive = true }: { 
+  testimonial: Testimonial, 
+  index: number,
+  isActive?: boolean
+}) => {
+  // Pre-compute the animation delay once per component instance
+  const animationDelay = useMemo(() => Math.min(index * 0.1, 0.3), [index]);
+  
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.2 }}
-      className="bg-white rounded-lg shadow-lg p-8 relative hover:shadow-xl transition-shadow duration-300"
-      whileHover={{ y: -5 }}
+    <div 
+      className={`bg-white rounded-lg shadow-lg p-8 relative hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
+        isActive ? 'animate-fade-in' : ''
+      }`}
+      style={{ 
+        willChange: "transform, opacity",
+        animationDelay: `${animationDelay}s`
+      }}
     >
       <div className="text-primary text-5xl absolute -top-4 -left-2">
         "
@@ -31,23 +41,29 @@ const TestimonialCard = ({ testimonial, index }: { testimonial: Testimonial, ind
           src={testimonial.image}
           alt={testimonial.name}
           className="w-12 h-12 rounded-full mr-4"
+          loading="lazy"
+          decoding="async"
         />
         <div>
           <p className="font-semibold text-neutral-800">{testimonial.name}</p>
           <p className="text-neutral-500">{testimonial.position}, {testimonial.company}</p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
-};
+});
 
-const TestimonialsSection = () => {
+// Add displayName for React DevTools
+TestimonialCard.displayName = "TestimonialCard";
+
+// Optimized with memoization
+const TestimonialsSection = memo(() => {
   const { data: testimonials = [] } = useQuery<Testimonial[]>({
     queryKey: ['/api/testimonials'],
   });
 
-  // Default testimonials in case API doesn't return data
-  const defaultTestimonials = [
+  // Memoize default testimonials to avoid unnecessary re-creation
+  const defaultTestimonials = useMemo(() => [
     {
       id: 1,
       name: "Siva Prakash",
@@ -72,44 +88,53 @@ const TestimonialsSection = () => {
       content: "The social media marketing campaigns designed by Godiva Technologies have significantly improved our online presence. Their team is responsive, creative, and delivers great results on time.",
       image: "https://randomuser.me/api/portraits/women/28.jpg"
     }
-  ];
+  ], []);
 
-  const displayTestimonials = testimonials.length > 0 ? testimonials : defaultTestimonials;
+  // Memoize to prevent recalculation
+  const displayTestimonials = useMemo(() => 
+    testimonials.length > 0 ? testimonials : defaultTestimonials
+  , [testimonials, defaultTestimonials]);
 
-  // Create carousel effect with auto-scroll
+  // State management for the carousel
   const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   
+  // Use layout effect for critical UI updates
   useEffect(() => {
-    // Check screen size for responsive design
+    // Throttled resize handler to improve performance
+    let resizeTimer: NodeJS.Timeout;
+    
     const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth < 768);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        setIsSmallScreen(window.innerWidth < 768);
+      }, 100); // 100ms throttle for better performance
     };
     
-    checkScreenSize();
+    checkScreenSize(); // Initial check
     window.addEventListener('resize', checkScreenSize);
     
-    return () => window.removeEventListener('resize', checkScreenSize);
+    return () => {
+      clearTimeout(resizeTimer);
+      window.removeEventListener('resize', checkScreenSize);
+    };
   }, []);
   
-  // Separate useEffect for auto-scrolling to avoid conditional hook issues
+  // Optimize auto-scrolling with a fixed interval
   useEffect(() => {
-    // Auto-scroll testimonials on larger screens
-    if (!isSmallScreen) {
+    if (!isSmallScreen && displayTestimonials.length > 1) {
       const interval = setInterval(() => {
         setCurrentTestimonialIndex((prev) => 
           prev === displayTestimonials.length - 1 ? 0 : prev + 1
         );
       }, 5000);
       
-      return () => {
-        clearInterval(interval);
-      };
+      return () => clearInterval(interval);
     }
   }, [displayTestimonials.length, isSmallScreen]);
   
-  // Animation variants for section heading
+  // Animation variants for improved performance
   const headingVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { 
@@ -129,78 +154,104 @@ const TestimonialsSection = () => {
   
   return (
     <section className="py-20 overflow-hidden relative bg-gradient-to-br from-blue-800 to-indigo-900">
+      {/* Add subtle background pattern instead of heavy animations */}
+      <div className="absolute inset-0 opacity-10 
+        [background-image:radial-gradient(#ffffff15_1px,transparent_1px)] 
+        [background-size:20px_20px]"></div>
+        
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16">
-          <motion.h2 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={headingVariants}
-            className="text-3xl font-bold text-white mb-4"
-          >
-            What Our Clients Say
-          </motion.h2>
-          <motion.p 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={textVariants}
-            className="text-lg text-white/90 max-w-2xl mx-auto"
-          >
-            Hear directly from our satisfied clients about their experience working with Godiva Technologies.
-          </motion.p>
-        </div>
-
-        {isSmallScreen ? (
-          // Grid layout for small screens
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayTestimonials.map((testimonial, index) => (
-              <div key={testimonial.id}>
-                <TestimonialCard 
-                  testimonial={testimonial}
-                  index={index}
-                />
-              </div>
-            ))}
+        <LazyMotion features={domAnimation} strict>
+          <div className="text-center mb-16">
+            <m.h2 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={headingVariants}
+              className="text-3xl font-bold text-white mb-4"
+            >
+              What Our Clients Say
+            </m.h2>
+            <m.p 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+              variants={textVariants}
+              className="text-lg text-white/90 max-w-2xl mx-auto"
+            >
+              Hear directly from our satisfied clients about their experience working with Godiva Technologies.
+            </m.p>
           </div>
-        ) : (
-          // Carousel for larger screens
-          <div ref={carouselRef} className="relative">
-            <div className="flex justify-center">
-              <motion.div
-                key={currentTestimonialIndex}
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -100 }}
-                transition={{ duration: 0.5 }}
-                className="w-full max-w-2xl"
-              >
-                <TestimonialCard 
-                  testimonial={displayTestimonials[currentTestimonialIndex]}
-                  index={0}
-                />
-              </motion.div>
-            </div>
-            
-            <div className="flex justify-center mt-8 space-x-2">
-              {displayTestimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonialIndex(index)}
-                  className={`w-3 h-3 rounded-full ${
-                    index === currentTestimonialIndex 
-                      ? 'bg-white' 
-                      : 'bg-white/50 hover:bg-white/70'
-                  } transition-colors duration-300`}
-                  aria-label={`Go to testimonial ${index + 1}`}
-                />
+
+          {isSmallScreen ? (
+            // Grid layout for small screens with optimized animations
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayTestimonials.map((testimonial, index) => (
+                <m.div
+                  key={testimonial.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-10%" }}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: Math.min(0.1 * index, 0.3),
+                    ease: "easeOut"
+                  }}
+                  style={{ willChange: "transform, opacity" }}
+                >
+                  <TestimonialCard 
+                    testimonial={testimonial}
+                    index={index}
+                  />
+                </m.div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            // Carousel for larger screens with optimized animations
+            <div ref={carouselRef} className="relative">
+              <div className="flex justify-center">
+                <div className="w-full max-w-2xl">
+                  {/* Using a key prop for React to detect change and animate properly */}
+                  <m.div
+                    key={currentTestimonialIndex}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                    style={{ willChange: "transform, opacity" }}
+                  >
+                    <TestimonialCard 
+                      testimonial={displayTestimonials[currentTestimonialIndex]}
+                      index={0}
+                      isActive={true}
+                    />
+                  </m.div>
+                </div>
+              </div>
+              
+              {/* Carousel indicators */}
+              <div className="flex justify-center mt-8 space-x-2">
+                {displayTestimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentTestimonialIndex(index)}
+                    className={`w-3 h-3 rounded-full ${
+                      index === currentTestimonialIndex 
+                        ? 'bg-white' 
+                        : 'bg-white/50 hover:bg-white/70'
+                    } transition-colors duration-300`}
+                    aria-label={`Go to testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </LazyMotion>
       </div>
     </section>
   );
-};
+});
+
+// Add displayName for React DevTools
+TestimonialsSection.displayName = "TestimonialsSection";
 
 export default TestimonialsSection;

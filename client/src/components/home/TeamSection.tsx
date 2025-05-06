@@ -1,6 +1,7 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FaLinkedin, FaTwitter } from "react-icons/fa";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import ceoImage from "../../assets/team/ceo.jpg";
 
 interface TeamMember {
@@ -13,18 +14,34 @@ interface TeamMember {
   twitter?: string;
 }
 
-const TeamMemberCard = ({ member }: { member: TeamMember }) => {
+// Optimized for performance with memoization
+const TeamMemberCard = memo(({ member, index }: { member: TeamMember; index: number }) => {
+  // Calculate staggered animation delay based on index
+  const animationDelay = useMemo(() => Math.min(index * 0.1, 0.5), [index]);
+  
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-      <img
-        src={member.image}
-        alt={`${member.name} - ${member.position}`}
-        className="w-full h-64 object-cover object-center"
-      />
+    <div 
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+      style={{ 
+        willChange: "transform", 
+        animationDelay: `${animationDelay}s` 
+      }}
+    >
+      <div className="relative">
+        <img
+          src={member.image}
+          alt={`${member.name} - ${member.position}`}
+          className="w-full h-64 object-cover object-center"
+          loading="lazy" // Add lazy loading
+          decoding="async" // Add async decoding
+        />
+        {/* Static gradient overlay instead of animation */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      </div>
       <div className="p-6">
         <h3 className="text-2xl font-bold text-primary mb-1 border-b border-primary pb-2">{member.name}</h3>
         <p className="text-neutral-700 font-medium mt-3 mb-3">{member.position}</p>
-        <p className="text-neutral-600 mb-4">{member.bio}</p>
+        <p className="text-neutral-600 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">{member.bio}</p>
         <div className="flex space-x-3">
           {member.linkedIn && (
             <a
@@ -52,15 +69,19 @@ const TeamMemberCard = ({ member }: { member: TeamMember }) => {
       </div>
     </div>
   );
-};
+});
 
-const TeamSection = () => {
+// Apply displayName for React DevTools
+TeamMemberCard.displayName = "TeamMemberCard";
+
+// Optimize with memoization
+const TeamSection = memo(() => {
   const { data: teamMembers = [] } = useQuery<TeamMember[]>({
     queryKey: ['/api/team-members'],
   });
 
-  // Default team members in case API doesn't return data
-  const defaultTeamMembers = [
+  // Memoize default team members to avoid re-creating on each render
+  const defaultTeamMembers = useMemo(() => [
     {
       id: 1,
       name: "Ananth",
@@ -97,28 +118,63 @@ const TeamSection = () => {
       linkedIn: "https://linkedin.com",
       twitter: "https://twitter.com"
     }
-  ];
+  ], []);
 
-  const displayTeamMembers = teamMembers.length > 0 ? teamMembers : defaultTeamMembers;
+  // Memoize to avoid recalculation on re-renders
+  const displayTeamMembers = useMemo(() => 
+    teamMembers.length > 0 ? teamMembers : defaultTeamMembers
+  , [teamMembers, defaultTeamMembers]);
 
   return (
-    <section className="py-20 bg-neutral-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-neutral-800 mb-4">Leadership Team</h2>
-          <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-            Meet our leadership team of experienced professionals who are passionate about creating innovative digital solutions and delivering exceptional results for our clients worldwide.
-          </p>
-        </div>
+    <section className="py-20 bg-neutral-50 relative">
+      {/* Subtle background pattern for visual interest without heavy animations */}
+      <div className="absolute inset-0 opacity-5 
+        [background-image:radial-gradient(#4f46e520_1px,transparent_1px)] 
+        [background-size:20px_20px]"></div>
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <LazyMotion features={domAnimation} strict>
+          <m.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Leadership Team</h2>
+            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+              Meet our leadership team of experienced professionals who are passionate about creating innovative digital solutions and delivering exceptional results for our clients worldwide.
+            </p>
+          </m.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {displayTeamMembers.map((member) => (
-            <TeamMemberCard key={member.id} member={member} />
-          ))}
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {displayTeamMembers.map((member, index) => (
+              <m.div
+                key={member.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{ 
+                  duration: 0.5,
+                  delay: Math.min(0.1 * index, 0.3),
+                  ease: "easeOut"
+                }}
+                style={{ willChange: "transform, opacity" }}
+              >
+                <TeamMemberCard 
+                  member={member}
+                  index={index}
+                />
+              </m.div>
+            ))}
+          </div>
+        </LazyMotion>
       </div>
     </section>
   );
-};
+});
+
+// Apply displayName for React DevTools
+TeamSection.displayName = "TeamSection";
 
 export default TeamSection;
