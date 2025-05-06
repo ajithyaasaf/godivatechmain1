@@ -226,13 +226,27 @@ const BlogPost = () => {
         description={`${post.excerpt} GodivaTech provides the best ${category?.name || 'digital services'} in Madurai, Tamil Nadu for businesses looking to grow their online presence.`}
         keywords={customKeywords}
         canonicalUrl={getCanonicalUrl(`/blog/${post.slug}`)}
-        structuredData={structuredData}
-        ogImage={post.coverImage || undefined}
         ogType="article"
+        ogImage={post.coverImage || '/images/blog-default-og-image.jpg'}
+        imageWidth={1200}
+        imageHeight={630}
+        cityName="Madurai"
+        regionName="Tamil Nadu"
+        countryName="India"
+        twitterCard="summary_large_image"
+        twitterSite="@godivatech"
+        twitterCreator={post.authorName ? `@${post.authorName.toLowerCase().replace(/\s+/g, '')}` : '@godivatech'}
+        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        ampUrl={`/blog/${post.slug}/amp`}
         publishedTime={new Date(post.publishedAt).toISOString()}
         modifiedTime={new Date(post.publishedAt).toISOString()}
         author={post.authorName}
         section={category?.name || 'Digital Services'}
+        alternateUrls={[
+          { hrefLang: "en-in", href: `https://godivatech.com/blog/${post.slug}` },
+          { hrefLang: "ta-in", href: `https://godivatech.com/ta/blog/${post.slug}` }
+        ]}
+        structuredData={structuredData}
       >
         {/* Add AMP link for mobile users */}
         {isMobile && (

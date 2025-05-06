@@ -41,6 +41,37 @@ export const locationKeywords = {
     "Meenakshi Nagar Madurai",
     "Jaihindpuram Madurai",
   ],
+  // Neighborhoods mapped to primary business categories
+  neighborhoods: {
+    webDevelopment: ["Anna Nagar", "Gomathipuram", "KK Nagar"],
+    mobileApp: ["Iyer Bungalow", "SS Colony", "Narimedu"],
+    digitalMarketing: ["Anna Nagar", "Mattuthavani", "Tirunagar"],
+    software: ["Iyer Bungalow", "Pasumalai", "Jaihindpuram"],
+    ecommerce: ["KK Nagar", "Narimedu", "Kalavasal"],
+    branding: ["Anna Nagar", "SS Colony", "Gomathipuram"],
+  },
+  // Popular postal codes for local SEO
+  postalCodes: [
+    "625002", // Madurai Central
+    "625001", // Madurai Town
+    "625007", // Anna Nagar
+    "625010", // KK Nagar 
+    "625014", // Iyer Bungalow
+    "625009", // Gomathipuram
+    "625016", // SS Colony
+    "625003", // Narimedu
+  ],
+  // Local landmarks for proximity optimization
+  landmarks: [
+    "Meenakshi Amman Temple",
+    "Madurai Railway Station",
+    "Mattuthavani Bus Stand",
+    "Thirumalai Nayak Palace",
+    "Madurai Airport",
+    "Kalavasal Junction",
+    "MGR Bus Stand",
+    "MADITSSIA Trade Centre"
+  ]
 };
 
 // Service type keywords in different formats

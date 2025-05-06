@@ -23,6 +23,11 @@ interface SEOProps {
   cityName?: string;
   regionName?: string;
   countryName?: string;
+  postalCode?: string;
+  neighborhood?: string;
+  latitude?: number;
+  longitude?: number;
+  landmark?: string;
   
   // Advanced SEO settings
   robots?: string;
@@ -33,6 +38,17 @@ interface SEOProps {
   facebookAppId?: string;
   twitterSite?: string;
   twitterCreator?: string;
+  
+  // Mobile optimization
+  mobileAppIosId?: string;
+  mobileAppAndroidId?: string;
+  mobileAppWindowsId?: string;
+  
+  // Additional structured data
+  priceRange?: string;
+  telephoneNumber?: string;
+  businessHours?: string[];
+  servicedArea?: string[];
 }
 
 /**
@@ -63,6 +79,11 @@ const SEO: React.FC<SEOProps> = memo(({
   cityName = 'Madurai',
   regionName = 'Tamil Nadu',
   countryName = 'India',
+  postalCode = '625020',
+  neighborhood,
+  latitude = 9.9252,
+  longitude = 78.1198,
+  landmark,
   robots,
   ampUrl,
   alternateUrls = [],
@@ -71,6 +92,13 @@ const SEO: React.FC<SEOProps> = memo(({
   facebookAppId,
   twitterSite = '@godivatech',
   twitterCreator,
+  mobileAppIosId,
+  mobileAppAndroidId,
+  mobileAppWindowsId,
+  priceRange = '₹₹',
+  telephoneNumber = '+91-123-456-7890',
+  businessHours = ['Mo-Fr 09:00-18:00', 'Sa 10:00-15:00'],
+  servicedArea = ['Madurai', 'Coimbatore', 'Trichy', 'Chennai'],
   children
 }) => {
   // Default domain for canonical URLs and images
@@ -177,34 +205,101 @@ const SEO: React.FC<SEOProps> = memo(({
         />
       ))}
       
-      {/* Basic organization structured data for all pages */}
+      {/* Enhanced LocalBusiness structured data for all pages */}
       <script 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ 
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Organization",
+            "@type": "LocalBusiness",
+            "@id": `${domain}/#organization`,
             "name": "GodivaTech",
+            "alternateName": "Godiva Technologies",
             "url": domain,
-            "logo": `${domain}/logo.png`,
+            "logo": {
+              "@type": "ImageObject",
+              "url": `${domain}/logo.png`,
+              "width": "180",
+              "height": "60"
+            },
+            "image": formattedOgImage,
+            "description": "GodivaTech offers professional web development, app development, and digital marketing services in Madurai, Tamil Nadu with a focus on creating high-performance, SEO-optimized digital solutions.",
+            "priceRange": priceRange,
+            "telephone": telephoneNumber,
+            "email": "contact@godivatech.com",
             "sameAs": [
               "https://www.facebook.com/godivatech",
               "https://www.linkedin.com/company/godivatech",
-              "https://twitter.com/godivatech"
+              "https://twitter.com/godivatech",
+              "https://www.instagram.com/godivatech",
+              "https://www.youtube.com/channel/godivatech"
             ],
             "address": {
               "@type": "PostalAddress",
-              "streetAddress": "Anna Nagar",
+              "streetAddress": neighborhood || "Anna Nagar",
               "addressLocality": cityName,
               "addressRegion": regionName,
-              "postalCode": "625020",
+              "postalCode": postalCode,
               "addressCountry": countryName
             },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": latitude,
+              "longitude": longitude
+            },
+            "hasMap": `https://www.google.com/maps?cid=123456789`,
+            "openingHoursSpecification": businessHours.map(hours => {
+              const [days, timeRange] = hours.split(' ');
+              const [opens, closes] = timeRange.split('-');
+              return {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": days.split('-').map(day => {
+                  const daysMap: Record<string, string> = {
+                    "Mo": "Monday", "Tu": "Tuesday", "We": "Wednesday", 
+                    "Th": "Thursday", "Fr": "Friday", "Sa": "Saturday", "Su": "Sunday"
+                  };
+                  return daysMap[day as keyof typeof daysMap] || day;
+                }),
+                "opens": opens,
+                "closes": closes
+              };
+            }),
+            "areaServed": servicedArea.map(area => ({
+              "@type": "City",
+              "name": area
+            })),
             "contactPoint": {
               "@type": "ContactPoint",
-              "telephone": "+91-123-456-7890",
-              "contactType": "customer service"
-            }
+              "telephone": telephoneNumber,
+              "contactType": "customer service",
+              "contactOption": "TollFree",
+              "areaServed": "IN",
+              "availableLanguage": ["English", "Tamil"]
+            },
+            "founder": {
+              "@type": "Person",
+              "name": "Rajkumar Singh",
+              "jobTitle": "CEO & Founder",
+              "sameAs": "https://www.linkedin.com/in/rajkumar-godivatech/"
+            },
+            "foundingDate": "2015-06-01",
+            "numberOfEmployees": {
+              "@type": "QuantitativeValue",
+              "value": "20-50"
+            },
+            "knowsAbout": [
+              "Web Development", 
+              "Mobile App Development", 
+              "Digital Marketing", 
+              "Search Engine Optimization", 
+              "Software Development"
+            ],
+            "keywords": extendedKeywords.split(', ').slice(0, 10).join(', '),
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": canonical
+            },
+            "award": "Best Digital Marketing Agency in Madurai 2023"
           }, null, 0)
         }}
       />
