@@ -60,9 +60,12 @@ This document outlines the SEO implementation for the GodivaTech website, focusi
 ## Key SEO Features Implemented:
 
 1. **Location-Based Targeting**:
-   - Primary focus keywords target "Madurai" location
+   - Primary focus keywords target "Madurai" location with neighborhood specificity
+   - Local neighborhood targeting (Iyer Bungalow, Anna Nagar, KK Nagar, etc.)
    - Secondary keywords focus on "Tamil Nadu" region
    - Service names combined with location for specific targeting
+   - Natural language search queries ("near me", "how much", "who is the best")
+   - Intent-based variations (cost inquiries, review searches, etc.)
 
 2. **Structured Data**:
    - JSON-LD implementation for rich snippets
