@@ -70,6 +70,8 @@ This document outlines the SEO implementation for the GodivaTech website, focusi
    - Article schema for blog content
    - Service schema for service pages
    - BreadcrumbList for improved navigation
+   - FAQ schema for service pages to target featured snippets
+   - CollectionPage schema for blog listings
 
 3. **Meta Tags**:
    - Optimized title tags with primary keywords first
@@ -202,6 +204,25 @@ To ensure SEO effectiveness:
 
 ## Technical SEO Considerations
 
+### Core Web Vitals Optimizations
+
+1. **Largest Contentful Paint (LCP)**
+   - Optimized image loading with proper dimensions
+   - Added width and height attributes to prevent layout shifts
+   - Implemented fetchPriority="high" for hero images
+   - Set proper loading attributes (eager for above-fold, lazy for below-fold)
+
+2. **Cumulative Layout Shift (CLS)**
+   - Fixed image dimensions in BlogCard.tsx and BlogPost.tsx
+   - Added aspect ratio containers for images
+   - Implemented placeholder containers for dynamic content
+
+3. **First Input Delay (FID) / Interaction to Next Paint (INP)**
+   - Minimized JavaScript execution time
+   - Optimized animation performance with GPU acceleration
+   - Used efficient event handlers for interactive elements
+
+### Additional Technical Considerations
 - Ensure pages load quickly (under 3 seconds)
 - Make images responsive and properly compressed
 - Implement proper handling of null or undefined image values

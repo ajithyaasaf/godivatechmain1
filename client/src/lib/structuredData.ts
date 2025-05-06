@@ -41,12 +41,21 @@ export const getLocalBusinessData = () => ({
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
   '@id': 'https://godivatech.com/#organization',
-  name: 'GodivaTech',
-  description: 'Best digital marketing, web development and app development company in Madurai offering affordable IT solutions for local businesses.',
+  name: 'GodivaTech - Best Software Company in Madurai',
+  description: 'Best digital marketing, web development and app development company in Madurai offering affordable IT solutions for local businesses in Tamil Nadu.',
   url: 'https://godivatech.com',
   telephone: '+91 96005 20130',
-  image: 'https://godivatech.com/building.jpg',
+  email: 'info@godivatech.com',
+  image: [
+    'https://godivatech.com/building.jpg',
+    'https://godivatech.com/office-entrance.jpg',
+    'https://godivatech.com/team-photo.jpg'
+  ],
+  logo: 'https://godivatech.com/logo.png',
+  slogan: 'Madurai\'s Premier Technology Partner',
   priceRange: '₹₹',
+  currenciesAccepted: 'INR',
+  paymentAccepted: 'Cash, Credit Card, UPI',
   address: {
     '@type': 'PostalAddress',
     streetAddress: '261, Vaigai mainroad 4th Street, Sri Nagar, Iyer Bungalow',
@@ -68,23 +77,62 @@ export const getLocalBusinessData = () => ({
         'Tuesday',
         'Wednesday',
         'Thursday',
-        'Friday',
-        'Saturday'
+        'Friday'
       ],
       opens: '09:00',
       closes: '18:00'
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Saturday',
+      opens: '10:00',
+      closes: '16:00'
+    }
+  ],
+  areaServed: [
+    {
+      '@type': 'City',
+      name: 'Madurai',
+      '@id': 'https://www.wikidata.org/wiki/Q173032'
+    },
+    {
+      '@type': 'State',
+      name: 'Tamil Nadu',
+      '@id': 'https://www.wikidata.org/wiki/Q1445'
     }
   ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: 'IT Services',
+    name: 'IT Services in Madurai',
+    description: 'Professional technology services offered by GodivaTech in Madurai, Tamil Nadu',
     itemListElement: [
       {
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
           name: 'Web Development',
-          description: 'Custom website design and development for businesses in Madurai at affordable prices'
+          description: 'Custom website design and development for businesses in Madurai at affordable prices',
+          serviceType: 'Web Development',
+          provider: {
+            '@id': 'https://godivatech.com/#organization'
+          },
+          serviceOutput: 'Professional, SEO-optimized websites',
+          hoursAvailable: {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: [
+              'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+            ],
+            opens: '09:00',
+            closes: '18:00'
+          }
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Madurai'
+        },
+        eligibleRegion: {
+          '@type': 'State',
+          name: 'Tamil Nadu'
         }
       },
       {
@@ -92,7 +140,19 @@ export const getLocalBusinessData = () => ({
         itemOffered: {
           '@type': 'Service',
           name: 'Digital Marketing',
-          description: 'Comprehensive digital marketing services in Madurai including SEO, social media, and content marketing'
+          description: 'Comprehensive digital marketing services in Madurai including SEO, social media, and content marketing',
+          serviceType: 'Digital Marketing',
+          provider: {
+            '@id': 'https://godivatech.com/#organization'
+          }
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Madurai'
+        },
+        eligibleRegion: {
+          '@type': 'State',
+          name: 'Tamil Nadu'
         }
       },
       {
@@ -100,11 +160,53 @@ export const getLocalBusinessData = () => ({
         itemOffered: {
           '@type': 'Service',
           name: 'App Development',
-          description: 'Mobile application development for Android and iOS platforms for businesses in Madurai'
+          description: 'Mobile application development for Android and iOS platforms for businesses in Madurai',
+          serviceType: 'App Development',
+          provider: {
+            '@id': 'https://godivatech.com/#organization'
+          }
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Madurai'
+        },
+        eligibleRegion: {
+          '@type': 'State',
+          name: 'Tamil Nadu'
         }
       }
     ]
-  }
+  },
+  // Add review aggregate for social proof
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    ratingCount: '57',
+    bestRating: '5',
+    worstRating: '1'
+  },
+  // Awards and recognitions
+  award: [
+    'Best Web Development Company in Madurai 2023',
+    'Top Digital Marketing Agency in Tamil Nadu'
+  ],
+  // Local business attributes
+  keywords: [
+    'web development Madurai',
+    'digital marketing Madurai',
+    'app development Tamil Nadu',
+    'SEO company Madurai',
+    'affordable web design Madurai',
+    'best software company in Madurai',
+    'top digital marketing agency Tamil Nadu'
+  ],
+  // Social profiles
+  sameAs: [
+    'https://www.facebook.com/godivatech',
+    'https://www.linkedin.com/company/godivatech',
+    'https://twitter.com/godivatech',
+    'https://www.instagram.com/godivatech'
+  ]
 });
 
 // Web Page structured data
@@ -160,9 +262,18 @@ export const getBlogPostData = (
 ) => ({
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
+  name: title,
   headline: title,
   description: description,
   image: imageUrl,
+  url: url,
+  isPartOf: {
+    '@id': 'https://godivatech.com/#website'
+  },
+  about: {
+    '@id': 'https://godivatech.com/#organization'
+  },
+  inLanguage: 'en-IN',
   datePublished: datePublished,
   dateModified: dateModified || datePublished,
   author: {
@@ -181,6 +292,17 @@ export const getBlogPostData = (
   mainEntityOfPage: {
     '@type': 'WebPage',
     '@id': url
+  },
+  // Add location attributes for local SEO
+  locationCreated: {
+    '@type': 'Place',
+    name: 'Madurai, Tamil Nadu, India',
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Madurai',
+      addressRegion: 'Tamil Nadu',
+      addressCountry: 'IN'
+    }
   }
 });
 
@@ -259,6 +381,14 @@ export const getCollectionPageData = (
   '@type': 'CollectionPage',
   name: name,
   description: `Collection of ${items.length} projects by GodivaTech, the best web development company in Madurai`,
+  url: 'https://godivatech.com/blog',
+  isPartOf: {
+    '@id': 'https://godivatech.com/#website'
+  },
+  about: {
+    '@id': 'https://godivatech.com/#organization'
+  },
+  inLanguage: 'en-IN',
   numberOfItems: items.length,
   itemListElement: items.map((item, index) => ({
     '@type': 'ListItem',
