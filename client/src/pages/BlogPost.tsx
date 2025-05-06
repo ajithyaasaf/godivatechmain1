@@ -204,6 +204,10 @@ const BlogPost = () => {
                   src={post.authorImage || '/assets/placeholder-author.png'} 
                   alt={post.authorName} 
                   className="w-12 h-12 rounded-full mr-4"
+                  width="48"
+                  height="48"
+                  loading="eager"
+                  fetchPriority="high"
                 />
                 <div>
                   <p className="font-semibold text-neutral-800">{post.authorName}</p>
@@ -219,8 +223,11 @@ const BlogPost = () => {
                   alt={`${post.title} - GodivaTech Madurai - ${category?.name || 'Blog'}`} 
                   className="w-full h-auto rounded-lg shadow-lg"
                   loading="eager"
+                  fetchPriority="high"
                   width="800"
                   height="450"
+                  decoding="async"
+                  style={{aspectRatio: "16/9", objectFit: "cover"}}
                 />
                 <figcaption className="text-center text-neutral-500 text-sm mt-2">
                   {post.title} | GodivaTech Madurai
