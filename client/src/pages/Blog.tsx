@@ -5,6 +5,7 @@ import BlogCard from "@/components/blog/BlogCard";
 import CategoryFilter from "@/components/blog/CategoryFilter";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import { Button } from "@/components/ui/button";
+import Breadcrumb from "@/components/ui/breadcrumb";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
 import { blogKeywords } from "@/lib/seoKeywords";
@@ -12,7 +13,8 @@ import {
   getOrganizationData, 
   getWebPageData,
   getBreadcrumbData,
-  getBlogPostData 
+  getBlogPostData,
+  getCollectionPageData
 } from "@/lib/structuredData";
 import type { BlogPost, Category } from "@shared/schema";
 import { getAllBlogPosts, getAllCategories, getBlogPostsByCategoryId, searchBlogPosts } from "@/lib/firestore";
@@ -248,11 +250,24 @@ const Blog = () => {
     ])
   ];
 
-  // Add blog posts to structured data if available
+  // Add blog collection structured data for SEO
   if (blogPosts.length > 0) {
-    const latestPost = blogPosts[0];
+    // Add collection page data
     structuredData.push(
-      getBlogPostData(
+      getCollectionPageData(
+        "Digital Marketing & Web Development Blog by GodivaTech Madurai",
+        blogPosts.slice(0, 10).map(post => ({
+          name: post.title,
+          description: post.excerpt,
+          image: post.coverImage || "https://godivatech.com/assets/blog-default.jpg"
+        }))
+      )
+    );
+    
+    // Also add the latest blog post schema
+    const latestPost = blogPosts[0];
+    if (latestPost) {
+      const blogPostSchema = getBlogPostData(
         latestPost.title,
         latestPost.excerpt,
         `https://godivatech.com/blog/${latestPost.slug}`,
@@ -260,9 +275,10 @@ const Blog = () => {
         new Date(latestPost.publishedAt).toISOString(),
         new Date(latestPost.publishedAt).toISOString(),
         latestPost.authorName,
-        latestPost.authorImage
-      )
-    );
+        latestPost.authorImage || undefined
+      );
+      structuredData.push(blogPostSchema);
+    }
   }
 
   return (
@@ -359,6 +375,30 @@ const Blog = () => {
             </section>
           </TransitionItem>
 
+          {/* Breadcrumb Navigation */}
+          <TransitionItem delay={0.05}>
+            <section className="py-6 bg-white border-b border-neutral-100">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <Breadcrumb 
+                  items={
+                    activeCategory && activeCategory > 0 
+                      ? [
+                          { name: "Blog", href: "/blog" },
+                          { 
+                            name: displayCategories.find(c => c.id === activeCategory)?.name || "Category", 
+                            href: `/blog?category=${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`,
+                            current: true 
+                          }
+                        ]
+                      : [
+                          { name: "Blog", href: "/blog", current: true }
+                        ]
+                  }
+                />
+              </div>
+            </section>
+          </TransitionItem>
+          
           {/* Content section */}
           <TransitionItem delay={0.1}>
             <section className="py-20 bg-neutral-50/50 relative">

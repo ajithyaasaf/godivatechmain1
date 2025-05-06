@@ -214,7 +214,15 @@ export const getServiceData = (
 });
 
 // FAQPage structured data
-export const getFaqData = (faqs: {question: string, answer: string}[]) => ({
+/**
+ * Creates FAQPage schema markup for service pages or blog posts with FAQs
+ * This schema helps pages appear in Google's FAQ rich results
+ * 
+ * @param faqs Array of question/answer pairs
+ * @param url The canonical URL of the page (optional)
+ * @returns Schema.org FAQPage structured data
+ */
+export const getFaqData = (faqs: {question: string, answer: string}[], url?: string) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
   mainEntity: faqs.map(faq => ({
@@ -224,7 +232,8 @@ export const getFaqData = (faqs: {question: string, answer: string}[]) => ({
       '@type': 'Answer',
       text: faq.answer
     }
-  }))
+  })),
+  ...(url ? { '@id': url } : {})
 });
 
 // BreadcrumbList structured data
