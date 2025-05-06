@@ -38,6 +38,21 @@ const About = () => {
         description="GodivaTech provides affordable web development, digital marketing, and app development services in Madurai since 2010. Learn about our experienced team, mission, and values as a leading IT company in Tamil Nadu."
         keywords={aboutKeywords}
         canonicalUrl="/about"
+        ogType="profile"
+        ogImage="/images/about-og-image.jpg"
+        imageWidth={1200}
+        imageHeight={630}
+        cityName="Madurai"
+        regionName="Tamil Nadu"
+        countryName="India"
+        twitterCard="summary_large_image"
+        twitterSite="@godivatech"
+        twitterCreator="@godivatech"
+        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        alternateUrls={[
+          { hrefLang: "en-in", href: "https://godivatech.com/about" },
+          { hrefLang: "ta-in", href: "https://godivatech.com/ta/about" }
+        ]}
         structuredData={structuredData}
       />
       

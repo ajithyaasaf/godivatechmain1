@@ -64,6 +64,21 @@ const Contact = () => {
         description="Contact GodivaTech for affordable web development, mobile app development, and digital marketing services in Madurai. Get in touch for a custom quote and consultation for your business needs."
         keywords={contactKeywords}
         canonicalUrl="/contact"
+        ogType="website"
+        ogImage="/images/contact-og-image.jpg"
+        imageWidth={1200}
+        imageHeight={630}
+        cityName="Madurai"
+        regionName="Tamil Nadu"
+        countryName="India"
+        twitterCard="summary_large_image"
+        twitterSite="@godivatech"
+        twitterCreator="@godivatech"
+        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        alternateUrls={[
+          { hrefLang: "en-in", href: "https://godivatech.com/contact" },
+          { hrefLang: "ta-in", href: "https://godivatech.com/ta/contact" }
+        ]}
         structuredData={structuredData}
       />
 

@@ -262,6 +262,21 @@ const Portfolio = () => {
         description="Explore GodivaTech's portfolio of successful web development, app development, and digital marketing projects. See how we've helped businesses in Madurai achieve digital excellence."
         keywords={portfolioKeywords}
         canonicalUrl="/portfolio"
+        ogType="website"
+        ogImage="/images/portfolio-og-image.jpg"
+        imageWidth={1200}
+        imageHeight={630}
+        cityName="Madurai"
+        regionName="Tamil Nadu"
+        countryName="India"
+        twitterCard="summary_large_image"
+        twitterSite="@godivatech"
+        twitterCreator="@godivatech"
+        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        alternateUrls={[
+          { hrefLang: "en-in", href: "https://godivatech.com/portfolio" },
+          { hrefLang: "ta-in", href: "https://godivatech.com/ta/portfolio" }
+        ]}
         structuredData={structuredData}
       />
       <div className="relative">
