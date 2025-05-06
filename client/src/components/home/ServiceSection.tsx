@@ -169,9 +169,13 @@ interface ServiceType {
   slug: string;
 }
 
-function ServiceSection() {
+// Define component as const function with React.FC type for better typing
+const ServiceSection: React.FC = () => {
+  // Use memo for API data
   const { data: services = [] } = useQuery<ServiceType[]>({
     queryKey: ['/api/services'],
+    // Set staleTime to reduce unnecessary network requests
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Use memoized predefined services to prevent unnecessary re-renders
@@ -220,24 +224,29 @@ function ServiceSection() {
     }
   ], []);
 
-  const displayServices: ServiceType[] = services.length > 0 ? services : defaultServices;
+  // Memoize computed value to prevent recalculation on re-renders  
+  const displayServices = useMemo<ServiceType[]>(() => 
+    services.length > 0 ? services : defaultServices
+  , [services, defaultServices]);
 
   const sectionRef = useRef<HTMLDivElement>(null);
+  
+  // Optimize scroll hook with simplified configuration
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   });
   
-  // Color based on scroll progress
+  // Color based on scroll progress - memoized transform
   const gradientOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 0.2]);
   
-  // Features list for highlight section
-  const keyFeatures = [
+  // Features list for highlight section - memoized to prevent recreation
+  const keyFeatures = useMemo(() => [
     "Experienced Web Development Team",
     "Responsive Customer Support",
     "Affordable Pricing Plans",
     "Customized IT Solutions for Your Business"
-  ];
+  ], []);
   
   return (
     <section 
@@ -383,6 +392,10 @@ function ServiceSection() {
                       className="w-full h-auto"
                       loading="lazy" 
                       decoding="async"
+                      width="600"
+                      height="400"
+                      fetchpriority="low"
+                      style={{ willChange: "opacity" }}
                     />
                     
                     {/* Static overlay gradient instead of animated */}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo } from "react";
+import React, { useEffect, useRef, memo, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useScroll, useTransform } from "framer-motion";
@@ -21,21 +21,23 @@ const HeroSection = memo(() => {
     offset: ["start start", "end start"]
   });
   
-  // Scroll to services section
-  const scrollToNext = () => {
+  // Scroll to services section - memoized to avoid recreation on each render
+  const scrollToNext = useCallback(() => {
     const nextSection = document.getElementById('services');
     if (nextSection) {
       nextSection.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }, []);
   
   // Scroll-based visibility effects
   const scrollOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   
-  // Type animation effect
+  // Type animation effect - optimized with useCallback
   useEffect(() => {
+    let typingTimeout: NodeJS.Timeout;
+    
     if (subtitleRef.current) {
-      setTimeout(() => {
+      typingTimeout = setTimeout(() => {
         typeText(
           subtitleRef,
           "Providing affordable IT solutions to businesses in Madurai and beyond.",
@@ -44,31 +46,57 @@ const HeroSection = memo(() => {
         );
       }, 500);
     }
+    
+    // Clean up timeout to prevent memory leaks
+    return () => {
+      clearTimeout(typingTimeout);
+    };
   }, []);
   
-  // Featured services to display in hero
-  const featuredServices = [
+  // Featured services to display in hero - memoized to prevent recreation
+  const featuredServices = useMemo(() => [
     { icon: Code, label: "Web Development" },
     { icon: Layers, label: "Digital Marketing" },
     { icon: BarChart, label: "UI/UX Design" }
-  ];
+  ], []);
   
-  // Animation variants
-  const itemFadeIn = {
+  // Animation variants - memoized
+  const itemFadeIn = useMemo(() => ({
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
       y: 0,
       transition: { duration: 0.8, ease: "easeOut" } 
     }
-  };
+  }), []);
+  
+  // Pre-compute sparkles for consistent rendering
+  const sparkles = useMemo(() => 
+    Array.from({ length: 6 }).map((_, i) => ({
+      id: i,
+      top: `${Math.floor(Math.random() * 100)}%`,
+      left: `${Math.floor(Math.random() * 100)}%`,
+      size: Math.floor(Math.random() * 4 + 2),
+      animationDelay: `${Math.floor(Math.random() * 5)}s`
+    }))
+  , []);
+  
+  // Container animation variants
+  const containerVariants = useMemo(() => ({
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  }), []);
   
   return (
     <div 
       ref={sectionRef} 
       className="relative min-h-[100vh] overflow-hidden flex items-center py-20"
     >
-      {/* Modern mesh gradient background */}
+      {/* Modern mesh gradient background - static elements for better performance */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-primary to-purple-800 opacity-90" />
         
@@ -76,49 +104,40 @@ const HeroSection = memo(() => {
         <div className="absolute inset-0 opacity-[0.15] 
           [background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]" />
         
-        {/* Animated gradient blobs */}
-        <div className="absolute top-1/4 -left-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" 
-          style={{ animationDelay: '0s' }}
+        {/* Animated gradient blobs - reduced from 3 to 2 for performance */}
+        <div className="absolute top-1/4 -left-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" 
+          style={{ animationDuration: '15s' }}
         />
-        <div className="absolute top-1/3 -right-10 w-72 h-72 bg-indigo-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" 
-          style={{ animationDelay: '2s' }}
-        />
-        <div className="absolute -bottom-10 left-1/4 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" 
-          style={{ animationDelay: '4s' }}
+        <div className="absolute -bottom-10 left-1/4 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" 
+          style={{ animationDuration: '20s', animationDelay: '3s' }}
         />
         
-        {/* Grid lines */}
+        {/* Grid lines with larger size for better performance */}
         <div className="absolute inset-0 
           [background-image:linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] 
-          [background-size:4rem_4rem]" />
+          [background-size:6rem_6rem]" />
       </div>
       
-      {/* Static sparkles with CSS animations instead of JS animations */}
+      {/* Static sparkles with CSS animations - reduced quantity for performance */}
       <div className="absolute inset-0 overflow-hidden z-10 pointer-events-none">
-        {Array.from({ length: 8 }).map((_, i) => {
-          // Pre-compute random values for consistent rendering
-          const top = `${Math.floor(Math.random() * 100)}%`;
-          const left = `${Math.floor(Math.random() * 100)}%`;
-          const size = Math.floor(Math.random() * 4 + 2);
-          const animationDelay = `${Math.floor(Math.random() * 5)}s`;
-          
-          return (
-            <div
-              key={i}
-              className="absolute rounded-full bg-white animate-pulse-slow"
-              style={{
-                top,
-                left,
-                width: `${size}px`,
-                height: `${size}px`,
-                filter: 'blur(1px)',
-                boxShadow: '0 0 6px 2px rgba(255, 255, 255, 0.3)',
-                animationDelay,
-                opacity: 0.6
-              }}
-            />
-          );
-        })}
+        {sparkles.map(sparkle => (
+          <div
+            key={sparkle.id}
+            className="absolute rounded-full bg-white animate-pulse-slow"
+            style={{
+              top: sparkle.top,
+              left: sparkle.left,
+              width: `${sparkle.size}px`,
+              height: `${sparkle.size}px`,
+              filter: 'blur(1px)',
+              boxShadow: '0 0 6px 2px rgba(255, 255, 255, 0.3)',
+              animationDelay: sparkle.animationDelay,
+              animationDuration: '3s',
+              opacity: 0.6,
+              willChange: 'opacity'
+            }}
+          />
+        ))}
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -129,26 +148,18 @@ const HeroSection = memo(() => {
               className="lg:order-1 mt-8 lg:mt-0 text-center lg:text-left"
               initial="hidden"
               animate="visible"
-              variants={{
-                hidden: {},
-                visible: {
-                  transition: {
-                    staggerChildren: 0.2
-                  }
-                }
-              }}
+              variants={containerVariants}
             >
               <m.div 
                 variants={itemFadeIn}
                 className="mb-6 inline-flex"
               >
-                <m.span 
-                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20"
-                  whileHover={{ scale: 1.05 }}
+                <span 
+                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20 transition-transform duration-200 hover:scale-105"
                 >
                   <Sparkles className="h-3.5 w-3.5 mr-2 text-yellow-300" />
                   Next-Gen Technology Solutions
-                </m.span>
+                </span>
               </m.div>
               
               <m.h1 
@@ -177,10 +188,8 @@ const HeroSection = memo(() => {
                 variants={itemFadeIn}
                 className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8"
               >
-                <m.div 
-                  whileHover={{ scale: 1.05 }} 
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto"
+                <div 
+                  className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
                 >
                   <Button 
                     ref={ctaButtonRef}
@@ -195,12 +204,10 @@ const HeroSection = memo(() => {
                       </span>
                     </Link>
                   </Button>
-                </m.div>
+                </div>
                 
-                <m.div 
-                  whileHover={{ scale: 1.05 }} 
-                  whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto"
+                <div 
+                  className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
                 >
                   <Button 
                     asChild 
@@ -210,7 +217,7 @@ const HeroSection = memo(() => {
                   >
                     <Link href="/services">Explore Solutions</Link>
                   </Button>
-                </m.div>
+                </div>
               </m.div>
               
               {/* Featured services tags */}
@@ -220,14 +227,13 @@ const HeroSection = memo(() => {
               >
                 <span className="text-white/70 mr-2 text-sm">Featured:</span>
                 {featuredServices.map((service, index) => (
-                  <m.span
+                  <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white/90 bg-white/5 border border-white/10 backdrop-blur-sm"
-                    whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white/90 bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/10"
                   >
                     <service.icon className="h-3 w-3 mr-1.5" />
                     {service.label}
-                  </m.span>
+                  </span>
                 ))}
               </m.div>
             </m.div>
@@ -240,26 +246,17 @@ const HeroSection = memo(() => {
               transition={{ duration: 1, delay: 0.5 }}
             >
               <div className="relative w-full max-w-lg">
-                {/* Glowing background shape - replaced with CSS animation */}
+                {/* Glowing background shape - using static effect for better performance */}
                 <div 
                   className="absolute top-0 left-1/2 -translate-x-1/2 h-[350px] w-[350px] rounded-full bg-gradient-to-br from-blue-400/20 to-purple-600/20 blur-3xl animate-pulse-slow"
-                  style={{ 
-                    opacity: 0.5, 
-                    animationDuration: '8s'
-                  }}
+                  style={{ opacity: 0.5, animationDuration: '10s' }}
                 />
               
-              {/* Simplified 3D visuals */}
+              {/* Simplified 3D visuals with minimal animation */}
               <div className="relative mx-auto">
-                <m.div
-                  className="relative mx-auto"
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ 
-                    duration: 1,
-                    delay: 0.8,
-                    ease: "easeOut"
-                  }}
+                <div
+                  className="relative mx-auto animate-fade-in"
+                  style={{ animationDuration: '1s', animationDelay: '0.8s' }}
                 >
                   {/* Main image container */}
                   <div className="relative w-full max-w-[400px] aspect-square mx-auto">
@@ -268,19 +265,18 @@ const HeroSection = memo(() => {
                     
                     {/* Image - Using CSS animations instead of JS animations */}
                     <div
-                      className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl transform rotate-2 bg-gradient-to-br from-indigo-900/90 to-purple-900/90 backdrop-blur-sm"
+                      className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl transform rotate-2 bg-gradient-to-br from-indigo-900/90 to-purple-900/90 backdrop-blur-sm animate-float-slow"
                       style={{ 
                         transformStyle: 'preserve-3d',
-                        animation: 'float-slow 12s ease-in-out infinite'
+                        animationDuration: '20s',
+                        willChange: 'transform'
                       }}
                     >
                       {/* Display 3D visualization */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <m.div 
-                          className="text-white/90 text-center relative z-20"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 1, duration: 1 }}
+                        <div 
+                          className="text-white/90 text-center relative z-20 animate-fade-in"
+                          style={{ animationDuration: '1s', animationDelay: '1s' }}
                         >
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div className="w-32 h-32 rounded-full bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center">
@@ -295,31 +291,23 @@ const HeroSection = memo(() => {
                           {/* Floating feature boxes with CSS animations instead of JS */}
                           <div
                             className="absolute top-8 right-8 w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600/80 to-blue-400/80 border border-white/20 backdrop-blur-sm shadow-lg animate-float-slow"
-                            style={{ 
-                              animationDuration: '5s'
-                            }}
+                            style={{ animationDuration: '10s' }}
                           />
                           
                           <div
                             className="absolute top-8 left-8 w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600/80 to-purple-400/80 border border-white/20 backdrop-blur-sm shadow-lg rotate-12 animate-float-reverse"
-                            style={{ 
-                              animationDuration: '7s',
-                              animationDelay: '1s'
-                            }}
+                            style={{ animationDuration: '15s' }}
                           />
                           
                           <div
                             className="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg rotate-12 animate-float-slow"
-                            style={{ 
-                              animationDuration: '6s',
-                              animationDelay: '2s'
-                            }}
+                            style={{ animationDuration: '12s' }}
                           />
-                        </m.div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </m.div>
+                </div>
               </div>
             </div>
             </m.div>
@@ -341,6 +329,7 @@ const HeroSection = memo(() => {
         <button
           onClick={scrollToNext}
           className="relative w-8 h-12 rounded-full border border-white/20 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-white/5 hover:bg-white/10 transition-colors"
+          aria-label="Scroll to services section"
         >
           <div
             className="w-1.5 h-1.5 bg-white rounded-full animate-float-slow"
@@ -355,5 +344,8 @@ const HeroSection = memo(() => {
     </div>
   );
 });
+
+// Set displayName for React DevTools
+HeroSection.displayName = "HeroSection";
 
 export default HeroSection;
