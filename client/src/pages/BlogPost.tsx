@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, memo } from "react";
 import { useParams, Link, useLocation } from "wouter";
 import { formatDistanceToNow, format } from "date-fns";
 import NewsletterSection from "@/components/home/NewsletterSection";
@@ -13,7 +13,7 @@ import {
 import SEO from "@/components/SEO";
 import AmpBlogPost from "@/components/AmpBlogPost";
 import OptimizedImage from "@/components/ui/optimized-image";
-import { blogKeywords } from "@/lib/seoKeywords";
+import { blogKeywords, getLocationSpecificDescription } from "@/lib/seoKeywords";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 import { getCanonicalUrl } from "@/lib/canonicalUrl";
 import { 
@@ -210,9 +210,18 @@ const BlogPost = () => {
   
   // If we're on mobile and the ?amp=1 parameter is present, show AMP version
   if (showAmpVersion) {
+    // Convert any null to undefined for AmpBlogPost props
+    const safePost = {
+      ...post,
+      coverImage: post.coverImage || undefined,
+      authorImage: post.authorImage || undefined,
+      authorName: post.authorName || "GodivaTech",
+      publishedAt: post.publishedAt.toString()
+    };
+    
     return (
       <AmpBlogPost
-        post={post}
+        post={safePost}
         category={category}
         canonicalUrl={`https://godivatech.com/blog/${post.slug}`}
       />
