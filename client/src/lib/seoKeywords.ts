@@ -1,6 +1,6 @@
 /**
  * SEO Keywords Utility
- * 
+ *
  * This file contains centralized keyword sets for different pages and services
  * focused on local SEO for Madurai and Tamil Nadu region
  */
@@ -8,134 +8,134 @@
 // Location-based keywords for better local SEO
 export const locationKeywords = {
   primary: [
-    'Madurai',
-    'Madurai Tamil Nadu',
-    'Madurai city',
-    'Madurai district'
+    "Madurai",
+    "Madurai Tamil Nadu",
+    "Madurai city",
+    "Madurai district",
   ],
   nearby: [
-    'Coimbatore',
-    'Trichy',
-    'Chennai',
-    'Tirunelveli',
-    'Dindigul',
-    'Theni',
-    'Sivagangai',
-    'Ramanathapuram',
-    'Virudhunagar'
+    "Coimbatore",
+    "Trichy",
+    "Chennai",
+    "Tirunelveli",
+    "Dindigul",
+    "Theni",
+    "Sivagangai",
+    "Ramanathapuram",
+    "Virudhunagar",
   ],
   local: [
-    'Iyer Bungalow Madurai',
-    'Anna Nagar Madurai',
-    'KK Nagar Madurai',
-    'Arasaradi Madurai',
-    'Mattuthavani Madurai',
-    'Kalavasal Madurai',
-    'Pasumalai Madurai',
-    'Narimedu Madurai',
-    'Gomathipuram Madurai',
-    'SS Colony Madurai',
-    'Anaiyur Madurai',
-    'Thiruparankundram Madurai',
-    'Tirunagar Madurai',
-    'Meenakshi Nagar Madurai',
-    'Jaihindpuram Madurai'
-  ]
+    "Iyer Bungalow Madurai",
+    "Anna Nagar Madurai",
+    "KK Nagar Madurai",
+    "Arasaradi Madurai",
+    "Mattuthavani Madurai",
+    "Kalavasal Madurai",
+    "Pasumalai Madurai",
+    "Narimedu Madurai",
+    "Gomathipuram Madurai",
+    "SS Colony Madurai",
+    "Anaiyur Madurai",
+    "Thiruparankundram Madurai",
+    "Tirunagar Madurai",
+    "Meenakshi Nagar Madurai",
+    "Jaihindpuram Madurai",
+  ],
 };
 
 // Service type keywords in different formats
 export const serviceTypeKeywords = {
   webDev: [
-    'web development',
-    'website design',
-    'website development',
-    'ecommerce website',
-    'responsive website',
-    'WordPress website',
-    'custom website',
+    "web development",
+    "website design",
+    "website development",
+    "ecommerce website",
+    "responsive website",
+    "WordPress website",
+    "custom website",
   ],
   digitalMarketing: [
-    'digital marketing',
-    'SEO',
-    'social media marketing',
-    'content marketing',
-    'email marketing',
-    'PPC advertising',
-    'Google Ads',
-    'Facebook Ads',
-    'Instagram marketing'
+    "digital marketing",
+    "SEO",
+    "social media marketing",
+    "content marketing",
+    "email marketing",
+    "PPC advertising",
+    "Google Ads",
+    "Facebook Ads",
+    "Instagram marketing",
   ],
   appDev: [
-    'app development',
-    'mobile app',
-    'Android app',
-    'iOS app',
-    'cross-platform app',
-    'Flutter app',
-    'React Native app'
+    "app development",
+    "mobile app",
+    "Android app",
+    "iOS app",
+    "cross-platform app",
+    "Flutter app",
+    "React Native app",
   ],
   branding: [
-    'branding',
-    'logo design',
-    'visual identity',
-    'brand strategy',
-    'rebranding',
-    'corporate identity'
+    "branding",
+    "logo design",
+    "visual identity",
+    "brand strategy",
+    "rebranding",
+    "corporate identity",
   ],
   software: [
-    'software development',
-    'custom software',
-    'business software',
-    'ERP solutions',
-    'CRM software',
-    'inventory management software'
-  ]
+    "software development",
+    "custom software",
+    "business software",
+    "ERP solutions",
+    "CRM software",
+    "inventory management software",
+  ],
 };
 
 // Quality and price-related keywords
 export const qualityPriceKeywords = {
   quality: [
-    'best',
-    'top',
-    'professional',
-    'expert',
-    'trusted',
-    'reliable',
-    'leading'
+    "best",
+    "top",
+    "professional",
+    "expert",
+    "trusted",
+    "reliable",
+    "leading",
   ],
   price: [
-    'affordable',
-    'cheapest',
-    'cost-effective',
-    'budget-friendly',
-    'reasonable price',
-    'value for money'
+    "affordable",
+    "cheapest",
+    "cost-effective",
+    "budget-friendly",
+    "reasonable price",
+    "value for money",
   ],
   business: [
-    'company',
-    'agency',
-    'firm',
-    'service provider',
-    'consultant',
-    'specialists'
-  ]
+    "company",
+    "agency",
+    "firm",
+    "service provider",
+    "consultant",
+    "specialists",
+  ],
 };
 
 // Business type keywords
 export const businessTypeKeywords = [
-  'small business',
-  'startup',
-  'enterprise',
-  'local business',
-  'ecommerce',
-  'retail',
-  'restaurants',
-  'healthcare',
-  'education',
-  'manufacturing',
-  'real estate',
-  'hospitality',
-  'finance'
+  "small business",
+  "startup",
+  "enterprise",
+  "local business",
+  "ecommerce",
+  "retail",
+  "restaurants",
+  "healthcare",
+  "education",
+  "manufacturing",
+  "real estate",
+  "hospitality",
+  "finance",
 ];
 
 // Generate keyword combinations for specific services
@@ -143,10 +143,10 @@ export const generateKeywordSet = (
   service: keyof typeof serviceTypeKeywords,
   includePrice = true,
   includeLocation = true,
-  count = 20
+  count = 20,
 ) => {
   const keywords: string[] = [];
-  
+
   // Add main service keywords with quality indicators and locations
   for (const quality of qualityPriceKeywords.quality) {
     for (const businessType of qualityPriceKeywords.business) {
@@ -154,12 +154,20 @@ export const generateKeywordSet = (
         // Basic format: "best web development company in Madurai"
         if (includeLocation) {
           for (const location of locationKeywords.primary) {
-            keywords.push(`${quality} ${serviceKeyword} ${businessType} in ${location}`);
-            
+            keywords.push(
+              `${quality} ${serviceKeyword} ${businessType} in ${location}`,
+            );
+
             // Add natural search queries
-            keywords.push(`${quality} ${serviceKeyword} ${businessType} near me ${location}`);
-            keywords.push(`${serviceKeyword} ${businessType} ${location} reviews`);
-            keywords.push(`top rated ${serviceKeyword} ${businessType} ${location}`);
+            keywords.push(
+              `${quality} ${serviceKeyword} ${businessType} near me ${location}`,
+            );
+            keywords.push(
+              `${serviceKeyword} ${businessType} ${location} reviews`,
+            );
+            keywords.push(
+              `top rated ${serviceKeyword} ${businessType} ${location}`,
+            );
           }
         } else {
           keywords.push(`${quality} ${serviceKeyword} ${businessType}`);
@@ -167,7 +175,7 @@ export const generateKeywordSet = (
       }
     }
   }
-  
+
   // Add price-focused keywords if requested
   if (includePrice) {
     for (const price of qualityPriceKeywords.price) {
@@ -176,12 +184,18 @@ export const generateKeywordSet = (
           // Price format: "affordable web development company in Madurai"
           if (includeLocation) {
             for (const location of locationKeywords.primary) {
-              keywords.push(`${price} ${serviceKeyword} ${businessType} in ${location}`);
-              
+              keywords.push(
+                `${price} ${serviceKeyword} ${businessType} in ${location}`,
+              );
+
               // Add cost-oriented search queries
-              keywords.push(`${serviceKeyword} ${businessType} ${location} cost`);
+              keywords.push(
+                `${serviceKeyword} ${businessType} ${location} cost`,
+              );
               keywords.push(`${serviceKeyword} packages ${location} price`);
-              keywords.push(`how much does ${serviceKeyword} cost in ${location}`);
+              keywords.push(
+                `how much does ${serviceKeyword} cost in ${location}`,
+              );
             }
           } else {
             keywords.push(`${price} ${serviceKeyword} ${businessType}`);
@@ -190,22 +204,28 @@ export const generateKeywordSet = (
       }
     }
   }
-  
+
   // Add business-specific keywords
   for (const businessType of businessTypeKeywords) {
     for (const serviceKeyword of serviceTypeKeywords[service].slice(0, 3)) {
       if (includeLocation) {
-        keywords.push(`${serviceKeyword} for ${businessType} in ${locationKeywords.primary[0]}`);
-        
+        keywords.push(
+          `${serviceKeyword} for ${businessType} in ${locationKeywords.primary[0]}`,
+        );
+
         // Add business-specific queries
-        keywords.push(`${serviceKeyword} company for ${businessType}s ${locationKeywords.primary[0]}`);
-        keywords.push(`best ${serviceKeyword} for ${businessType} ${locationKeywords.primary[0]}`);
+        keywords.push(
+          `${serviceKeyword} company for ${businessType}s ${locationKeywords.primary[0]}`,
+        );
+        keywords.push(
+          `best ${serviceKeyword} for ${businessType} ${locationKeywords.primary[0]}`,
+        );
       } else {
         keywords.push(`${serviceKeyword} for ${businessType}`);
       }
     }
   }
-  
+
   // Add location-specific keywords
   if (includeLocation) {
     // Local neighborhood targeting
@@ -215,20 +235,30 @@ export const generateKeywordSet = (
         keywords.push(`${serviceKeyword} company ${local}`);
       }
     }
-    
+
     // Add question-based search queries
-    keywords.push(`who is the best ${service} company in ${locationKeywords.primary[0]}`);
-    keywords.push(`where to get ${service} services in ${locationKeywords.primary[0]}`);
-    keywords.push(`how to find ${service} experts in ${locationKeywords.primary[0]}`);
-    
+    keywords.push(
+      `who is the best ${service} company in ${locationKeywords.primary[0]}`,
+    );
+    keywords.push(
+      `where to get ${service} services in ${locationKeywords.primary[0]}`,
+    );
+    keywords.push(
+      `how to find ${service} experts in ${locationKeywords.primary[0]}`,
+    );
+
     // Add year-specific keywords
     const currentYear = new Date().getFullYear();
-    keywords.push(`best ${service} company ${locationKeywords.primary[0]} ${currentYear}`);
-    keywords.push(`top rated ${service} services ${locationKeywords.primary[0]} ${currentYear}`);
+    keywords.push(
+      `best ${service} company ${locationKeywords.primary[0]} ${currentYear}`,
+    );
+    keywords.push(
+      `top rated ${service} services ${locationKeywords.primary[0]} ${currentYear}`,
+    );
   }
-  
+
   // Return limited unique set of keywords
-  return [...new Set(keywords)].slice(0, count).join(', ');
+  return [...new Set(keywords)].slice(0, count).join(", ");
 };
 
 // Pre-generated keyword sets for main pages
@@ -253,7 +283,7 @@ expert digital marketing services near me Madurai,
 local SEO services for Madurai businesses,
 website development cost in Madurai,
 top app development company in Madurai reviews
-`.replace(/\n/g, '');
+`.replace(/\n/g, "");
 
 export const aboutKeywords = `
 best software company in Madurai Tamilnadu,
@@ -272,7 +302,7 @@ award-winning digital marketing agency Madurai testimonials,
 IT services for Madurai local businesses,
 established technology company in Madurai office location,
 certified web design company Madurai
-`.replace(/\n/g, '');
+`.replace(/\n/g, "");
 
 export const contactKeywords = `
 contact best web development company in Madurai location,
@@ -289,7 +319,7 @@ contact business software solutions company Madurai,
 schedule free digital marketing consultation Madurai,
 custom software development company contact Madurai,
 GodivaTech IT company address in Madurai
-`.replace(/\n/g, '');
+`.replace(/\n/g, "");
 
 export const servicesKeywords = `
 top web development services in Madurai price list,
@@ -310,7 +340,7 @@ enterprise software solutions for manufacturers Madurai,
 cheapest web development company in Madurai reviews,
 best social media marketing agency in Madurai results,
 affordable SEO packages in Madurai for small businesses
-`.replace(/\n/g, '');
+`.replace(/\n/g, "");
 
 export const blogKeywords = `
 digital marketing tips for Madurai local businesses,
@@ -329,7 +359,7 @@ social media marketing strategies for Madurai restaurants,
 ecommerce website features for Tamil Nadu businesses,
 software development outsourcing benefits Madurai,
 best website hosting services for Madurai businesses
-`.replace(/\n/g, '');
+`.replace(/\n/g, "");
 
 export const portfolioKeywords = `
 web development projects completed in Madurai,
@@ -347,4 +377,4 @@ mobile app user interface designs Madurai,
 responsive website design gallery Madurai clients,
 digital transformation case studies for Madurai retailers,
 custom software developed for Madurai manufacturers
-`.replace(/\n/g, '');
+`.replace(/\n/g, "");

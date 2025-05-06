@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useScroll, useTransform } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { typeText } from "@/lib/animation";
 import { 
   ArrowUpRight, Sparkles, Code, Layers, BarChart
 } from "lucide-react";
 
-// Memoized Hero Section for performance
+// Memoized Hero Section with optimized animations for performance
 const HeroSection = memo(() => {
   // Refs for different elements
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -92,170 +93,165 @@ const HeroSection = memo(() => {
           [background-size:4rem_4rem]" />
       </div>
       
-      {/* Reduced number of sparkles for better performance */}
+      {/* Static sparkles with CSS animations instead of JS animations */}
       <div className="absolute inset-0 overflow-hidden z-10 pointer-events-none">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-white"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 4 + 2}px`,
-              height: `${Math.random() * 4 + 2}px`,
-              filter: 'blur(1px)',
-              boxShadow: '0 0 6px 2px rgba(255, 255, 255, 0.3)',
-            }}
-            animate={{
-              opacity: [0.1, 0.8, 0.1],
-              scale: [0.8, 1.2, 0.8],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut",
-              delay: Math.random() * 5,
-            }}
-          />
-        ))}
+        {Array.from({ length: 8 }).map((_, i) => {
+          // Pre-compute random values for consistent rendering
+          const top = `${Math.floor(Math.random() * 100)}%`;
+          const left = `${Math.floor(Math.random() * 100)}%`;
+          const size = Math.floor(Math.random() * 4 + 2);
+          const animationDelay = `${Math.floor(Math.random() * 5)}s`;
+          
+          return (
+            <div
+              key={i}
+              className="absolute rounded-full bg-white animate-pulse-slow"
+              style={{
+                top,
+                left,
+                width: `${size}px`,
+                height: `${size}px`,
+                filter: 'blur(1px)',
+                boxShadow: '0 0 6px 2px rgba(255, 255, 255, 0.3)',
+                animationDelay,
+                opacity: 0.6
+              }}
+            />
+          );
+        })}
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          {/* Left content */}
-          <motion.div 
-            className="lg:order-1 mt-8 lg:mt-0 text-center lg:text-left"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: {},
-              visible: {
-                transition: {
-                  staggerChildren: 0.2
+          <LazyMotion features={domAnimation} strict>
+            {/* Left content */}
+            <m.div 
+              className="lg:order-1 mt-8 lg:mt-0 text-center lg:text-left"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.2
+                  }
                 }
-              }
-            }}
-          >
-            <motion.div 
-              variants={itemFadeIn}
-              className="mb-6 inline-flex"
+              }}
             >
-              <motion.span 
-                className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20"
-                whileHover={{ scale: 1.05 }}
+              <m.div 
+                variants={itemFadeIn}
+                className="mb-6 inline-flex"
               >
-                <Sparkles className="h-3.5 w-3.5 mr-2 text-yellow-300" />
-                Next-Gen Technology Solutions
-              </motion.span>
-            </motion.div>
-            
-            <motion.h1 
-              variants={itemFadeIn}
-              className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
-            >
-              <span className="block">
-                Affordable big IT & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">technology</span>
-              </span>
-              <span className="block mt-2">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">solutions</span>
-              </span>
-            </motion.h1>
-            
-            <motion.div variants={itemFadeIn}>
-              <p 
-                ref={subtitleRef} 
-                className="text-xl text-white/90 mb-6 max-w-xl lg:mx-0 mx-auto min-h-[4rem]"
-                style={{ visibility: 'hidden' }}
-              >
-                {/* Text will be filled in by typing effect */}
-              </p>
-            </motion.div>
-            
-            <motion.div 
-              variants={itemFadeIn}
-              className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8"
-            >
-              <motion.div 
-                whileHover={{ scale: 1.05 }} 
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto"
-              >
-                <Button 
-                  ref={ctaButtonRef}
-                  asChild 
-                  size="lg" 
-                  className="bg-white text-primary hover:bg-neutral-50 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full w-full sm:w-auto"
+                <m.span 
+                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20"
+                  whileHover={{ scale: 1.05 }}
                 >
-                  <Link href="/contact">
-                    <span className="flex items-center justify-center gap-2">
-                      Start a Project 
-                      <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
-                    </span>
-                  </Link>
-                </Button>
-              </motion.div>
+                  <Sparkles className="h-3.5 w-3.5 mr-2 text-yellow-300" />
+                  Next-Gen Technology Solutions
+                </m.span>
+              </m.div>
               
-              <motion.div 
-                whileHover={{ scale: 1.05 }} 
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto"
+              <m.h1 
+                variants={itemFadeIn}
+                className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
               >
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  size="lg" 
-                  className="border-white/20 bg-white/5 backdrop-blur-sm text-white hover:bg-white/10 rounded-full w-full sm:w-auto"
+                <span className="block">
+                  Affordable big IT & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">technology</span>
+                </span>
+                <span className="block mt-2">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">solutions</span>
+                </span>
+              </m.h1>
+              
+              <m.div variants={itemFadeIn}>
+                <p 
+                  ref={subtitleRef} 
+                  className="text-xl text-white/90 mb-6 max-w-xl lg:mx-0 mx-auto min-h-[4rem]"
+                  style={{ visibility: 'hidden' }}
                 >
-                  <Link href="/services">Explore Solutions</Link>
-                </Button>
-              </motion.div>
-            </motion.div>
+                  {/* Text will be filled in by typing effect */}
+                </p>
+              </m.div>
+              
+              <m.div 
+                variants={itemFadeIn}
+                className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8"
+              >
+                <m.div 
+                  whileHover={{ scale: 1.05 }} 
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full sm:w-auto"
+                >
+                  <Button 
+                    ref={ctaButtonRef}
+                    asChild 
+                    size="lg" 
+                    className="bg-white text-primary hover:bg-neutral-50 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full w-full sm:w-auto"
+                  >
+                    <Link href="/contact">
+                      <span className="flex items-center justify-center gap-2">
+                        Start a Project 
+                        <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
+                      </span>
+                    </Link>
+                  </Button>
+                </m.div>
+                
+                <m.div 
+                  whileHover={{ scale: 1.05 }} 
+                  whileTap={{ scale: 0.95 }}
+                  className="w-full sm:w-auto"
+                >
+                  <Button 
+                    asChild 
+                    variant="outline" 
+                    size="lg" 
+                    className="border-white/20 bg-white/5 backdrop-blur-sm text-white hover:bg-white/10 rounded-full w-full sm:w-auto"
+                  >
+                    <Link href="/services">Explore Solutions</Link>
+                  </Button>
+                </m.div>
+              </m.div>
+              
+              {/* Featured services tags */}
+              <m.div 
+                variants={itemFadeIn}
+                className="mt-10 flex flex-wrap gap-2 justify-center lg:justify-start"
+              >
+                <span className="text-white/70 mr-2 text-sm">Featured:</span>
+                {featuredServices.map((service, index) => (
+                  <m.span
+                    key={index}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white/90 bg-white/5 border border-white/10 backdrop-blur-sm"
+                    whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+                  >
+                    <service.icon className="h-3 w-3 mr-1.5" />
+                    {service.label}
+                  </m.span>
+                ))}
+              </m.div>
+            </m.div>
             
-            {/* Featured services tags */}
-            <motion.div 
-              variants={itemFadeIn}
-              className="mt-10 flex flex-wrap gap-2 justify-center lg:justify-start"
+            {/* Right content - 3D isometric illustration */}
+            <m.div 
+              className="lg:order-2 flex justify-center items-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
             >
-              <span className="text-white/70 mr-2 text-sm">Featured:</span>
-              {featuredServices.map((service, index) => (
-                <motion.span
-                  key={index}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white/90 bg-white/5 border border-white/10 backdrop-blur-sm"
-                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-                >
-                  <service.icon className="h-3 w-3 mr-1.5" />
-                  {service.label}
-                </motion.span>
-              ))}
-            </motion.div>
-          </motion.div>
-          
-          {/* Right content - 3D isometric illustration */}
-          <motion.div 
-            className="lg:order-2 flex justify-center items-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          >
-            <div className="relative w-full max-w-lg">
-              {/* Glowing background shape */}
-              <motion.div 
-                className="absolute top-0 left-1/2 -translate-x-1/2 h-[350px] w-[350px] rounded-full bg-gradient-to-br from-blue-400/20 to-purple-600/20 blur-3xl"
-                animate={{
-                  scale: [0.8, 1, 0.8],
-                  opacity: [0.4, 0.6, 0.4]
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  repeatType: "reverse"
-                }}
-              />
+              <div className="relative w-full max-w-lg">
+                {/* Glowing background shape - replaced with CSS animation */}
+                <div 
+                  className="absolute top-0 left-1/2 -translate-x-1/2 h-[350px] w-[350px] rounded-full bg-gradient-to-br from-blue-400/20 to-purple-600/20 blur-3xl animate-pulse-slow"
+                  style={{ 
+                    opacity: 0.5, 
+                    animationDuration: '8s'
+                  }}
+                />
               
               {/* Simplified 3D visuals */}
               <div className="relative mx-auto">
-                <motion.div
+                <m.div
                   className="relative mx-auto"
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -270,23 +266,17 @@ const HeroSection = memo(() => {
                     {/* Shadow */}
                     <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl opacity-40 blur-xl transform rotate-3" />
                     
-                    {/* Image */}
-                    <motion.div
+                    {/* Image - Using CSS animations instead of JS animations */}
+                    <div
                       className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl transform rotate-2 bg-gradient-to-br from-indigo-900/90 to-purple-900/90 backdrop-blur-sm"
-                      animate={{ 
-                        rotateX: [0, -2, 0, 2, 0], 
-                        rotateY: [0, 2, 0, -2, 0] 
-                      }}
-                      transition={{ 
-                        duration: 12, 
-                        ease: "easeInOut", 
-                        repeat: Infinity,
-                        repeatType: "loop"
+                      style={{ 
+                        transformStyle: 'preserve-3d',
+                        animation: 'float-slow 12s ease-in-out infinite'
                       }}
                     >
                       {/* Display 3D visualization */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <motion.div 
+                        <m.div 
                           className="text-white/90 text-center relative z-20"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -302,93 +292,66 @@ const HeroSection = memo(() => {
                             </div>
                           </div>
                           
-                          {/* Floating feature boxes with equal spacing */}
-                          <motion.div
-                            className="absolute top-8 right-8 w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600/80 to-blue-400/80 border border-white/20 backdrop-blur-sm shadow-lg"
-                            animate={{ 
-                              y: [0, -8, 0],
-                              rotate: [0, 5, 0]
-                            }}
-                            transition={{ 
-                              duration: 5, 
-                              repeat: Infinity,
-                              repeatType: "reverse" 
+                          {/* Floating feature boxes with CSS animations instead of JS */}
+                          <div
+                            className="absolute top-8 right-8 w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600/80 to-blue-400/80 border border-white/20 backdrop-blur-sm shadow-lg animate-float-slow"
+                            style={{ 
+                              animationDuration: '5s'
                             }}
                           />
                           
-                          <motion.div
-                            className="absolute top-8 left-8 w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600/80 to-purple-400/80 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
-                            animate={{ 
-                              y: [0, 8, 0],
-                              rotate: [12, 0, 12]
-                            }}
-                            transition={{ 
-                              duration: 7, 
-                              repeat: Infinity,
-                              repeatType: "reverse",
-                              delay: 1
+                          <div
+                            className="absolute top-8 left-8 w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600/80 to-purple-400/80 border border-white/20 backdrop-blur-sm shadow-lg rotate-12 animate-float-reverse"
+                            style={{ 
+                              animationDuration: '7s',
+                              animationDelay: '1s'
                             }}
                           />
                           
-                          <motion.div
-                            className="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
-                            animate={{ 
-                              y: [0, 8, 0],
-                              rotate: [12, 0, 12]
-                            }}
-                            transition={{ 
-                              duration: 6, 
-                              repeat: Infinity,
-                              repeatType: "reverse",
-                              delay: 2
+                          <div
+                            className="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg rotate-12 animate-float-slow"
+                            style={{ 
+                              animationDuration: '6s',
+                              animationDelay: '2s'
                             }}
                           />
-                        </motion.div>
+                        </m.div>
                       </div>
-                    </motion.div>
+                    </div>
                   </div>
-                </motion.div>
+                </m.div>
               </div>
             </div>
-          </motion.div>
+            </m.div>
+          </LazyMotion>
         </div>
       </div>
       
-      {/* Modern scroll indicator */}
-      <motion.div 
+      {/* Modern scroll indicator - using CSS animation */}
+      <div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-        style={{ opacity: scrollOpacity }}
+        style={{ opacity: String(scrollOpacity) }}
       >
-        <motion.span 
-          className="text-sm mb-3 text-white/70 font-light"
-          animate={{ y: [0, 5, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
+        <div 
+          className="text-sm mb-3 text-white/70 font-light animate-float-slow"
+          style={{ animationDuration: '2s' }}
         >
           Scroll to explore
-        </motion.span>
-        <motion.button
+        </div>
+        <button
           onClick={scrollToNext}
-          className="relative w-8 h-12 rounded-full border border-white/20 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-white/5"
-          whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
+          className="relative w-8 h-12 rounded-full border border-white/20 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-white/5 hover:bg-white/10 transition-colors"
         >
-          <motion.div
-            animate={{ 
-              y: [0, 16, 0] 
+          <div
+            className="w-1.5 h-1.5 bg-white rounded-full animate-float-slow"
+            style={{ 
+              animationDuration: '1.5s',
+              transformOrigin: 'center',
+              animationTimingFunction: 'cubic-bezier(0.45, 0, 0.55, 1)'
             }}
-            transition={{ 
-              duration: 1.5, 
-              repeat: Infinity,
-              repeatType: "loop",
-              ease: "easeInOut",
-              repeatDelay: 0.5
-            }}
-            className="w-1.5 h-1.5 bg-white rounded-full"
           />
-        </motion.button>
-      </motion.div>
+        </button>
+      </div>
     </div>
   );
 });
