@@ -58,9 +58,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       
       <div className="p-8 flex flex-col h-full relative z-10">
         {/* Modern Icon with enhanced design elements */}
-        <div className="relative mb-6 w-16 h-16">
-          {/* Base gradient background */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-indigo-500/20 shadow-lg"></div>
+        <div className="relative mb-6 w-16 h-16 flex items-center justify-center">
+          {/* Base gradient background with border */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-indigo-500/20 shadow-md border border-primary/10"></div>
           
           {/* Animated pulse effect */}
           <motion.div 
@@ -99,17 +99,17 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
                          [background-image:radial-gradient(#4f46e530_1px,transparent_1px)] 
                          [background-size:5px_5px] rounded-2xl"></div>
           
-          {/* Icon with glow effect */}
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            {Icon && typeof Icon === 'function' && (
+          {/* Icon with glow effect - using fixed positioning */}
+          <div className="relative z-10 flex items-center justify-center">
+            {Icon && (
               <div className="relative">
                 {/* Shadow/glow effect */}
-                <div className="absolute -inset-1 text-primary opacity-50 blur-[2px]">
+                <div className="absolute inset-0 text-primary opacity-50 blur-[2px] scale-125 translate-y-[2px]">
                   <Icon className="h-7 w-7" />
                 </div>
                 
                 {/* Main icon */}
-                <Icon className="text-primary h-7 w-7 relative z-10 group-hover:scale-110 
+                <Icon className="h-7 w-7 text-primary relative z-10 group-hover:scale-110 
                                transition-all duration-300 drop-shadow-sm" />
               </div>
             )}
@@ -349,7 +349,7 @@ const ServiceSection = () => {
                   exit={{ opacity: 0, y: 10 }}
                 >
                   <ServiceCard 
-                    icon={service.icon || Code}
+                    icon={getIconForService(service.slug)}
                     title={service.title}
                     description={service.description}
                     slug={service.slug}
