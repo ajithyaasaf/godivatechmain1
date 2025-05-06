@@ -13,81 +13,109 @@ import CTASection from "@/components/home/CTASection";
 import ContactSection from "@/components/home/ContactSection";
 import MapSection from "@/components/home/MapSection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
+import SEO from "@/components/SEO";
+import { 
+  getLocalBusinessData, 
+  getOrganizationData, 
+  getWebsiteData,
+  getWebPageData 
+} from "@/lib/structuredData";
+import { homeKeywords } from "@/lib/seoKeywords";
 
 /**
- * Enhanced Home page with smooth section transitions
+ * Enhanced Home page with smooth section transitions and SEO optimization
  */
 const Home = () => {
-  // No need for manual scroll restoration - now handled by PageTransition component
+  // SEO structured data
+  const structuredData = [
+    getOrganizationData(),
+    getLocalBusinessData(),
+    getWebsiteData(),
+    getWebPageData(
+      "Best Digital Marketing & Web Development Company in Madurai | GodivaTech",
+      "GodivaTech offers top-rated web development, digital marketing, and app development services in Madurai at affordable prices. Get custom technology solutions for your business.",
+      "https://godivatech.com/"
+    )
+  ];
   
   return (
-    <PageTransition>
-      <div className="relative">
-        {/* Hero section with immediate display */}
-        <TransitionItem>
-          <HeroSection />
-        </TransitionItem>
-        
-        {/* Other sections with staggered reveal */}
-        <TransitionItem delay={0.1}>
-          <TrustedBySection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.2}>
-          <ServiceSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.1}>
-          <AboutSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.2}>
-          <TeamSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.1}>
-          <PortfolioSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.2}>
-          <TestimonialsSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.1}>
-          <BlogSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.2}>
-          <NewsletterSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.1}>
-          <CTASection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.2}>
-          <ContactSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.1}>
-          <MapSection />
-        </TransitionItem>
-        
-        {/* Thin visual separator lines between sections */}
-        <motion.div 
-          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        />
-        <motion.div 
-          className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        />
-      </div>
-    </PageTransition>
+    <>
+      <SEO
+        title="Best Digital Marketing & Web Development Company in Madurai | GodivaTech"
+        description="GodivaTech provides affordable web development, mobile app development, and digital marketing services in Madurai. Top-rated IT company for custom software solutions at competitive prices."
+        keywords={homeKeywords}
+        canonicalUrl="/"
+        structuredData={structuredData}
+      />
+      
+      <PageTransition>
+        <div className="relative">
+          {/* Hero section with immediate display */}
+          <TransitionItem>
+            <HeroSection />
+          </TransitionItem>
+          
+          {/* Other sections with staggered reveal */}
+          <TransitionItem delay={0.1}>
+            <TrustedBySection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.2}>
+            <ServiceSection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.1}>
+            <AboutSection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.2}>
+            <TeamSection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.1}>
+            <PortfolioSection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.2}>
+            <TestimonialsSection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.1}>
+            <BlogSection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.2}>
+            <NewsletterSection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.1}>
+            <CTASection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.2}>
+            <ContactSection />
+          </TransitionItem>
+          
+          <TransitionItem delay={0.1}>
+            <MapSection />
+          </TransitionItem>
+          
+          {/* Thin visual separator lines between sections */}
+          <motion.div 
+            className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+          />
+          <motion.div 
+            className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+          />
+        </div>
+      </PageTransition>
+    </>
   );
 };
 
