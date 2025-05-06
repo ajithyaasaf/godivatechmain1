@@ -14,6 +14,8 @@ import SEO from "@/components/SEO";
 import AmpBlogPost from "@/components/AmpBlogPost";
 import OptimizedImage from "@/components/ui/optimized-image";
 import { blogKeywords } from "@/lib/seoKeywords";
+import Breadcrumbs from "@/components/common/Breadcrumbs";
+import { getCanonicalUrl } from "@/lib/canonicalUrl";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -223,7 +225,7 @@ const BlogPost = () => {
         title={`${post.title} | Best ${category?.name || 'Digital Services'} in Madurai | GodivaTech`}
         description={`${post.excerpt} GodivaTech provides the best ${category?.name || 'digital services'} in Madurai, Tamil Nadu for businesses looking to grow their online presence.`}
         keywords={customKeywords}
-        canonicalUrl={`/blog/${post.slug}`}
+        canonicalUrl={getCanonicalUrl(`/blog/${post.slug}`)}
         structuredData={structuredData}
         ogImage={post.coverImage || undefined}
         ogType="article"
@@ -234,13 +236,29 @@ const BlogPost = () => {
       >
         {/* Add AMP link for mobile users */}
         {isMobile && (
-          <link rel="amphtml" href={`/blog/${post.slug}?amp=1`} />
+          <link rel="amphtml" href={`${getCanonicalUrl(`/blog/${post.slug}`)}?amp=1`} />
         )}
+        
+        {/* Add alternate language links */}
+        <link rel="alternate" hrefLang="en-IN" href={getCanonicalUrl(`/blog/${post.slug}`)} />
+        <link rel="alternate" hrefLang="ta-IN" href={`${getCanonicalUrl(`/blog/${post.slug}`)}?lang=ta`} />
+        <link rel="alternate" hrefLang="x-default" href={getCanonicalUrl(`/blog/${post.slug}`)} />
       </SEO>
 
       <section className="bg-white pt-20 pb-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap mb-8">
+          {/* Enhanced breadcrumb navigation with structured data */}
+          <Breadcrumbs 
+            location={{ 
+              city: "Madurai", 
+              neighborhood: category && ["Digital Marketing", "SEO", "Web Development"].includes(category.name) 
+                ? "Anna Nagar" 
+                : "Iyer Bungalow" 
+            }}
+            className="mb-4"
+          />
+          
+          <div className="flex flex-wrap mb-4">
             <Link 
               href="/blog" 
               className="text-primary hover:text-primary/90 flex items-center"

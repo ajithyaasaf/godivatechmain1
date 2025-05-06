@@ -178,8 +178,8 @@ export const generateSitemap = async (): Promise<string> => {
 
     // Add project pages with URL slug handling
     projects.forEach(project => {
-      // Create a slug from title if not already present
-      const slug = project.slug || project.title?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || '';
+      // Create a slug from title since Project schema might not have a slug property
+      const slug = project.title?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || '';
       if (!slug) return; // Skip if we can't generate a slug
       
       const projectUrl = `/portfolio/${slug}`;
