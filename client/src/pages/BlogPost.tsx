@@ -184,7 +184,7 @@ const BlogPost = () => {
             <div className="mb-8">
               <div className="mb-4 flex items-center">
                 <span className="bg-primary/10 text-primary text-xs font-medium px-2.5 py-1 rounded mr-3">
-                  {post.category?.name || "Uncategorized"}
+                  {category?.name || "Uncategorized"}
                 </span>
                 <span className="text-neutral-500 text-sm">{formattedDate}</span>
               </div>
@@ -199,7 +199,7 @@ const BlogPost = () => {
               
               <div className="flex items-center">
                 <img 
-                  src={post.authorImage} 
+                  src={post.authorImage || '/assets/placeholder-author.png'} 
                   alt={post.authorName} 
                   className="w-12 h-12 rounded-full mr-4"
                 />
@@ -213,8 +213,8 @@ const BlogPost = () => {
             <div className="mb-10">
               <figure>
                 <img 
-                  src={post.coverImage} 
-                  alt={`${post.title} - GodivaTech Madurai - ${post.category?.name || 'Blog'}`} 
+                  src={post.coverImage || '/assets/blog-default.jpg'} 
+                  alt={`${post.title} - GodivaTech Madurai - ${category?.name || 'Blog'}`} 
                   className="w-full h-auto rounded-lg shadow-lg"
                   loading="eager"
                   width="800"
@@ -284,9 +284,9 @@ const BlogPost = () => {
             
             {/* Call to Action Box with Targeted SEO Keywords */}
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-8 mb-8">
-              <h3 className="text-2xl font-bold text-primary mb-4">Need the Best {post.category?.name || "Digital Services"} in Madurai?</h3>
+              <h3 className="text-2xl font-bold text-primary mb-4">Need the Best {category?.name || "Digital Services"} in Madurai?</h3>
               <p className="text-neutral-700 mb-6">
-                As the leading software company in Madurai, GodivaTech specializes in professional {post.category?.name?.toLowerCase() || "digital services"} for businesses across Tamil Nadu. 
+                As the leading software company in Madurai, GodivaTech specializes in professional {category?.name?.toLowerCase() || "digital services"} for businesses across Tamil Nadu. 
                 Our experienced Madurai-based team can help you implement all the strategies discussed in this article with affordable, result-driven solutions.
               </p>
               <p className="text-neutral-700 mb-6">
@@ -294,10 +294,10 @@ const BlogPost = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/contact" className="bg-primary hover:bg-primary/90 text-white py-3 px-6 rounded-lg inline-block text-center font-medium">
-                  Contact Best {post.category?.name || "Digital"} Agency in Madurai
+                  Contact Best {category?.name || "Digital"} Agency in Madurai
                 </Link>
-                <Link href={`/services/${post.category?.slug || ''}`} className="bg-white border border-primary text-primary hover:bg-primary/5 py-3 px-6 rounded-lg inline-block text-center font-medium">
-                  View Our {post.category?.name || "Services"} in Madurai
+                <Link href={`/services/${category?.slug || ''}`} className="bg-white border border-primary text-primary hover:bg-primary/5 py-3 px-6 rounded-lg inline-block text-center font-medium">
+                  View Our {category?.name || "Services"} in Madurai
                 </Link>
               </div>
             </div>
