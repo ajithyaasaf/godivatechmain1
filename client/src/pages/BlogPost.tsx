@@ -11,6 +11,8 @@ import {
   getCategoryById
 } from "@/lib/firestore";
 import SEO from "@/components/SEO";
+import AmpBlogPost from "@/components/AmpBlogPost";
+import OptimizedImage from "@/components/ui/optimized-image";
 import { blogKeywords } from "@/lib/seoKeywords";
 import { 
   getOrganizationData, 
@@ -18,6 +20,11 @@ import {
   getBreadcrumbData,
   getBlogPostData
 } from "@/lib/structuredData";
+import {
+  getMobileBlogPostData,
+  getMobileBreadcrumbData,
+  isMobileDevice
+} from "@/lib/mobileStructuredData";
 
 const BlogPost = () => {
   const { slug } = useParams();
