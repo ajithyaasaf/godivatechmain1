@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
@@ -9,6 +9,8 @@ import {
   getWebPageData,
   getBreadcrumbData 
 } from "@/lib/structuredData";
+import MobileSchema, { getCommonServiceFAQs } from "@/components/schema/MobileSchema";
+import { createMobileServiceStructuredData } from "@/lib/mobileOptimization";
 import { 
   Activity, Heart, BarChart4, CheckCircle, Building2, Truck,
   GraduationCap, ArrowRight, Globe, Layers, Code, Cloud, 
@@ -192,6 +194,24 @@ const Services = () => {
   });
   
   const [location] = useLocation();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile devices for serving optimized content
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const mobileKeywords = ['android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+      const isMobileDevice = mobileKeywords.some(keyword => userAgent.indexOf(keyword) !== -1) || window.innerWidth < 768;
+      setIsMobile(isMobileDevice);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
   
   // Enterprise level services data
   const enterpriseServices: ServiceType[] = [
