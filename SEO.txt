@@ -205,33 +205,90 @@ To ensure SEO effectiveness:
 7. **Update meta titles and descriptions** when content changes significantly.
 8. **Add location-specific testimonials** and case studies when available.
 
-## Technical SEO Considerations
+## Mobile SEO Optimizations
 
-### Core Web Vitals Optimizations
+The website has been specifically optimized for mobile users with the following implementations:
 
-1. **Largest Contentful Paint (LCP)**
-   - Optimized image loading with proper dimensions
-   - Added width and height attributes to prevent layout shifts
-   - Implemented fetchPriority="high" for hero images
-   - Set proper loading attributes (eager for above-fold, lazy for below-fold)
+### 1. AMP (Accelerated Mobile Pages) Support
 
-2. **Cumulative Layout Shift (CLS)**
-   - Fixed image dimensions in BlogCard.tsx and BlogPost.tsx
-   - Added aspect ratio containers for images
-   - Implemented placeholder containers for dynamic content
+1. **AMP Implementation for Blog Posts**
+   - Created `client/src/components/AmpBlogPost.tsx` component for mobile-optimized blog content
+   - Follows AMP HTML specification for faster loading on mobile devices
+   - Implements required AMP boilerplate code and styling
+   - Properly handles content formatting for AMP compatibility
+   - Adds AMP-specific structured data
 
-3. **First Input Delay (FID) / Interaction to Next Paint (INP)**
-   - Minimized JavaScript execution time
-   - Optimized animation performance with GPU acceleration
-   - Used efficient event handlers for interactive elements
+2. **AMP Integration in BlogPost Component**
+   - Added conditional rendering based on mobile detection
+   - Implemented `?amp=1` URL parameter support for AMP versions
+   - Added canonical/amphtml link relationship for proper indexing
+   - Created mobile-specific AMP structured data
 
-### Additional Technical Considerations
-- Ensure pages load quickly (under 3 seconds)
-- Make images responsive and properly compressed
-- Implement proper handling of null or undefined image values
-- Use semantic HTML elements for better crawlability
-- Keep site structure logical and user-friendly
-- Maintain mobile-first design as Google uses mobile-first indexing
+3. **AMP Content Processing**
+   - Automated conversion of standard HTML to AMP-compatible markup
+   - Replaced img tags with amp-img for better performance
+   - Added responsive layout attributes for mobile display
+   - Added speakable attributes for better voice search compatibility
+
+### 2. Mobile-Specific Structured Data
+
+1. **Mobile-Optimized Schema Implementation**
+   - Created `client/src/lib/mobileStructuredData.ts` with mobile-specific schema helpers
+   - Enhanced schema with mobile-specific attributes
+   - Added speakable specifications for voice search on mobile
+   - Included potentialAction entries for mobile app deep linking support
+   - Added mobile-specific accessibility attributes
+
+2. **Mobile Feature Highlighting**
+   - Structured data highlighting mobile responsiveness
+   - Added mobile-specific service attributes
+   - Enhanced local business data with mobile-friendly attributes
+   - Implemented mobile-specific breadcrumb data
+
+### 3. Optimized Image Loading for Mobile
+
+1. **OptimizedImage Component**
+   - Created `client/src/components/ui/optimized-image.tsx` component
+   - Implements responsive image loading with mobile detection
+   - Uses different image quality settings based on device type
+   - Implements proper loading strategies (eager/lazy) for performance
+   - Adds mobile-specific sizing attributes for better rendering
+
+2. **Cloudinary Integration for Mobile**
+   - Uses Cloudinary's transformation parameters for mobile optimization
+   - Implements automatic format detection (WebP for supported browsers)
+   - Uses lower quality settings on mobile for faster loading
+   - Implements responsive DPR (Device Pixel Ratio) adjustments
+
+### 4. Core Web Vitals Optimizations for Mobile
+
+1. **Largest Contentful Paint (LCP) Optimization**
+   - Prioritized loading of critical images on mobile
+   - Implemented proper image dimensions with aspect ratio
+   - Added fetchPriority="high" for important content
+   - Optimized image quality/size balance for mobile networks
+
+2. **Cumulative Layout Shift (CLS) Prevention**
+   - Added placeholder containers while images load
+   - Implemented proper image dimensions with aspect ratios
+   - Fixed content jumps with placeholder states
+   - Used proper image sizing attributes for mobile viewports
+
+3. **Interaction to Next Paint (INP) Optimization**
+   - Minimized JavaScript execution time on mobile
+   - Optimized touch event handlers for mobile interaction
+   - Improved animation performance for mobile devices
+   - Reduced unnecessary JavaScript on mobile views
+
+### 5. Additional Mobile SEO Considerations
+
+- Mobile-specific metadata with viewport settings
+- Touch-friendly UI elements with appropriate sizing
+- Mobile-friendly content formatting with readable fonts
+- Proper handling of mobile navigation patterns
+- Mobile network performance considerations
+- Support for offline content viewing when possible
+- Mobile-friendly local business information display
 
 ## Contact Information in SEO
 
