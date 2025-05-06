@@ -355,7 +355,7 @@ const Services = () => {
             type="breadcrumb" 
             data={[
               { name: "Home", url: "https://godivatech.com/" },
-              { name: `IT Services in Anna Nagar, Madurai`, url: "https://godivatech.com/services" }
+              { name: "IT Services in Anna Nagar, Madurai", url: "https://godivatech.com/services" }
             ]}
             pageUrl="https://godivatech.com/services"
             categoryName="Services"
@@ -574,180 +574,185 @@ const Services = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                   <motion.div
+                    className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10"
+                    initial={{ opacity: 0, y: -10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <span className="text-primary font-semibold text-sm">OUR APPROACH</span>
+                  </motion.div>
+                  
+                  <motion.h2 
+                    className="text-4xl font-bold text-gray-900 mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.7 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
                   >
-                    <h2 className="text-3xl font-bold text-neutral-800 mb-6 relative inline-block">
-                      Our Work Process
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 to-transparent" />
-                    </h2>
-                    <p className="text-lg text-neutral-600 mb-8">
-                      At Godiva Technologies, we follow a structured process to ensure the successful delivery of high-quality digital solutions for our clients:
-                    </p>
-                  </motion.div>
+                    How We Deliver Exceptional Results
+                  </motion.h2>
+                  
+                  <motion.p 
+                    className="text-xl text-gray-600 mb-10"
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    Our structured methodology ensures that every project is completed to the highest standards, on time and within budget.
+                  </motion.p>
                   
                   <div className="space-y-8">
                     <ServiceStep 
-                      number={1} 
-                      title="Initial Consultation" 
-                      description="We start by understanding your business, goals, and specific requirements through detailed discussions with your team."
-                      delay={0.1}
-                    />
-                    
-                    <ServiceStep 
-                      number={2} 
-                      title="Custom Strategy Development" 
-                      description="We create a tailored digital strategy that addresses your unique challenges and leverages the right technologies for your business."
-                      delay={0.2}
-                    />
-                    
-                    <ServiceStep 
-                      number={3} 
-                      title="Creative Design & Development" 
-                      description="Our team designs and develops solutions with a focus on user experience, visual appeal, and technical excellence."
+                      number={1}
+                      title="Discovery and Planning"
+                      description="We begin by understanding your business goals, target audience, and unique requirements to create a comprehensive project plan."
                       delay={0.3}
                     />
                     
                     <ServiceStep 
-                      number={4} 
-                      title="Quality Testing" 
-                      description="We thoroughly test all deliverables across different devices and platforms to ensure optimal performance and functionality."
+                      number={2}
+                      title="Design and Prototyping"
+                      description="Our designers create intuitive user interfaces and engaging visuals that align with your brand identity and business objectives."
                       delay={0.4}
                     />
                     
                     <ServiceStep 
-                      number={5} 
-                      title="Launch & Ongoing Support" 
-                      description="After launch, we provide dedicated support and maintenance to ensure your digital assets continue to perform at their best."
+                      number={3}
+                      title="Development and Testing"
+                      description="Our development team builds your solution using cutting-edge technologies, with rigorous testing throughout the process."
                       delay={0.5}
+                    />
+                    
+                    <ServiceStep 
+                      number={4}
+                      title="Deployment and Support"
+                      description="We launch your project with care and provide ongoing maintenance and support to ensure continued success."
+                      delay={0.6}
                     />
                   </div>
                 </div>
                 
-                <div>
-                  <motion.div
-                    className="rounded-xl overflow-hidden shadow-2xl relative"
-                    initial={{ opacity: 0, scale: 0.95, rotateY: 15 }}
-                    whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    style={{ transformStyle: 'preserve-3d' }}
-                  >
-                    {/* Gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-transparent mix-blend-overlay z-10" />
-                    
-                    {/* Main image */}
-                    <img
-                      src="https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                      alt="Service approach illustration"
-                      className="w-full h-full object-cover"
+                <div className="relative mt-10 lg:mt-0">
+                  <div className="relative">
+                    <motion.div 
+                      className="absolute -top-10 -left-10 w-64 h-64 bg-primary opacity-5 rounded-full"
+                      animate={{
+                        scale: [1, 1.1, 1],
+                      }}
+                      transition={{
+                        duration: 8,
+                        repeat: Infinity,
+                        repeatType: "reverse"
+                      }}
                     />
                     
-                    {/* Floating badge */}
-                    <motion.div
-                      className="absolute bottom-6 right-6 bg-white rounded-lg shadow-lg py-2 px-4 z-20 flex items-center border border-neutral-100"
+                    <motion.div 
+                      className="relative z-10 bg-gradient-to-br from-primary to-purple-700 rounded-2xl shadow-xl p-8 text-white"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: 0.8 }}
+                      transition={{ duration: 0.6 }}
                     >
-                      <CheckCircle className="text-primary h-5 w-5 mr-2" />
-                      <span className="font-medium text-sm">Client-Centric Approach</span>
+                      <div className="mb-6">
+                        <div className="bg-white/10 h-16 w-16 rounded-full flex items-center justify-center mb-4">
+                          <Sparkles className="h-8 w-8 text-white" />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">Why Choose Us?</h3>
+                        <p className="text-white/80">Our approach delivers substantial benefits over traditional service providers.</p>
+                      </div>
+                      
+                      <ul className="space-y-4">
+                        <li className="flex items-start">
+                          <div className="mr-4 text-white">
+                            <CheckCircle className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">Expert Team</h4>
+                            <p className="text-white/80 text-sm">Skilled professionals with deep industry experience</p>
+                          </div>
+                        </li>
+                        
+                        <li className="flex items-start">
+                          <div className="mr-4 text-white">
+                            <CheckCircle className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">Transparent Process</h4>
+                            <p className="text-white/80 text-sm">Clear communication and milestone-based development</p>
+                          </div>
+                        </li>
+                        
+                        <li className="flex items-start">
+                          <div className="mr-4 text-white">
+                            <CheckCircle className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">Local Understanding</h4>
+                            <p className="text-white/80 text-sm">Deep knowledge of Madurai market and customer needs</p>
+                          </div>
+                        </li>
+                        
+                        <li className="flex items-start">
+                          <div className="mr-4 text-white">
+                            <CheckCircle className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">Result Focused</h4>
+                            <p className="text-white/80 text-sm">Commitment to delivering measurable business outcomes</p>
+                          </div>
+                        </li>
+                      </ul>
+                      
+                      <div className="mt-8">
+                        <Button 
+                          asChild 
+                          className="bg-white hover:bg-white/90 text-primary rounded-full px-6"
+                        >
+                          <Link href="/about" className="flex items-center">
+                            About Our Team
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Link>
+                        </Button>
+                      </div>
                     </motion.div>
-                  </motion.div>
+                  </div>
+                  
+                  <motion.div 
+                    className="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-500 opacity-5 rounded-full"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                    }}
+                    transition={{
+                      duration: 10,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      delay: 1
+                    }}
+                  />
                 </div>
               </div>
             </div>
           </section>
         </TransitionItem>
 
-        {/* Industries section */}
-        <TransitionItem delay={0.2}>
-          <section className="py-24 relative overflow-hidden bg-gradient-to-b from-gray-50/80 to-white">
-            {/* Background with gradients */}
-            <div className="absolute inset-0 bg-neutral-50/60" />
-            
-            {/* Subtle grid pattern */}
-            <div className="absolute inset-0 
-              [background-image:linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] 
-              [background-size:4rem_4rem]" />
-              
-            {/* Content */}
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-              <motion.div 
-                className="text-center mb-16"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-              >
-                <div className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
-                  <span className="text-primary font-semibold text-sm">INDUSTRY EXPERTISE</span>
-                </div>
-                
-                <h2 className="text-4xl font-bold text-neutral-800 mb-4">Industries We Serve</h2>
-                <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-                  Our specialized solutions are tailored to meet the unique requirements of businesses across various sectors, with deep expertise in these key industries.
-                </p>
-              </motion.div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {industries.map((industry, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.7, delay: 0.1 * index }}
-                  >
-                    <IndustryCard 
-                      icon={industry.icon}
-                      title={industry.title}
-                      description={industry.description}
-                      index={index}
-                    />
-                  </motion.div>
-                ))}
-              </div>
-              
-              <motion.div 
-                className="mt-16 text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <p className="text-neutral-600 mb-6">Don't see your industry? Our expertise extends beyond these sectors.</p>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="border-primary text-primary hover:bg-primary/5"
-                >
-                  <Link href="/contact" className="flex items-center">
-                    Discuss Your Industry Needs
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </motion.div>
-            </div>
-          </section>
-        </TransitionItem>
-        
-        {/* Benefits Section */}
+        {/* Industries we serve */}
         <TransitionItem delay={0.3}>
-          <section className="py-24 bg-primary/5 relative overflow-hidden">
+          <section className="py-24 bg-gradient-to-br from-gray-50 to-white relative">
+            {/* Subtle pattern background */}
+            <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0aC0ydi00aDJ2NHptMC02aC0ydi00aDJ2NHptMC02aC0ydi00aDJ2NHptMC02aC0yVjhoMnY0em0wIDE4aC0ydi00aDJ2NHptMCA2aC0ydi00aDJ2NHptMCA2aC0ydi00aDJ2NHptMCA2aC0ydi00aDJ2NHptLTYgMEgyOHYtNGgydjR6bS02IDBoLTR2LTRoNHY0em0tNiAwaC00di00aDR2NHptLTYgMEg4di00aDR2NHptMC02aC00di00aDR2NHptMC02aC00di00aDR2NHptMC02aC00di00aDR2NHptMC02aC00VjhoNHY0em0wLTZoLTRWOGg0djR6TTI4IDh2NGgtMlY4aDJ6bTYgMGgydjRoLTJWOHptNiAwaDJ2NGgtMlY4em02IDBoMnY0aC0yVjh6bTYgMGg0djRoLTRWOHptMCA2aDR2NGgtNHYtNHptMCA2aDR2NGgtNHYtNHptMCA2aDR2NGgtNHYtNHptMCA2aDR2NGgtNHYtNHptMCA2aDR2NGgtNHYtNHptLTYgMGgydjRoLTJ2LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] bg-repeat" />
+            
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="text-center mb-16">
                 <motion.div 
-                  className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/10 border border-primary/20"
+                  className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10"
                   initial={{ opacity: 0, y: -10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
                 >
-                  <span className="text-primary font-semibold text-sm">WHY CHOOSE US</span>
+                  <span className="text-primary font-semibold text-sm">INDUSTRIES</span>
                 </motion.div>
                 
                 <motion.h2 
@@ -757,68 +762,51 @@ const Services = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                  The GodivaTech Advantage
+                  Tailored Solutions for Every Industry
                 </motion.h2>
                 
                 <motion.p 
-                  className="text-lg text-gray-600 max-w-3xl mx-auto"
+                  className="text-xl text-gray-600 max-w-3xl mx-auto"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  Our enterprise solutions are built on core principles that ensure exceptional quality, reliability, and value for your business.
+                  We specialize in creating industry-specific solutions that address the unique challenges and opportunities of your business sector.
                 </motion.p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {[
-                  {
-                    icon: Sparkles,
-                    title: "Expert Team",
-                    description: "Our team consists of industry veterans with deep expertise in the latest technologies and best practices."
-                  },
-                  {
-                    icon: FileCheck,
-                    title: "Proven Methodology",
-                    description: "A structured approach to project delivery ensures quality, timeliness, and transparency at every stage."
-                  },
-                  {
-                    icon: ShieldCheck,
-                    title: "Enterprise Security",
-                    description: "We implement robust security measures to protect your data and applications from vulnerabilities."
-                  },
-                  {
-                    icon: Cpu,
-                    title: "Scalable Solutions",
-                    description: "Our technology solutions are designed to grow with your business, adapting to changing needs."
-                  },
-                  {
-                    icon: MessageCircle,
-                    title: "Dedicated Support",
-                    description: "We provide ongoing technical support and maintenance to ensure your systems run smoothly."
-                  },
-                  {
-                    icon: Database,
-                    title: "Data-Driven Approach",
-                    description: "We leverage analytics and insights to make informed decisions that drive business growth."
-                  }
-                ].map((benefit, index) => (
-                  <motion.div 
+                {industries.map((industry, index) => (
+                  <IndustryCard 
                     key={index}
-                    className="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col h-full"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <div className="bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mb-6">
-                      <benefit.icon className="h-7 w-7 text-primary" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-                    <p className="text-gray-600">{benefit.description}</p>
-                  </motion.div>
+                    icon={industry.icon}
+                    title={industry.title}
+                    description={industry.description}
+                    index={index}
+                  />
                 ))}
+              </div>
+              
+              <div className="mt-16 text-center">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <p className="text-gray-600 mb-6">Don't see your industry? We serve many other sectors as well!</p>
+                  <Button 
+                    asChild 
+                    variant="outline"
+                    className="border-primary text-primary hover:bg-primary/5 rounded-full px-8"
+                  >
+                    <Link href="/contact" className="flex items-center">
+                      Contact Us For Details
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </motion.div>
               </div>
             </div>
           </section>
