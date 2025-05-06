@@ -274,18 +274,21 @@ export const getMobileLocalBusinessData = () => {
             "name": "Mobile-optimized Web Development Services in Madurai"
           }
         }
+      },
+      {
+        "@type": "ViewAction",
+        "target": "https://godivatech.com/"
       }
     ],
-    // Add mobile web app capability
-    "potentialAction": {
-      "@type": "ViewAction",
-      "target": [
-        "https://godivatech.com/",
-        {
-          "@type": "EntryPoint",
-          "urlTemplate": "android-app://com.godivatech.app/https/godivatech.com/"
-        }
-      ]
+    // Special mobile application data
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://godivatech.com/",
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [".speakable-content"]
+      },
+      "specialty": "Mobile-optimized website for Madurai businesses"
     }
   };
 };

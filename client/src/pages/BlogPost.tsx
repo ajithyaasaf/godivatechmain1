@@ -130,30 +130,71 @@ const BlogPost = () => {
   // Split content by paragraphs for better rendering
   const contentParagraphs = post.content.split("\n\n");
 
-  // Create structured data for SEO
-  const structuredData = [
-    getOrganizationData(),
-    getWebPageData(
-      `${post.title} | Best ${category?.name || 'Digital Services'} in Madurai`,
-      `${post.excerpt} GodivaTech provides the best ${category?.name || 'digital services'} in Madurai, Tamil Nadu for businesses looking to grow their online presence.`,
-      `https://godivatech.com/blog/${post.slug}`
-    ),
-    getBreadcrumbData([
-      { name: "Home", item: "https://godivatech.com/" },
-      { name: "Blog", item: "https://godivatech.com/blog" },
-      { name: post.title, item: `https://godivatech.com/blog/${post.slug}` }
-    ]),
-    getBlogPostData(
-      post.title,
-      post.excerpt,
-      `https://godivatech.com/blog/${post.slug}`,
-      post.coverImage || "https://godivatech.com/assets/blog-default.jpg",
-      new Date(post.publishedAt).toISOString(),
-      new Date(post.publishedAt).toISOString(),
-      post.authorName,
-      post.authorImage || undefined
-    )
-  ];
+  // Detect if user is on mobile
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    // Check for mobile device on client side
+    const checkMobile = () => {
+      setIsMobile(
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        window.innerWidth <= 768
+      );
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
+  // Create structured data for SEO, with mobile optimization if needed
+  const structuredData = isMobile ? 
+    // Mobile-optimized structured data
+    [
+      getOrganizationData(),
+      getMobileBlogPostData(
+        post.title,
+        post.excerpt,
+        `https://godivatech.com/blog/${post.slug}`,
+        post.coverImage || "https://godivatech.com/assets/blog-default.jpg",
+        new Date(post.publishedAt).toISOString(),
+        new Date(post.publishedAt).toISOString(),
+        post.authorName,
+        post.authorImage || undefined
+      ),
+      getMobileBreadcrumbData([
+        { name: "Home", item: "https://godivatech.com/" },
+        { name: "Blog", item: "https://godivatech.com/blog" },
+        { name: post.title, item: `https://godivatech.com/blog/${post.slug}` }
+      ])
+    ] : 
+    // Desktop structured data
+    [
+      getOrganizationData(),
+      getWebPageData(
+        `${post.title} | Best ${category?.name || 'Digital Services'} in Madurai`,
+        `${post.excerpt} GodivaTech provides the best ${category?.name || 'digital services'} in Madurai, Tamil Nadu for businesses looking to grow their online presence.`,
+        `https://godivatech.com/blog/${post.slug}`
+      ),
+      getBreadcrumbData([
+        { name: "Home", item: "https://godivatech.com/" },
+        { name: "Blog", item: "https://godivatech.com/blog" },
+        { name: post.title, item: `https://godivatech.com/blog/${post.slug}` }
+      ]),
+      getBlogPostData(
+        post.title,
+        post.excerpt,
+        `https://godivatech.com/blog/${post.slug}`,
+        post.coverImage || "https://godivatech.com/assets/blog-default.jpg",
+        new Date(post.publishedAt).toISOString(),
+        new Date(post.publishedAt).toISOString(),
+        post.authorName,
+        post.authorImage || undefined
+      )
+    ];
 
   // Create custom keywords for this blog post
   const customKeywords = `${category?.name?.toLowerCase() || 'digital services'} Madurai, 
@@ -162,6 +203,20 @@ const BlogPost = () => {
     GodivaTech Madurai, IT company Tamil Nadu, 
     web development Madurai, digital marketing Madurai, app development Madurai`;
 
+  // Determine if we should show AMP version for mobile users
+  const showAmpVersion = isMobile && window.location.search.includes('amp=1');
+  
+  // If we're on mobile and the ?amp=1 parameter is present, show AMP version
+  if (showAmpVersion) {
+    return (
+      <AmpBlogPost
+        post={post}
+        category={category}
+        canonicalUrl={`https://godivatech.com/blog/${post.slug}`}
+      />
+    );
+  }
+  
   return (
     <>
       <SEO
@@ -176,7 +231,12 @@ const BlogPost = () => {
         modifiedTime={new Date(post.publishedAt).toISOString()}
         author={post.authorName}
         section={category?.name || 'Digital Services'}
-      />
+      >
+        {/* Add AMP link for mobile users */}
+        {isMobile && (
+          <link rel="amphtml" href={`/blog/${post.slug}?amp=1`} />
+        )}
+      </SEO>
 
       <section className="bg-white pt-20 pb-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -207,14 +267,13 @@ const BlogPost = () => {
               </p>
               
               <div className="flex items-center">
-                <img 
+                <OptimizedImage 
                   src={post.authorImage || '/assets/placeholder-author.png'} 
                   alt={post.authorName} 
                   className="w-12 h-12 rounded-full mr-4"
-                  width="48"
-                  height="48"
-                  loading="eager"
-                  fetchPriority="high"
+                  width={48}
+                  height={48}
+                  priority={true}
                 />
                 <div>
                   <p className="font-semibold text-neutral-800">{post.authorName}</p>
@@ -225,16 +284,15 @@ const BlogPost = () => {
             
             <div className="mb-10">
               <figure>
-                <img 
+                <OptimizedImage 
                   src={post.coverImage || '/assets/blog-default.jpg'} 
                   alt={`${post.title} - GodivaTech Madurai - ${category?.name || 'Blog'}`} 
                   className="w-full h-auto rounded-lg shadow-lg"
-                  loading="eager"
-                  fetchPriority="high"
-                  width="800"
-                  height="450"
-                  decoding="async"
-                  style={{aspectRatio: "16/9", objectFit: "cover"}}
+                  width={800}
+                  height={450}
+                  priority={true}
+                  mobileSizes="100vw"
+                  quality={90}
                 />
                 <figcaption className="text-center text-neutral-500 text-sm mt-2">
                   {post.title} | GodivaTech Madurai
