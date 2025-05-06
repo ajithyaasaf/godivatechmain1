@@ -240,3 +240,25 @@ export const getBreadcrumbData = (
     item: item.item
   }))
 });
+
+// CollectionPage structured data for portfolio or product collections
+export const getCollectionPageData = (
+  name: string,
+  items: {name: string, description: string, image?: string}[]
+) => ({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: name,
+  description: `Collection of ${items.length} projects by GodivaTech, the best web development company in Madurai`,
+  numberOfItems: items.length,
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    item: {
+      '@type': 'CreativeWork',
+      name: item.name,
+      description: item.description,
+      ...(item.image && { image: item.image })
+    }
+  }))
+});

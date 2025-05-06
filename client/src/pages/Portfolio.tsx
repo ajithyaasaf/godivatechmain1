@@ -4,6 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
+import SEO from "@/components/SEO";
+import { portfolioKeywords } from "@/lib/seoKeywords";
+import { 
+  getOrganizationData, 
+  getWebPageData,
+  getBreadcrumbData,
+  getCollectionPageData
+} from "@/lib/structuredData";
 
 interface Project {
   id: number;
@@ -225,8 +233,37 @@ const Portfolio = () => {
     }
   ];
 
+  // SEO structured data array for rich snippets
+  const structuredData = [
+    getOrganizationData(),
+    getWebPageData(
+      "Successful Project Portfolio | Best Web Development in Madurai - GodivaTech",
+      "Explore GodivaTech's portfolio of successful web development, app development, and digital marketing projects. See how we've helped businesses in Madurai achieve digital excellence.",
+      "https://godivatech.com/portfolio"
+    ),
+    getBreadcrumbData([
+      { name: "Home", item: "https://godivatech.com/" },
+      { name: "Portfolio", item: "https://godivatech.com/portfolio" }
+    ]),
+    getCollectionPageData(
+      "Project Portfolio",
+      displayProjects.map(project => ({
+        name: project.title,
+        description: project.description,
+        image: project.image
+      }))
+    )
+  ];
+
   return (
     <PageTransition>
+      <SEO
+        title="Successful Project Portfolio | Best Web Development in Madurai - GodivaTech"
+        description="Explore GodivaTech's portfolio of successful web development, app development, and digital marketing projects. See how we've helped businesses in Madurai achieve digital excellence."
+        keywords={portfolioKeywords}
+        canonicalUrl="/portfolio"
+        structuredData={structuredData}
+      />
       <div className="relative">
         {/* Hero section */}
         <TransitionItem>

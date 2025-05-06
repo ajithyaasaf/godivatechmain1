@@ -1,10 +1,17 @@
 import React from "react";
-import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import { AtSign, Phone, MapPin, Clock, ArrowRight } from "lucide-react";
 import ContactSection from "@/components/home/ContactSection";
 import MapSection from "@/components/home/MapSection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
+import SEO from "@/components/SEO";
+import { contactKeywords } from "@/lib/seoKeywords";
+import { 
+  getOrganizationData, 
+  getWebPageData,
+  getLocalBusinessData,
+  getBreadcrumbData 
+} from "@/lib/structuredData";
 
 const Contact = () => {
   // Contact info items
@@ -35,16 +42,30 @@ const Contact = () => {
     }
   ];
   
+  // SEO structured data for rich snippets
+  const structuredData = [
+    getOrganizationData(),
+    getLocalBusinessData(),
+    getWebPageData(
+      "Contact Best Web Development Company in Madurai | GodivaTech",
+      "Contact GodivaTech for affordable web development, app development, and digital marketing services in Madurai. Get in touch for a free consultation and quote.",
+      "https://godivatech.com/contact"
+    ),
+    getBreadcrumbData([
+      { name: "Home", item: "https://godivatech.com/" },
+      { name: "Contact Us", item: "https://godivatech.com/contact" }
+    ])
+  ];
+
   return (
     <>
-      <Helmet>
-        <title>Contact Us | GodivaTech</title>
-        <meta 
-          name="description" 
-          content="Contact GodivaTech to discuss your technology needs. Our team of experts is ready to help you transform your business with innovative software solutions, IT consulting, and cloud services." 
-        />
-        <meta name="keywords" content="contact GodivaTech, technology consulting, IT support, software development services" />
-      </Helmet>
+      <SEO
+        title="Contact Best Web Development Company in Madurai | GodivaTech"
+        description="Contact GodivaTech for affordable web development, mobile app development, and digital marketing services in Madurai. Get in touch for a custom quote and consultation for your business needs."
+        keywords={contactKeywords}
+        canonicalUrl="/contact"
+        structuredData={structuredData}
+      />
 
       <PageTransition>
         <div className="relative">

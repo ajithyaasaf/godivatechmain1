@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import BlogCard from "@/components/blog/BlogCard";
@@ -7,6 +6,14 @@ import CategoryFilter from "@/components/blog/CategoryFilter";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import { Button } from "@/components/ui/button";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
+import SEO from "@/components/SEO";
+import { blogKeywords } from "@/lib/seoKeywords";
+import { 
+  getOrganizationData, 
+  getWebPageData,
+  getBreadcrumbData,
+  getBlogPostData 
+} from "@/lib/structuredData";
 import type { BlogPost, Category } from "@shared/schema";
 import { getAllBlogPosts, getAllCategories, getBlogPostsByCategoryId, searchBlogPosts } from "@/lib/firestore";
 
