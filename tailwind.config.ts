@@ -109,6 +109,10 @@ export default {
           "0%": { transform: "translateX(20px)", opacity: "0" },
           "100%": { transform: "translateX(0)", opacity: "1" }
         },
+        "slide-pattern": {
+          "0%": { backgroundPosition: "0% 0%" },
+          "100%": { backgroundPosition: "100% 100%" }
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -119,6 +123,7 @@ export default {
         "gleam": "gleam 10s ease-in-out infinite",
         "fade-in": "fade-in 0.5s ease-out",
         "slide-in": "slide-in 0.5s ease-out",
+        "slide-pattern": "slide-pattern 20s ease-in-out infinite alternate",
       },
     },
   },
