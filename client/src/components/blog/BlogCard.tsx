@@ -1,17 +1,27 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { Link } from "wouter";
 import { formatDistanceToNow, format } from "date-fns";
 import type { ExtendedBlogPost } from "@shared/schema";
 
-const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
-  const formattedDate = formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true });
-  const formattedISODate = new Date(post.publishedAt).toISOString();
-  const humanReadableDate = format(new Date(post.publishedAt), 'MMMM dd, yyyy');
+// Optimize BlogCard with memoization
+const BlogCard = memo(({ post, index = 0 }: { post: ExtendedBlogPost; index?: number }) => {
+  // Calculate formatted dates once using useMemo to avoid recalculation on re-renders
+  const dateValues = useMemo(() => {
+    const postDate = new Date(post.publishedAt);
+    return {
+      formattedDate: formatDistanceToNow(postDate, { addSuffix: true }),
+      formattedISODate: postDate.toISOString(),
+      humanReadableDate: format(postDate, 'MMMM dd, yyyy')
+    };
+  }, [post.publishedAt]);
   
-  const categoryName = post.category?.name || "Uncategorized";
+  // Memoize category name
+  const categoryName = useMemo(() => 
+    post.category?.name || "Uncategorized"
+  , [post.category?.name]);
   
   // Generate structured data for SEO
-  const structuredData = {
+  const structuredData = useMemo(() => ({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.title,
@@ -26,29 +36,41 @@ const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
       "name": "GodivaTech",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://godivatech.com/logo.png" // Update with actual logo URL
+        "url": "https://godivatech.com/logo.png" 
       }
     },
-    "datePublished": formattedISODate,
+    "datePublished": dateValues.formattedISODate,
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": `https://godivatech.com/blog/${post.slug}`
     }
-  };
+  }), [post.title, post.excerpt, post.coverImage, post.authorName, post.slug, dateValues.formattedISODate]);
+
+  // Calculate staggered animation delay
+  const animationDelay = useMemo(() => 
+    Math.min(index * 0.1, 0.3)
+  , [index]);
 
   return (
-    <article className="bg-white border border-neutral-200 rounded-lg overflow-hidden shadow hover:shadow-md transition-shadow duration-300">
+    <article 
+      className="bg-white border border-neutral-200 rounded-lg overflow-hidden shadow hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group"
+      style={{ 
+        willChange: "transform, box-shadow",
+        animationDelay: `${animationDelay}s` 
+      }}
+    >
       {/* Add structured data for SEO */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       
       <Link href={`/blog/${post.slug}`}>
-        <div className="w-full h-48 overflow-hidden bg-neutral-100">
+        <div className="w-full h-48 overflow-hidden bg-neutral-100 relative">
           {post.coverImage ? (
             <img
               src={post.coverImage}
               alt={post.title}
-              className="w-full h-full object-cover object-center"
-              loading="lazy" // Add lazy loading for better performance
+              className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+              loading="lazy" 
+              decoding="async"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-neutral-400">
@@ -59,6 +81,8 @@ const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
               </svg>
             </div>
           )}
+          {/* Static semi-transparent gradient overlay instead of animation */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
       </Link>
       <div className="p-6">
@@ -69,19 +93,19 @@ const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
             </span>
           </Link>
           <time 
-            dateTime={formattedISODate} 
+            dateTime={dateValues.formattedISODate} 
             className="text-neutral-500 text-sm ml-auto"
-            title={humanReadableDate}
+            title={dateValues.humanReadableDate}
           >
-            {formattedDate}
+            {dateValues.formattedDate}
           </time>
         </div>
-        <Link href={`/blog/${post.slug}`} className="block mb-3">
-          <h3 className="text-xl font-semibold text-neutral-800 hover:text-primary transition duration-150">
+        <Link href={`/blog/${post.slug}`} className="block mb-3 group">
+          <h3 className="text-xl font-semibold text-neutral-800 group-hover:text-primary transition duration-150">
             {post.title}
           </h3>
         </Link>
-        <p className="text-neutral-600 mb-4">{post.excerpt}</p>
+        <p className="text-neutral-600 mb-4 line-clamp-3 group-hover:line-clamp-none transition-all duration-300">{post.excerpt}</p>
         <div className="flex items-center">
           <div className="w-8 h-8 rounded-full overflow-hidden mr-3 bg-neutral-200">
             {post.authorImage ? (
@@ -90,6 +114,7 @@ const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
                 alt={`${post.authorName} - Author at GodivaTech`}
                 className="w-full h-full object-cover object-center"
                 loading="lazy"
+                decoding="async"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-neutral-500">
@@ -102,6 +127,9 @@ const BlogCard = ({ post }: { post: ExtendedBlogPost }) => {
       </div>
     </article>
   );
-};
+});
+
+// Add displayName for React DevTools
+BlogCard.displayName = "BlogCard";
 
 export default BlogCard;
