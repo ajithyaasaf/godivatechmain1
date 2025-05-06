@@ -15,10 +15,14 @@ import {
 } from "@shared/schema";
 import { setupAuth, isAuthenticated } from "./auth";
 import { uploadImage, deleteImage } from "./cloudinary";
+import { setupSitemap } from "./sitemap";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
+  
+  // Set up XML sitemap
+  setupSitemap(app);
   
   // Image Upload API
   app.post("/api/upload", isAuthenticated, async (req, res) => {
