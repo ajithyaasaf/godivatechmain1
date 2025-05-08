@@ -1,20 +1,18 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server/vercel-simplified.js",
-      "use": "@vercel/node"
+  "buildCommand": "npm run build",
+  "outputDirectory": "client/dist",
+  "functions": {
+    "api/**": {
+      "memory": 1024
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "server/vercel-simplified.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "server/vercel-simplified.js"
-    }
+  },
+  "api": {
+    "runtime": "nodejs18.x"
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/(.*)", "destination": "/" }
   ],
   "env": {
     "NODE_ENV": "production"

@@ -1,0 +1,229 @@
+[19:09:22.852] Running build in Washington, D.C., USA (East) – iad1
+[19:09:22.870] Cloning github.com/ajithyaasaf/godivatechmain1 (Branch: main, Commit: 724a2e0)
+[19:09:23.487] Cloning completed: 617.000ms
+[19:09:25.773] Restored build cache from previous deployment (DjMywoac7XV5cQ1XmgzJCHUd9nKV)
+[19:09:26.682] Running "vercel build"
+[19:09:27.097] Vercel CLI 41.7.3
+[19:09:27.215] WARN! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+[19:09:27.689] Installing dependencies...
+[19:09:29.461] 
+[19:09:29.461] up to date in 1s
+[19:09:29.461] 
+[19:09:29.462] 76 packages are looking for funding
+[19:09:29.462]   run `npm fund` for details
+[19:09:29.726] Using TypeScript 5.6.3 (local user-provided)
+[19:09:38.160] server/routes.ts(709,60): error TS2345: Argument of type '{}' is not assignable to parameter of type 'string | number'.
+[19:09:38.161] server/routes.ts(881,13): error TS2322: Type '{}' is not assignable to type 'string'.
+[19:09:38.161] 
+[19:09:38.778] server/storage.ts(20,8): error TS2300: Duplicate identifier 'session'.
+[19:09:38.778] server/storage.ts(87,25): error TS2694: Namespace 'session' has no exported member 'SessionStore'.
+[19:09:38.779] server/storage.ts(90,14): error TS2420: Class 'MemStorage' incorrectly implements interface 'IStorage'.
+[19:09:38.779]   Type 'MemStorage' is missing the following properties from type 'IStorage': updateBlogPost, deleteBlogPost, updateCategory, deleteCategory, and 11 more.
+[19:09:38.779] server/storage.ts(147,35): error TS2345: Argument of type '{ id: number; title: string; slug: string; excerpt: string; content: string; publishedAt: string; coverImage: string; authorName: string; authorImage: string; categoryId: number; }' is not assignable to parameter of type '{ slug: string; id: number; title: string; excerpt: string; content: string; published: boolean; authorName: string; authorImage: string | null; coverImage: string | null; publishedAt: Date; categoryId: number | null; }'.
+[19:09:38.779]   Property 'published' is missing in type '{ id: number; title: string; slug: string; excerpt: string; content: string; publishedAt: string; coverImage: string; authorName: string; authorImage: string; categoryId: number; }' but required in type '{ slug: string; id: number; title: string; excerpt: string; content: string; published: boolean; authorName: string; authorImage: string | null; coverImage: string | null; publishedAt: Date; categoryId: number | null; }'.
+[19:09:38.782] server/storage.ts(171,37): error TS2345: Argument of type '{ id: number; title: string; description: string; image: string; category: string; technologies: string[]; }' is not assignable to parameter of type '{ id: number; title: string; link: string | null; description: string; fullDescription: string | null; image: string | null; gallery: string[] | null; category: string; technologies: string[]; ... 8 more ...; order: number | null; }'.
+[19:09:38.783]   Type '{ id: number; title: string; description: string; image: string; category: string; technologies: string[]; }' is missing the following properties from type '{ id: number; title: string; link: string | null; description: string; fullDescription: string | null; image: string | null; gallery: string[] | null; category: string; technologies: string[]; ... 8 more ...; order: number | null; }': link, fullDescription, gallery, githubLink, and 8 more.
+[19:09:38.785] server/storage.ts(223,11): error TS2322: Type '{ id: number; slug: string; title: string; excerpt: string; content: string; authorName: string; published?: boolean | undefined; authorImage?: string | null | undefined; coverImage?: string | null | undefined; publishedAt?: Date | undefined; categoryId?: number | ... 1 more ... | undefined; }' is not assignable to type '{ slug: string; id: number; title: string; excerpt: string; content: string; published: boolean; authorName: string; authorImage: string | null; coverImage: string | null; publishedAt: Date; categoryId: number | null; }'.
+[19:09:38.788]   Types of property 'published' are incompatible.
+[19:09:38.788]     Type 'boolean | undefined' is not assignable to type 'boolean'.
+[19:09:38.789]       Type 'undefined' is not assignable to type 'boolean'.
+[19:09:38.789] server/storage.ts(261,11): error TS2322: Type '{ id: number; title: string; description: string; category: string; technologies: string[]; link?: string | null | undefined; fullDescription?: string | null | undefined; image?: string | null | undefined; ... 9 more ...; order?: number | ... 1 more ... | undefined; }' is not assignable to type '{ id: number; title: string; link: string | null; description: string; fullDescription: string | null; image: string | null; gallery: string[] | null; category: string; technologies: string[]; ... 8 more ...; order: number | null; }'.
+[19:09:38.790]   Types of property 'link' are incompatible.
+[19:09:38.790]     Type 'string | null | undefined' is not assignable to type 'string | null'.
+[19:09:38.790]       Type 'undefined' is not assignable to type 'string | null'.
+[19:09:38.791] server/storage.ts(299,11): error TS2322: Type '{ id: number; name: string; position: string; bio: string; image?: string | null | undefined; linkedIn?: string | null | undefined; twitter?: string | null | undefined; }' is not assignable to type '{ id: number; name: string; image: string | null; position: string; bio: string; linkedIn: string | null; twitter: string | null; }'.
+[19:09:38.791]   Types of property 'image' are incompatible.
+[19:09:38.791]     Type 'string | null | undefined' is not assignable to type 'string | null'.
+[19:09:38.791]       Type 'undefined' is not assignable to type 'string | null'.
+[19:09:38.791] server/storage.ts(315,11): error TS2322: Type '{ id: number; content: string; name: string; position: string; company: string; image?: string | null | undefined; }' is not assignable to type '{ id: number; content: string; name: string; image: string | null; position: string; company: string; }'.
+[19:09:38.792]   Types of property 'image' are incompatible.
+[19:09:38.792]     Type 'string | null | undefined' is not assignable to type 'string | null'.
+[19:09:38.792]       Type 'undefined' is not assignable to type 'string | null'.
+[19:09:38.792] server/storage.ts(332,11): error TS2322: Type '{ id: number; createdAt: Date; name: string; email: string; subject: string; message: string; phone?: string | null | undefined; }' is not assignable to type '{ id: number; name: string; email: string; phone: string | null; subject: string; message: string; createdAt: Date; }'.
+[19:09:38.792]   Types of property 'phone' are incompatible.
+[19:09:38.792]     Type 'string | null | undefined' is not assignable to type 'string | null'.
+[19:09:38.793]       Type 'undefined' is not assignable to type 'string | null'.
+[19:09:38.793] server/storage.ts(362,22): error TS2339: Property 'updateBlogPost' does not exist on type 'MemStorage'.
+[19:09:38.793] server/storage.ts(363,29): error TS2341: Property 'blogPosts' is private and only accessible within class 'MemStorage'.
+[19:09:38.793] server/storage.ts(368,8): error TS2341: Property 'blogPosts' is private and only accessible within class 'MemStorage'.
+[19:09:38.793] server/storage.ts(372,22): error TS2551: Property 'deleteBlogPost' does not exist on type 'MemStorage'. Did you mean 'getBlogPost'?
+[19:09:38.793] server/storage.ts(373,15): error TS2341: Property 'blogPosts' is private and only accessible within class 'MemStorage'.
+[19:09:38.794] server/storage.ts(376,22): error TS2339: Property 'updateCategory' does not exist on type 'MemStorage'.
+[19:09:38.794] server/storage.ts(377,33): error TS2341: Property 'categories' is private and only accessible within class 'MemStorage'.
+[19:09:38.794] server/storage.ts(382,8): error TS2341: Property 'categories' is private and only accessible within class 'MemStorage'.
+[19:09:38.794] server/storage.ts(386,22): error TS2551: Property 'deleteCategory' does not exist on type 'MemStorage'. Did you mean 'getCategory'?
+[19:09:38.794] server/storage.ts(387,15): error TS2341: Property 'categories' is private and only accessible within class 'MemStorage'.
+[19:09:38.795] server/storage.ts(390,22): error TS2339: Property 'updateProject' does not exist on type 'MemStorage'.
+[19:09:38.795] server/storage.ts(400,32): error TS2341: Property 'projects' is private and only accessible within class 'MemStorage'.
+[19:09:38.795] server/storage.ts(400,45): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'number'.
+[19:09:38.795]   Type 'string' is not assignable to type 'number'.
+[19:09:38.795] server/storage.ts(406,36): error TS2341: Property 'projects' is private and only accessible within class 'MemStorage'.
+[19:09:38.799] server/storage.ts(406,49): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+[19:09:38.800] server/storage.ts(409,14): error TS2341: Property 'projects' is private and only accessible within class 'MemStorage'.
+[19:09:38.801] server/storage.ts(409,27): error TS2345: Argument of type 'string' is not assignable to parameter of type 'number'.
+[19:09:38.801] server/storage.ts(417,8): error TS2341: Property 'projects' is private and only accessible within class 'MemStorage'.
+[19:09:38.801] server/storage.ts(417,21): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'number'.
+[19:09:38.801]   Type 'string' is not assignable to type 'number'.
+[19:09:38.801] server/storage.ts(421,22): error TS2551: Property 'deleteProject' does not exist on type 'MemStorage'. Did you mean 'getProject'?
+[19:09:38.807] server/storage.ts(424,17): error TS2341: Property 'projects' is private and only accessible within class 'MemStorage'.
+[19:09:38.811] server/storage.ts(427,15): error TS2341: Property 'projects' is private and only accessible within class 'MemStorage'.
+[19:09:38.811] server/storage.ts(427,31): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'number'.
+[19:09:38.811]   Type 'string' is not assignable to type 'number'.
+[19:09:38.813] server/storage.ts(430,22): error TS2339: Property 'updateService' does not exist on type 'MemStorage'.
+[19:09:38.813] server/storage.ts(431,32): error TS2341: Property 'services' is private and only accessible within class 'MemStorage'.
+[19:09:38.813] server/storage.ts(436,8): error TS2341: Property 'services' is private and only accessible within class 'MemStorage'.
+[19:09:38.813] server/storage.ts(440,22): error TS2551: Property 'deleteService' does not exist on type 'MemStorage'. Did you mean 'getService'?
+[19:09:38.813] server/storage.ts(441,15): error TS2341: Property 'services' is private and only accessible within class 'MemStorage'.
+[19:09:38.814] server/storage.ts(444,22): error TS2551: Property 'updateTeamMember' does not exist on type 'MemStorage'. Did you mean 'createTeamMember'?
+[19:09:38.814] server/storage.ts(445,31): error TS2341: Property 'teamMembers' is private and only accessible within class 'MemStorage'.
+[19:09:38.814] server/storage.ts(450,8): error TS2341: Property 'teamMembers' is private and only accessible within class 'MemStorage'.
+[19:09:38.814] server/storage.ts(454,22): error TS2551: Property 'deleteTeamMember' does not exist on type 'MemStorage'. Did you mean 'getTeamMember'?
+[19:09:38.814] server/storage.ts(455,15): error TS2341: Property 'teamMembers' is private and only accessible within class 'MemStorage'.
+[19:09:38.814] server/storage.ts(458,22): error TS2551: Property 'updateTestimonial' does not exist on type 'MemStorage'. Did you mean 'createTestimonial'?
+[19:09:38.815] server/storage.ts(459,36): error TS2341: Property 'testimonials' is private and only accessible within class 'MemStorage'.
+[19:09:38.815] server/storage.ts(464,8): error TS2341: Property 'testimonials' is private and only accessible within class 'MemStorage'.
+[19:09:38.815] server/storage.ts(468,22): error TS2551: Property 'deleteTestimonial' does not exist on type 'MemStorage'. Did you mean 'getTestimonial'?
+[19:09:38.815] server/storage.ts(469,15): error TS2341: Property 'testimonials' is private and only accessible within class 'MemStorage'.
+[19:09:38.816] server/storage.ts(472,22): error TS2551: Property 'deleteContactMessage' does not exist on type 'MemStorage'. Did you mean 'getContactMessage'?
+[19:09:38.823] server/storage.ts(473,15): error TS2341: Property 'contactMessages' is private and only accessible within class 'MemStorage'.
+[19:09:38.823] server/storage.ts(476,22): error TS2551: Property 'deleteSubscriber' does not exist on type 'MemStorage'. Did you mean 'getSubscriber'?
+[19:09:38.823] server/storage.ts(477,15): error TS2341: Property 'subscribers' is private and only accessible within class 'MemStorage'.
+[19:09:38.824] server/storage.ts(499,8): error TS2300: Duplicate identifier 'session'.
+[19:09:38.824] server/storage.ts(502,25): error TS2694: Namespace 'session' has no exported member 'SessionStore'.
+[19:09:38.831] server/storage.ts(514,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.831] server/storage.ts(514,43): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.831] server/storage.ts(514,56): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.832] server/storage.ts(519,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.832] server/storage.ts(519,43): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.832] server/storage.ts(519,56): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.839] server/storage.ts(524,36): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.839] server/storage.ts(524,50): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.839] server/storage.ts(525,5): error TS2739: Type '{}' is missing the following properties from type '{ id: number; username: string; password: string; }': id, username, password
+[19:09:38.840] server/storage.ts(530,5): error TS2740: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' is missing the following properties from type '{ slug: string; id: number; title: string; excerpt: string; content: string; published: boolean; authorName: string; authorImage: string | null; coverImage: string | null; publishedAt: Date; categoryId: number | null; }[]': length, pop, push, concat, and 34 more.
+[19:09:38.841] server/storage.ts(530,35): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.842] server/storage.ts(530,54): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.842] server/storage.ts(534,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.842] server/storage.ts(534,43): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.842] server/storage.ts(534,60): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.842] server/storage.ts(539,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.843] server/storage.ts(539,43): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.843] server/storage.ts(539,60): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.843] server/storage.ts(544,36): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.843] server/storage.ts(544,54): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.843] server/storage.ts(545,5): error TS2740: Type '{}' is missing the following properties from type '{ slug: string; id: number; title: string; excerpt: string; content: string; published: boolean; authorName: string; authorImage: string | null; coverImage: string | null; publishedAt: Date; categoryId: number | null; }': slug, id, title, excerpt, and 7 more.
+[19:09:38.843] server/storage.ts(549,32): error TS2339: Property 'update' does not exist on type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }'.
+[19:09:38.844] server/storage.ts(557,21): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.844] server/storage.ts(557,38): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.844] server/storage.ts(563,5): error TS2740: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' is missing the following properties from type '{ slug: string; id: number; name: string; }[]': length, pop, push, concat, and 34 more.
+[19:09:38.844] server/storage.ts(563,35): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.844] server/storage.ts(567,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.845] server/storage.ts(567,47): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.845] server/storage.ts(567,65): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.845] server/storage.ts(572,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.845] server/storage.ts(572,47): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.845] server/storage.ts(572,65): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.845] server/storage.ts(577,40): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.846] server/storage.ts(577,59): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.846] server/storage.ts(578,5): error TS2739: Type '{}' is missing the following properties from type '{ slug: string; id: number; name: string; }': slug, id, name
+[19:09:38.846] server/storage.ts(582,32): error TS2339: Property 'update' does not exist on type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }'.
+[19:09:38.846] server/storage.ts(590,21): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.846] server/storage.ts(590,39): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.847] server/storage.ts(596,5): error TS2740: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' is missing the following properties from type '{ id: number; title: string; link: string | null; description: string; fullDescription: string | null; image: string | null; gallery: string[] | null; category: string; technologies: string[]; ... 8 more ...; order: number | null; }[]': length, pop, push, concat, and 34 more.
+[19:09:38.848] server/storage.ts(596,35): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.848] server/storage.ts(600,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.849] server/storage.ts(600,46): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.854] server/storage.ts(600,62): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.855] server/storage.ts(605,39): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.855] server/storage.ts(605,56): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.855] server/storage.ts(606,5): error TS2740: Type '{}' is missing the following properties from type '{ id: number; title: string; link: string | null; description: string; fullDescription: string | null; image: string | null; gallery: string[] | null; category: string; technologies: string[]; ... 8 more ...; order: number | null; }': id, title, link, description, and 14 more.
+[19:09:38.855] server/storage.ts(616,38): error TS2339: Property 'update' does not exist on type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }'.
+[19:09:38.855] server/storage.ts(633,34): error TS2339: Property 'update' does not exist on type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }'.
+[19:09:38.856] server/storage.ts(650,23): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.856] server/storage.ts(650,39): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.856] server/storage.ts(660,5): error TS2740: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' is missing the following properties from type '{ slug: string; id: number; title: string; description: string; icon: string; }[]': length, pop, push, concat, and 34 more.
+[19:09:38.856] server/storage.ts(660,35): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.856] server/storage.ts(664,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.856] server/storage.ts(664,46): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.856] server/storage.ts(664,62): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.857] server/storage.ts(669,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.857] server/storage.ts(669,46): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.857] server/storage.ts(669,62): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.857] server/storage.ts(674,39): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.857] server/storage.ts(674,56): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.857] server/storage.ts(675,5): error TS2739: Type '{}' is missing the following properties from type '{ slug: string; id: number; title: string; description: string; icon: string; }': slug, id, title, description, icon
+[19:09:38.857] server/storage.ts(679,32): error TS2339: Property 'update' does not exist on type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }'.
+[19:09:38.858] server/storage.ts(687,21): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.858] server/storage.ts(687,37): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.858] server/storage.ts(693,5): error TS2740: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' is missing the following properties from type '{ id: number; name: string; image: string | null; position: string; bio: string; linkedIn: string | null; twitter: string | null; }[]': length, pop, push, concat, and 34 more.
+[19:09:38.858] server/storage.ts(693,35): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.858] server/storage.ts(697,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.858] server/storage.ts(697,45): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.858] server/storage.ts(697,64): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.859] server/storage.ts(702,38): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.863] server/storage.ts(702,58): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.863] server/storage.ts(703,5): error TS2740: Type '{}' is missing the following properties from type '{ id: number; name: string; image: string | null; position: string; bio: string; linkedIn: string | null; twitter: string | null; }': id, name, image, position, and 3 more.
+[19:09:38.863] server/storage.ts(707,32): error TS2339: Property 'update' does not exist on type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }'.
+[19:09:38.867] server/storage.ts(715,21): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.867] server/storage.ts(715,40): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.867] server/storage.ts(721,5): error TS2740: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' is missing the following properties from type '{ id: number; content: string; name: string; image: string | null; position: string; company: string; }[]': length, pop, push, concat, and 34 more.
+[19:09:38.867] server/storage.ts(721,35): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.871] server/storage.ts(725,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.875] server/storage.ts(725,50): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(725,70): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(730,43): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(730,64): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(731,5): error TS2740: Type '{}' is missing the following properties from type '{ id: number; content: string; name: string; image: string | null; position: string; company: string; }': id, content, name, image, and 2 more.
+[19:09:38.875] server/storage.ts(735,32): error TS2339: Property 'update' does not exist on type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }'.
+[19:09:38.875] server/storage.ts(743,21): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(743,41): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(749,5): error TS2740: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' is missing the following properties from type '{ id: number; name: string; email: string; phone: string | null; subject: string; message: string; createdAt: Date; }[]': length, pop, push, concat, and 34 more.
+[19:09:38.875] server/storage.ts(749,35): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(749,60): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(753,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.875] server/storage.ts(753,46): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(753,69): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(758,39): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(758,63): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(759,5): error TS2740: Type '{}' is missing the following properties from type '{ id: number; name: string; email: string; phone: string | null; subject: string; message: string; createdAt: Date; }': id, name, email, phone, and 3 more.
+[19:09:38.875] server/storage.ts(763,21): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(763,44): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.875] server/storage.ts(769,5): error TS2740: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' is missing the following properties from type '{ id: number; email: string; createdAt: Date; }[]': length, pop, push, concat, and 34 more.
+[19:09:38.875] server/storage.ts(769,35): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(769,56): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(773,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.876] server/storage.ts(773,49): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(773,68): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(778,11): error TS2488: Type '{ select: () => ...; from: () => ...; where: () => ...; orderBy: () => ...; insert: () => ...; values: () => ...; returning: () => {}[]; delete: () => ...; }' must have a '[Symbol.iterator]()' method that returns an iterator.
+[19:09:38.876] server/storage.ts(778,49): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(778,68): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(783,42): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(783,62): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(784,5): error TS2739: Type '{}' is missing the following properties from type '{ id: number; email: string; createdAt: Date; }': id, email, createdAt
+[19:09:38.876] server/storage.ts(788,21): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.876] server/storage.ts(788,40): error TS2554: Expected 0 arguments, but got 1.
+[19:09:38.877] 
+[19:09:39.099] server/firestore-storage.ts(482,32): error TS2352: Conversion of type '{ id: string; docId: string; firebaseId: string; link: string | null; image: string | null; gallery: string[] | null; fullDescription: string | null; clientName: string | null; completionDate: string | null; ... 12 more ...; technologies: string[]; }' to type '{ id: number; title: string; link: string | null; description: string; fullDescription: string | null; image: string | null; gallery: string[] | null; category: string; technologies: string[]; ... 8 more ...; order: number | null; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+[19:09:39.107]   Types of property 'id' are incompatible.
+[19:09:39.107]     Type 'string' is not comparable to type 'number'.
+[19:09:39.107] server/firestore-storage.ts(546,58): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(547,58): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(559,80): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(565,27): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(566,32): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(647,63): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(648,78): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(652,57): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(659,60): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] server/firestore-storage.ts(662,90): error TS2339: Property 'id' does not exist on type 'never'.
+[19:09:39.107] 
+[19:09:39.230] server/vite.ts(39,5): error TS2322: Type '{ middlewareMode: boolean; hmr: { server: Server<typeof IncomingMessage, typeof ServerResponse>; }; allowedHosts: boolean; }' is not assignable to type 'ServerOptions'.
+[19:09:39.230]   Types of property 'allowedHosts' are incompatible.
+[19:09:39.230]     Type 'boolean' is not assignable to type 'true | string[] | undefined'.
+[19:09:39.230] 
+[19:10:16.202] Build Completed in /vercel/output [49s]
+[19:10:16.552] Deploying outputs...
+[19:10:23.760] 
+[19:10:24.076] Deployment completed
+[19:10:43.103] Uploading build cache [113.65 MB]...
+[19:10:44.766] Build cache uploaded: 1.667s
+[19:10:46.996] Exiting build container
