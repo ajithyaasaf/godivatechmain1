@@ -1,10 +1,10 @@
+// Load environment variables from .env file first
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import dotenv from 'dotenv';
-
-// Load environment variables from .env file
-dotenv.config();
 
 const app = express();
 // Increase JSON body limit to 10MB for image uploads

@@ -1,32 +1,63 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { log } from './vite';
 
-// Trim any potential whitespace from environment variables
-const cloudName = process.env.CLOUDINARY_CLOUD_NAME?.trim();
-const apiKey = process.env.CLOUDINARY_API_KEY?.trim();
-const apiSecret = process.env.CLOUDINARY_API_SECRET?.trim();
+// Directly define the cloudinary credentials
+const CLOUDINARY_CLOUD_NAME = 'doeodacsg';
+const CLOUDINARY_API_KEY = '269267633995791';
+const CLOUDINARY_API_SECRET = 'wUw9Seu6drQEIbQ1tAvYeVyqHdU';
 
-// Configure Cloudinary with environment variables
-console.log('Cloudinary Config:', {
-  cloud_name: cloudName,
-  api_key: apiKey ? 'Exists (not shown)' : 'Missing',
-  api_secret: apiSecret ? 'Exists (not shown)' : 'Missing'
-});
+// Function to get cloudinary credentials - using hardcoded values for now to debug
+const getCloudinaryConfig = () => {
+  return {
+    cloudName: CLOUDINARY_CLOUD_NAME,
+    apiKey: CLOUDINARY_API_KEY, 
+    apiSecret: CLOUDINARY_API_SECRET
+  };
+};
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: cloudName,
-  api_key: apiKey,
-  api_secret: apiSecret,
-  secure: true,
-});
+// Function to update Cloudinary configuration
+const configureCloudinary = () => {
+  const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
+
+  // Configure Cloudinary with environment variables
+  console.log('Cloudinary Config:', {
+    cloud_name: cloudName,
+    api_key: apiKey ? 'Exists (not shown)' : 'Missing',
+    api_secret: apiSecret ? 'Exists (not shown)' : 'Missing'
+  });
+
+  // Configure Cloudinary
+  cloudinary.config({
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret,
+    secure: true,
+  });
+
+  return { cloudName, apiKey, apiSecret };
+};
+
+// Initial configuration
+configureCloudinary();
 
 // Verify Cloudinary configuration is present
 const verifyCloudinaryConfig = () => {
+  // Get fresh credentials
+  const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
+  
   if (!cloudName || !apiKey || !apiSecret) {
     log('Missing Cloudinary environment variables', 'cloudinary');
     return false;
   }
+
+  // Update configuration with current credentials
+  cloudinary.config({
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret,
+    secure: true,
+  });
+  
   return true;
 };
 
@@ -35,14 +66,6 @@ export const uploadImage = async (file: string, folder = 'godivatech/portfolio')
   if (!verifyCloudinaryConfig()) {
     throw new Error('Cloudinary configuration is missing');
   }
-
-  // Re-apply configuration to ensure it's using the latest values
-  cloudinary.config({
-    cloud_name: cloudName,
-    api_key: apiKey,
-    api_secret: apiSecret,
-    secure: true,
-  });
 
   try {
     // For files that are already URLs (from the client)
@@ -59,7 +82,7 @@ export const uploadImage = async (file: string, folder = 'godivatech/portfolio')
         });
         console.log('Successfully uploaded to Cloudinary:', result.secure_url);
         return result.secure_url;
-      } catch (uploadError) {
+      } catch (uploadError: any) {
         console.error('Specific upload error:', uploadError.message);
         console.error('Error details:', uploadError);
         throw uploadError;
@@ -80,7 +103,7 @@ export const uploadImage = async (file: string, folder = 'godivatech/portfolio')
         });
         console.log('Successfully uploaded URL to Cloudinary:', result.secure_url);
         return result.secure_url;
-      } catch (uploadError) {
+      } catch (uploadError: any) {
         console.error('Specific URL upload error:', uploadError.message);
         console.error('Error details:', uploadError);
         throw uploadError;
@@ -101,14 +124,6 @@ export const deleteImage = async (imageUrl: string): Promise<boolean> => {
   if (!verifyCloudinaryConfig() || !imageUrl) {
     return false;
   }
-
-  // Re-apply configuration to ensure it's using the latest values
-  cloudinary.config({
-    cloud_name: cloudName,
-    api_key: apiKey,
-    api_secret: apiSecret,
-    secure: true,
-  });
 
   try {
     // Extract the public_id from the URL
