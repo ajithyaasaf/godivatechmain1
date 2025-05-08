@@ -2,22 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/vercel-handler.js",
+      "src": "server/vercel-simplified.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "server/vercel-handler.js"
-    },
-    {
-      "src": "/ws",
-      "dest": "server/vercel-handler.js"
+      "dest": "server/vercel-simplified.js"
     },
     {
       "src": "/(.*)",
-      "dest": "server/vercel-handler.js"
+      "dest": "server/vercel-simplified.js"
     }
   ],
   "env": {
