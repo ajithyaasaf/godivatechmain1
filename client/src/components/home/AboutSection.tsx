@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import founderImage from "../../assets/team/ceo.jpg";
+import workspaceImage from "../../assets/modern-workspace.jpeg";
 
 const AboutSection = () => {
   return (
@@ -11,13 +11,13 @@ const AboutSection = () => {
           <div className="w-full lg:w-1/2">
             <div className="relative">
               <img 
-                src={founderImage} 
-                alt="Ananth - Founder & CEO of GodivaTech" 
-                className="rounded-lg shadow-xl w-full object-cover" 
+                src={workspaceImage} 
+                alt="Modern Workspace at GodivaTech" 
+                className="rounded-lg shadow-xl w-full object-cover h-[400px]" 
               />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 rounded-b-lg">
-                <p className="text-white font-semibold text-lg">Ananth</p>
-                <p className="text-white/90 text-sm">Founder & CEO</p>
+                <p className="text-white font-semibold text-lg">Modern Workspace</p>
+                <p className="text-white/90 text-sm">GodivaTech Office</p>
               </div>
             </div>
           </div>
