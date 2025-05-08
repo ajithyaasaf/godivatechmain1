@@ -7,8 +7,8 @@ dotenv.config();
 
 console.log('=== Cloudinary Production Configuration Test ===');
 console.log('Cloud Name:', process.env.CLOUDINARY_CLOUD_NAME);
-console.log('API Key (first 4 chars):', process.env.CLOUDINARY_API_KEY?.substring(0, 4) + '...');
-console.log('API Secret (first 4 chars):', process.env.CLOUDINARY_API_SECRET?.substring(0, 4) + '...');
+console.log('API Key:', process.env.CLOUDINARY_API_KEY);
+console.log('API Secret:', process.env.CLOUDINARY_API_SECRET);
 
 // Configure Cloudinary with production credentials
 cloudinary.config({
