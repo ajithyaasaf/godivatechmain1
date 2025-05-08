@@ -1,9 +1,16 @@
 {
   "version": 2,
+  "name": "godivatech",
   "builds": [
     {
       "src": "server/vercel-handler.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "client/dist/**",
+          ".env.production"
+        ]
+      }
     }
   ],
   "routes": [

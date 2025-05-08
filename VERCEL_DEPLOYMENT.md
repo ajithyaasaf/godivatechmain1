@@ -9,25 +9,36 @@ This guide explains how to deploy the GodivaTech website to Vercel.
 - Firebase project (for authentication and database)
 - Cloudinary account (for image uploads)
 
-## Setup Steps
+## Setup Options
 
-### 1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+You have two options for deploying to Vercel:
 
-Make sure your latest code is pushed to a Git repository that Vercel can access.
+### Option 1: Deploy from Git repository (Recommended)
 
-### 2. Import your project in Vercel
+1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+2. Import your project in Vercel:
+   - Log in to your Vercel account
+   - Click "Add New" → "Project"
+   - Import your Git repository
+   - Use these project settings:
+     - Framework Preset: "Other"
+     - Build Command: `npm run build`
+     - Output Directory: `client/dist`
+     - Install Command: `npm install`
 
-1. Log in to your Vercel account
-2. Click "Add New" → "Project"
-3. Import your Git repository
-4. Configure the project settings:
-   - Set the Framework Preset to "Other"
-   - Set the Build Command to `npm run build`
-   - Set the Output Directory to `client/dist`
+### Option 2: Deploy with vercel-deploy-config.json
 
-### 3. Set Environment Variables
+For more control over the deployment configuration, you can use the provided `vercel-deploy-config.json` file:
 
-Add the following environment variables in the Vercel project settings:
+1. Rename `vercel-deploy-config.json` to `vercel.json`
+2. Deploy from CLI using:
+   ```
+   vercel
+   ```
+
+## Environment Variables
+
+Set these environment variables in the Vercel project settings:
 
 ```
 FIREBASE_API_KEY=your_firebase_api_key
@@ -47,32 +58,39 @@ VITE_API_URL=/api
 NODE_ENV=production
 ```
 
-### 4. Deploy
+## Serverless Compatibility
 
-Click "Deploy" and wait for the build to complete.
+This project has been specially configured for Vercel's serverless environment:
 
-## Post-Deployment
+- `server/vercel.js` - Serverless entry point
+- `server/vercel-websocket.js` - WebSocket implementation that adapts to serverless environment
+- Special handling for static file serving in serverless context
+
+## Post-Deployment Checklist
 
 After deployment:
 
-1. Test all functionality, especially:
+1. Test all functionality:
    - Firebase authentication
    - Contact form submissions
    - Newsletter subscriptions
    - Admin dashboard access
    - Image uploads via Cloudinary
 
-2. Set up a custom domain in Vercel if needed
+2. Add your Vercel deployment URL to Firebase authorized domains
+
+3. Set up a custom domain in Vercel if needed
 
 ## Troubleshooting
 
-- **API Issues**: Check that your API routes are correctly prefixed with `/api`
+- **API Issues**: Ensure your Vercel routes are configured correctly
 - **Authentication Problems**: Verify Firebase configuration and authorized domains
-- **WebSocket Issues**: WebSocket connection might need additional configuration for Vercel
+- **WebSocket Limitations**: In serverless environments, WebSockets have limited functionality
 - **Image Upload Failures**: Verify Cloudinary credentials and CORS settings
+- **Environment Variables**: Double-check that all required environment variables are set
 
 ## Notes
 
-- Vercel automatically handles HTTPS and CDN distribution
-- You may need to add your Vercel deployment URL to Firebase authorized domains
-- For large traffic, consider upgrading your Vercel plan
+- Vercel automatically handles HTTPS, CDN distribution, and global scaling
+- The Firebase configuration is particularly important; make sure all keys are correctly set
+- For increased performance and reliability, consider upgrading your Vercel plan

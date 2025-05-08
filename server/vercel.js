@@ -7,10 +7,26 @@ import { setupAuth } from './auth';
 import { setupSitemap } from './sitemap';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { WebSocketServer } from 'ws';
+import { createServer } from 'http';
+import setupWebSocketServer from './vercel-websocket';
+import dotenv from 'dotenv';
+
+// Load environment variables based on NODE_ENV
+if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config();
+}
 
 // Initialize Express app
 const app = express();
+const server = createServer(app);
+
+// Setup WebSocket with Vercel-compatible adapter
+const websocketServer = setupWebSocketServer(server);
+
+// Make WebSocket server available globally
+app.locals.wss = websocketServer;
 
 // Enable CORS
 app.use(cors({
@@ -54,5 +70,15 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ message: 'An internal server error occurred' });
 });
 
-// For Vercel, we export the Express app directly
+// For development server (will not run in Vercel production)
+if (typeof process.env.VERCEL === 'undefined') {
+  // For local development and other environments, start a full HTTP server
+  const PORT = process.env.PORT || 5000;
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+// Export app for Vercel (default) and for testing purposes
 export default app;
+export { app };
