@@ -3,10 +3,28 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express, { type Request, Response, NextFunction } from "express";
+import cors from 'cors';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Configure CORS for cross-origin requests
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [
+      'https://godivatech.vercel.app', // Main production frontend
+      'https://godiva-tech.vercel.app', // Alternative production domain
+      /\.vercel\.app$/ // Allow all Vercel preview deployments
+    ]
+  : '*'; // In development, allow all origins
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 // Increase JSON body limit to 10MB for image uploads
 app.use(express.json({ limit: '10mb' })); 
 // Increase URL-encoded body limit to 10MB
