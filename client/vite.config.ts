@@ -1,13 +1,17 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-// Removed Replit-specific plugin for Vercel compatibility
+import themeJson from "@replit/vite-plugin-shadcn-theme-json";
+import { cartographer } from "@replit/vite-plugin-cartographer";
+import runtimeErrorPlugin from "@replit/vite-plugin-runtime-error-modal";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react()
-    // Removed theme plugin for Vercel compatibility
+    react(),
+    themeJson(), // This will automatically use the theme.json in the root directory
+    cartographer(),
+    runtimeErrorPlugin()
   ],
   resolve: {
     alias: {
@@ -17,7 +21,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist", // This is the key change - output to ./dist
+    outDir: "dist",
     emptyOutDir: true,
   },
 });

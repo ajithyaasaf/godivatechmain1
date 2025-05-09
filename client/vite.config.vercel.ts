@@ -1,12 +1,16 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import themeJson from "@replit/vite-plugin-shadcn-theme-json";
 
 // Special Vite config for Vercel deployment
-// No Replit-specific plugins
 export default defineConfig({
   plugins: [
-    react()
+    react(),
+    themeJson({
+      // This will use theme.json in the root directory
+      themeJsonPath: path.resolve(process.cwd(), "../theme.json"),
+    })
   ],
   resolve: {
     alias: {
