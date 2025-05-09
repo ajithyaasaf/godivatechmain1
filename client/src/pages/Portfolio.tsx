@@ -125,11 +125,24 @@ const MethodologyStep = memo(({ number, title, description, delay }: {
 const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   
-  const { data: projects = [] } = useQuery<Project[]>({
+  // Add a loading state to show loading indicator while fetching
+  const { data: projects = [], isLoading, isError } = useQuery<Project[]>({
     queryKey: ['/api/projects'],
+    // Add retry logic and longer timeout to ensure we try harder to get data
+    retry: 3,
+    retryDelay: 1000,
+    // Log all errors for debugging purposes
+    onError: (error) => {
+      console.error("Error fetching projects from API:", error);
+    },
+    // Log successful data retrieval
+    onSuccess: (data) => {
+      console.log("Projects fetched successfully, count:", data.length);
+    }
   });
 
   // Default projects in case API doesn't return data
+  // This will only be used if there's an error or if the API explicitly returns an empty array
   const defaultProjects = [
     {
       id: 1,
@@ -181,7 +194,9 @@ const Portfolio = () => {
     }
   ];
 
-  const displayProjects = projects.length > 0 ? projects : defaultProjects;
+  // Only use default projects if there's an error or the projects array is explicitly empty
+  // If still loading, we should wait for the actual data
+  const displayProjects = isError || (projects && projects.length === 0 && !isLoading) ? defaultProjects : projects;
   
   // Get unique categories from projects
   const uniqueCategories = Array.from(new Set(displayProjects.map(project => project.category)));
