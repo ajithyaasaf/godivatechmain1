@@ -1,13 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-// Removed Replit-specific plugin for Vercel compatibility
 
-// https://vitejs.dev/config/
+// Special Vite config for Vercel deployment
+// No Replit-specific plugins
 export default defineConfig({
   plugins: [
     react()
-    // Removed theme plugin for Vercel compatibility
   ],
   resolve: {
     alias: {
@@ -17,7 +16,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist", // This is the key change - output to ./dist
+    outDir: "dist",
     emptyOutDir: true,
   },
 });
