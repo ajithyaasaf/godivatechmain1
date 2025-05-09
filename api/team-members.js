@@ -1,4 +1,4 @@
-// Serverless API endpoint for services
+// Serverless API endpoint for team members
 // For Vercel deployment
 
 import { firestoreStorage } from './lib/firestore-storage.js';
@@ -20,31 +20,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    // GET: Fetch all services
+    // GET request handler
     if (req.method === 'GET') {
-      const services = await firestoreStorage.getAllServices();
-      return res.status(200).json(services);
-    }
-    
-    // POST: Create a new service (requires authentication)
-    if (req.method === 'POST') {
-      // In a real implementation, you'd add authentication here
-      /*
-      if (!req.headers.authorization) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-      */
-      
-      const serviceData = req.body;
-      const newService = await firestoreStorage.createService(serviceData);
-      return res.status(201).json(newService);
+      const teamMembers = await firestoreStorage.getAllTeamMembers();
+      return res.status(200).json(teamMembers);
     }
     
     // Method not allowed
     return res.status(405).json({ message: 'Method not allowed' });
     
   } catch (error) {
-    console.error('Error handling services request:', error);
+    console.error('Error handling team members request:', error);
     return res.status(500).json({ 
       message: 'Internal server error',
       error: error.message 
