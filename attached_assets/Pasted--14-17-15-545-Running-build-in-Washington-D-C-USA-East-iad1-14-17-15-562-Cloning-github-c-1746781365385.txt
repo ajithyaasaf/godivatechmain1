@@ -1,0 +1,38 @@
+[14:17:15.545] Running build in Washington, D.C., USA (East) – iad1
+[14:17:15.562] Cloning github.com/ajithyaasaf/godivatechmain1 (Branch: main, Commit: c5a3dca)
+[14:17:15.727] Previous build caches not available
+[14:17:16.063] Cloning completed: 500.000ms
+[14:17:16.439] Running "vercel build"
+[14:17:16.822] Vercel CLI 41.7.3
+[14:17:16.943] WARN! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+[14:17:18.002] Installing dependencies...
+[14:17:59.117] 
+[14:17:59.118] added 400 packages in 41s
+[14:17:59.119] 
+[14:17:59.119] 45 packages are looking for funding
+[14:17:59.119]   run `npm fund` for details
+[14:17:59.184] Running "npm run vercel-build"
+[14:17:59.302] 
+[14:17:59.302] > godivatech-client@1.0.0 vercel-build
+[14:17:59.302] > vite build --config vite.config.vercel.ts
+[14:17:59.303] 
+[14:17:59.561] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[14:17:59.615] transforming...
+[14:18:02.958] [32m✓[39m 264 modules transformed.
+[14:18:02.964] [31mx[39m Build failed in 3.38s
+[14:18:02.965] [31merror during build:
+[14:18:02.965] [31m[vite]: Rollup failed to resolve import "drizzle-zod" from "/vercel/path0/shared/schema.ts".
+[14:18:02.965] This is most likely unintended because it can break your application at runtime.
+[14:18:02.965] If you do want to externalize this module explicitly add it to
+[14:18:02.965] `build.rollupOptions.external`[31m
+[14:18:02.965]     at viteWarn (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65839:17)
+[14:18:02.965]     at onwarn (file:///vercel/path0/client/node_modules/@vitejs/plugin-react/dist/index.mjs:102:9)
+[14:18:02.966]     at onRollupWarning (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65869:5)
+[14:18:02.966]     at onwarn (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65534:7)
+[14:18:02.966]     at file:///vercel/path0/client/node_modules/rollup/dist/es/shared/node-entry.js:20740:13
+[14:18:02.966]     at Object.logger [as onLog] (file:///vercel/path0/client/node_modules/rollup/dist/es/shared/node-entry.js:22605:9)
+[14:18:02.966]     at ModuleLoader.handleInvalidResolvedId (file:///vercel/path0/client/node_modules/rollup/dist/es/shared/node-entry.js:21352:26)
+[14:18:02.966]     at file:///vercel/path0/client/node_modules/rollup/dist/es/shared/node-entry.js:21310:26[39m
+[14:18:02.991] Error: Command "npm run vercel-build" exited with 1
+[14:18:03.303] 
+[14:18:06.450] Exiting build container

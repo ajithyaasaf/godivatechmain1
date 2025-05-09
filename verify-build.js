@@ -1,0 +1,50 @@
+// Simple verification script to check for any build issues
+// Run with: node verify-build.js
+
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+console.log('Starting verification...');
+
+try {
+  // Check if our schema file exists
+  const schemaPath = path.join(__dirname, 'client', 'src', 'lib', 'schema.ts');
+  if (fs.existsSync(schemaPath)) {
+    console.log('✓ Frontend schema file found');
+  } else {
+    console.error('❌ Frontend schema file not found!');
+    process.exit(1);
+  }
+
+  // Check if Vercel config properly externalizes drizzle-zod
+  const configPath = path.join(__dirname, 'client', 'vite.config.vercel.ts');
+  const configContent = fs.readFileSync(configPath, 'utf8');
+  if (configContent.includes("'drizzle-zod'")) {
+    console.log('✓ Vercel config correctly externalizes drizzle-zod');
+  } else {
+    console.error('❌ Vercel config missing drizzle-zod in externals!');
+    process.exit(1);
+  }
+
+  // Try to build the client 
+  console.log('Testing client build...');
+  try {
+    execSync('cd client && npm run build', { stdio: 'inherit' });
+    console.log('✓ Client build successful!');
+  } catch (err) {
+    console.error('❌ Client build failed!');
+    process.exit(1);
+  }
+
+  console.log('\n✅ All checks passed! Your project should deploy successfully on Vercel.');
+  console.log('📝 See VERCEL_DEPLOYMENT.md for deployment instructions.');
+
+} catch (error) {
+  console.error('Error during verification:', error);
+  process.exit(1);
+}

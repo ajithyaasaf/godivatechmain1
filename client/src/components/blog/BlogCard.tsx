@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { Link } from "wouter";
 import { formatDistanceToNow, format } from "date-fns";
-import type { ExtendedBlogPost } from "@shared/schema";
+import type { ExtendedBlogPost } from "@/lib/schema";
 
 // Optimize BlogCard with memoization
 const BlogCard = memo(({ post, index = 0 }: { post: ExtendedBlogPost; index?: number }) => {

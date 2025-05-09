@@ -4,7 +4,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import BlogCard from "@/components/blog/BlogCard";
 import { Button } from "@/components/ui/button";
-import type { BlogPost, Category } from "@shared/schema";
+import type { BlogPost, Category } from "@/lib/schema";
 import { 
   getBlogPostBySlug, 
   getAllBlogPosts,

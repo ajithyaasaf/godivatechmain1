@@ -8,7 +8,7 @@ import {
   WhereFilterOp, OrderByDirection
 } from "firebase/firestore";
 import { db } from "./firebase";
-import type { BlogPost, Category } from "@shared/schema";
+import type { BlogPost, Category } from "@/lib/schema";
 
 // Firestore collection names
 const BLOG_POSTS_COLLECTION = "blog_posts";

@@ -16,7 +16,7 @@ import {
   getBlogPostData,
   getCollectionPageData
 } from "@/lib/structuredData";
-import type { BlogPost, Category } from "@shared/schema";
+import type { BlogPost, Category } from "@/lib/schema";
 import { getAllBlogPosts, getAllCategories, getBlogPostsByCategoryId, searchBlogPosts } from "@/lib/firestore";
 
 // Animated empty state component

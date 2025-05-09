@@ -7,7 +7,7 @@ import CategoryFilter from "../blog/CategoryFilter";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 
 // Import the ExtendedBlogPost type from schema
-import type { ExtendedBlogPost } from "@shared/schema";
+import type { ExtendedBlogPost } from "@/lib/schema";
 
 interface Category {
   id: number;
