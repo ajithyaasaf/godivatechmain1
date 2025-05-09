@@ -4,11 +4,9 @@
   "outputDirectory": "dist",
   "functions": {
     "api/**": {
-      "memory": 1024
+      "memory": 1024,
+      "runtime": "nodejs18.x"
     }
-  },
-  "api": {
-    "runtime": "nodejs18.x"
   },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
