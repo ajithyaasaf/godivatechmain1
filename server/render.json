@@ -18,6 +18,6 @@
     "SESSION_SECRET": "",
     "ALLOWED_ORIGINS": "https://godivatech.vercel.app,https://www.godivatech.com"
   },
-  "buildCommand": "npm ci && npm run build",
-  "startCommand": "npm run start"
+  "buildCommand": "chmod +x render-build.sh && ./render-build.sh",
+  "startCommand": "./render-start.sh"
 }

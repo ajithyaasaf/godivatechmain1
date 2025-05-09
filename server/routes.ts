@@ -24,6 +24,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Set up XML sitemap
   setupSitemap(app);
   
+  // Health check endpoint
+  app.get("/api/health", (req, res) => {
+    res.json({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || "development"
+    });
+  });
+  
+  // Debug endpoint (only in development)
+  if (process.env.NODE_ENV !== "production") {
+    app.get("/api/debug", (req, res) => {
+      res.json({
+        nodeEnv: process.env.NODE_ENV,
+        hasFirebaseConfig: !!process.env.FIREBASE_PROJECT_ID,
+        hasCloudinary: !!process.env.CLOUDINARY_CLOUD_NAME,
+        allowedOrigins: process.env.ALLOWED_ORIGINS || "not set"
+      });
+    });
+  }
+  
   // Image Upload API
   app.post("/api/upload", isAuthenticated, async (req, res) => {
     try {

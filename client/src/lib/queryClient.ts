@@ -1,7 +1,8 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 // Get the API base URL from environment or use the backend URL for production
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://godivatech-backend.onrender.com';
+const API_BASE_URL = import.meta.env.VITE_SERVER_URL || import.meta.env.VITE_API_URL || 'https://godivatech-backend.onrender.com';
+console.log('API Base URL:', API_BASE_URL);
 
 // Function to construct full API URL
 function getFullApiUrl(urlPath: string): string {
