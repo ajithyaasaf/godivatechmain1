@@ -18,5 +18,16 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    rollupOptions: {
+      // Externalize server-side only dependencies
+      external: [
+        'drizzle-orm',
+        'drizzle-orm/pg-core',
+        'express',
+        'pg',
+        'firebase-admin',
+        'cloudinary'
+      ]
+    }
   },
 });
