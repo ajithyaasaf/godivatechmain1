@@ -8,8 +8,8 @@ export default defineConfig({
   plugins: [
     react(),
     themeJson({
-      // This will use theme.json in the root directory
-      themeJsonPath: path.resolve(process.cwd(), "../theme.json"),
+      // Use theme.json in the client directory for Vercel
+      themeJsonPath: path.resolve(process.cwd(), "theme.json"),
     })
   ],
   resolve: {
