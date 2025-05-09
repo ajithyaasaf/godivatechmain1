@@ -10,19 +10,31 @@ import { setupVite, serveStatic, log } from "./vite";
 const app = express();
 
 // Configure CORS for cross-origin requests
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? [
+let allowedOrigins;
+
+if (process.env.NODE_ENV === 'production') {
+  if (process.env.ALLOWED_ORIGINS) {
+    // Parse comma-separated list of allowed origins
+    allowedOrigins = process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim());
+    console.log('Allowed origins from env:', allowedOrigins);
+  } else {
+    // Default production origins if not specified
+    allowedOrigins = [
       'https://godivatech.vercel.app', // Main production frontend
       'https://godiva-tech.vercel.app', // Alternative production domain
       /\.vercel\.app$/ // Allow all Vercel preview deployments
-    ]
-  : '*'; // In development, allow all origins
+    ];
+  }
+} else {
+  // In development, allow all origins
+  allowedOrigins = '*';
+}
 
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
 
 // Increase JSON body limit to 10MB for image uploads

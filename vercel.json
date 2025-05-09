@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "client/dist",
+  "buildCommand": "chmod +x vercel-build.sh && ./vercel-build.sh",
+  "outputDirectory": "dist",
   "functions": {
     "api/**": {
       "memory": 1024

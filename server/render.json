@@ -1,0 +1,23 @@
+{
+  "name": "godivatech-backend",
+  "env": {
+    "NODE_ENV": "production",
+    "FIREBASE_TYPE": "",
+    "FIREBASE_PROJECT_ID": "",
+    "FIREBASE_PRIVATE_KEY_ID": "",
+    "FIREBASE_PRIVATE_KEY": "",
+    "FIREBASE_CLIENT_EMAIL": "",
+    "FIREBASE_CLIENT_ID": "",
+    "FIREBASE_AUTH_URI": "",
+    "FIREBASE_TOKEN_URI": "",
+    "FIREBASE_AUTH_PROVIDER_CERT_URL": "",
+    "FIREBASE_CLIENT_CERT_URL": "",
+    "CLOUDINARY_CLOUD_NAME": "doeodacsg",
+    "CLOUDINARY_API_KEY": "269267633995791",
+    "CLOUDINARY_API_SECRET": "wUw9Seu6drQEIbQ1tAvYeVyqHdU",
+    "SESSION_SECRET": "",
+    "ALLOWED_ORIGINS": "https://godivatech.vercel.app,https://www.godivatech.com"
+  },
+  "buildCommand": "npm ci && npm run build",
+  "startCommand": "npm run start"
+}

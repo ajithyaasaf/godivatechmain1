@@ -1,0 +1,59 @@
+[11:20:18.273] Running build in Washington, D.C., USA (East) – iad1
+[11:20:18.310] Cloning github.com/ajithyaasaf/godivatechmain1 (Branch: main, Commit: 0625ad4)
+[11:20:18.324] Skipping build cache, deployment was triggered without cache.
+[11:20:18.676] Cloning completed: 366.000ms
+[11:20:19.056] Running "vercel build"
+[11:20:19.465] Vercel CLI 41.7.3
+[11:20:20.001] Running "install" command: `npm install`...
+[11:20:23.187] npm warn deprecated q@1.5.1: You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+[11:20:23.188] npm warn deprecated
+[11:20:23.188] npm warn deprecated (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
+[11:20:25.484] npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+[11:20:25.585] npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+[11:20:34.959] 
+[11:20:34.960] added 682 packages, and audited 683 packages in 15s
+[11:20:34.960] 
+[11:20:34.961] 76 packages are looking for funding
+[11:20:34.961]   run `npm fund` for details
+[11:20:34.997] 
+[11:20:34.998] 7 moderate severity vulnerabilities
+[11:20:34.999] 
+[11:20:34.999] To address issues that do not require attention, run:
+[11:20:35.000]   npm audit fix
+[11:20:35.003] 
+[11:20:35.004] To address all issues (including breaking changes), run:
+[11:20:35.004]   npm audit fix --force
+[11:20:35.004] 
+[11:20:35.004] Run `npm audit` for details.
+[11:20:35.280] 
+[11:20:35.280] > rest-express@1.0.0 build
+[11:20:35.281] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[11:20:35.281] 
+[11:20:35.790] [36mvite v5.4.14 [32mbuilding for production...[36m[39m
+[11:20:35.848] transforming...
+[11:20:36.167] Browserslist: browsers data (caniuse-lite) is 7 months old. Please run:
+[11:20:36.167]   npx update-browserslist-db@latest
+[11:20:36.168]   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+[11:20:45.061] [32m✓[39m 2605 modules transformed.
+[11:20:45.969] rendering chunks...
+[11:20:45.987] computing gzip size...
+[11:20:46.030] [2m../dist/public/[22m[32mindex.html                             [39m[1m[2m    2.73 kB[22m[1m[22m[2m │ gzip:   1.18 kB[22m
+[11:20:46.030] [2m../dist/public/[22m[2massets/[22m[32mgodiva-logo-C316X4_3.png        [39m[1m[2m   17.03 kB[22m[1m[22m
+[11:20:46.031] [2m../dist/public/[22m[2massets/[22m[32mmodern-workspace-Bii4tqxV.jpeg  [39m[1m[2m   49.82 kB[22m[1m[22m
+[11:20:46.031] [2m../dist/public/[22m[2massets/[22m[32mceo-FxtVRioG.jpg                [39m[1m[2m1,077.43 kB[22m[1m[22m
+[11:20:46.031] [2m../dist/public/[22m[2massets/[22m[35mindex-D-0P-ToB.css              [39m[1m[2m  127.87 kB[22m[1m[22m[2m │ gzip:  20.03 kB[22m
+[11:20:46.031] [2m../dist/public/[22m[2massets/[22m[36mindex-JB1fnRgj.js               [39m[1m[33m1,638.44 kB[39m[22m[2m │ gzip: 460.68 kB[22m
+[11:20:46.032] [33m
+[11:20:46.032] (!) Some chunks are larger than 500 kB after minification. Consider:
+[11:20:46.032] - Using dynamic import() to code-split the application
+[11:20:46.032] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[11:20:46.032] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[11:20:46.033] [32m✓ built in 10.22s[39m
+[11:20:46.092] 
+[11:20:46.093]   dist/index.js  122.0kb
+[11:20:46.093] 
+[11:20:46.093] ⚡ Done in 12ms
+[11:20:46.110] Error: No Output Directory named "dist" found after the Build completed. You can configure the Output Directory in your Project Settings.
+[11:20:46.110] Learn More: https://vercel.link/missing-public-directory
+[11:20:46.443] 
+[11:20:49.171] Exiting build container

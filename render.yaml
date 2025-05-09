@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: godivatech-backend
+    runtime: node
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FIREBASE_TYPE
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY_ID
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_CLIENT_ID
+        sync: false
+      - key: FIREBASE_AUTH_URI
+        sync: false
+      - key: FIREBASE_TOKEN_URI
+        sync: false
+      - key: FIREBASE_AUTH_PROVIDER_CERT_URL
+        sync: false
+      - key: FIREBASE_CLIENT_CERT_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        value: doeodacsg
+      - key: CLOUDINARY_API_KEY
+        value: 269267633995791
+      - key: CLOUDINARY_API_SECRET
+        value: wUw9Seu6drQEIbQ1tAvYeVyqHdU
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGINS
+        value: https://godivatech.vercel.app,https://www.godivatech.com
