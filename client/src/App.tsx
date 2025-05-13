@@ -15,6 +15,7 @@ import BlogPost from "@/pages/BlogPost";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
+import DiagnosticsPage from "@/pages/diagnostics";
 
 // Admin pages
 import AdminDashboard from "@/pages/admin";
@@ -59,6 +60,7 @@ function App() {
               <Route path="/blog/:slug" component={BlogPost} />
               <Route path="/contact" component={Contact} />
               <Route path="/auth" component={AuthPage} />
+              <Route path="/diagnostics" component={DiagnosticsPage} />
               <Route component={NotFound} />
             </Switch>
           </AnimatePresence>
