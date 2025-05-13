@@ -5,6 +5,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import DeploymentDiagnostic from "@/components/admin/DeploymentDiagnostic";
 import {
   BarChart3,
   CalendarDays,
@@ -12,6 +13,7 @@ import {
   MessageSquareText,
   RefreshCw,
   Users2,
+  Wrench,
 } from "lucide-react";
 
 interface StatCardProps {
@@ -43,29 +45,29 @@ const AdminDashboard = () => {
   }));
 
   // Fetch count data for dashboard
-  const { data: blogPosts = [] } = useQuery({ 
+  const { data: blogPosts = [] } = useQuery<any[]>({ 
     queryKey: ['/api/blog-posts'],
   });
   
-  const { data: services = [] } = useQuery({ 
+  const { data: services = [] } = useQuery<any[]>({ 
     queryKey: ['/api/services'],
   });
   
-  const { data: testimonials = [] } = useQuery({ 
+  const { data: testimonials = [] } = useQuery<any[]>({ 
     queryKey: ['/api/testimonials'],
   });
   
-  const { data: teamMembers = [] } = useQuery({ 
+  const { data: teamMembers = [] } = useQuery<any[]>({ 
     queryKey: ['/api/team-members'],
   });
 
   // For contact messages and subscribers, we'll create a placeholder as these require admin access
-  const { data: contactMessages = [], isLoading: messagesLoading } = useQuery({
+  const { data: contactMessages = [], isLoading: messagesLoading } = useQuery<any[]>({
     queryKey: ['/api/admin/contact-messages'],
     retry: false, // Don't retry if unauthorized
   });
 
-  const { data: subscribers = [], isLoading: subscribersLoading } = useQuery({
+  const { data: subscribers = [], isLoading: subscribersLoading } = useQuery<any[]>({
     queryKey: ['/api/admin/subscribers'],
     retry: false, // Don't retry if unauthorized
   });
@@ -89,37 +91,37 @@ const AdminDashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatCard 
           title="Total Blog Posts" 
-          value={blogPosts.length} 
+          value={(blogPosts as any[]).length} 
           icon={<FileText className="h-4 w-4 text-muted-foreground" />}
           description="Manage your blog content from the Blog Posts section"
         />
         <StatCard 
           title="Services" 
-          value={services.length} 
+          value={(services as any[]).length} 
           icon={<BarChart3 className="h-4 w-4 text-muted-foreground" />}
           description="Update your service offerings to showcase your expertise"
         />
         <StatCard 
           title="Team Members" 
-          value={teamMembers.length} 
+          value={(teamMembers as any[]).length} 
           icon={<Users2 className="h-4 w-4 text-muted-foreground" />}
           description="Showcase your team members on the About page"
         />
         <StatCard 
           title="Testimonials" 
-          value={testimonials.length} 
+          value={(testimonials as any[]).length} 
           icon={<MessageSquareText className="h-4 w-4 text-muted-foreground" />}
           description="Client reviews and testimonials"
         />
         <StatCard 
           title="Contact Messages" 
-          value={messagesLoading ? "Loading..." : contactMessages.length} 
+          value={messagesLoading ? "Loading..." : (contactMessages as any[]).length} 
           icon={<MessageSquareText className="h-4 w-4 text-muted-foreground" />}
           description="Messages from your contact form"
         />
         <StatCard 
           title="Newsletter Subscribers" 
-          value={subscribersLoading ? "Loading..." : subscribers.length} 
+          value={subscribersLoading ? "Loading..." : (subscribers as any[]).length} 
           icon={<CalendarDays className="h-4 w-4 text-muted-foreground" />}
           description="Email subscribers for your newsletter"
         />
@@ -148,6 +150,7 @@ const AdminDashboard = () => {
           <TabsList>
             <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
             <TabsTrigger value="analytics">Usage Analytics</TabsTrigger>
+            <TabsTrigger value="diagnostic">Deployment Diagnostic</TabsTrigger>
             <TabsTrigger value="tips">Admin Tips</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="p-4">
@@ -164,6 +167,9 @@ const AdminDashboard = () => {
               Website analytics and visitor statistics will be available in a future update.
               For now, focus on managing your content and keeping your website up-to-date.
             </p>
+          </TabsContent>
+          <TabsContent value="diagnostic" className="p-4">
+            <DeploymentDiagnostic />
           </TabsContent>
           <TabsContent value="tips" className="p-4">
             <h3 className="text-lg font-medium mb-2">Admin Tips</h3>
