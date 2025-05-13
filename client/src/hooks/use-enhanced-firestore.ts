@@ -269,8 +269,9 @@ export function useFirestoreDocument<T extends DocumentData>(
           setData(result);
           setError(null);
         }
-      } catch (err) {
+      } catch (error) {
         if (isMounted) {
+          const err = error as Error;
           const firebaseError = err instanceof FirebaseServiceError 
             ? err 
             : new FirebaseServiceError(
@@ -390,8 +391,9 @@ export function useFirestoreCollection<T extends DocumentData>(
           setData(result);
           setError(null);
         }
-      } catch (err) {
+      } catch (error) {
         if (isMounted) {
+          const err = error as Error;
           const firebaseError = err instanceof FirebaseServiceError 
             ? err 
             : new FirebaseServiceError(
@@ -546,7 +548,8 @@ export function useFirestoreCreate<T extends DocumentData>(
       }
       
       return createdDoc;
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error;
       const firebaseError = err instanceof FirebaseServiceError 
         ? err 
         : new FirebaseServiceError(
@@ -694,7 +697,8 @@ export function useFirestoreUpdate<T extends DocumentData>(
       }
       
       return updatedDoc;
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error;
       const firebaseError = err instanceof FirebaseServiceError 
         ? err 
         : new FirebaseServiceError(
@@ -809,7 +813,8 @@ export function useFirestoreDelete(
       }
       
       return true;
-    } catch (err) {
+    } catch (error) {
+      const err = error as Error;
       const firebaseError = err instanceof FirebaseServiceError 
         ? err 
         : new FirebaseServiceError(

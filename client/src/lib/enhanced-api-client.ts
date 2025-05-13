@@ -149,12 +149,13 @@ async function fetchWithTimeout(
     const response = await fetch(url, { ...options, signal });
     return response;
   } catch (error) {
-    if (error.name === 'AbortError') {
+    const err = error as Error;
+    if (err.name === 'AbortError') {
       throw new ApiError(
         `Request timed out after ${timeout}ms: ${url}`,
         ApiErrorType.TIMEOUT,
         408,
-        error,
+        err,
         true
       );
     }
@@ -312,13 +313,14 @@ export async function enhancedApiRequest(
       
       return response;
     } catch (error) {
+      const err = error as Error;
       // Handle network errors specifically
-      if (error.name === 'TypeError' && error.message.includes('network')) {
+      if (err.name === 'TypeError' && err.message.includes('network')) {
         throw new ApiError(
           `Network error: Could not connect to ${fullUrl}`,
           ApiErrorType.NETWORK,
           undefined,
-          error,
+          err,
           true
         );
       }
@@ -331,10 +333,10 @@ export async function enhancedApiRequest(
       // Otherwise, wrap in ApiError
       console.error(`API Request failed for ${method} ${url}:`, error);
       throw new ApiError(
-        error.message || 'Unknown API error',
+        err.message || 'Unknown API error',
         ApiErrorType.UNKNOWN,
         undefined,
-        error,
+        err,
         true
       );
     }
@@ -405,13 +407,14 @@ export const getEnhancedQueryFn: <T>(options: {
         console.log(`Query data received for ${urlPath}:`, typeof data === 'object' ? 'object' : data);
         return data;
       } catch (error) {
+        const err = error as Error;
         // Handle network errors specifically
-        if (error.name === 'TypeError' && error.message.includes('network')) {
+        if (err.name === 'TypeError' && err.message.includes('network')) {
           throw new ApiError(
             `Network error: Could not connect to ${fullUrl}`,
             ApiErrorType.NETWORK,
             undefined,
-            error,
+            err,
             true
           );
         }
@@ -423,10 +426,10 @@ export const getEnhancedQueryFn: <T>(options: {
         
         console.error(`Query failed for GET ${urlPath}:`, error);
         throw new ApiError(
-          error.message || 'Unknown API error',
+          err.message || 'Unknown API error',
           ApiErrorType.UNKNOWN,
           undefined,
-          error,
+          err,
           true
         );
       }
