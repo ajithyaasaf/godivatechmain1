@@ -1,17 +1,26 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "./vercel-build.sh",
   "outputDirectory": "dist",
   "framework": "vite",
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
-  ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "handle": "filesystem" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/(.*\\.(js|css|ico|png|jpg|jpeg|svg|webp|json))", "dest": "/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "^/(.*).(js|css|png|jpg|jpeg|svg|webp|gif|ico|json)$",
+      "dest": "/$1.$2"
+    },
+    {
+      "src": "/(.*)",
+      "status": 200,
+      "dest": "/index.html"
+    }
   ],
   "env": {
     "NODE_ENV": "production"
