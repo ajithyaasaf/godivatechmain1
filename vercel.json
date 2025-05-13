@@ -3,16 +3,35 @@
   "version": 2,
   "builds": [
     {
-      "src": "client/package.json",
+      "src": "vercel-build.sh",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist",
-        "buildCommand": "cd client && npm install && npm run vercel-build"
+        "distDir": "client/dist"
       }
     }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/client/dist/$1" }
+    { 
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "continue": true
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*).js",
+      "dest": "/$1.js"
+    },
+    {
+      "src": "/(.*).css",
+      "dest": "/$1.css"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "https://godivatech-backend.onrender.com/api/$1"
+    }
   ],
   "env": {
     "VITE_SERVER_URL": "https://godivatech-backend.onrender.com",
