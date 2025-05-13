@@ -5,6 +5,7 @@ import { z } from "zod";
 export const insertUserSchema = z.object({
   username: z.string(),
   password: z.string(),
+  name: z.string().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -12,6 +13,7 @@ export interface User {
   id: number;
   username: string;
   password: string;
+  name?: string;
 }
 
 // Category schemas

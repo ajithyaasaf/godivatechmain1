@@ -4,31 +4,29 @@ import {
   useMutation,
   UseMutationResult,
 } from "@tanstack/react-query";
-import { insertUserSchema, User, InsertUser } from "@/lib/schema";
+import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { useLocation } from "wouter";
 
 type AuthContextType = {
-  user: User | null;
+  user: SelectUser | null;
   isLoading: boolean;
   error: Error | null;
-  loginMutation: UseMutationResult<User, Error, LoginData>;
+  loginMutation: UseMutationResult<SelectUser, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
-  registerMutation: UseMutationResult<User, Error, InsertUser>;
+  registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
 };
 
-type LoginData = Pick<InsertUser, "username" | "password"> & { rememberMe?: boolean };
+type LoginData = Pick<InsertUser, "username" | "password">;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
   const {
     data: user,
     error,
     isLoading,
-  } = useQuery<User | null, Error>({
+  } = useQuery<SelectUser | null, Error>({
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
@@ -38,22 +36,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/login", credentials);
       return await res.json();
     },
-    onSuccess: (user: User) => {
+    onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
       toast({
-        title: "Login successful",
-        description: "You have been logged in successfully",
+        title: "Welcome back!",
+        description: `You're now logged in as ${user.name || user.username}.`,
       });
-      
-      // Redirect to admin page after successful login
-      const redirectPath = sessionStorage.getItem('redirectAfterLogin') || '/admin';
-      sessionStorage.removeItem('redirectAfterLogin');
-      setLocation(redirectPath);
     },
     onError: (error: Error) => {
       toast({
         title: "Login failed",
-        description: error.message || "Invalid username or password",
+        description: error.message,
         variant: "destructive",
       });
     },
@@ -64,17 +57,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await apiRequest("POST", "/api/register", credentials);
       return await res.json();
     },
-    onSuccess: (user: User) => {
+    onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
       toast({
-        title: "Registration successful",
-        description: "Your account has been created successfully",
+        title: "Account created!",
+        description: `Welcome to GodivaTech, ${user.name || user.username}.`,
       });
     },
     onError: (error: Error) => {
       toast({
         title: "Registration failed",
-        description: error.message || "Failed to create account",
+        description: error.message,
         variant: "destructive",
       });
     },
@@ -87,18 +80,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
       toast({
-        title: "Logout successful",
-        description: "You have been logged out successfully",
+        title: "Logged out",
+        description: "You have been successfully logged out.",
       });
-      
-      // Redirect to auth page after successful logout (this will be used if no onSuccess handler is provided)
-      // We don't use this directly because we want to let components handle their own redirection
-      // But this serves as a fallback
-      if (window.location.pathname.startsWith('/admin')) {
-        setTimeout(() => {
-          window.location.href = '/auth';
-        }, 100);
-      }
     },
     onError: (error: Error) => {
       toast({

@@ -1,431 +1,279 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useLocation, Redirect } from "wouter";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { insertUserSchema } from "@/lib/schema";
-import { Helmet } from "react-helmet";
-import { motion } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Lock, User, AlertCircle, ArrowRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { insertUserSchema } from "@/lib/schema";
+import { Loader2 } from "lucide-react";
 
-// Form schemas
-const loginFormSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  rememberMe: z.boolean().default(false),
+// Create login schema (subset of user schema)
+const loginSchema = insertUserSchema.pick({
+  username: true,
+  password: true,
 });
 
-const registerFormSchema = insertUserSchema.extend({
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
-
-// Form value types
-type LoginFormValues = z.infer<typeof loginFormSchema>;
-type RegisterFormValues = z.infer<typeof registerFormSchema>;
-
-const AuthPage = () => {
-  const { user, loginMutation, registerMutation } = useAuth();
-  const [location, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<string>("login");
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [registerError, setRegisterError] = useState<string | null>(null);
-
-  // Clear errors when switching tabs
-  useEffect(() => {
-    setLoginError(null);
-    setRegisterError(null);
-  }, [activeTab]);
-
-  // Get redirect path from URL query parameters or session storage
-  useEffect(() => {
-    const queryParams = new URLSearchParams(window.location.search);
-    const redirectPath = queryParams.get('redirect');
-    
-    if (redirectPath) {
-      sessionStorage.setItem('redirectAfterLogin', redirectPath);
-    }
-  }, []);
-
-  // Login form
-  const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginFormSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-      rememberMe: false,
-    },
+// Create registration schema including confirmPassword
+const registrationSchema = insertUserSchema
+  .extend({
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
   });
 
-  // Register form
-  const registerForm = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerFormSchema),
+// Registration schema type
+type RegistrationFormValues = z.infer<typeof registrationSchema>;
+
+export default function AuthPage() {
+  const [activeTab, setActiveTab] = useState("login");
+  const { user, loginMutation, registerMutation } = useAuth();
+  const [location, setLocation] = useLocation();
+
+  // If user is already logged in, redirect to home page
+  useEffect(() => {
+    if (user) {
+      setLocation("/");
+    }
+  }, [user, setLocation]);
+
+  // Login form
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: "",
+      password: ""
+    }
+  });
+
+  // Registration form
+  const registrationForm = useForm<RegistrationFormValues>({
+    resolver: zodResolver(registrationSchema),
     defaultValues: {
       username: "",
       password: "",
       confirmPassword: "",
-    },
+      name: ""
+    }
   });
 
-  // Form handlers
-  const onLoginSubmit = (values: LoginFormValues) => {
-    setLoginError(null);
-    
-    // Save remember me preference
-    if (values.rememberMe) {
-      localStorage.setItem("rememberAuth", "true");
-    } else {
-      localStorage.removeItem("rememberAuth");
-    }
-    
-    // Handle login
-    loginMutation.mutate(values, {
-      onSuccess: (user) => {
-        // Directly redirect to admin page after successful login
-        console.log("Login successful, redirecting to admin page");
-        // Force redirect to admin page
-        setTimeout(() => {
-          window.location.href = '/admin';
-        }, 100);
-      },
-      onError: (error) => {
-        setLoginError(error.message || "Login failed. Please check your credentials and try again.");
-      }
-    });
-  };
+  // Handle login submission
+  function onLoginSubmit(values: z.infer<typeof loginSchema>) {
+    loginMutation.mutate(values);
+  }
 
-  const onRegisterSubmit = (values: RegisterFormValues) => {
-    setRegisterError(null);
-    
-    // Omit confirmPassword before submitting
-    const { confirmPassword, ...registerData } = values;
-    
-    registerMutation.mutate(registerData, {
-      onSuccess: (user) => {
-        // Directly redirect to admin page after successful registration
-        console.log("Registration successful, redirecting to admin page");
-        // Force redirect to admin page 
-        setTimeout(() => {
-          window.location.href = '/admin';
-        }, 100);
-      },
-      onError: (error) => {
-        setRegisterError(error.message || "Registration failed. This username may already be taken.");
-      }
-    });
-  };
-
-  // Determine redirect path after login
-  const getRedirectPath = () => {
-    // Check for stored redirect path
-    const redirectPath = sessionStorage.getItem('redirectAfterLogin');
-    if (redirectPath) {
-      sessionStorage.removeItem('redirectAfterLogin');
-      return redirectPath;
-    }
-    // Default to admin dashboard
-    return "/admin";
-  };
-
-  // Redirect if already logged in
-  if (user) {
-    return <Redirect to={getRedirectPath()} />;
+  // Handle registration submission
+  function onRegisterSubmit(values: RegistrationFormValues) {
+    // Remove confirmPassword as it's not in the user schema
+    const { confirmPassword, ...userData } = values;
+    registerMutation.mutate(userData);
   }
 
   return (
-    <>
-      <Helmet>
-        <title>Admin Login | GodivaTech Dashboard</title>
-        <meta name="description" content="Admin login for GodivaTech website management" />
-      </Helmet>
-
-      <div className="min-h-screen flex flex-col lg:flex-row">
-        {/* Hero Section */}
-        <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-          className="lg:w-1/2 bg-primary text-white p-8 lg:p-12 flex items-center justify-center"
-        >
-          <div className="max-w-md">
-            <h1 className="text-3xl lg:text-4xl font-bold mb-4">GodivaTech Admin Dashboard</h1>
-            <p className="text-lg opacity-90 mb-6">
-              Manage your website content with ease. Login to the dashboard to edit your services, 
-              blog posts, team members, and more.
-            </p>
-            <ul className="space-y-2 mb-8">
-              <li className="flex items-center">
-                <span className="mr-2 bg-white bg-opacity-20 rounded-full p-1">✓</span>
-                <span>Manage blog posts and categories</span>
-              </li>
-              <li className="flex items-center">
-                <span className="mr-2 bg-white bg-opacity-20 rounded-full p-1">✓</span>
-                <span>Add or update services</span>
-              </li>
-              <li className="flex items-center">
-                <span className="mr-2 bg-white bg-opacity-20 rounded-full p-1">✓</span>
-                <span>Showcase your team and projects</span>
-              </li>
-              <li className="flex items-center">
-                <span className="mr-2 bg-white bg-opacity-20 rounded-full p-1">✓</span>
-                <span>View contact messages and subscribers</span>
-              </li>
-            </ul>
-          </div>
-        </motion.div>
-
-        {/* Auth Forms */}
-        <motion.div 
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="lg:w-1/2 p-8 lg:p-12 flex items-center justify-center bg-muted/10"
-        >
-          <Card className="w-full max-w-md shadow-xl border-gray-200">
-            <CardHeader>
-              <CardTitle className="text-2xl">Admin Access</CardTitle>
-              <CardDescription>
-                Login to your admin account or register a new account
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="login">Login</TabsTrigger>
-                  <TabsTrigger value="register">Register</TabsTrigger>
-                </TabsList>
-
-                {/* Login Form */}
-                <TabsContent value="login" className="mt-0">
-                  {loginError && (
-                    <Alert variant="destructive" className="mb-4">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Login failed</AlertTitle>
-                      <AlertDescription>{loginError}</AlertDescription>
-                    </Alert>
-                  )}
-                  
-                  <Form {...loginForm}>
-                    <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                      <FormField
-                        control={loginForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                                <Input 
-                                  {...field} 
-                                  placeholder="Enter your username" 
-                                  className="pl-10"
-                                  disabled={loginMutation.isPending}
-                                  autoComplete="username"
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={loginForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                                <Input 
-                                  {...field} 
-                                  type="password" 
-                                  placeholder="Enter your password" 
-                                  className="pl-10"
-                                  disabled={loginMutation.isPending}
-                                  autoComplete="current-password"
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={loginForm.control}
-                        name="rememberMe"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-2">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                              <FormLabel>
-                                Remember me
-                              </FormLabel>
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        disabled={loginMutation.isPending}
-                      >
-                        {loginMutation.isPending ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Logging in...
-                          </>
-                        ) : "Login"}
-                      </Button>
-                    </form>
-                  </Form>
-                </TabsContent>
-
-                {/* Register Form */}
-                <TabsContent value="register" className="mt-0">
-                  {registerError && (
-                    <Alert variant="destructive" className="mb-4">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Registration failed</AlertTitle>
-                      <AlertDescription>{registerError}</AlertDescription>
-                    </Alert>
-                  )}
-                  
-                  <Form {...registerForm}>
-                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
-                      <FormField
-                        control={registerForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                                <Input 
-                                  {...field} 
-                                  placeholder="Choose a username" 
-                                  className="pl-10"
-                                  disabled={registerMutation.isPending}
-                                  autoComplete="username"
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={registerForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                                <Input 
-                                  {...field} 
-                                  type="password" 
-                                  placeholder="Create a password" 
-                                  className="pl-10"
-                                  disabled={registerMutation.isPending}
-                                  autoComplete="new-password"
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={registerForm.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                                <Input 
-                                  {...field} 
-                                  type="password" 
-                                  placeholder="Confirm your password" 
-                                  className="pl-10"
-                                  disabled={registerMutation.isPending}
-                                  autoComplete="new-password"
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        disabled={registerMutation.isPending}
-                      >
-                        {registerMutation.isPending ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Creating account...
-                          </>
-                        ) : "Create Account"}
-                      </Button>
-                    </form>
-                  </Form>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-            
-            <CardFooter className="flex flex-col gap-4 text-sm text-muted-foreground border-t pt-6">
-              <div className="text-center w-full">
-                {activeTab === "login" ? (
-                  <p>Don't have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("register")}>Register</Button></p>
-                ) : (
-                  <p>Already have an account? <Button variant="link" className="p-0" onClick={() => setActiveTab("login")}>Login</Button></p>
-                )}
-              </div>
+    <div className="flex min-h-screen">
+      {/* Left side - Form */}
+      <div className="w-full lg:w-1/2 p-8 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">
+              Welcome to GodivaTech
+            </CardTitle>
+            <CardDescription className="text-center">
+              Sign in to access your account or create a new one
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="login">Login</TabsTrigger>
+                <TabsTrigger value="register">Register</TabsTrigger>
+              </TabsList>
               
+              <TabsContent value="login">
+                <Form {...loginForm}>
+                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                    <FormField
+                      control={loginForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your username" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Enter your password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={loginMutation.isPending}
+                    >
+                      {loginMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Logging in...
+                        </>
+                      ) : (
+                        "Login"
+                      )}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+              
+              <TabsContent value="register">
+                <Form {...registrationForm}>
+                  <form onSubmit={registrationForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                    <FormField
+                      control={registrationForm.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Full Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your full name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registrationForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Choose a username" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registrationForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Create a password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={registrationForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Confirm your password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button 
+                      type="submit" 
+                      className="w-full" 
+                      disabled={registerMutation.isPending}
+                    >
+                      {registerMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating Account...
+                        </>
+                      ) : (
+                        "Create Account"
+                      )}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <p className="text-sm text-muted-foreground">
+              {activeTab === "login" 
+                ? "Don't have an account? " 
+                : "Already have an account? "}
               <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-1 mx-auto" 
-                onClick={() => setLocation("/")}
+                variant="link" 
+                className="p-0" 
+                onClick={() => setActiveTab(activeTab === "login" ? "register" : "login")}
               >
-                Return to Website <ArrowRight className="h-3 w-3" />
+                {activeTab === "login" ? "Register" : "Login"}
               </Button>
-            </CardFooter>
-          </Card>
-        </motion.div>
+            </p>
+          </CardFooter>
+        </Card>
       </div>
-    </>
+      
+      {/* Right side - Hero image and content */}
+      <div className="hidden lg:block lg:w-1/2 bg-primary-50 p-8">
+        <div className="h-full flex flex-col justify-center items-center text-center px-8">
+          <h1 className="text-4xl font-bold mb-6 text-primary">
+            Advanced Technology Solutions
+          </h1>
+          <p className="text-lg mb-8 text-gray-700">
+            Join our platform to access premium technology services, expert consultations, and exclusive content to help your business grow in the digital age.
+          </p>
+          <div className="space-y-4 text-left w-full max-w-md">
+            <div className="flex items-center">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                ✓
+              </div>
+              <div>
+                <h3 className="font-medium">Custom Software Development</h3>
+                <p className="text-sm text-gray-600">Tailored solutions for your unique business needs</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                ✓
+              </div>
+              <div>
+                <h3 className="font-medium">Digital Transformation</h3>
+                <p className="text-sm text-gray-600">Modernize your business processes and systems</p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4">
+                ✓
+              </div>
+              <div>
+                <h3 className="font-medium">IT Consulting</h3>
+                <p className="text-sm text-gray-600">Expert guidance for your technology decisions</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-};
-
-export default AuthPage;
+}

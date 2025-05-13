@@ -8,9 +8,10 @@ export type User = {
   id: number;
   username: string;
   password: string;
+  name?: string;
 };
 
-export type InsertUser = Pick<User, "username" | "password">;
+export type InsertUser = Pick<User, "username" | "password" | "name">;
 
 export type BlogPost = {
   id: number;
