@@ -1,34 +1,11 @@
 {
   "version": 2,
-  "buildCommand": "cp theme.json client/ && cd client && npm install && npm run vercel-build",
-  "outputDirectory": "client/dist",
-  "installCommand": "npm install",
-  "functions": {
-    "api/*.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
   "rewrites": [
-    { "source": "/api/services", "destination": "/api/services.js" },
-    { "source": "/api/projects", "destination": "/api/projects.js" },
-    { "source": "/api/blog-posts", "destination": "/api/blog-posts.js" },
-    { "source": "/api/categories", "destination": "/api/categories.js" },
-    { "source": "/api/team-members", "destination": "/api/team-members.js" },
-    { "source": "/api/testimonials", "destination": "/api/testimonials.js" },
-    { "source": "/api/(.*)", "destination": "/api/$1.js" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/$1" }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
-      ]
-    }
   ],
   "env": {
     "NODE_ENV": "production"
