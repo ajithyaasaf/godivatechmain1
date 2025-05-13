@@ -13,6 +13,7 @@ import type { BlogPost, Category } from "@/lib/schema";
 // Firestore collection names
 const BLOG_POSTS_COLLECTION = "blog_posts";
 const CATEGORIES_COLLECTION = "categories";
+const PROJECTS_COLLECTION = "projects";
 
 // Generic Functions for Firestore CRUD Operations
 // -----------------------------------------------
@@ -317,6 +318,75 @@ export async function searchBlogPosts(searchQuery: string): Promise<BlogPost[]> 
   } catch (error) {
     console.error("Error searching blog posts:", error);
     return [];
+  }
+}
+
+// Project type (matching the one in Portfolio.tsx)
+export interface Project {
+  id: number | string;
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+  technologies: string[];
+  link?: string;
+}
+
+// Converts Firestore data to Project object
+export function convertToProject(doc: QueryDocumentSnapshot<DocumentData>): Project {
+  const data = doc.data();
+  return {
+    id: doc.id,
+    title: data.title || "Untitled Project",
+    description: data.description || "",
+    image: data.image || data.coverImage || "",
+    category: data.category || "Software Development",
+    technologies: Array.isArray(data.technologies) ? data.technologies : [],
+    link: data.link || data.url || null
+  };
+}
+
+// Get all projects
+export async function getAllProjects(): Promise<Project[]> {
+  try {
+    console.log("Fetching projects from Firestore...");
+    const projectsRef = collection(db, PROJECTS_COLLECTION);
+    const q = query(projectsRef);
+    const querySnapshot = await getDocs(q);
+    
+    console.log(`Found ${querySnapshot.docs.length} projects in Firestore collection`);
+    
+    // Map the query results to Project objects
+    const projects = querySnapshot.docs.map(doc => {
+      console.log(`Processing project: id=${doc.id}, title=${doc.data().title}`);
+      return convertToProject(doc);
+    });
+    
+    return projects;
+  } catch (error) {
+    console.error("Error getting all projects:", error);
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Firebase project ID during error:", db.app.options.projectId);
+    }
+    return [];
+  }
+}
+
+// Get a project by ID
+export async function getProjectById(id: number | string): Promise<Project | null> {
+  try {
+    const docRef = doc(db, PROJECTS_COLLECTION, id.toString());
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      return null;
+    }
+    
+    return convertToProject(docSnap as QueryDocumentSnapshot<DocumentData>);
+  } catch (error) {
+    console.error(`Error getting project by ID ${id}:`, error);
+    return null;
   }
 }
 

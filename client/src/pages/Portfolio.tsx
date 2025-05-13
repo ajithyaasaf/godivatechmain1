@@ -1,12 +1,13 @@
-import React, { useState, memo, useMemo } from "react";
+import React, { useState, memo, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence, LazyMotion, domAnimation, m } from "framer-motion";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight, ExternalLink, Loader2, AlertCircle } from "lucide-react";
 import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
 import { portfolioKeywords } from "@/lib/seoKeywords";
 import OptimizedImage from "@/components/ui/optimized-image";
+import { getAllProjects, Project as FirestoreProject } from "@/lib/firestore";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -124,69 +125,62 @@ const MethodologyStep = memo(({ number, title, description, delay }: {
 
 const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [firestoreProjects, setFirestoreProjects] = useState<Project[]>([]);
+  const [isLoadingFirestore, setIsLoadingFirestore] = useState(false);
   
-  const { data: projects = [] } = useQuery<Project[]>({
+  // Fetch from API server (Express/Render) first
+  const { data: apiProjects = [], isLoading: isLoadingApi } = useQuery<Project[]>({
     queryKey: ['/api/projects'],
   });
 
-  // Default projects in case API doesn't return data
-  const defaultProjects = [
-    {
-      id: 1,
-      title: "E-Commerce Platform Redesign",
-      description: "Completely redesigned the online shopping experience for a leading retailer, resulting in a 40% increase in conversions.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Software Development",
-      technologies: ["React", "Node.js", "AWS"]
-    },
-    {
-      id: 2,
-      title: "Healthcare Data Migration",
-      description: "Migrated a healthcare provider's legacy systems to a secure cloud infrastructure, improving performance by 60%.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Cloud Solutions",
-      technologies: ["Azure", "Kubernetes", "HIPAA"]
-    },
-    {
-      id: 3,
-      title: "Predictive Maintenance System",
-      description: "Developed an AI-powered system for a manufacturing company that predicts equipment failures before they occur.",
-      image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "AI & Machine Learning",
-      technologies: ["Python", "TensorFlow", "IoT"]
-    },
-    {
-      id: 4,
-      title: "Financial Services Mobile App",
-      description: "Created a secure mobile banking application with advanced features like biometric authentication and real-time notifications.",
-      image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Software Development",
-      technologies: ["React Native", "Node.js", "MongoDB"]
-    },
-    {
-      id: 5,
-      title: "Enterprise Resource Planning System",
-      description: "Designed and implemented a custom ERP solution that integrated all departments and streamlined business processes.",
-      image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Software Development",
-      technologies: ["Java", "Spring Boot", "PostgreSQL"]
-    },
-    {
-      id: 6,
-      title: "Cybersecurity Infrastructure Upgrade",
-      description: "Strengthened a financial institution's security posture with advanced threat detection and prevention systems.",
-      image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      category: "Cybersecurity",
-      technologies: ["Palo Alto", "Splunk", "AWS Security"]
-    }
-  ];
+  // Also fetch directly from Firestore as a backup
+  useEffect(() => {
+    const fetchFirestoreProjects = async () => {
+      try {
+        setIsLoadingFirestore(true);
+        console.log("Fetching projects directly from Firestore...");
+        const projects = await getAllProjects();
+        console.log(`Fetched ${projects.length} projects directly from Firestore`);
+        setFirestoreProjects(projects as Project[]);
+      } catch (error) {
+        console.error("Error fetching from Firestore:", error);
+      } finally {
+        setIsLoadingFirestore(false);
+      }
+    };
 
-  const displayProjects = projects.length > 0 ? projects : defaultProjects;
+    // Only fetch from Firestore if API call is empty or taking too long
+    if (apiProjects.length === 0) {
+      fetchFirestoreProjects();
+    }
+  }, [apiProjects.length]);
+
+  // Use projects from API first, then Firestore, then fallback to default
+  // Choose the first non-empty array of projects
+  const displayProjects = apiProjects.length > 0 
+    ? apiProjects 
+    : firestoreProjects.length > 0 
+      ? firestoreProjects 
+      : [];
+  
+  // Log which data source we're using
+  useEffect(() => {
+    if (apiProjects.length > 0) {
+      console.log("Using projects from API server");
+    } else if (firestoreProjects.length > 0) {
+      console.log("Using projects directly from Firestore");
+    } else {
+      console.log("No projects found from any source");
+    }
+  }, [apiProjects.length, firestoreProjects.length]);
   
   // Get unique categories from projects
   const uniqueCategories = Array.from(new Set(displayProjects.map(project => project.category)));
   const categories = ['All', ...uniqueCategories];
   
+  // Show loading state if both API and Firestore are loading and we have no data yet
+  const isLoading = (isLoadingApi || isLoadingFirestore) && displayProjects.length === 0;
+    
   // Filter projects by category
   const filteredProjects = activeFilter 
     ? displayProjects.filter(project => project.category === activeFilter) 
@@ -349,25 +343,63 @@ const Portfolio = () => {
                 ))}
               </motion.div>
 
-              {/* Projects grid with staggered animation */}
-              <AnimatePresence mode="wait">
+              {/* Loading state */}
+              {isLoading && (
                 <motion.div 
-                  key={activeFilter || 'all'}
+                  className="flex flex-col items-center justify-center py-16"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
-                  {filteredProjects.map((project, index) => (
-                    <ProjectCard 
-                      key={project.id} 
-                      project={project} 
-                      index={index} 
-                    />
-                  ))}
+                  <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
+                  <p className="text-neutral-600 text-lg">
+                    Loading projects from database...
+                  </p>
                 </motion.div>
-              </AnimatePresence>
+              )}
+              
+              {/* Empty state - no projects found */}
+              {!isLoading && displayProjects.length === 0 && (
+                <motion.div 
+                  className="flex flex-col items-center justify-center py-16 px-4 text-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                    <AlertCircle className="h-8 w-8 text-amber-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-neutral-800 mb-2">No projects found</h3>
+                  <p className="text-neutral-600 max-w-md mx-auto mb-8">
+                    We couldn't retrieve any projects at this time. This could be due to a connection issue with our database.
+                  </p>
+                  <p className="text-neutral-500 text-sm">
+                    Technical details: Failed to fetch from both the API server and Firestore directly.
+                  </p>
+                </motion.div>
+              )}
+
+              {/* Projects grid with staggered animation */}
+              {!isLoading && displayProjects.length > 0 && (
+                <AnimatePresence mode="wait">
+                  <motion.div 
+                    key={activeFilter || 'all'}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                  >
+                    {filteredProjects.map((project, index) => (
+                      <ProjectCard 
+                        key={project.id} 
+                        project={project} 
+                        index={index} 
+                      />
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              )}
             </div>
           </section>
         </TransitionItem>
