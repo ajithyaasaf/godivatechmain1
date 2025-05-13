@@ -1,16 +1,22 @@
-// Simple API proxy for Vercel deployment
-// This approach deploys only the frontend to Vercel
-// And points API requests to an external backend (on Render)
+// This file serves as an entry point for Vercel serverless functions
+// It proxies requests to our Express server
+
+import { createServer } from 'http';
+import { parse } from 'url';
+import '../dist/index.js'; // Import the compiled server code
 
 export default function handler(req, res) {
-  // Point to your Render backend URL
-  const BACKEND_URL = process.env.BACKEND_URL || 'https://godivatech.onrender.com';
+  // Proxy to the Express server
+  const parsedUrl = parse(req.url, true);
+  req.query = parsedUrl.query;
   
-  // For now, let's return a simple response
-  res.status(200).json({
-    message: "API endpoint is working",
-    info: "In production, this would proxy to your backend server",
-    timestamp: new Date().toISOString(),
-    backendUrl: BACKEND_URL
+  // Forward the request to our Express server
+  return import('../dist/index.js').then((module) => {
+    if (typeof module.default === 'function') {
+      return module.default(req, res);
+    } else {
+      res.statusCode = 500;
+      res.end('Internal Server Error: Express app not found');
+    }
   });
 }
