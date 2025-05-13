@@ -22,6 +22,8 @@ if (process.env.NODE_ENV === 'production') {
     allowedOrigins = [
       'https://godivatech.vercel.app', // Main production frontend
       'https://godiva-tech.vercel.app', // Alternative production domain
+      'https://www.godivatech.com',    // Production domain
+      'https://godivatech.com',        // Production domain without www
       /\.vercel\.app$/ // Allow all Vercel preview deployments
     ];
   }
@@ -30,12 +32,37 @@ if (process.env.NODE_ENV === 'production') {
   allowedOrigins = '*';
 }
 
+// Standard CORS middleware
 app.use(cors({
   origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
+
+// Add a custom middleware to ensure CORS headers are always present
+// This handles cases where the main CORS middleware might not apply
+app.use((req, res, next) => {
+  // For preflight requests
+  if (req.method === 'OPTIONS') {
+    // Set CORS headers for preflight requests
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS,PATCH');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    
+    // Handle preflight request
+    res.status(204).end();
+    return;
+  }
+  
+  // Set CORS headers for all other requests
+  // This ensures headers are set even if the cors middleware doesn't catch it
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  next();
+});
 
 // Increase JSON body limit to 10MB for image uploads
 app.use(express.json({ limit: '10mb' })); 

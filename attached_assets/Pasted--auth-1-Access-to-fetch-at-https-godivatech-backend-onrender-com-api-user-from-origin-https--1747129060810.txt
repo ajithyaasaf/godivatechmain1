@@ -1,0 +1,89 @@
+
+/#/auth:1 Access to fetch at 'https://godivatech-backend.onrender.com/api/user' from origin 'https://www.godivatech.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+queryClient.ts:103 
+            
+            
+           GET https://godivatech-backend.onrender.com/api/user net::ERR_FAILED 404 (Not Found)
+(anonymous) @ queryClient.ts:103
+l @ query.js:193
+_ @ retryer.js:80
+start @ retryer.js:121
+fetch @ query.js:275
+K0 @ queryObserver.js:173
+onSubscribe @ queryObserver.js:56
+subscribe @ subscribable.js:9
+(anonymous) @ useBaseQuery.js:58
+T5 @ react-dom.development.js:16139
+_d @ react-dom.development.js:23189
+Yae @ react-dom.development.js:24970
+Gae @ react-dom.development.js:24930
+qae @ react-dom.development.js:24917
+Wae @ react-dom.development.js:24905
+Aoe @ react-dom.development.js:27078
+lu @ react-dom.development.js:27023
+K4 @ react-dom.development.js:26115
+gd @ react-dom.development.js:12042
+Coe @ react-dom.development.js:26998
+Im @ react-dom.development.js:26721
+goe @ react-dom.development.js:26020
+G4 @ react-dom.development.js:25848
+ze @ scheduler.development.js:266
+Oe @ scheduler.development.js:239
+un @ scheduler.development.js:533
+queryClient.ts:142 Query failed for GET /api/user (https://godivatech-backend.onrender.com/api/user): TypeError: Failed to fetch
+    at queryClient.ts:103:25
+    at Object.l [as fn] (query.js:193:14)
+    at _ (retryer.js:80:49)
+    at Object.start (retryer.js:121:9)
+    at SB.fetch (query.js:275:26)
+    at VB.K0 (queryObserver.js:173:38)
+    at VB.onSubscribe (queryObserver.js:56:9)
+    at VB.subscribe (subscribable.js:9:10)
+    at useBaseQuery.js:58:56
+    at T5 (react-dom.development.js:16139:10)
+(anonymous) @ queryClient.ts:142
+await in (anonymous)
+l @ query.js:193
+_ @ retryer.js:80
+start @ retryer.js:121
+fetch @ query.js:275
+K0 @ queryObserver.js:173
+onSubscribe @ queryObserver.js:56
+subscribe @ subscribable.js:9
+(anonymous) @ useBaseQuery.js:58
+T5 @ react-dom.development.js:16139
+_d @ react-dom.development.js:23189
+Yae @ react-dom.development.js:24970
+Gae @ react-dom.development.js:24930
+qae @ react-dom.development.js:24917
+Wae @ react-dom.development.js:24905
+Aoe @ react-dom.development.js:27078
+lu @ react-dom.development.js:27023
+K4 @ react-dom.development.js:26115
+gd @ react-dom.development.js:12042
+Coe @ react-dom.development.js:26998
+Im @ react-dom.development.js:26721
+goe @ react-dom.development.js:26020
+G4 @ react-dom.development.js:25848
+ze @ scheduler.development.js:266
+Oe @ scheduler.development.js:239
+un @ scheduler.development.js:533
+firebase-env-test.ts:29 Firebase Config Test - Firestore read test: ✓ Success (5 documents)
+firebase-env-test.ts:36 Firebase Config Test - Auth instance: ✓ Created
+main.tsx:19 Firestore initialization check complete
+firebase-env-test.ts:41 
+            
+            
+           POST https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDzIqWI6AApvWSE22y1Ug7h-8MysAo2fNw 400 (Bad Request)
+(anonymous) @ index-68039fd7.js:919
+await in (anonymous)
+rY @ index-68039fd7.js:928
+Kg @ index-68039fd7.js:888
+iY @ index-68039fd7.js:976
+hSe @ index-68039fd7.js:5516
+pSe @ index-68039fd7.js:5619
+await in pSe
+IK @ firebase-env-test.ts:41
+await in IK
+(anonymous) @ main.tsx:24
+firebase-env-test.ts:47 Firebase Config Test - Anonymous auth test: ✗ Failed Firebase: Error (auth/admin-restricted-operation).

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIME Type Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #333;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 1rem;
+      overflow: auto;
+      border-radius: 4px;
+    }
+    .success {
+      color: #43a047;
+      border-left: 4px solid #43a047;
+      padding-left: 1rem;
+    }
+    .error {
+      color: #e53935;
+      border-left: 4px solid #e53935;
+      padding-left: 1rem;
+    }
+    .test-container {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    button {
+      background: #3f51b5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>MIME Type Test Page</h1>
+  <p>This page helps diagnose MIME type issues with JavaScript modules in your Vercel deployment.</p>
+  
+  <div class="test-container">
+    <h2>1. Basic Script Test</h2>
+    <p>Testing regular script loading:</p>
+    <div id="basic-test-result">Running...</div>
+    <script>
+      document.getElementById('basic-test-result').innerHTML = '<div class="success">✓ Regular script loaded successfully</div>';
+    </script>
+  </div>
+  
+  <div class="test-container">
+    <h2>2. Module Script Test</h2>
+    <p>Testing ES module script loading:</p>
+    <div id="module-test-result">Running...</div>
+    <script type="module">
+      document.getElementById('module-test-result').innerHTML = '<div class="success">✓ Module script loaded successfully</div>';
+    </script>
+  </div>
+  
+  <div class="test-container">
+    <h2>3. External Module Test</h2>
+    <p>Testing external module import:</p>
+    <div id="external-test-result">Running...</div>
+    <script type="module">
+      try {
+        // Create a simple module to test import
+        const moduleUrl = URL.createObjectURL(new Blob(
+          ['export default "Module loaded successfully";'], 
+          { type: 'application/javascript' }
+        ));
+        
+        // Try to import it
+        import(moduleUrl).then(module => {
+          document.getElementById('external-test-result').innerHTML = 
+            `<div class="success">✓ ${module.default}</div>`;
+        }).catch(error => {
+          document.getElementById('external-test-result').innerHTML = 
+            `<div class="error">✗ Error: ${error.message}</div>`;
+        });
+      } catch (error) {
+        document.getElementById('external-test-result').innerHTML = 
+          `<div class="error">✗ Error: ${error.message}</div>`;
+      }
+    </script>
+  </div>
+  
+  <div class="test-container">
+    <h2>4. Browser Information</h2>
+    <pre id="browser-info"></pre>
+    <script>
+      const browserInfo = {
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        platform: navigator.platform,
+        cookiesEnabled: navigator.cookieEnabled,
+        doNotTrack: navigator.doNotTrack,
+        onLine: navigator.onLine,
+        screenSize: `${window.screen.width}×${window.screen.height}`,
+        viewportSize: `${window.innerWidth}×${window.innerHeight}`,
+        pixelRatio: window.devicePixelRatio,
+        location: window.location.href
+      };
+      
+      document.getElementById('browser-info').textContent = 
+        JSON.stringify(browserInfo, null, 2);
+    </script>
+  </div>
+  
+  <div class="test-container">
+    <h2>5. Navigation</h2>
+    <button onclick="window.location.href = '/'">Go to Main Application</button>
+  </div>
+</body>
+</html>

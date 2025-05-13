@@ -1,6 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+// Import these directly instead of using require()
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,8 +13,9 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        require('tailwindcss')('./vercel-tailwind.config.js'),
-        require('autoprefixer')(),
+        // Use direct function calls with the config path
+        tailwindcss('./vercel-tailwind.config.js'),
+        autoprefixer(),
       ],
     },
   },
@@ -26,5 +30,15 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Ensure proper MIME types by using .js extension for all chunks
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+        // Ensure proper module format
+        format: 'es',
+      }
+    }
   },
 });

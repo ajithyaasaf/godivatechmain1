@@ -1,0 +1,41 @@
+[14:37:26.402] Running build in Washington, D.C., USA (East) – iad1
+[14:37:26.419] Cloning github.com/ajithyaasaf/godivatechmain1 (Branch: main, Commit: 0e21148)
+[14:37:26.590] Previous build caches not available
+[14:37:26.790] Cloning completed: 371.000ms
+[14:37:27.149] Running "vercel build"
+[14:37:27.540] Vercel CLI 41.7.3
+[14:37:27.659] WARN! Due to `builds` existing in your configuration file, the Build and Development Settings defined in your Project Settings will not apply. Learn More: https://vercel.link/unused-build-settings
+[14:37:28.206] Starting Vercel build process...
+[14:37:28.207] Installing client dependencies...
+[14:38:10.615] 
+[14:38:10.616] added 400 packages, and audited 401 packages in 42s
+[14:38:10.616] 
+[14:38:10.617] 45 packages are looking for funding
+[14:38:10.617]   run `npm fund` for details
+[14:38:10.623] 
+[14:38:10.624] 2 moderate severity vulnerabilities
+[14:38:10.625] 
+[14:38:10.625] To address all issues (including breaking changes), run:
+[14:38:10.625]   npm audit fix --force
+[14:38:10.625] 
+[14:38:10.625] Run `npm audit` for details.
+[14:38:10.687] Building client for Vercel...
+[14:38:10.802] 
+[14:38:10.802] > godivatech-client@1.0.0 vercel-build
+[14:38:10.802] > vite build --config vite.config.vercel.ts
+[14:38:10.802] 
+[14:38:11.026] [31mfailed to load config from /vercel/path0/client/vite.config.vercel.ts[39m
+[14:38:11.033] [31merror during build:
+[14:38:11.033] Error: Dynamic require of "file:///vercel/path0/client/node_modules/tailwindcss/lib/index.js" is not supported
+[14:38:11.034]     at file:///vercel/path0/client/vite.config.vercel.ts.timestamp-1747127291018-05f87653a11a4.mjs:5:9
+[14:38:11.034]     at file:///vercel/path0/client/vite.config.vercel.ts.timestamp-1747127291018-05f87653a11a4.mjs:20:9
+[14:38:11.034]     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+[14:38:11.034]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+[14:38:11.034]     at async loadConfigFromBundledFile (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66958:15)
+[14:38:11.034]     at async loadConfigFromFile (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66799:24)
+[14:38:11.035]     at async resolveConfig (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:66399:24)
+[14:38:11.035]     at async build (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65487:18)
+[14:38:11.035]     at async CAC.<anonymous> (file:///vercel/path0/client/node_modules/vite/dist/node/cli.js:829:5)[39m
+[14:38:11.052] Error: Command "./vercel-build.sh" exited with 1
+[14:38:11.372] 
+[14:38:14.313] Exiting build container
