@@ -1,22 +1,24 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import themeJson from "@replit/vite-plugin-shadcn-theme-json";
+// Remove Replit-specific plugin for Vercel build
+// import themeJson from "@replit/vite-plugin-shadcn-theme-json";
 
 // Special Vite config for Vercel deployment
 export default defineConfig({
   plugins: [
     react(),
-    themeJson({
-      // Use theme.json in the client directory for Vercel
-      themeJsonPath: path.resolve(process.cwd(), "theme.json"),
-    })
+    // Remove Replit-specific plugin that might cause issues in Vercel
+    // themeJson({
+    //   themeJsonPath: path.resolve(process.cwd(), "theme.json"),
+    // })
   ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
       "@shared": path.resolve(__dirname, "../shared"),
-      "@assets": path.resolve(__dirname, "../attached_assets"),
+      // For Vercel, we need to use a different path to attached assets
+      "@assets": path.resolve(__dirname, "public/assets"),
     },
   },
   build: {

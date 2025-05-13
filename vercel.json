@@ -1,56 +1,28 @@
 {
+  "name": "godivatech",
   "version": 2,
-  "buildCommand": "chmod +x vercel-build.sh && ./vercel-build.sh",
-  "outputDirectory": "dist",
-  "framework": "vite",
-  "headers": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.js",
-      "headers": [
-        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" }
-      ]
-    },
-    {
-      "source": "/(.*)\\.css",
-      "headers": [
-        { "key": "Content-Type", "value": "text/css; charset=utf-8" }
-      ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist",
+        "buildCommand": "cd client && npm install && npm run vercel-build"
+      }
     }
   ],
-  "functions": {
-    "api/standalone.js": {
-      "runtime": "nodejs18.x",
-      "memory": 1024
-    }
-  },
   "routes": [
-    { "handle": "filesystem" },
-    { 
-      "src": "/api/(.*)", 
-      "dest": "/api/standalone.js",
-      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html",
-      "status": 200
-    }
+    { "src": "/(.*)", "dest": "/client/dist/$1" }
   ],
-  "cleanUrls": true,
-  "trailingSlash": false,
   "env": {
-    "NODE_ENV": "production"
+    "VITE_SERVER_URL": "https://godivatech-backend.onrender.com",
+    "VITE_FIREBASE_API_KEY": "AIzaSyDzIqWI6AApvWSE22y1Ug7h-8MysAo2fNw",
+    "VITE_FIREBASE_AUTH_DOMAIN": "godiva-tech.firebaseapp.com",
+    "VITE_FIREBASE_PROJECT_ID": "godiva-tech",
+    "VITE_FIREBASE_STORAGE_BUCKET": "godiva-tech.appspot.com",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "801444351245",
+    "VITE_FIREBASE_APP_ID": "1:801444351245:web:f030b472d6fb7be3d4f444",
+    "VITE_FIREBASE_MEASUREMENT_ID": "G-KHE7CZP6EZ",
+    "VITE_DEBUG_MODE": "true"
   }
 }
