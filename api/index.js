@@ -1,22 +1,76 @@
-// This file serves as an entry point for Vercel serverless functions
-// It proxies requests to our Express server
+// api/index.js - Vercel Serverless API handler
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import { createServer } from "http";
+import { setupAuth } from "../server/auth.js";
+import { setupSitemap } from "../server/sitemap.js";
 
-import { createServer } from 'http';
-import { parse } from 'url';
-import '../dist/index.js'; // Import the compiled server code
+// Initialize environment variables
+dotenv.config();
 
-export default function handler(req, res) {
-  // Proxy to the Express server
-  const parsedUrl = parse(req.url, true);
-  req.query = parsedUrl.query;
-  
-  // Forward the request to our Express server
-  return import('../dist/index.js').then((module) => {
-    if (typeof module.default === 'function') {
-      return module.default(req, res);
-    } else {
-      res.statusCode = 500;
-      res.end('Internal Server Error: Express app not found');
-    }
+// Create Express app
+const app = express();
+
+// CORS setup
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// JSON body parser
+app.use(express.json());
+
+// Set up authentication routes
+setupAuth(app);
+
+// Set up sitemap
+setupSitemap(app);
+
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "production"
+  });
+});
+
+// Ping endpoint for network connectivity checks
+app.get("/api/ping", (req, res) => {
+  res.json({ 
+    status: "ok", 
+    timestamp: new Date().toISOString(),
+    server: "GodivaTech API"
+  });
+});
+
+// Add more API routes as needed
+// ...
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+  console.error('API Error:', err);
+  res.status(500).json({
+    error: "Internal Server Error",
+    message: process.env.NODE_ENV === 'production' ? undefined : err.message
+  });
+});
+
+// Create server for local development
+const server = createServer(app);
+
+// Start server if not in Vercel environment
+if (typeof process.env.VERCEL === 'undefined') {
+  const PORT = process.env.PORT || 5000;
+  server.listen(PORT, () => {
+    console.log(`[api] Server is running on port ${PORT}`);
   });
 }
+
+// Export for Vercel serverless functions
+export default app;

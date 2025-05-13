@@ -30,7 +30,21 @@
     }
   ],
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "functions": {
+    "api/index.js": {
+      "memory": 1024
+    }
+  },
+  "routes": [
+    { "handle": "filesystem" },
+    { 
+      "src": "/api/(.*)", 
+      "dest": "/api/index.js",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    }
   ],
   "cleanUrls": true,
   "trailingSlash": false,
