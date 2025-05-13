@@ -13,6 +13,9 @@
       "dest": "/assets/$1"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "^/(.*).(js|css|png|jpg|jpeg|svg|webp|gif|ico|json)$",
       "dest": "/$1.$2"
     },

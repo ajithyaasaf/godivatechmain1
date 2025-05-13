@@ -1,0 +1,42 @@
+[11:56:10.314] Running build in Washington, D.C., USA (East) – iad1
+[11:56:10.391] Cloning github.com/ajithyaasaf/godivatechmain1 (Branch: main, Commit: 247e723)
+[11:56:11.269] Cloning completed: 877.000ms
+[11:56:13.353] Restored build cache from previous deployment (HPCbiLFNkYZ6EKDFTReHNqheytmt)
+[11:56:14.423] Running "vercel build"
+[11:56:14.984] Vercel CLI 41.7.3
+[11:56:15.980] Installing dependencies...
+[11:56:17.627] 
+[11:56:17.628] up to date in 1s
+[11:56:17.628] 
+[11:56:17.628] 76 packages are looking for funding
+[11:56:17.629]   run `npm fund` for details
+[11:56:17.790] 
+[11:56:17.792] > rest-express@1.0.0 build
+[11:56:17.792] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[11:56:17.793] 
+[11:56:18.250] [36mvite v5.4.14 [32mbuilding for production...[36m[39m
+[11:56:18.623] transforming...
+[11:56:28.819] [32m✓[39m 2522 modules transformed.
+[11:56:29.939] rendering chunks...
+[11:56:29.962] computing gzip size...
+[11:56:30.011] [2m../dist/public/[22m[32mindex.html                             [39m[1m[2m    2.73 kB[22m[1m[22m[2m │ gzip:   1.18 kB[22m
+[11:56:30.012] [2m../dist/public/[22m[2massets/[22m[32mgodiva-logo-C316X4_3.png        [39m[1m[2m   17.03 kB[22m[1m[22m
+[11:56:30.012] [2m../dist/public/[22m[2massets/[22m[32mmodern-workspace-Bii4tqxV.jpeg  [39m[1m[2m   49.82 kB[22m[1m[22m
+[11:56:30.012] [2m../dist/public/[22m[2massets/[22m[32mceo-FxtVRioG.jpg                [39m[1m[2m1,077.43 kB[22m[1m[22m
+[11:56:30.012] [2m../dist/public/[22m[2massets/[22m[35mindex-Cqstfb9X.css              [39m[1m[2m  131.12 kB[22m[1m[22m[2m │ gzip:  20.47 kB[22m
+[11:56:30.019] [2m../dist/public/[22m[2massets/[22m[36mindex-BleVK-eA.js               [39m[1m[33m2,091.97 kB[39m[22m[2m │ gzip: 538.50 kB[22m
+[11:56:30.019] [32m✓ built in 11.74s[39m
+[11:56:30.020] [33m
+[11:56:30.020] (!) Some chunks are larger than 500 kB after minification. Consider:
+[11:56:30.020] - Using dynamic import() to code-split the application
+[11:56:30.020] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[11:56:30.020] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[11:56:30.104] 
+[11:56:30.104]   dist/index.js  123.2kb
+[11:56:30.104] 
+[11:56:30.104] ⚡ Done in 17ms
+[11:56:30.323] Build completed successfully with public files copied to dist/
+[11:57:49.812] Build Completed in /vercel/output [2m]
+[11:57:50.939] Deploying outputs...
+[11:58:05.353] 
+[11:58:05.931] Deployment completed

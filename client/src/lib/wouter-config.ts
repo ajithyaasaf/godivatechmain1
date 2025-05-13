@@ -6,25 +6,28 @@ import { useState, useEffect } from 'react';
 type NavigateFn = (to: string) => void;
 type LocationHook = () => [string, NavigateFn];
 
-// Custom hook for handling routing in the app
+// Hash-based routing for better compatibility with static deployments
 export const useHashLocation: LocationHook = () => {
-  // Get current pathname
-  const getPath = () => window.location.pathname || '/';
+  // Get hash location (excluding the # symbol)
+  const getHashPath = () => {
+    const hash = window.location.hash;
+    const path = hash.replace(/^#/, '') || '/';
+    return path;
+  };
   
   // State to track current location
-  const [path, setPath] = useState(getPath());
+  const [path, setPath] = useState(getHashPath());
   
   // Handle navigation
   const navigate: NavigateFn = (to) => {
-    window.history.pushState(null, '', to);
-    setPath(to);
+    window.location.hash = to;
   };
   
-  // Update path when browser history changes
+  // Update path when hash changes
   useEffect(() => {
-    const handlePopState = () => setPath(getPath());
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    const handleHashChange = () => setPath(getHashPath());
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   return [path, navigate];
