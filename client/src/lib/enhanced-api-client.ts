@@ -1,5 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { getNetworkStatus, NetworkStatus } from "@/hooks/use-network-status";
+import { getNetworkStatus, NetworkStatus } from "../hooks/use-network-status";
 
 // Constants for retry configuration
 const MAX_RETRIES = 3;

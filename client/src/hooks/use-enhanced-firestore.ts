@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { FirebaseService, FirebaseErrorType, FirebaseServiceError, firebaseService } from '@/lib/firebase-service';
-import { useNetworkStatus, NetworkStatus } from '@/hooks/use-network-status';
-import { DocumentData, QueryConstraint, orderBy, where, limit, DocumentReference, setDoc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { doc } from 'firebase/firestore';
+import { useToast } from './use-toast';
+import { FirebaseService, FirebaseErrorType, FirebaseServiceError, firebaseService } from '../lib/firebase-service';
+import { useNetworkStatus, NetworkStatus } from './use-network-status';
+import { 
+  DocumentData, QueryConstraint, orderBy, where, limit, 
+  DocumentReference, setDoc, updateDoc, deleteDoc, serverTimestamp,
+  collection, doc
+} from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 // Constants
 const MAX_OFFLINE_QUEUE_SIZE = 100;

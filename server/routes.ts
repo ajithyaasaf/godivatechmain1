@@ -33,6 +33,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
+  // Ping endpoint for network connectivity checks
+  app.get("/api/ping", (req, res) => {
+    res.json({ 
+      status: "ok", 
+      timestamp: new Date().toISOString(),
+      server: "GodivaTech API"
+    });
+  });
+  
+  // HEAD request for fast network connectivity checks
+  app.head("/api/ping", (req, res) => {
+    res.setHeader("X-Server-Time", new Date().toISOString());
+    res.setHeader("X-Server", "GodivaTech API");
+    res.status(200).end();
+  });
+  
   // Debug endpoint (only in development)
   if (process.env.NODE_ENV !== "production") {
     app.get("/api/debug", (req, res) => {

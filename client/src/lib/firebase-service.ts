@@ -7,7 +7,7 @@ import {
   Firestore
 } from "firebase/firestore";
 import { db } from "./firebase";
-import { NetworkStatus, useNetworkStatus } from "@/hooks/use-network-status";
+import { NetworkStatus, useNetworkStatus } from "../hooks/use-network-status";
 
 // Constants for retry configuration
 const MAX_RETRIES = 3;
