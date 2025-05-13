@@ -1,23 +1,24 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 // Get the API base URL from environment or use the backend URL for production
+// In order of preference: VITE_SERVER_URL -> VITE_API_URL -> default fallback
 const API_BASE_URL = import.meta.env.VITE_SERVER_URL || import.meta.env.VITE_API_URL || 'https://godivatech-backend.onrender.com';
 console.log('API Base URL:', API_BASE_URL);
 
-// Function to construct full API URL
+// Function to construct full API URL with improved environment handling
 function getFullApiUrl(urlPath: string): string {
   // If the URL already starts with http(s), it's a full URL
   if (urlPath.startsWith('http')) {
     return urlPath;
   }
   
-  // If we're in development, use relative URLs
-  if (import.meta.env.DEV) {
+  // For development in Replit, use relative URLs to avoid CORS issues
+  if (import.meta.env.DEV && window.location.hostname.includes('replit')) {
     return urlPath;
   }
   
-  // In production, prefix with API base URL
-  // Ensure there's only one / between base and path
+  // For Vercel preview/production deployments, always use the full URL
+  // to ensure consistent API connectivity
   const baseWithTrailingSlash = API_BASE_URL.endsWith('/') 
     ? API_BASE_URL 
     : `${API_BASE_URL}/`;

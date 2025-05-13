@@ -11,11 +11,20 @@ import { useHashLocation } from "./lib/wouter-config";
 import "./lib/firebase";
 // Initialize Firestore with sample data
 import { initializeFirestoreWithSampleData } from "@/lib/firestore";
+// Import Firebase configuration test
+import { testFirebaseConfig } from "@/lib/firebase-env-test";
 
 // Check and initialize Firestore sample data if needed
 initializeFirestoreWithSampleData()
   .then(() => console.log("Firestore initialization check complete"))
   .catch(error => console.error("Error during Firestore initialization:", error));
+  
+// Test Firebase configuration (helpful for debugging deployment issues)
+if (import.meta.env.DEV || import.meta.env.VITE_DEBUG_MODE === 'true') {
+  testFirebaseConfig()
+    .then(result => console.log("Firebase config test result:", result))
+    .catch(error => console.error("Firebase config test error:", error));
+}
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>

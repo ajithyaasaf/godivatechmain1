@@ -23,18 +23,34 @@ export async function getCollection(
   constraints: QueryConstraint[] = []
 ): Promise<DocumentData[]> {
   try {
+    console.log(`Fetching collection: ${collectionName} from project: ${db.app.options.projectId}`);
+    console.log(`Environment: ${import.meta.env.MODE}, Base URL: ${window.location.origin}`);
+    
     const collectionRef = collection(db, collectionName);
     const q = constraints.length > 0 
       ? query(collectionRef, ...constraints) 
       : query(collectionRef);
     
     const querySnapshot = await getDocs(q);
+    console.log(`Successfully retrieved ${querySnapshot.docs.length} documents from ${collectionName}`);
+    
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error getting collection ${collectionName}:`, error);
+    console.error(`Error code:`, error.code);
+    console.error(`Error message:`, error.message);
+    console.error(`Firebase project ID during error:`, db.app.options.projectId);
+    console.error(`Host environment:`, window.location.hostname);
+    
+    // In production, provide more context for debugging
+    if (import.meta.env.PROD) {
+      console.error(`Vercel deployment URL: ${import.meta.env.VITE_SERVER_URL || 'Not configured'}`);
+      console.error(`Firebase auth domain: ${db.app.options.authDomain}`);
+    }
+    
     throw error;
   }
 }

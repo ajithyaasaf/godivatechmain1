@@ -6,7 +6,25 @@
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Credentials", "value": "true" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization" }
+      ]
+    }
+  ],
   "env": {
-    "VITE_SERVER_URL": "https://godivatech-backend.onrender.com"
+    "VITE_SERVER_URL": "https://godivatech-backend.onrender.com",
+    "VITE_FIREBASE_API_KEY": "AIzaSyDzIqWI6AApvWSE22y1Ug7h-8MysAo2fNw",
+    "VITE_FIREBASE_AUTH_DOMAIN": "godiva-tech.firebaseapp.com",
+    "VITE_FIREBASE_PROJECT_ID": "godiva-tech",
+    "VITE_FIREBASE_STORAGE_BUCKET": "godiva-tech.appspot.com",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "801444351245",
+    "VITE_FIREBASE_APP_ID": "1:801444351245:web:f030b472d6fb7be3d4f444",
+    "VITE_FIREBASE_MEASUREMENT_ID": "G-KHE7CZP6EZ"
   }
 }

@@ -26,16 +26,24 @@ export const registerUser = async (
   displayName?: string
 ) => {
   try {
+    console.log(`Attempting to register user with email: ${email}`);
+    console.log(`Firebase project ID: ${auth.app.options.projectId}`);
+    
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    console.log('User registered successfully, UID:', userCredential.user.uid);
     
     // Update the user profile with display name if provided
     if (displayName && userCredential.user) {
       await updateProfile(userCredential.user, { displayName });
+      console.log('User profile updated with display name');
     }
     
     return userCredential;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error registering user:', error);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    console.error('Firebase project ID during error:', auth.app.options.projectId);
     throw error;
   }
 };
@@ -48,9 +56,24 @@ export const registerUser = async (
  */
 export const loginUser = async (email: string, password: string) => {
   try {
-    return await signInWithEmailAndPassword(auth, email, password);
-  } catch (error) {
+    console.log(`Attempting to sign in user with email: ${email}`);
+    console.log(`Firebase project ID: ${auth.app.options.projectId}`);
+    console.log(`Firebase auth domain: ${auth.app.options.authDomain}`);
+    
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log('User signed in successfully, UID:', userCredential.user.uid);
+    
+    // Log token information (for debugging only)
+    const token = await userCredential.user.getIdToken();
+    console.log('Auth token retrieved successfully, length:', token.length);
+    
+    return userCredential;
+  } catch (error: any) {
     console.error('Error signing in user:', error);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    console.error('Firebase project ID during error:', auth.app.options.projectId);
+    console.error('Environment:', import.meta.env.MODE); // 'development' or 'production'
     throw error;
   }
 };
