@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GodivaTech - Debug Page</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+      color: #333;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 1rem;
+      overflow: auto;
+      border-radius: 4px;
+    }
+    button {
+      background: #3f51b5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-right: 0.5rem;
+    }
+    button:hover {
+      background: #303f9f;
+    }
+    .logo {
+      max-width: 200px;
+      display: block;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+    .error {
+      color: #e53935;
+      border-left: 4px solid #e53935;
+      padding-left: 1rem;
+    }
+    .success {
+      color: #43a047;
+      border-left: 4px solid #43a047;
+      padding-left: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>GodivaTech - Application Debug Page</h1>
+  
+  <div id="status" class="loading">
+    <p>Running diagnostics...</p>
+  </div>
+  
+  <div>
+    <button id="redirect-home">Go to Homepage</button>
+    <button id="test-assets">Test Asset Loading</button>
+    <button id="test-api">Test API Connection</button>
+    <button id="check-environment">Check Environment</button>
+  </div>
+  
+  <h2>Browser Information</h2>
+  <pre id="browser-info"></pre>
+  
+  <h2>Environment Variables</h2>
+  <pre id="env-info">Environment variables are not accessible in client-side code for security reasons</pre>
+  
+  <h2>Asset Loading Test</h2>
+  <div id="asset-test"></div>
+  
+  <h2>API Connection Test</h2>
+  <pre id="api-test">Click "Test API Connection" to run this test</pre>
+
+  <script>
+    // Display browser information
+    document.getElementById('browser-info').textContent = `
+User Agent: ${navigator.userAgent}
+Language: ${navigator.language}
+Platform: ${navigator.platform}
+Screen: ${window.innerWidth}x${window.innerHeight}
+URL: ${window.location.href}
+    `;
+
+    // Setup button handlers
+    document.getElementById('redirect-home').addEventListener('click', function() {
+      window.location.href = '/#/';
+    });
+
+    document.getElementById('test-assets').addEventListener('click', function() {
+      const assetTest = document.getElementById('asset-test');
+      assetTest.innerHTML = '';
+      
+      // Try to load an image
+      const img = new Image();
+      img.onload = function() {
+        assetTest.innerHTML += '<p class="success">✓ Image loaded successfully</p>';
+        assetTest.appendChild(img);
+      };
+      img.onerror = function() {
+        assetTest.innerHTML += '<p class="error">✗ Failed to load image</p>';
+      };
+      img.src = '/assets/godiva-logo-C316X4_3.png';
+      img.style.maxWidth = '200px';
+      
+      // Try to load a stylesheet
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/assets/index-Cqstfb9X.css';
+      link.onload = function() {
+        assetTest.innerHTML += '<p class="success">✓ CSS loaded successfully</p>';
+      };
+      link.onerror = function() {
+        assetTest.innerHTML += '<p class="error">✗ Failed to load CSS</p>';
+      };
+      document.head.appendChild(link);
+    });
+
+    document.getElementById('test-api').addEventListener('click', function() {
+      const apiTest = document.getElementById('api-test');
+      apiTest.textContent = 'Testing API connection...';
+      
+      // Try to connect to the API
+      fetch('/api/health')
+        .then(response => response.json())
+        .then(data => {
+          apiTest.textContent = JSON.stringify(data, null, 2);
+          document.getElementById('status').innerHTML = '<p class="success">✓ API connection successful</p>';
+        })
+        .catch(error => {
+          apiTest.textContent = `Error connecting to API: ${error.message}`;
+          document.getElementById('status').innerHTML = '<p class="error">✗ API connection failed</p>';
+        });
+    });
+
+    document.getElementById('check-environment').addEventListener('click', function() {
+      const envInfo = document.getElementById('env-info');
+      
+      // List variables prefixed with VITE_ which are accessible
+      let envVars = '';
+      for (const key in import.meta?.env || {}) {
+        if (key.startsWith('VITE_')) {
+          envVars += `${key}: ${key.includes('KEY') || key.includes('SECRET') ? '[HIDDEN]' : import.meta.env[key]}\n`;
+        }
+      }
+      
+      if (envVars) {
+        envInfo.textContent = envVars;
+      } else {
+        envInfo.textContent = 'No environment variables found or import.meta.env is not available';
+      }
+    });
+
+    // Automatically run tests
+    window.onload = function() {
+      // Check if the page is accessible
+      document.getElementById('status').innerHTML = '<p class="success">✓ Debug page loaded successfully</p>';
+      
+      // Automatically test API
+      document.getElementById('test-api').click();
+    };
+  </script>
+</body>
+</html>

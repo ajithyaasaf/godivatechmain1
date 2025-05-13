@@ -1,84 +1,56 @@
-// Vercel serverless entry point
+// server/vercel.js - Production server for Vercel deployment
+import dotenv from "dotenv";
 import express from 'express';
-import cors from 'cors';
-import compression from 'compression';
-import { registerRoutes } from './routes';
-import { setupAuth } from './auth';
-import { setupSitemap } from './sitemap';
 import path from 'path';
+import cors from 'cors';
 import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { createServer } from 'http';
-import setupWebSocketServer from './vercel-websocket';
-import dotenv from 'dotenv';
 
-// Load environment variables based on NODE_ENV
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: '.env.production' });
-} else {
-  dotenv.config();
-}
+// Initialize environment variables
+dotenv.config();
+
+// Get directory path in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Initialize Express app
 const app = express();
-const server = createServer(app);
+const PORT = process.env.PORT || 3000;
 
-// Setup WebSocket with Vercel-compatible adapter
-const websocketServer = setupWebSocketServer(server);
-
-// Make WebSocket server available globally
-app.locals.wss = websocketServer;
-
-// Enable CORS
+// Set up CORS
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Use compression
-app.use(compression());
+// Serve static files from the React app
+app.use(express.static(join(__dirname, '../dist')));
 
-// Parse JSON body
-app.use(express.json());
+// Define API routes here
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
-// Setup auth
-setupAuth(app);
-
-// Setup sitemap
-setupSitemap(app);
-
-// Register API routes
-registerRoutes(app);
-
-// Serve static client files from the dist directory
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const clientDistPath = path.join(__dirname, '../client/dist');
-app.use(express.static(clientDistPath));
-
-// Serve the index.html file for all other routes (SPA fallback)
+// Handle React routing, return all requests to React app
 app.get('*', (req, res) => {
-  // Skip API and websocket routes
-  if (req.path.startsWith('/api/') || req.path === '/ws') {
-    return;
+  // Exclude API routes from catch-all
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
   }
   
-  res.sendFile(path.join(clientDistPath, 'index.html'));
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
-// Error handling middleware
-app.use((err, _req, res, _next) => {
-  console.error('Server error:', err);
-  res.status(500).json({ message: 'An internal server error occurred' });
-});
+// Create HTTP server
+const server = createServer(app);
 
-// For development server (will not run in Vercel production)
+// Start server if not in Vercel environment
 if (typeof process.env.VERCEL === 'undefined') {
-  // For local development and other environments, start a full HTTP server
-  const PORT = process.env.PORT || 5000;
   server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`[vercel] Server is running on port ${PORT}`);
   });
 }
 
-// Export app for Vercel (default) and for testing purposes
 export default app;
-export { app };
