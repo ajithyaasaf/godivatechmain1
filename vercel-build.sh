@@ -5,9 +5,14 @@ echo "Current directory: $(pwd)"
 echo "Files in root directory:"
 ls -la
 
-# Run the standard build with detailed output
-echo "Running npm build..."
-npm run build
+# Run the Vercel-specific build
+echo "Running client Vercel build..."
+cd client && npm run vercel-build && cd ..
+
+# Create dist directory if not exists (should match the output in VERCEL_DEPLOYMENT.md)
+mkdir -p dist
+echo "Copying client build to main dist..."
+cp -r client/dist/* dist/
 
 # Create .nojekyll file to prevent GitHub Pages from ignoring files with underscores
 echo "Creating .nojekyll file..."
@@ -17,8 +22,12 @@ touch dist/.nojekyll
 echo "Copying public files to dist directory..."
 cp -r public/* dist/
 
-# Ensure content-type is set correctly
-echo "Creating _headers file for content-type..."
+# Create proper 404 page
+echo "Creating 404 page..."
+cp dist/index.html dist/404.html
+
+# Create Vercel specific headers and redirects
+echo "Creating Vercel _headers file..."
 cat > dist/_headers << EOF
 /*
   Content-Type: text/html; charset=UTF-8
@@ -34,12 +43,13 @@ cat > dist/_headers << EOF
   Content-Type: application/json; charset=UTF-8
 EOF
 
-# Create proper 404 page
-echo "Creating 404 page..."
-cp dist/index.html dist/404.html
+echo "Creating _redirects file..."
+cat > dist/_redirects << EOF
+/*    /index.html   200
+EOF
 
 # Verify the dist directory structure
 echo "Files in dist directory:"
 ls -la dist/
 
-echo "Build completed successfully with public files copied to dist/"
+echo "Build completed successfully with proper client files copied to dist/"
