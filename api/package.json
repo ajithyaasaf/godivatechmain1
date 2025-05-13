@@ -1,0 +1,10 @@
+{
+  "name": "godivatech-api",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "standalone.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

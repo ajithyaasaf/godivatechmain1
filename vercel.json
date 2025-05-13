@@ -29,12 +29,9 @@
       ]
     }
   ],
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
   "functions": {
-    "api/index.js": {
+    "api/standalone.js": {
+      "runtime": "nodejs18.x",
       "memory": 1024
     }
   },
@@ -42,8 +39,13 @@
     { "handle": "filesystem" },
     { 
       "src": "/api/(.*)", 
-      "dest": "/api/index.js",
+      "dest": "/api/standalone.js",
       "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "status": 200
     }
   ],
   "cleanUrls": true,

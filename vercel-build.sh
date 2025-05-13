@@ -5,14 +5,24 @@ echo "Current directory: $(pwd)"
 echo "Files in root directory:"
 ls -la
 
-# Run the Vercel-specific build
+# Install dependencies (ensure we have all required packages)
+echo "Installing dependencies..."
+npm install
+
+# Run the Vercel-specific build for client
 echo "Running client Vercel build..."
 cd client && npm run vercel-build && cd ..
 
-# Create dist directory if not exists (should match the output in VERCEL_DEPLOYMENT.md)
-mkdir -p dist
-echo "Copying client build to main dist..."
-cp -r client/dist/* dist/
+# Build server-side code for API routes
+echo "Building API and server code..."
+mkdir -p dist/api
+cp -r api/* dist/api/
+cp -r server dist/
+
+# Copy schema files needed by the API
+echo "Copying schema files..."
+mkdir -p dist/shared
+cp -r shared dist/
 
 # Create .nojekyll file to prevent GitHub Pages from ignoring files with underscores
 echo "Creating .nojekyll file..."
@@ -24,7 +34,11 @@ cp -r public/* dist/
 
 # Create proper 404 page
 echo "Creating 404 page..."
-cp dist/index.html dist/404.html
+cp client/dist/index.html dist/404.html
+
+# Copy static client files to main dist
+echo "Copying client build to main dist..."
+cp -r client/dist/* dist/
 
 # Create Vercel specific headers and redirects
 echo "Creating Vercel _headers file..."
@@ -45,11 +59,16 @@ EOF
 
 echo "Creating _redirects file..."
 cat > dist/_redirects << EOF
-/*    /index.html   200
+/api/*  /api/index.js  200
+/*      /index.html    200
 EOF
 
 # Verify the dist directory structure
 echo "Files in dist directory:"
 ls -la dist/
+echo "API directory:"
+ls -la dist/api/
+echo "Server directory:"
+ls -la dist/server/
 
-echo "Build completed successfully with proper client files copied to dist/"
+echo "Build completed successfully!"
