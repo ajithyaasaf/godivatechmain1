@@ -90,17 +90,52 @@ export const FirebaseAuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       setIsLoading(true);
+      
+      // First sign out from Firebase
       await logoutUser();
+      
+      // Then explicitly clear the current user state
+      setCurrentUser(null);
+      
+      // Clear any tokens or session data that might be stored
+      try {
+        localStorage.removeItem('firebase:authUser');
+        localStorage.removeItem('firebase:auth');
+        sessionStorage.removeItem('firebase:authUser');
+        sessionStorage.removeItem('firebase:auth');
+      } catch (e) {
+        console.error("Error clearing Firebase auth data from storage:", e);
+      }
+      
       toast({
         title: "Logged out",
         description: "You've been logged out successfully.",
       });
+      
+      // More aggressive navigation to auth page
+      setTimeout(() => {
+        // If we're still on a page that should be protected
+        if (
+          window.location.pathname.includes('/admin') || 
+          window.location.pathname.includes('/protected')
+        ) {
+          console.log("Protected route detected after logout, forcing navigation to auth");
+          window.location.pathname = '/auth';
+        }
+      }, 200);
+      
     } catch (error: any) {
+      console.error("Firebase signOut failed:", error);
+      
       toast({
         title: "Logout failed",
         description: error.message || "Failed to sign out.",
         variant: "destructive",
       });
+      
+      // Try to clear user state even on error
+      setCurrentUser(null);
+      
       throw error;
     } finally {
       setIsLoading(false);
