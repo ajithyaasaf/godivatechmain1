@@ -4,6 +4,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import BackToTopButton from "./ui/BackToTopButton";
 import ParticleBackground from "./ui/ParticleBackground";
+import { preconnect, dnsPrefetch } from "@/lib/resourcePreloader";
 import PageTransition from "./PageTransition";
 
 interface LayoutProps {
@@ -16,8 +17,20 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const [showParticles, setShowParticles] = useState(false);
   
-  // Wait for the page to load before showing particles to improve performance
+  // Setup preloading and optimizations on first render
   useEffect(() => {
+    // Setup preconnect for domains we'll load resources from
+    preconnect('https://fonts.googleapis.com');
+    preconnect('https://fonts.gstatic.com');
+    preconnect('https://cdn.jsdelivr.net');
+    preconnect('https://api.fontshare.com');
+    preconnect('https://res.cloudinary.com');
+    
+    // DNS prefetch for other domains
+    dnsPrefetch('https://randomuser.me');
+    dnsPrefetch('https://firebasestorage.googleapis.com');
+    
+    // Delay showing particle effects for performance
     const timer = setTimeout(() => {
       setShowParticles(true);
     }, 1000);

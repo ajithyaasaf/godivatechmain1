@@ -67,6 +67,24 @@ app.use((req, res, next) => {
   next();
 });
 
+// Apply appropriate caching strategies based on request path
+app.use((req, res, next) => {
+  const path = req.path;
+  
+  // API routes should use our API caching strategy
+  if (path.startsWith('/api/')) {
+    apiCache(req, res, next);
+  }
+  // Static files should use longer caching
+  else if (path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|map|webp)$/)) {
+    staticAssetCache(req, res, next);
+  }
+  // HTML routes should use HTML caching with short duration
+  else {
+    htmlCache(req, res, next);
+  }
+});
+
 // Increase JSON body limit to 10MB for image uploads
 app.use(express.json({ limit: '10mb' })); 
 // Increase URL-encoded body limit to 10MB

@@ -144,17 +144,35 @@ export const getQueryFn: <T>(options: {
     }
   };
 
+/**
+ * Creates an optimized Query Client instance with improved caching settings
+ */
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
+      // Fine-tuned caching behavior
+      staleTime: 1000 * 60 * 5, // 5 minutes before data is considered stale
+      cacheTime: 1000 * 60 * 30, // 30 minutes before unused data is garbage collected
+      // Only refetch when window is focused if data is stale
+      refetchOnWindowFocus: 'always',
+      // Retry 3 times with exponential backoff if a query fails
+      retry: 3,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      // Reduce unnecessary refetches
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: Infinity,
-      retry: false,
+      // Add structured keys for better cache management
+      structuralSharing: true,
+      // Prevent refetch on component mount if data is fresh
+      refetchOnMount: true,
     },
     mutations: {
+      // Don't retry mutations to prevent duplicate writes
       retry: false,
+      // Notify all related queries to refetch after mutation
+      onSuccess: () => {
+        queryClient.invalidateQueries();
+      },
     },
   },
 });
