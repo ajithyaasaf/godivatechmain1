@@ -2,7 +2,8 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
-import { queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+
 import { 
   BarChart3, 
   Files, 
@@ -23,7 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
+
 
 interface NavItemProps {
   icon: LucideIcon;
@@ -56,27 +57,25 @@ interface AdminLayoutProps {
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [location, setLocation] = useLocation();
   const { user, logoutMutation } = useAuth();
-  const { toast } = useToast();
+
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Get first letter of username for avatar
   const userInitial = user?.username?.charAt(0).toUpperCase() || 'A';
 
-  const handleLogout = async () => {
-    try {
-      // First call the API directly to ensure the server-side logout happens
-      await fetch('/api/logout', { 
-        method: 'POST',
-        credentials: 'include'
-      });
-      
-      console.log("Logout successful, redirecting to auth page");
-      
-      // Force a hard redirect to the auth page
-      window.location.href = '/auth';
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const handleLogout = () => {
+    // Call the logout mutation from the auth context
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        console.log("Logout successful, redirecting to auth page");
+        
+        // Add a short delay to ensure state updates are processed
+        setTimeout(() => {
+          // Use window.location for a hard redirect that will fully reset the app state
+          window.location.href = '/auth';
+        }, 100);
+      }
+    });
   };
 
   const closeMobileNav = () => {

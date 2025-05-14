@@ -1,0 +1,20 @@
+chunk-7SSXMLWA.js?v=f796f95f:14032 The above error occurred in the <AdminLayout> component:
+
+    at AdminLayout (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/src/components/admin/AdminLayout.tsx?t=1747226405296:75:24)
+    at AdminDashboard (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/src/pages/admin/index.tsx?t=1747226405296:71:19)
+    at Route (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/node_modules/.vite/deps/wouter.js?v=f796f95f:323:16)
+    at ProtectedRoute (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/src/lib/protected-route.tsx:22:3)
+    at Switch (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/node_modules/.vite/deps/wouter.js?v=f796f95f:379:17)
+    at Suspense
+    at AuthProvider (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at App (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/src/App.tsx?t=1747226405296&v=uxrmosDgtJqyGEas3fmRi:127:22)
+    at Router (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/node_modules/.vite/deps/wouter.js?v=f796f95f:291:17)
+    at Provider (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/node_modules/.vite/deps/chunk-ZZIMQBQA.js?v=f796f95f:38:15)
+    at TooltipProvider (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=f796f95f:61:5)
+    at QueryClientProvider (https://e544babc-3350-4ba1-b56d-ee03efd73f85-00-2r0r7w6oyrr30.pike.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=f796f95f:2805:3)
+    at AppWithProviders
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+chunk-7SSXMLWA.js?v=f796f95f:19413 Uncaught ReferenceError: useToast is not defined
+    at AdminLayout (AdminLayout.tsx:59:21)
