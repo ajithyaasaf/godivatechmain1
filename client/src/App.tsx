@@ -11,6 +11,7 @@ import LCPOptimizer from "@/components/performance/LCPOptimizer";
 import FontOptimizer from "@/components/performance/FontOptimizer";
 import CriticalCSSOptimizer from "@/components/performance/CriticalCSSOptimizer";
 import { usePageHistory } from "@/hooks/use-page-history";
+import { initializePerformanceOptimizations } from "@/lib/performance";
 
 // Optimized loading component with minimal DOM updates and better UX
 import OptimizedLoadingIndicator from "@/components/OptimizedLoadingIndicator";
@@ -76,7 +77,7 @@ function App() {
   // Track page navigation for the 404 page history feature
   usePageHistory();
   
-  // Initialize performance tracking
+  // Initialize performance tracking and Core Web Vitals optimizations
   useEffect(() => {
     // Track long tasks to identify performance bottlenecks
     trackLongTasks((duration) => {
@@ -85,9 +86,46 @@ function App() {
       }
     });
     
-    // Preload critical resources
-    preloadCriticalResources();
+    // Initialize all performance optimizations for Core Web Vitals
+    initializePerformanceOptimizations();
     
+    // Preload critical resources
+    preloadCriticalResources([
+      // Hero image
+      '/home-hero.jpg',
+      // Fonts
+      '/fonts/main-font.woff2',
+      // Critical CSS
+      '/critical.css'
+    ]);
+    
+    // Report Core Web Vitals to console in development
+    if (process.env.NODE_ENV === 'development') {
+      setTimeout(() => {
+        if ('performance' in window) {
+          // Get the paint metrics
+          const paintMetrics = performance.getEntriesByType('paint');
+          paintMetrics.forEach(metric => {
+            console.log(`${metric.name}: ${metric.startTime.toFixed(2)}ms`);
+          });
+          
+          // Get LCP if available
+          try {
+            const lcpEntries = performance.getEntriesByType('largest-contentful-paint');
+            if (lcpEntries.length > 0) {
+              console.log(`Largest Contentful Paint: ${lcpEntries[0].startTime.toFixed(2)}ms`);
+            }
+          } catch (e) {
+            // LCP not supported
+          }
+        }
+      }, 3000);
+    }
+    
+    // Clean up event listeners on unmount
+    return () => {
+      // Cleanup code here if needed
+    };
   }, []);
 
   return (

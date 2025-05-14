@@ -1,189 +1,206 @@
 /**
- * Performance Optimization Utilities
+ * Performance optimization utilities for Core Web Vitals
+ */
+
+/**
+ * Track long-running tasks that may cause poor user experience
+ * This helps identify performance bottlenecks
  * 
- * This module provides utilities for improving application performance:
- * - Lazy loading and code splitting
- * - Resource prioritization
- * - CSS optimization
- * - Resource preloading
+ * @param callback Callback function that receives the duration of long tasks
+ * @param threshold Minimum duration (ms) to consider a task as "long"
  */
-
-/**
- * Critical CSS and JS resources that should be preloaded
- */
-const CRITICAL_RESOURCES = [
-  { type: 'style', href: '/src/index.css' },
-  // Add critical scripts if needed
-];
-
-/**
- * Preload critical resources for initial page load
- */
-export function preloadCriticalResources(): void {
-  CRITICAL_RESOURCES.forEach(resource => {
-    const linkEl = document.createElement('link');
-    linkEl.rel = 'preload';
-    linkEl.href = resource.href;
-    linkEl.as = resource.type;
-    linkEl.crossOrigin = 'anonymous';
-    document.head.appendChild(linkEl);
-  });
-}
-
-/**
- * Dynamically load non-critical JavaScript
- * @param src Script URL to load
- * @param defer Whether to defer execution
- * @returns Promise that resolves when script is loaded
- */
-export function loadScript(src: string, defer = true): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.defer = defer;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
-    document.body.appendChild(script);
-  });
-}
-
-/**
- * Lazy load a component only when it's needed
- * @param componentPath Path to the component to lazy load
- * @returns A promise that resolves with the loaded component
- */
-export function lazyLoadComponent(componentPath: string): Promise<any> {
-  return import(/* @vite-ignore */ componentPath);
-}
-
-/**
- * Optimizes the loading of third-party resources
- * @param resource Resource URL
- * @param type Resource type (script, style, font, etc.)
- * @param options Additional loading options
- */
-export function optimizeThirdPartyLoading(
-  resource: string, 
-  type: 'script' | 'style' | 'font', 
-  options?: { async?: boolean; defer?: boolean; crossOrigin?: string }
-): void {
-  if (type === 'script') {
-    const script = document.createElement('script');
-    script.src = resource;
-    script.async = options?.async ?? true;
-    script.defer = options?.defer ?? true;
-    if (options?.crossOrigin) script.crossOrigin = options.crossOrigin;
-    document.body.appendChild(script);
-  } else if (type === 'style') {
-    const link = document.createElement('link');
-    link.href = resource;
-    link.rel = 'stylesheet';
-    if (options?.crossOrigin) link.crossOrigin = options.crossOrigin;
-    document.head.appendChild(link);
-  } else if (type === 'font') {
-    const link = document.createElement('link');
-    link.href = resource;
-    link.rel = 'preload';
-    link.as = 'font';
-    link.type = 'font/woff2';
-    link.crossOrigin = options?.crossOrigin ?? 'anonymous';
-    document.head.appendChild(link);
+export function trackLongTasks(callback: (duration: number) => void, threshold: number = 50) {
+  if (typeof window === 'undefined' || !('PerformanceObserver' in window)) return;
+  
+  try {
+    const observer = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        // duration is in milliseconds
+        const duration = entry.duration;
+        
+        if (duration > threshold) {
+          callback(duration);
+        }
+      });
+    });
+    
+    observer.observe({ entryTypes: ['longtask'] });
+    
+    return () => {
+      observer.disconnect();
+    };
+  } catch (error) {
+    console.error('Error setting up long task observer:', error);
   }
 }
 
 /**
- * Track long tasks to identify performance bottlenecks
- * @param callback Function to call when a long task is detected
+ * Lazy load images that are not in the viewport
+ * This helps improve Largest Contentful Paint (LCP) by prioritizing visible images
+ * 
+ * @param imageSelector CSS selector for images to lazy load
  */
-export function trackLongTasks(callback: (duration: number) => void): void {
-  // Use PerformanceObserver to track long tasks if supported
-  if ('PerformanceObserver' in window) {
-    try {
-      const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          // @ts-ignore - PerformanceLongTaskTiming not in standard TS DOM types
-          callback(entry.duration);
-        });
+export function setupLazyLoading(imageSelector: string = 'img:not([loading])') {
+  if (typeof window === 'undefined') return;
+  
+  // Add loading="lazy" to images that don't already have it
+  const images = document.querySelectorAll<HTMLImageElement>(imageSelector);
+  images.forEach(img => {
+    if (!img.hasAttribute('loading')) {
+      img.loading = 'lazy';
+    }
+    
+    // Add decoding="async" for better performance
+    if (!img.hasAttribute('decoding')) {
+      img.decoding = 'async';
+    }
+  });
+}
+
+/**
+ * Preload critical resources
+ * This helps improve First Contentful Paint (FCP) and Largest Contentful Paint (LCP)
+ * 
+ * @param resources Array of URLs to preload
+ * @param type Resource type (image, style, script, font)
+ */
+export function preloadCriticalResources(resources: string[], type: 'image' | 'style' | 'script' | 'font' = 'image') {
+  if (typeof window === 'undefined') return;
+  
+  resources.forEach(url => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = url;
+    link.as = type;
+    
+    if (type === 'font') {
+      link.setAttribute('crossorigin', 'anonymous');
+    }
+    
+    document.head.appendChild(link);
+  });
+}
+
+/**
+ * Optimize images on the page for better performance
+ * This helps improve Largest Contentful Paint (LCP)
+ */
+export function optimizeImages() {
+  if (typeof window === 'undefined') return;
+  
+  const images = document.querySelectorAll<HTMLImageElement>('img');
+  
+  images.forEach(img => {
+    // Skip images that are already optimized
+    if (img.getAttribute('data-optimized') === 'true') return;
+    
+    // Add width and height attributes to prevent layout shifts
+    if (img.width && img.height && !img.hasAttribute('width') && !img.hasAttribute('height')) {
+      img.setAttribute('width', img.width.toString());
+      img.setAttribute('height', img.height.toString());
+    }
+    
+    // Mark as optimized
+    img.setAttribute('data-optimized', 'true');
+  });
+}
+
+/**
+ * Defer non-critical JavaScript
+ * This helps improve Time to Interactive (TTI) and Total Blocking Time (TBT)
+ * 
+ * @param callback Function to defer
+ * @param timeout Delay in milliseconds
+ */
+export function deferNonCritical(callback: () => void, timeout: number = 1000) {
+  if (typeof window === 'undefined') return;
+  
+  if ('requestIdleCallback' in window) {
+    // Use requestIdleCallback when browser is idle
+    (window as any).requestIdleCallback(() => {
+      setTimeout(callback, 0);
+    });
+  } else {
+    // Fallback to setTimeout
+    setTimeout(callback, timeout);
+  }
+}
+
+/**
+ * Register a performance observer to monitor Core Web Vitals metrics
+ * This helps track LCP, FID, and CLS in production
+ */
+export function monitorWebVitals() {
+  if (typeof window === 'undefined' || !('PerformanceObserver' in window)) return;
+  
+  try {
+    // LCP observer
+    const lcpObserver = new PerformanceObserver((entryList) => {
+      const entries = entryList.getEntries();
+      const lastEntry = entries[entries.length - 1];
+      console.log('LCP:', lastEntry.startTime);
+    });
+    lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+    
+    // FID observer
+    const fidObserver = new PerformanceObserver((entryList) => {
+      const entries = entryList.getEntries();
+      entries.forEach(entry => {
+        const delay = (entry as any).processingStart - entry.startTime;
+        console.log('FID:', delay);
+      });
+    });
+    fidObserver.observe({ type: 'first-input', buffered: true });
+    
+    // CLS observer
+    const clsObserver = new PerformanceObserver((entryList) => {
+      let clsValue = 0;
+      const entries = entryList.getEntries();
+      
+      entries.forEach(entry => {
+        if (!(entry as any).hadRecentInput) {
+          clsValue += (entry as any).value;
+        }
       });
       
-      // Start observing long task notifications
-      observer.observe({ entryTypes: ['longtask'] });
-    } catch (e) {
-      console.error('Long task tracking not supported', e);
-    }
+      console.log('CLS:', clsValue);
+    });
+    clsObserver.observe({ type: 'layout-shift', buffered: true });
+  } catch (error) {
+    console.error('Error setting up performance observers:', error);
   }
 }
 
 /**
- * Split a heavy computation into smaller chunks to prevent blocking the main thread
- * @param items Items to process
- * @param processFn Function to process each chunk
- * @param chunkSize Number of items to process per chunk
+ * Initialize all performance optimizations
+ * Call this function once in your app's entry point
  */
-export function processInChunks<T, R>(
-  items: T[],
-  processFn: (chunk: T[]) => R,
-  chunkSize = 5
-): void {
-  let index = 0;
+export function initializePerformanceOptimizations() {
+  if (typeof window === 'undefined') return;
   
-  function processNextChunk() {
-    const chunk = items.slice(index, index + chunkSize);
-    if (chunk.length === 0) return;
-    
-    // Process the chunk
-    processFn(chunk);
-    
-    // Move to the next chunk
-    index += chunkSize;
-    
-    // Schedule the next chunk with requestIdleCallback or setTimeout
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(() => processNextChunk());
-    } else {
-      setTimeout(processNextChunk, 1);
-    }
+  // Wait for page to be fully loaded
+  if (document.readyState === 'complete') {
+    performOptimizations();
+  } else {
+    window.addEventListener('load', performOptimizations);
   }
   
-  // Start processing
-  processNextChunk();
-}
-
-/**
- * Debounce a function to limit how often it can be called
- * Useful for expensive UI operations triggered by user input
- * @param fn Function to debounce
- * @param delay Delay in milliseconds
- * @returns Debounced function
- */
-export function debounce<T extends (...args: any[]) => any>(
-  fn: T,
-  delay = 300
-): (...args: Parameters<T>) => void {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  
-  return function(...args: Parameters<T>): void {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
-  };
-}
-
-/**
- * Create an optimized intersection observer for lazy-loading elements
- * @param callback Function to call when elements intersect
- * @param options IntersectionObserver options
- * @returns IntersectionObserver instance
- */
-export function createLazyLoadObserver(
-  callback: IntersectionObserverCallback,
-  options?: IntersectionObserverInit
-): IntersectionObserver {
-  const defaultOptions: IntersectionObserverInit = {
-    root: null,
-    rootMargin: '200px 0px', // Start loading before element is visible
-    threshold: 0.01,
-    ...options
-  };
-  
-  return new IntersectionObserver(callback, defaultOptions);
+  function performOptimizations() {
+    // Add lazy loading to images
+    setupLazyLoading();
+    
+    // Optimize images to prevent CLS
+    optimizeImages();
+    
+    // Defer non-critical operations
+    deferNonCritical(() => {
+      // Add analytics, non-essential scripts, etc. here
+      monitorWebVitals();
+    });
+    
+    // Preload hero image for better LCP
+    if (window.location.pathname === '/' || window.location.pathname === '/home') {
+      preloadCriticalResources(['/hero-image.jpg'], 'image');
+    }
+  }
 }
