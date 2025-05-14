@@ -6,6 +6,10 @@ import BackToTopButton from "./ui/BackToTopButton";
 import ParticleBackground from "./ui/ParticleBackground";
 import { preconnect, dnsPrefetch } from "@/lib/resourcePreloader";
 import PageTransition from "./PageTransition";
+import { setupLazyLoading } from "@/lib/imageOptimizer";
+import { throttle } from "@/lib/jsOptimizer";
+import { detectUnusedCSS } from "@/lib/styleOptimizer";
+import { trackBundlePerformance } from "@/lib/bundleOptimizer";
 
 interface LayoutProps {
   children: ReactNode;
@@ -19,6 +23,12 @@ const Layout = ({ children }: LayoutProps) => {
   
   // Setup preloading and optimizations on first render
   useEffect(() => {
+    // Performance monitoring in development mode
+    if (process.env.NODE_ENV === 'development') {
+      trackBundlePerformance('main-bundle');
+      detectUnusedCSS();
+    }
+    
     // Setup preconnect for domains we'll load resources from
     preconnect('https://fonts.googleapis.com');
     preconnect('https://fonts.gstatic.com');
@@ -30,12 +40,24 @@ const Layout = ({ children }: LayoutProps) => {
     dnsPrefetch('https://randomuser.me');
     dnsPrefetch('https://firebasestorage.googleapis.com');
     
+    // Setup image lazy loading
+    setupLazyLoading();
+    
+    // Optimize scroll events - throttle to prevent jank
+    const handleScroll = throttle(() => {
+      // Add any scroll-based logic here
+    }, 100);
+    window.addEventListener('scroll', handleScroll);
+    
     // Delay showing particle effects for performance
     const timer = setTimeout(() => {
       setShowParticles(true);
     }, 1000);
     
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
   
   return (

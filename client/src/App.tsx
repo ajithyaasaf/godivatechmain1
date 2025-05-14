@@ -8,17 +8,26 @@ import PerformanceMonitor from "@/components/PerformanceMonitor";
 import ResourceHints from "@/components/ResourceHints";
 import { trackLongTasks, preloadCriticalResources } from "@/lib/performance";
 
-// Loading component
+// Optimized loading component with minimal DOM updates and better UX
+import OptimizedLoadingIndicator from "@/components/OptimizedLoadingIndicator";
+
 const PageLoading = () => (
   <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-pulse space-y-4 p-4">
-      <div className="h-6 bg-gray-200 rounded w-1/4 mx-auto"></div>
-      <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded"></div>
-        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-        <div className="h-4 bg-gray-200 rounded w-4/6"></div>
-      </div>
-    </div>
+    <OptimizedLoadingIndicator 
+      isLoading={true}
+      minDelay={200}
+      loadingText="Loading page..."
+      fallback={
+        <div className="animate-pulse space-y-4 p-4">
+          <div className="h-6 bg-gray-200 rounded w-1/4 mx-auto"></div>
+          <div className="space-y-2">
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+          </div>
+        </div>
+      }
+    />
   </div>
 );
 
