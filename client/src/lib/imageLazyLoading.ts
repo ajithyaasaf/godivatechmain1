@@ -68,6 +68,7 @@ export const generateSizes = (): string => {
  * @returns Object with loading, decoding, and fetchPriority attributes
  */
 export const getImageLoadingAttrs = (priority: boolean = false) => {
+  // Use lowercase attributes for HTML standard compliance
   if (priority) {
     return {
       loading: "eager" as const,

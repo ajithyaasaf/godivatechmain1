@@ -3,8 +3,10 @@ import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import Layout from "@/components/Layout";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
+import ResourceHints from "@/components/ResourceHints";
+import { trackLongTasks, preloadCriticalResources } from "@/lib/performance";
 
 // Loading component
 const PageLoading = () => (
@@ -57,11 +59,28 @@ function App() {
 
   // Determine if we're on an admin route
   const isAdminRoute = location.startsWith("/admin");
+  
+  // Initialize performance tracking
+  useEffect(() => {
+    // Track long tasks to identify performance bottlenecks
+    trackLongTasks((duration) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`Long task detected: ${duration.toFixed(2)}ms`);
+      }
+    });
+    
+    // Preload critical resources
+    preloadCriticalResources();
+    
+  }, []);
 
   return (
     <AuthProvider>
+      {/* Add resource hints for performance optimization */}
+      <ResourceHints />
+      
       {/* Performance monitoring tool - only visible in development */}
-      {/* <PerformanceMonitor /> */}
+      {process.env.NODE_ENV === 'development' && <PerformanceMonitor />}
 
       {!isAdminRoute && (
         <Layout>
