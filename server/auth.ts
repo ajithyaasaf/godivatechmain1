@@ -6,6 +6,7 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
+import { InsertUser } from "@shared/schema";
 
 declare global {
   namespace Express {
@@ -28,11 +29,40 @@ async function comparePasswords(supplied: string, stored: string) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
+// Function to create a default admin user
+async function createDefaultAdminUser() {
+  try {
+    // Check if an admin user already exists
+    const existingAdmin = await storage.getUserByUsername('admin');
+    
+    if (!existingAdmin) {
+      console.log('Creating default admin user...');
+      
+      // Create the admin user
+      const adminUser: InsertUser = {
+        username: 'admin',
+        password: await hashPassword('admin123'), // default password
+        name: 'System Administrator'
+      };
+      
+      await storage.createUser(adminUser);
+      console.log('Default admin user created successfully');
+    } else {
+      console.log('Admin user already exists');
+    }
+  } catch (error) {
+    console.error('Error creating default admin user:', error);
+  }
+}
+
 export function setupAuth(app: Express) {
   // Generate a random session secret if it doesn't exist
   if (!process.env.SESSION_SECRET) {
     process.env.SESSION_SECRET = randomBytes(32).toString("hex");
   }
+  
+  // Create a default admin user if none exists
+  createDefaultAdminUser();
 
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET,
