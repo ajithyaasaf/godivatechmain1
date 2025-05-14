@@ -15,7 +15,7 @@ import AmpBlogPost from "@/components/AmpBlogPost";
 import OptimizedImage from "@/components/ui/optimized-image";
 import { blogKeywords, getLocationSpecificDescription } from "@/lib/seoKeywords";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
-import { getCanonicalUrl } from "@/lib/canonicalUrl";
+import { formatCanonicalUrl } from "@/lib/canonicalUrl";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -23,10 +23,12 @@ import {
   getBlogPostData
 } from "@/lib/structuredData";
 import {
-  getMobileBlogPostData,
-  getMobileBreadcrumbData,
-  isMobileDevice
-} from "@/lib/mobileStructuredData";
+  createMobileAppStructuredData,
+  createMobileBreadcrumbStructuredData,
+  createMobileServiceStructuredData,
+  createMobileImageStructuredData,
+  createMobileFAQStructuredData
+} from "@/lib/mobileOptimization";
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -157,7 +159,7 @@ const BlogPost = () => {
     // Mobile-optimized structured data
     [
       getOrganizationData(),
-      getMobileBlogPostData(
+      getBlogPostData(
         post.title,
         post.excerpt,
         `https://godivatech.com/blog/${post.slug}`,
@@ -167,7 +169,7 @@ const BlogPost = () => {
         post.authorName,
         post.authorImage || undefined
       ),
-      getMobileBreadcrumbData([
+      getBreadcrumbData([
         { name: "Home", item: "https://godivatech.com/" },
         { name: "Blog", item: "https://godivatech.com/blog" },
         { name: post.title, item: `https://godivatech.com/blog/${post.slug}` }
@@ -234,7 +236,7 @@ const BlogPost = () => {
         title={`${post.title} | Best ${category?.name || 'Digital Services'} in Madurai | GodivaTech`}
         description={`${post.excerpt} GodivaTech provides the best ${category?.name || 'digital services'} in Madurai, Tamil Nadu for businesses looking to grow their online presence.`}
         keywords={customKeywords}
-        canonicalUrl={getCanonicalUrl(`/blog/${post.slug}`)}
+        canonicalUrl={formatCanonicalUrl(`/blog/${post.slug}`)}
         ogType="article"
         ogImage={post.coverImage || 'https://godivatech.com/images/blog-default-og-image.jpg'}
         imageWidth={1200}
@@ -263,13 +265,13 @@ const BlogPost = () => {
       >
         {/* Add AMP link for mobile users */}
         {isMobile && (
-          <link rel="amphtml" href={`${getCanonicalUrl(`/blog/${post.slug}`)}?amp=1`} />
+          <link rel="amphtml" href={`${formatCanonicalUrl(`/blog/${post.slug}`)}?amp=1`} />
         )}
         
         {/* Add alternate language links */}
-        <link rel="alternate" hrefLang="en-IN" href={getCanonicalUrl(`/blog/${post.slug}`)} />
-        <link rel="alternate" hrefLang="ta-IN" href={`${getCanonicalUrl(`/blog/${post.slug}`)}?lang=ta`} />
-        <link rel="alternate" hrefLang="x-default" href={getCanonicalUrl(`/blog/${post.slug}`)} />
+        <link rel="alternate" hrefLang="en-IN" href={formatCanonicalUrl(`/blog/${post.slug}`)} />
+        <link rel="alternate" hrefLang="ta-IN" href={`${formatCanonicalUrl(`/blog/${post.slug}`)}?lang=ta`} />
+        <link rel="alternate" hrefLang="x-default" href={formatCanonicalUrl(`/blog/${post.slug}`)} />
       </SEO>
 
       <section className="bg-white pt-20 pb-12">
@@ -336,8 +338,7 @@ const BlogPost = () => {
                   width={800}
                   height={450}
                   priority={true}
-                  mobileSizes="100vw"
-                  quality={90}
+                  sizes="100vw"
                 />
                 <figcaption className="text-center text-neutral-500 text-sm mt-2">
                   {post.title} | GodivaTech Madurai
