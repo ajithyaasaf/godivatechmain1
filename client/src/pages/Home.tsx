@@ -36,8 +36,8 @@ const Home = () => {
     getLocalBusinessData(),
     getWebsiteData(),
     getWebPageData(
-      "Best Digital Marketing & Web Development Company in Madurai | GodivaTech",
-      "GodivaTech offers top-rated web development, digital marketing, and app development services in Madurai at affordable prices. Get custom technology solutions for your business.",
+      "Web Development & Digital Marketing Services | GodivaTech Madurai",
+      "GodivaTech offers web development, digital marketing, and app development services in Madurai at affordable prices. Get custom technology solutions for your business.",
       "https://godivatech.com/"
     )
   ];
@@ -45,8 +45,8 @@ const Home = () => {
   return (
     <>
       <SEO
-        title="Best Digital Marketing & Web Development Company in Madurai | GodivaTech"
-        description="GodivaTech provides affordable web development, mobile app development, and digital marketing services in Madurai. Top-rated IT company for custom software solutions at competitive prices."
+        title="Web Development & Digital Marketing Services | GodivaTech Madurai"
+        description="GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business."
         keywords={homeKeywords}
         canonicalUrl="/"
         structuredData={structuredData}

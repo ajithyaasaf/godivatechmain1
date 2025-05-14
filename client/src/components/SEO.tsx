@@ -117,10 +117,11 @@ const SEO: React.FC<SEOProps> = memo(({
     (ogImage.startsWith('http') ? ogImage : `${domain}${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`) : 
     `${domain}/og-image.jpg`;
     
-  // Enhanced title with location for local SEO when needed
+  // Enhanced title with location for local SEO when needed (optimized for character count)
   const enhancedTitle = title.toLowerCase().includes(cityName.toLowerCase()) ? 
     title : 
-    `${title} | GodivaTech | ${cityName}, ${regionName}`;
+    // Only add cityName if the title is short enough
+    (title.length < 35) ? `${title} | GodivaTech ${cityName}` : title;
     
   // Extend keywords with location context for better local SEO
   const extendedKeywords = keywords ? 
@@ -132,7 +133,7 @@ const SEO: React.FC<SEOProps> = memo(({
       {/* Basic SEO - Enhanced with proper formatting */}
       <html lang={ogLocale.split('_')[0]} />
       <title>{enhancedTitle}</title>
-      <meta name="description" content={description} />
+      <meta name="description" content={description.length > 160 ? description.substring(0, 157) + '...' : description} />
       <meta name="keywords" content={extendedKeywords} />
       <link rel="canonical" href={canonical} />
       
@@ -146,8 +147,8 @@ const SEO: React.FC<SEOProps> = memo(({
       
       {/* Open Graph / Facebook - Enhanced */}
       <meta property="og:type" content={ogType} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:title" content={title.length > 60 ? title.substring(0, 57) + '...' : title} />
+      <meta property="og:description" content={description.length > 160 ? description.substring(0, 157) + '...' : description} />
       <meta property="og:image" content={formattedOgImage} />
       <meta property="og:image:width" content={String(imageWidth)} />
       <meta property="og:image:height" content={String(imageHeight)} />
