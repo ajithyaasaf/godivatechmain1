@@ -220,13 +220,12 @@ const HeroSection = () => {
                 <h1 
                   className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
                   data-above-fold="true"
-                  // Removed all style properties to restore original colors
                 >
                   <span className="block">
-                    Affordable big IT & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">technology</span>
+                    Professional Web Development & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">Digital Marketing</span>
                   </span>
                   <span className="block mt-2">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">solutions</span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">Services in Madurai</span>
                   </span>
                 </h1>
               </m.div>
@@ -235,7 +234,7 @@ const HeroSection = () => {
                 variants={itemFadeIn}
               >
                 <h2 className="text-xl md:text-2xl font-medium text-white/80 mb-4">
-                  Professional Web Development & Digital Marketing Services in Madurai
+                  Affordable Big IT & Technology Solutions For Your Business
                 </h2>
               </m.div>
               
