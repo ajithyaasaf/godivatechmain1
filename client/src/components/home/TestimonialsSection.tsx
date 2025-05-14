@@ -170,7 +170,7 @@ const TestimonialsSection = memo(() => {
               variants={headingVariants}
               className="text-3xl font-bold text-white mb-4"
             >
-              What Our Clients Say
+              Customer Success Stories & Madurai Web Design Testimonials
             </m.h2>
             <m.p 
               initial="hidden"
@@ -179,7 +179,7 @@ const TestimonialsSection = memo(() => {
               variants={textVariants}
               className="text-lg text-white/90 max-w-2xl mx-auto"
             >
-              Hear directly from our satisfied clients about their experience working with Godiva Technologies.
+              See what local businesses say about our website design, development, and digital marketing services that have helped them grow their online presence.
             </m.p>
           </div>
 

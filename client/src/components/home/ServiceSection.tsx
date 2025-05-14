@@ -292,7 +292,7 @@ const ServiceSection: React.FC = () => {
             </div>
             
             <h2 className="text-4xl md:text-5xl font-bold text-neutral-800 mb-6 tracking-tight leading-tight">
-              Leading <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">web development & digital marketing</span> in Madurai
+              Professional <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">Website Development & SEO Services</span> in Madurai
             </h2>
             
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto leading-relaxed">

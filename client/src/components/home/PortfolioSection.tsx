@@ -148,9 +148,9 @@ const PortfolioSection = memo(() => {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Explore our recent projects</h2>
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Web Design Projects & Creative Digital Marketing Case Studies</h2>
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              Take a look at our diverse portfolio of successful marketing and web development projects for various clients.
+              Explore our diverse portfolio showcasing successful websites, mobile apps, and marketing campaigns developed for businesses in Madurai and throughout Tamil Nadu.
             </p>
           </m.div>
 

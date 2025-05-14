@@ -144,9 +144,9 @@ const TeamSection = memo(() => {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Leadership Team</h2>
+            <h2 className="text-3xl font-bold text-neutral-800 mb-4">Talented Web Developers & Digital Marketing Experts</h2>
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              Meet our leadership team of experienced professionals who are passionate about creating innovative digital solutions and delivering exceptional results for our clients worldwide.
+              Meet our team of experienced professionals who are passionate about creating innovative digital solutions and delivering exceptional website development and marketing results for our clients in Madurai and beyond.
             </p>
           </m.div>
 

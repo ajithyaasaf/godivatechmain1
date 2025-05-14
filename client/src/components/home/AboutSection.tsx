@@ -23,7 +23,7 @@ const AboutSection = () => {
           </div>
           <div className="w-full lg:w-1/2">
             <h2 className="text-3xl font-bold text-neutral-800 mb-6">
-              Affordable IT solutions to boost your online presence
+              Expert IT Solutions & Digital Services in Madurai
             </h2>
             <p className="text-lg text-neutral-600 mb-6">
               At Godiva Tech, we provide a range of digital marketing services in Madurai, including web development, mobile app development, UI/UX design, poster design, and marketing strategies.
