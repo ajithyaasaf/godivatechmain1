@@ -6,7 +6,7 @@ import { queryClient } from "./lib/queryClient";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Router } from "wouter";
-import { useHashLocation } from "./lib/wouter-config";
+import { useBrowserLocation } from "./lib/wouter-config";
 // Initialize Firebase early in the application lifecycle
 import "./lib/firebase";
 // Initialize Firestore with sample data
@@ -29,8 +29,8 @@ if (import.meta.env.DEV || import.meta.env.VITE_DEBUG_MODE === 'true') {
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      {/* Use custom Router configuration for proper routing in production */}
-      <Router hook={useHashLocation}>
+      {/* Use browser history for better SEO */}
+      <Router hook={useBrowserLocation}>
         <App />
       </Router>
       <Toaster />

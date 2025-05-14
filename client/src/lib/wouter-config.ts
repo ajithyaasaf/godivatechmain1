@@ -32,3 +32,29 @@ export const useHashLocation: LocationHook = () => {
 
   return [path, navigate];
 };
+
+// Browser history-based routing for better SEO
+export const useBrowserLocation: LocationHook = () => {
+  // Get path from window.location
+  const getPath = () => window.location.pathname || '/';
+  
+  // State to track current location
+  const [path, setPath] = useState(getPath());
+  
+  // Handle navigation
+  const navigate: NavigateFn = (to) => {
+    // Use history API to change the URL without a page reload
+    window.history.pushState(null, '', to);
+    setPath(to);
+  };
+  
+  // Update path when browser history changes
+  useEffect(() => {
+    // This handles the back/forward browser buttons
+    const handlePopState = () => setPath(getPath());
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  return [path, navigate];
+};
