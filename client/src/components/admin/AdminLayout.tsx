@@ -2,6 +2,7 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
+import { queryClient } from "@/lib/queryClient";
 import { 
   BarChart3, 
   Files, 
@@ -61,15 +62,21 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   // Get first letter of username for avatar
   const userInitial = user?.username?.charAt(0).toUpperCase() || 'A';
 
-  const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        // Directly navigate to auth page after successful logout
-        console.log("Logout successful, redirecting to auth page");
-        // Use setLocation from wouter for proper navigation
-        setLocation('/auth');
-      }
-    });
+  const handleLogout = async () => {
+    try {
+      // First call the API directly to ensure the server-side logout happens
+      await fetch('/api/logout', { 
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      console.log("Logout successful, redirecting to auth page");
+      
+      // Force a hard redirect to the auth page
+      window.location.href = '/auth';
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const closeMobileNav = () => {
