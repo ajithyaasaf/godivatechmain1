@@ -155,7 +155,7 @@ const SEO: React.FC<SEOProps> = memo(({
       {robots && <meta name="robots" content={robots} />}
       {!robots && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
       
-      {/* Open Graph / Facebook - Enhanced and Complete */}
+      {/* Open Graph / Facebook - Enhanced with Facebook best practices */}
       <meta property="og:type" content={ogType} />
       <meta property="og:title" content={title.length > 60 ? title.substring(0, 57) + '...' : title} />
       <meta property="og:description" content={description.length > 160 ? description.substring(0, 157) + '...' : description} />
@@ -164,8 +164,18 @@ const SEO: React.FC<SEOProps> = memo(({
       <meta property="og:image:width" content={String(imageWidth)} />
       <meta property="og:image:height" content={String(imageHeight)} />
       <meta property="og:image:alt" content={title} />
+      <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:site_name" content="GodivaTech" />
       <meta property="og:locale" content={ogLocale} />
+      <meta property="og:locale:alternate" content="ta_IN" />
+      
+      {/* Add updated time for content freshness */}
+      {modifiedTime && <meta property="og:updated_time" content={modifiedTime} />}
+      
+      {/* Add business location info for local SEO */}
+      {cityName && <meta property="og:street-address" content={`${cityName}, ${regionName}, ${countryName}`} />}
+      
+      {/* Facebook ID for insights */}
       {facebookAppId && <meta property="fb:app_id" content={facebookAppId} />}
       
       {/* Article-specific Open Graph tags - Expanded */}

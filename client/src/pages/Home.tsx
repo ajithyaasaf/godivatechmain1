@@ -59,6 +59,13 @@ const Home = () => {
         twitterCard="summary_large_image"
         twitterSite="@godivatech"
         modifiedTime={currentDate}
+        cityName="Madurai"
+        regionName="Tamil Nadu"
+        countryName="India"
+        postalCode="625007"
+        facebookAppId="107394345671850" // Replace with your actual Facebook App ID
+        priceRange="₹₹"
+        businessHours={['Mo-Fr 09:00-18:00', 'Sa 10:00-16:00']}
         robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
       />
       

@@ -298,9 +298,9 @@ const Services = () => {
         title="Best Web Development & Digital Marketing Services in Madurai | GodivaTech"
         description="GodivaTech offers affordable web development, app development, and digital marketing services in Madurai. Get custom IT solutions at competitive prices for your business."
         keywords={servicesKeywords}
-        canonicalUrl="/services"
-        ogType="service"
-        ogImage="/images/services-og-image.jpg"
+        canonicalUrl="https://godivatech.com/services"
+        ogType="website"
+        ogImage="https://godivatech.com/images/services-og-image.jpg"
         imageWidth={1200}
         imageHeight={630}
         cityName="Madurai"
@@ -311,6 +311,12 @@ const Services = () => {
         twitterCard="summary_large_image"
         twitterSite="@godivatech"
         twitterCreator="@godivatech"
+        modifiedTime={new Date().toISOString()}
+        facebookAppId="107394345671850"
+        priceRange="₹₹"
+        telephoneNumber="+91-96005-20130"
+        businessHours={['Mo-Fr 09:00-18:00', 'Sa 10:00-16:00']}
+        servicedArea={['Madurai', 'Coimbatore', 'Trichy', 'Chennai']}
         robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         alternateUrls={[
           { hrefLang: "en-in", href: "https://godivatech.com/services" },
