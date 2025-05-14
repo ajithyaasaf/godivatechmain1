@@ -2,6 +2,8 @@ import React, { memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { FaLinkedin, FaTwitter } from "react-icons/fa";
 import { LazyMotion, domAnimation, m } from "framer-motion";
+import { Link } from "wouter";
+import { Users, ArrowRight } from "lucide-react";
 import ceoImage from "../../assets/team/ceo.jpg";
 import OptimizedImage from "@/components/ui/optimized-image";
 
@@ -148,7 +150,7 @@ const TeamSection = memo(() => {
             </p>
           </m.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {displayTeamMembers.map((member, index) => (
               <m.div
                 key={member.id}
@@ -168,6 +170,21 @@ const TeamSection = memo(() => {
                 />
               </m.div>
             ))}
+          </div>
+          
+          {/* View Team link for internal linking */}
+          <div className="text-center">
+            <Link 
+              href="/about#team" 
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full
+                        bg-white border border-primary/20 text-primary font-semibold
+                        shadow-md hover:shadow-xl transition-all duration-300
+                        hover:scale-105 hover:bg-primary/5 active:scale-95"
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Meet Our Full Team
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
         </LazyMotion>
       </div>

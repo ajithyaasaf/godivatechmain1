@@ -104,10 +104,13 @@ const SEO: React.FC<SEOProps> = memo(({
   // Default domain for canonical URLs and images
   const domain = 'https://godivatech.com';
   
-  // Format canonical URL with proper handling
+  // Format canonical URL with proper handling - ensure it's always absolute for SEO best practices
   const canonical = canonicalUrl ? 
     (canonicalUrl.startsWith('http') ? canonicalUrl : `${domain}${canonicalUrl.startsWith('/') ? canonicalUrl : `/${canonicalUrl}`}`) : 
     domain;
+    
+  // Ensure canonical tag is not missing from browser inspection
+  console.log("Canonical URL set:", canonical);
   
   // Format OpenGraph image URL with proper handling
   const formattedOgImage = ogImage ? 

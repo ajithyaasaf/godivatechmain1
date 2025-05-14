@@ -326,6 +326,20 @@ const ServiceSection: React.FC = () => {
                 </m.div>
               ))}
             </div>
+            
+            {/* View All Services link for better internal linking */}
+            <div className="text-center mb-10">
+              <Link 
+                href="/services" 
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full
+                          bg-gradient-to-r from-primary to-indigo-600 text-white font-semibold
+                          shadow-lg hover:shadow-primary/20 transition-all duration-300
+                          hover:scale-105 active:scale-95"
+              >
+                View All Services
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
           </LazyMotion>
           
           {/* Features highlight - with performance optimizations */}
