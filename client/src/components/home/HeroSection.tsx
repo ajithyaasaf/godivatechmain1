@@ -162,24 +162,26 @@ const HeroSection = memo(() => {
                 </span>
               </m.div>
               
-              <m.h1 
+              <m.div 
                 variants={itemFadeIn}
-                className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
               >
-                <span className="block">
-                  Affordable big IT & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">technology</span>
-                </span>
-                <span className="block mt-2">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">solutions</span>
-                </span>
-              </m.h1>
+                <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight">
+                  <span className="block">
+                    Affordable big IT & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">technology</span>
+                  </span>
+                  <span className="block mt-2">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">solutions</span>
+                  </span>
+                </h1>
+              </m.div>
               
-              <m.h2 
+              <m.div 
                 variants={itemFadeIn}
-                className="text-xl md:text-2xl font-medium text-white/80 mb-4"
               >
-                Professional Web Development & Digital Marketing Services in Madurai
-              </m.h2>
+                <h2 className="text-xl md:text-2xl font-medium text-white/80 mb-4">
+                  Professional Web Development & Digital Marketing Services in Madurai
+                </h2>
+              </m.div>
               
               <m.div variants={itemFadeIn}>
                 <p 

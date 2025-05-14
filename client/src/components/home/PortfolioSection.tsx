@@ -183,13 +183,16 @@ const PortfolioSection = memo(() => {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Button
-              asChild
-              variant="outline"
-              className="bg-white border border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-300"
+            <Link 
+              href="/portfolio" 
+              className="inline-flex items-center justify-center px-6 py-3 rounded-full
+                        bg-gradient-to-r from-primary/90 to-indigo-600/90 text-white font-semibold
+                        shadow-lg hover:shadow-primary/20 transition-all duration-300
+                        hover:scale-105 active:scale-95"
             >
-              <Link href="/portfolio">View All Projects</Link>
-            </Button>
+              View All Projects
+              <ChevronRightIcon className="ml-2 h-4 w-4" />
+            </Link>
           </m.div>
         </LazyMotion>
       </div>
