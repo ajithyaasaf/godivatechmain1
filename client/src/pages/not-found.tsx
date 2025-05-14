@@ -77,12 +77,20 @@ export default function NotFound() {
               </Link>
             </Button>
             
-            {lastVisited && (
-              <Button variant="outline" asChild className="gap-2">
-                <Link to={lastVisited}>
-                  <ArrowLeft size={16} />
-                  Go Back
-                </Link>
+            {(lastVisited || canGoBack) && (
+              <Button 
+                variant="outline" 
+                className="gap-2"
+                onClick={() => {
+                  if (lastVisited) {
+                    window.location.href = lastVisited;
+                  } else if (canGoBack) {
+                    window.history.back();
+                  }
+                }}
+              >
+                <ArrowLeft size={16} />
+                Go Back
               </Button>
             )}
             

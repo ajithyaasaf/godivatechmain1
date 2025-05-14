@@ -160,6 +160,15 @@ app.use((req, res, next) => {
     // For all other routes, we need to serve the index.html for client-side routing
     next();
   });
+  
+  // Add a 404 handler for API routes
+  app.use('/api/*', (req, res) => {
+    res.status(404).json({
+      status: 404,
+      message: 'API endpoint not found',
+      path: req.originalUrl
+    });
+  });
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
