@@ -350,22 +350,12 @@ const Blog = () => {
           ? `/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`
           : "/blog"
         }
-        cityName="Madurai"
-        regionName="Tamil Nadu"
-        countryName="India"
-        ogType="website"
-        ogImage="/images/blog-og-image.jpg"
-        imageWidth={1200}
-        imageHeight={630}
-        twitterCard="summary_large_image"
-        twitterSite="@godivatech"
-        twitterCreator="@godivatech"
-        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         ampUrl="/blog/amp"
         alternateUrls={[
           { hrefLang: "en-in", href: "https://godivatech.com/blog" },
           { hrefLang: "ta-in", href: "https://godivatech.com/ta/blog" }
         ]}
+        structuredData={structuredData}
       />
 
       <PageTransition>
