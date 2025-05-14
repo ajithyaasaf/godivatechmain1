@@ -9,6 +9,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import { ssrMiddleware } from "./ssr-middleware";
 import { ssrProduction } from "./ssr-production";
 import { staticAssetCache, apiCache, htmlCache, noCache } from "./caching";
+import { seoMiddleware } from "./seo-middleware";
 
 const app = express();
 
