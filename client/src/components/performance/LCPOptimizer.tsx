@@ -16,25 +16,12 @@ const LCPOptimizer: React.FC = () => {
     // Initialize resource prefetching
     initResourcePrefetching();
 
-    // Add inline critical CSS for faster rendering
+    // Add minimal critical CSS that doesn't affect colors
     const style = document.createElement('style');
     style.textContent = `
-      /* Critical rendering path styles */
-      .hero-section h1 {
-        visibility: visible !important;
-        opacity: 1 !important;
-      }
-      
-      /* Prevent layout shifts */
-      .hero-section {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-      }
-      
-      /* Pre-render background gradients */
-      .bg-gradient-to-br {
-        background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+      /* Basic LCP optimization that doesn't affect colors */
+      img[data-above-fold="true"] {
+        content-visibility: visible !important;
       }
     `;
     document.head.appendChild(style);

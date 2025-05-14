@@ -91,10 +91,8 @@ function App() {
       {/* Add resource hints for performance optimization */}
       <ResourceHints />
       
-      {/* Performance optimization components */}
+      {/* Performance optimization components - CriticalCSSOptimizer temporarily removed to fix colors */}
       <LCPOptimizer />
-      <FontOptimizer />
-      <CriticalCSSOptimizer />
       
       {/* Performance monitoring tool - only visible in development */}
       {process.env.NODE_ENV === 'development' && <PerformanceMonitor />}
