@@ -236,12 +236,14 @@ const BlogPost = () => {
         keywords={customKeywords}
         canonicalUrl={getCanonicalUrl(`/blog/${post.slug}`)}
         ogType="article"
-        ogImage={post.coverImage || '/images/blog-default-og-image.jpg'}
+        ogImage={post.coverImage || 'https://godivatech.com/images/blog-default-og-image.jpg'}
         imageWidth={1200}
         imageHeight={630}
         cityName="Madurai"
         regionName="Tamil Nadu"
         countryName="India"
+        postalCode="625007"
+        neighborhood="Anna Nagar"
         twitterCard="summary_large_image"
         twitterSite="@godivatech"
         twitterCreator={post.authorName ? `@${post.authorName.toLowerCase().replace(/\s+/g, '')}` : '@godivatech'}
@@ -251,11 +253,13 @@ const BlogPost = () => {
         modifiedTime={new Date(post.publishedAt).toISOString()}
         author={post.authorName}
         section={category?.name || 'Digital Services'}
+        facebookAppId="107394345671850"
+        structuredData={structuredData}
+        ogLocale="en_IN"
         alternateUrls={[
           { hrefLang: "en-in", href: `https://godivatech.com/blog/${post.slug}` },
           { hrefLang: "ta-in", href: `https://godivatech.com/ta/blog/${post.slug}` }
         ]}
-        structuredData={structuredData}
       >
         {/* Add AMP link for mobile users */}
         {isMobile && (

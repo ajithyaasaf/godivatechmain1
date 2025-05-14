@@ -350,7 +350,6 @@ const Blog = () => {
           ? `/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`
           : "/blog"
         }
-        structuredData={structuredData}
         cityName="Madurai"
         regionName="Tamil Nadu"
         countryName="India"
