@@ -87,7 +87,7 @@ const BlogCard = memo(({ post, index = 0 }: { post: ExtendedBlogPost; index?: nu
       </Link>
       <div className="p-6">
         <div className="flex items-center mb-4">
-          <Link href={`/blog?category=${post.category?.slug || ""}`}>
+          <Link href={post.category?.slug ? `/blog/category/${post.category.slug}` : "/blog"}>
             <span className="bg-primary/10 text-primary text-xs font-medium px-2.5 py-1 rounded hover:bg-primary/20 cursor-pointer transition-colors">
               {categoryName}
             </span>
