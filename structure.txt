@@ -1,0 +1,277 @@
+# GodivaTech Website Project Structure
+
+## Project Overview
+A professional website for GodivaTech showcasing their technology services with SEO optimization and a blog system. The application is built with a modern React frontend and Express backend with Firebase integration.
+
+## Root Directory
+- `package.json` - Main NPM configuration
+- `vite.config.ts` - Vite bundler configuration
+- `drizzle.config.ts` - Drizzle ORM configuration
+- `tailwind.config.ts` - Tailwind CSS configuration
+- `postcss.config.js` - PostCSS configuration
+- `theme.json` - Theme configuration for application styling
+- `verify-build.js` - Script to verify build integrity
+- `update-imports.js` - Script to update import paths
+- `cloudinary-verify.js` - Script to verify Cloudinary API connection
+- `README.md` - Project documentation
+
+## Client-Side Code (Frontend)
+### Client Root Structure
+- `client/vite.config.ts` - Client-side Vite configuration
+- `client/tailwind.config.js` - Client-specific Tailwind configuration
+- `client/postcss.config.js` - Client-specific PostCSS configuration
+- `client/vercel-tailwind.config.js` - Tailwind configuration for Vercel deployment
+- `client/vite.config.vercel.ts` - Vite configuration for Vercel deployment
+
+### Client Source Files
+- `client/src/main.tsx` - Entry point for React application
+- `client/src/App.tsx` - Main React component with routing setup
+- `client/src/index.css` - Global CSS styles
+
+### Pages
+- `client/src/pages/Home.tsx` - Homepage component
+- `client/src/pages/About.tsx` - About page component
+- `client/src/pages/Services.tsx` - Services listing page
+- `client/src/pages/ServiceDetail.tsx` - Service detail page
+- `client/src/pages/Portfolio.tsx` - Portfolio showcasing projects
+- `client/src/pages/Blog.tsx` - Blog listing page
+- `client/src/pages/BlogPost.tsx` - Blog post detail page
+- `client/src/pages/Contact.tsx` - Contact form page
+- `client/src/pages/not-found.tsx` - 404 error page
+- `client/src/pages/auth-page.tsx` - Authentication page
+- `client/src/pages/diagnostics.tsx` - System diagnostics page
+
+### Admin Pages
+- `client/src/pages/admin/index.tsx` - Admin dashboard
+- `client/src/pages/admin/blog-posts.tsx` - Blog post management
+- `client/src/pages/admin/categories.tsx` - Category management
+- `client/src/pages/admin/services.tsx` - Service management
+- `client/src/pages/admin/projects.tsx` - Project management
+- `client/src/pages/admin/team-members.tsx` - Team member management
+- `client/src/pages/admin/testimonials.tsx` - Testimonial management
+- `client/src/pages/admin/contact-messages.tsx` - Contact message management
+- `client/src/pages/admin/subscribers.tsx` - Subscriber management
+
+### Components
+#### Layout Components
+- `client/src/components/Layout.tsx` - Main layout wrapper
+- `client/src/components/Header.tsx` - Site header with navigation
+- `client/src/components/Footer.tsx` - Site footer
+- `client/src/components/PageTransition.tsx` - Page transition animations
+- `client/src/components/SEO.tsx` - SEO metadata component
+- `client/src/components/CustomLink.tsx` - Custom link component for clean URLs
+
+#### Home Page Section Components
+- `client/src/components/home/HeroSection.tsx` - Hero section on homepage
+- `client/src/components/home/AboutSection.tsx` - About section on homepage
+- `client/src/components/home/ServiceSection.tsx` - Services section on homepage
+- `client/src/components/home/PortfolioSection.tsx` - Portfolio section on homepage
+- `client/src/components/home/TeamSection.tsx` - Team section on homepage
+- `client/src/components/home/TestimonialsSection.tsx` - Testimonials section on homepage
+- `client/src/components/home/BlogSection.tsx` - Blog section on homepage
+- `client/src/components/home/ContactSection.tsx` - Contact section on homepage
+- `client/src/components/home/CTASection.tsx` - Call-to-action section
+- `client/src/components/home/MapSection.tsx` - Map section for location
+- `client/src/components/home/NewsletterSection.tsx` - Newsletter signup section
+- `client/src/components/home/TrustedBySection.tsx` - Trusted by clients section
+
+#### Blog Components
+- `client/src/components/blog/BlogCard.tsx` - Blog post card component
+- `client/src/components/blog/CategoryFilter.tsx` - Category filter for blog posts
+
+#### Admin Components
+- `client/src/components/admin/AdminLayout.tsx` - Admin panel layout
+- `client/src/components/admin/BlogPostForm.tsx` - Form for blog post creation/editing
+- `client/src/components/admin/CategoryForm.tsx` - Form for category creation/editing
+- `client/src/components/admin/ServiceForm.tsx` - Form for service creation/editing
+- `client/src/components/admin/ProjectForm.tsx` - Form for project creation/editing
+- `client/src/components/admin/TeamMemberForm.tsx` - Form for team member creation/editing
+- `client/src/components/admin/TestimonialForm.tsx` - Form for testimonial creation/editing
+- `client/src/components/admin/ContentDataTable.tsx` - Generic data table for content
+- `client/src/components/admin/ContentDataTableFixed.tsx` - Fixed version of content data table
+- `client/src/components/admin/FileUpload.tsx` - File upload component
+- `client/src/components/admin/DeploymentDiagnostic.tsx` - Deployment diagnostics
+- `client/src/components/admin/CorsTestTool.tsx` - CORS testing tool
+
+#### Auth Components
+- `client/src/components/auth/firebase-auth-form.tsx` - Firebase authentication form
+
+#### Common Components
+- `client/src/components/common/Breadcrumbs.tsx` - Breadcrumb navigation
+
+#### Firebase Components
+- `client/src/components/firebase/FirebaseDataProvider.tsx` - Firebase data provider
+- `client/src/components/firebase/FirebaseExample.tsx` - Firebase example component
+- `client/src/components/firebase-protected-route.tsx` - Protected route using Firebase auth
+
+#### UI Components (ShadCN)
+- `client/src/components/ui/accordion.tsx` - Accordion component
+- `client/src/components/ui/alert-dialog.tsx` - Alert dialog component
+- `client/src/components/ui/alert.tsx` - Alert component
+- `client/src/components/ui/aspect-ratio.tsx` - Aspect ratio component
+- `client/src/components/ui/avatar.tsx` - Avatar component
+- `client/src/components/ui/badge.tsx` - Badge component
+- `client/src/components/ui/breadcrumb.tsx` - Breadcrumb component
+- `client/src/components/ui/button.tsx` - Button component
+- `client/src/components/ui/calendar.tsx` - Calendar component
+- `client/src/components/ui/card.tsx` - Card component
+- `client/src/components/ui/carousel.tsx` - Carousel component
+- `client/src/components/ui/checkbox.tsx` - Checkbox component
+- `client/src/components/ui/collapsible.tsx` - Collapsible component
+- `client/src/components/ui/command.tsx` - Command component
+- `client/src/components/ui/dialog.tsx` - Dialog component
+- `client/src/components/ui/dropdown-menu.tsx` - Dropdown menu component
+- `client/src/components/ui/form.tsx` - Form component
+- `client/src/components/ui/input.tsx` - Input component
+- `client/src/components/ui/label.tsx` - Label component
+- `client/src/components/ui/navigation-menu.tsx` - Navigation menu component
+- `client/src/components/ui/pagination.tsx` - Pagination component
+- `client/src/components/ui/select.tsx` - Select component
+- `client/src/components/ui/tabs.tsx` - Tabs component
+- `client/src/components/ui/textarea.tsx` - Textarea component
+- `client/src/components/ui/toast.tsx` - Toast component
+- `client/src/components/ui/toaster.tsx` - Toaster component
+- `client/src/components/ui/tooltip.tsx` - Tooltip component
+- `client/src/components/ui/BackToTopButton.tsx` - Back to top button component
+- `client/src/components/ui/faq-section.tsx` - FAQ section component
+
+### Hooks
+- `client/src/hooks/use-auth.ts` - Authentication hook
+- `client/src/hooks/use-firestore.ts` - Firestore database hook
+- `client/src/hooks/use-toast.ts` - Toast notifications hook
+- `client/src/hooks/use-mobile.tsx` - Mobile detection hook
+- `client/src/hooks/use-network-status.ts` - Network status hook
+- `client/src/hooks/use-parallax.ts` - Parallax effect hook
+- `client/src/hooks/use-scroll-to-top.ts` - Scroll to top hook
+
+### Library Functions
+- `client/src/lib/firebase.ts` - Firebase initialization
+- `client/src/lib/firestore.ts` - Firestore database utilities
+- `client/src/lib/auth.ts` - Authentication utilities
+- `client/src/lib/queryClient.ts` - React Query client setup
+- `client/src/lib/utils.ts` - General utility functions
+- `client/src/lib/protected-route.tsx` - Protected route component
+- `client/src/lib/sampleData.ts` - Sample data for development
+- `client/src/lib/schema.ts` - Schema definitions
+- `client/src/lib/seoKeywords.ts` - SEO keywords
+- `client/src/lib/structuredData.ts` - Structured data for SEO
+- `client/src/lib/mobileStructuredData.ts` - Mobile structured data
+- `client/src/lib/mobileOptimization.ts` - Mobile optimization utilities
+- `client/src/lib/canonicalUrl.ts` - Canonical URL utilities
+- `client/src/lib/animation.ts` - Animation utilities
+- `client/src/lib/wouter-config.ts` - Wouter router configuration
+- `client/src/lib/firebase-env-test.ts` - Firebase environment test
+- `client/src/lib/firebase-error-handler.ts` - Firebase error handler
+- `client/src/lib/firebase-service.ts` - Firebase service utilities
+
+### Assets
+- `client/src/assets/godiva-logo.png` - Company logo
+- `client/src/assets/modern-workspace.jpeg` - Hero image
+- `client/src/assets/team/ceo.jpg` - Team member image
+
+## Server-Side Code (Backend)
+### Server Root
+- `server/index.ts` - Main server entry point
+- `server/vite.ts` - Server-side Vite configuration
+
+### Server Routes and API
+- `server/routes.ts` - API route definitions
+- `server/api-test.ts` - API testing utilities
+- `server/auth.ts` - Authentication implementation
+- `server/cloudinary.ts` - Cloudinary integration for images
+- `server/sitemap.ts` - XML sitemap generation
+
+### Database and Storage
+- `server/db.ts` - Database configuration
+- `server/storage.ts` - Storage interface
+- `server/firestore-storage.ts` - Firestore implementation of storage
+
+### Firebase Integration
+- `server/firebase.ts` - Firebase configuration
+
+### Vercel Deployment
+- `server/vercel.js` - Vercel serverless function handler
+- `server/vercel-build-fix.ts` - Fixes for Vercel build
+- `server/vercel-handler.js` - Request handler for Vercel
+- `server/vercel-simplified.js` - Simplified version for Vercel
+- `server/vercel-websocket.js` - WebSocket support for Vercel
+
+## API Directory (Serverless Functions)
+- `api/index.js` - Main API handler
+- `api/blog-posts.js` - Blog posts API
+- `api/categories.js` - Categories API
+- `api/projects.js` - Projects API
+- `api/services.js` - Services API
+- `api/team-members.js` - Team members API
+- `api/testimonials.js` - Testimonials API
+- `api/example.js` - Example API endpoint
+- `api/standalone.js` - Standalone API endpoint
+- `api/lib/firebase-admin.js` - Firebase Admin SDK
+- `api/lib/firestore-storage.js` - Firestore storage for API
+
+## Shared Code
+- `shared/schema.ts` - Shared schema definitions
+- `shared/schema.vercel.ts` - Schema definitions for Vercel
+
+## Deployment Files
+- `DEPLOYMENT.md` - General deployment guide
+- `DEPLOYMENT_CHECKLIST.md` - Deployment checklist
+- `DEPLOYMENT_STRATEGY.md` - Deployment strategy
+- `DEPLOYMENT_TROUBLESHOOTING.md` - Troubleshooting guide
+- `VERCEL_DEPLOYMENT.md` - Vercel deployment guide
+- `RENDER_DEPLOYMENT.md` - Render deployment guide
+- `SPLIT_DEPLOYMENT_GUIDE.md` - Guide for split deployment
+- `FULL_STACK_VERCEL_DEPLOYMENT.md` - Guide for full-stack Vercel deployment
+- `vercel.json` - Vercel configuration
+- `render.yaml` - Render configuration
+- `build.sh` - Build script
+- `client-build.sh` - Client build script
+- `render-build.sh` - Render build script
+- `render-start.sh` - Render start script
+- `vercel-build.sh` - Vercel build script
+- `vercel-build-simple.sh` - Simplified Vercel build script
+- `vercel-start.sh` - Vercel start script
+- `prepare-for-deployment.sh` - Deployment preparation script
+
+## Application Features
+
+1. **Public Website**
+   - Modern, responsive design with animations
+   - SEO-optimized content and meta tags
+   - Services showcase
+   - Portfolio/projects display
+   - Team members presentation
+   - Client testimonials
+   - Blog system with categories
+   - Contact form
+   - Newsletter subscription
+
+2. **Admin Dashboard**
+   - Secure login with Firebase Authentication
+   - Content management for all website sections
+   - Blog post editor
+   - File uploads with Cloudinary
+   - Analytics and deployment diagnostics
+
+3. **Technical Features**
+   - React 18 with TypeScript
+   - Vite for fast builds
+   - Wouter for lightweight routing
+   - Clean URL routing for better SEO
+   - Shadcn UI components
+   - Tailwind CSS for styling
+   - Framer Motion for animations
+   - React Query for data fetching
+   - Firebase/Firestore for data storage
+   - Express.js backend API
+   - Vercel/Render deployment options
+
+4. **Data Entities**
+   - Blog Posts
+   - Categories
+   - Services
+   - Projects
+   - Team Members
+   - Testimonials
+   - Contact Messages
+   - Subscribers
