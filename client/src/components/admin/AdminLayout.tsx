@@ -63,29 +63,43 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const userInitial = user?.username?.charAt(0).toUpperCase() || 'A';
 
   const handleLogout = () => {
-    // First perform a direct HTTP request for server-side logout
-    fetch('/api/logout', {
-      method: 'POST',
-      credentials: 'include'
-    })
-    .then(() => {
-      console.log("Logout successful, redirecting to auth page");
-      
-      // Force redirection with most aggressive approach
-      document.location.href = '/auth';
-      
-      // As a backup, try again after a short delay if still on same page
-      setTimeout(() => {
-        if (window.location.pathname.includes('admin')) {
-          console.log("Still on admin page, trying redirect again");
-          window.location.href = '/auth';
-        }
-      }, 300);
-    })
-    .catch(error => {
-      console.error("Logout failed:", error);
-      // Even if logout fails, redirect to login page
-      document.location.href = '/auth';
+    // First call the logoutMutation from the auth context to clear client-side auth state
+    logoutMutation.mutate(undefined, {
+      onSettled: () => {
+        console.log("Logout mutation completed, now making direct API call");
+        
+        // Then perform a direct HTTP request for server-side logout
+        fetch('/api/logout', {
+          method: 'POST',
+          credentials: 'include'
+        })
+        .then(() => {
+          console.log("Server-side logout successful, redirecting to auth page");
+          
+          // First clear any cached authentication state
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('auth_state');
+          sessionStorage.removeItem('auth_token');
+          sessionStorage.removeItem('auth_state');
+          
+          // Use setLocation first for cleaner navigation within the app's router
+          // This helps update the router state properly
+          setLocation('/auth');
+          
+          // Then use more aggressive approach as fallback
+          setTimeout(() => {
+            if (window.location.pathname.includes('admin')) {
+              console.log("Still on admin page, forcing hard redirect");
+              window.location.href = '/auth';
+            }
+          }, 300);
+        })
+        .catch(error => {
+          console.error("Server-side logout failed:", error);
+          // Even if server-side logout fails, redirect to login page
+          setLocation('/auth');
+        });
+      }
     });
   };
 
