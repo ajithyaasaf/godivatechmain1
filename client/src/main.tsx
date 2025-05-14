@@ -9,29 +9,21 @@ import { Router } from "wouter";
 import { useBrowserLocation } from "./lib/wouter-config";
 // Initialize Firebase early in the application lifecycle
 import "./lib/firebase";
-// Initialize Firestore with sample data
-import { initializeFirestoreWithSampleData } from "@/lib/firestore";
-// Import Firebase configuration test
-import { testFirebaseConfig } from "@/lib/firebase-env-test";
-// Import font optimization
-import optimizeFontLoading from "@/lib/fontOptimizer";
+// Import Firestore without sample data initialization
+import "@/lib/firestore";
+// Using the performance optimization library instead of individual optimizers
+import { initializePerformanceOptimizations } from "@/lib/performance";
 
-// Optimize font loading
+// Apply all performance optimizations
 if (typeof window !== 'undefined') {
-  optimizeFontLoading();
+  initializePerformanceOptimizations();
 }
 
-// Check and initialize Firestore sample data if needed
-initializeFirestoreWithSampleData()
-  .then(() => console.log("Firestore initialization check complete"))
-  .catch(error => console.error("Error during Firestore initialization:", error));
+// Sample data initialization removed for production
+// Production environment should use real data from the database
   
-// Test Firebase configuration (helpful for debugging deployment issues)
-if (import.meta.env.DEV || import.meta.env.VITE_DEBUG_MODE === 'true') {
-  testFirebaseConfig()
-    .then(result => console.log("Firebase config test result:", result))
-    .catch(error => console.error("Firebase config test error:", error));
-}
+// Firebase configuration testing removed for production
+// Testing code was moved to dedicated test utilities
 
 // Hydrate the React Query client with any server-provided data
 const initialData = (window as any).__INITIAL_DATA__;

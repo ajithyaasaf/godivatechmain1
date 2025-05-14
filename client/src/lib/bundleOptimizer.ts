@@ -1,184 +1,97 @@
 /**
- * Bundle Optimization Utilities
+ * JavaScript bundle performance tracking utilities
+ * Provides functions to track bundle load and execution times
+ */
+
+interface BundleMetrics {
+  loadTime: number;
+  executionTime: number;
+  size: number | null;
+  timestamp: number;
+}
+
+const bundleMetrics: Record<string, BundleMetrics> = {};
+
+/**
+ * Track the performance of a JavaScript bundle
+ * This helps monitor and optimize bundle sizes and load times
  * 
- * This module provides tools to optimize JS/CSS bundle loading:
- * - Bundle splitting
- * - Tree-shaking helpers
- * - Dependency optimization
+ * @param bundleName A unique identifier for the bundle
+ * @param reportCallback Optional callback for metrics reporting
  */
-
-/**
- * Dynamically load a component with code splitting
- * @param componentPath Path to component
- * @param options Loading options
- * @returns Promise resolving to component
- */
-export async function loadComponent<T>(
-  componentPath: string,
-  options: {
-    fallback?: React.ReactNode;
-    preload?: boolean;
-    errorBoundary?: boolean;
-  } = {}
-): Promise<T> {
-  const { preload = false } = options;
+export function trackBundlePerformance(
+  bundleName: string,
+  reportCallback?: (metrics: BundleMetrics) => void
+) {
+  if (typeof window === 'undefined' || typeof performance === 'undefined') return;
   
-  // Preload the component
-  if (preload && typeof document !== 'undefined') {
-    const link = document.createElement('link');
-    link.rel = 'modulepreload';
-    link.href = componentPath;
-    document.head.appendChild(link);
-  }
+  const timestamp = Date.now();
+  const startExecutionTime = performance.now();
   
-  // Dynamically import the component
-  try {
-    const module = await import(/* @vite-ignore */ componentPath);
-    return module.default || module;
-  } catch (error) {
-    console.error(`Failed to load component: ${componentPath}`, error);
-    throw error;
-  }
-}
-
-/**
- * Register components that should be lazily loaded
- * @param components Map of component paths
- * @returns Object with lazy loaded components
- */
-export function registerLazyComponents<T extends Record<string, string>>(
-  components: T
-): { [K in keyof T]: () => Promise<any> } {
-  const lazyComponents: Record<string, () => Promise<any>> = {};
-  
-  // Create a lazy loader for each component
-  Object.entries(components).forEach(([name, path]) => {
-    lazyComponents[name] = () => loadComponent(path);
-  });
-  
-  return lazyComponents as { [K in keyof T]: () => Promise<any> };
-}
-
-/**
- * Create a dynamic import boundary
- * @param modulePath Path to the module
- * @returns A module that can be imported dynamically
- */
-export function createDynamicImport<T>(modulePath: string): () => Promise<T> {
-  return () => import(/* @vite-ignore */ modulePath);
-}
-
-/**
- * Track bundle size and loading performance
- * @param bundleName Name of the bundle to track
- */
-export function trackBundlePerformance(bundleName: string): void {
-  if (typeof window === 'undefined' || typeof performance === 'undefined' || process.env.NODE_ENV !== 'development') {
-    return;
-  }
-  
-  try {
-    // Record bundle load start time
-    const startTime = performance.now();
+  // Use requestAnimationFrame to ensure we capture full execution time
+  requestAnimationFrame(() => {
+    const executionTime = performance.now() - startExecutionTime;
     
-    // Track when the bundle is loaded
-    window.addEventListener('load', () => {
-      const endTime = performance.now();
-      const loadTime = endTime - startTime;
-      
-      console.log(`Bundle '${bundleName}' loaded in ${loadTime.toFixed(2)}ms`);
-      
-      // Analyze resources loaded
-      if (performance.getEntriesByType) {
-        const resources = performance.getEntriesByType('resource');
-        let totalSize = 0;
-        
-        const jsResources = resources.filter(r => r.name.endsWith('.js'));
-        const cssResources = resources.filter(r => r.name.endsWith('.css'));
-        
-        jsResources.forEach(r => {
-          // Use transferSize if available, otherwise estimatedSize
-          const size = (r as any).transferSize || ((r as any).decodedBodySize || 0);
-          totalSize += size;
-          
-          if (size > 100 * 1024) { // Larger than 100KB
-            console.warn(`Large JS resource: ${r.name} (${(size / 1024).toFixed(1)}KB)`);
-          }
+    // Get load metrics if performance API is fully supported
+    let loadTime = 0;
+    let size = null;
+    
+    if (
+      'getEntriesByType' in performance && 
+      'getEntriesByName' in performance
+    ) {
+      // Try to find resources matching bundle name
+      const resources = performance.getEntriesByType('resource')
+        .filter(resource => {
+          const name = resource.name.toLowerCase();
+          const bundleSearch = bundleName.toLowerCase();
+          return name.includes(bundleSearch) && 
+                (name.includes('.js') || name.includes('bundle') || name.includes('chunk'));
         });
+      
+      if (resources.length > 0) {
+        // Use the slowest load time as the bundle load time
+        loadTime = Math.max(...resources.map(r => r.duration));
         
-        cssResources.forEach(r => {
-          const size = (r as any).transferSize || ((r as any).decodedBodySize || 0);
-          totalSize += size;
-          
-          if (size > 50 * 1024) { // Larger than 50KB
-            console.warn(`Large CSS resource: ${r.name} (${(size / 1024).toFixed(1)}KB)`);
-          }
-        });
-        
-        console.log(`Total bundle size: ${(totalSize / 1024).toFixed(1)}KB`);
+        // Estimate size if available
+        if ('transferSize' in resources[0]) {
+          size = (resources[0] as any).transferSize || null;
+        }
       }
-    });
-  } catch (error) {
-    console.error('Error tracking bundle performance:', error);
-  }
-}
-
-/**
- * Preload critical bundles to speed up loading
- * @param bundles List of bundle paths to preload
- */
-export function preloadCriticalBundles(bundles: string[]): void {
-  if (typeof document === 'undefined') {
-    return;
-  }
-  
-  bundles.forEach(bundle => {
-    const link = document.createElement('link');
-    
-    if (bundle.endsWith('.js')) {
-      link.rel = 'modulepreload';
-      link.href = bundle;
-    } else if (bundle.endsWith('.css')) {
-      link.rel = 'preload';
-      link.href = bundle;
-      link.as = 'style';
-    } else {
-      // Skip unknown file types
-      return;
     }
     
-    document.head.appendChild(link);
+    const metrics: BundleMetrics = {
+      loadTime,
+      executionTime,
+      size,
+      timestamp
+    };
+    
+    // Store metrics
+    bundleMetrics[bundleName] = metrics;
+    
+    // Report metrics if callback is provided
+    if (reportCallback) {
+      reportCallback(metrics);
+    } else if (process.env.NODE_ENV === 'development') {
+      console.log(`[Bundle Metrics] ${bundleName}:`, metrics);
+    }
   });
 }
 
 /**
- * Initialize bundle loading for non-critical parts
- * This helps with performance by deferring loading of non-critical parts
- * @param bundles List of bundle paths to load
- * @param delay Delay before loading in ms
+ * Get the performance metrics for all tracked bundles
+ * @returns Record of bundle metrics by bundle name
  */
-export function loadNonCriticalBundles(bundles: string[], delay = 1000): void {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  
-  // Wait for initial load
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      bundles.forEach(bundle => {
-        if (bundle.endsWith('.js')) {
-          const script = document.createElement('script');
-          script.src = bundle;
-          script.async = true;
-          script.type = 'module';
-          document.body.appendChild(script);
-        } else if (bundle.endsWith('.css')) {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = bundle;
-          document.head.appendChild(link);
-        }
-      });
-    }, delay);
+export function getBundleMetrics(): Record<string, BundleMetrics> {
+  return { ...bundleMetrics };
+}
+
+/**
+ * Clear all tracked bundle metrics
+ */
+export function clearBundleMetrics(): void {
+  Object.keys(bundleMetrics).forEach(key => {
+    delete bundleMetrics[key];
   });
 }

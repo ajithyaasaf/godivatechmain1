@@ -1,104 +1,125 @@
 /**
- * JavaScript Optimization Utilities
+ * JavaScript performance optimization utilities
+ * Provides functions to optimize JavaScript execution and improve Core Web Vitals
+ */
+
+/**
+ * Throttle a function to limit how often it can be called
+ * Useful for optimizing scroll and resize event handlers
  * 
- * This module provides tools to optimize JavaScript loading and execution:
- * - Code splitting strategies
- * - Lazy initialization
- * - Runtime performance improvements
+ * @param func The function to throttle
+ * @param limit The time limit in milliseconds
+ * @returns A throttled version of the function
  */
-
-/**
- * Function to dynamically import JavaScript modules only when needed
- * @param module The module path to import
- * @returns Promise resolving to the imported module
- */
-export function dynamicImport<T>(module: string): Promise<T> {
-  return import(/* @vite-ignore */ module);
-}
-
-/**
- * Throttle a function to limit its execution frequency
- * Useful for optimizing high-frequency events like scroll, resize
- * @param fn Function to throttle
- * @param delay Minimum time between executions (ms)
- * @returns Throttled function
- */
-export function throttle<T extends (...args: any[]) => any>(
-  fn: T, 
-  delay = 100
-): (...args: Parameters<T>) => void {
-  let lastCallTime = 0;
-  let timeout: ReturnType<typeof setTimeout> | null = null;
+export function throttle<T extends (...args: any[]) => any>(func: T, limit: number = 100): (...funcArgs: Parameters<T>) => void {
+  let inThrottle: boolean = false;
+  let lastFunc: ReturnType<typeof setTimeout>;
+  let lastRan: number = 0;
   
-  return function(...args: Parameters<T>): void {
-    const now = Date.now();
-    const timeSinceLastCall = now - lastCallTime;
+  return function(this: any, ...args: Parameters<T>): void {
+    const context = this;
     
-    if (timeSinceLastCall >= delay) {
-      lastCallTime = now;
-      fn(...args);
-    } else {
-      // Clear any pending execution
-      if (timeout) {
-        clearTimeout(timeout);
-      }
+    if (!inThrottle) {
+      func.apply(context, args);
+      lastRan = Date.now();
+      inThrottle = true;
       
-      // Schedule execution at the end of the delay period
-      timeout = setTimeout(() => {
-        lastCallTime = Date.now();
-        fn(...args);
-        timeout = null;
-      }, delay - timeSinceLastCall);
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    } else {
+      clearTimeout(lastFunc);
+      lastFunc = setTimeout(() => {
+        if (Date.now() - lastRan >= limit) {
+          func.apply(context, args);
+          lastRan = Date.now();
+        }
+      }, limit - (Date.now() - lastRan));
     }
   };
 }
 
 /**
- * Run a task asynchronously during browser idle time
- * @param task Function to run
- * @param timeout Timeout in ms if requestIdleCallback isn't available
+ * Debounce a function to ensure it only executes after a specified delay
+ * Useful for inputs and other rapid user interactions
+ * 
+ * @param func The function to debounce
+ * @param delay The delay in milliseconds
+ * @returns A debounced version of the function
  */
-export function runWhenIdle(task: () => void, timeout = 1000): void {
-  if (typeof window === 'undefined') return;
+export function debounce<T extends (...args: any[]) => any>(func: T, delay: number = 300): (...funcArgs: Parameters<T>) => void {
+  let timer: ReturnType<typeof setTimeout>;
   
-  // Use requestIdleCallback if available, otherwise use setTimeout
-  if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(() => task(), { timeout });
-  } else {
-    setTimeout(task, 50); // Smaller timeout as fallback
-  }
+  return function(this: any, ...args: Parameters<T>): void {
+    const context = this;
+    clearTimeout(timer);
+    
+    timer = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
 }
 
 /**
- * Break a heavy computation into chunks to avoid blocking the main thread
- * @param items Items to process
- * @param processFn Function to process a single item
- * @param options Configuration options
+ * Memorize (cache) expensive function results
+ * 
+ * @param fn The function to memoize
+ * @returns A memoized version of the function
  */
-export function chunkProcess<T>(
-  items: T[],
-  processFn: (item: T) => void,
-  options: { chunkSize?: number; delay?: number } = {}
-): Promise<void> {
-  const { chunkSize = 10, delay = 1 } = options;
-  let index = 0;
+export function memoize<T extends (...args: any[]) => any>(fn: T): T {
+  const cache = new Map();
   
+  return function(this: any, ...args: Parameters<T>): ReturnType<T> {
+    const key = JSON.stringify(args);
+    
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    
+    return result;
+  } as T;
+}
+
+/**
+ * Split long-running tasks into smaller chunks to avoid blocking the main thread
+ * This improves Interaction to Next Paint (INP) and Total Blocking Time (TBT)
+ * 
+ * @param items Array of items to process
+ * @param processItem Function to process each item
+ * @param chunkSize Number of items to process in each chunk
+ * @param delayBetweenChunks Delay between chunks in milliseconds
+ */
+export function chunkedProcessing<T>(
+  items: T[],
+  processItem: (item: T) => void,
+  chunkSize: number = 5,
+  delayBetweenChunks: number = 16 // ~ 1 frame at 60fps
+): Promise<void> {
   return new Promise((resolve) => {
+    if (!items.length) {
+      resolve();
+      return;
+    }
+    
+    let index = 0;
+    
     function processChunk() {
-      const chunk = items.slice(index, index + chunkSize);
-      if (chunk.length === 0) {
-        resolve();
-        return;
+      const limit = Math.min(index + chunkSize, items.length);
+      
+      for (let i = index; i < limit; i++) {
+        processItem(items[i]);
       }
       
-      // Process current chunk
-      chunk.forEach(processFn);
+      index = limit;
       
-      // Move to next chunk
-      index += chunkSize;
-      
-      // Schedule next chunk
-      setTimeout(processChunk, delay);
+      if (index < items.length) {
+        setTimeout(processChunk, delayBetweenChunks);
+      } else {
+        resolve();
+      }
     }
     
     processChunk();
@@ -106,88 +127,37 @@ export function chunkProcess<T>(
 }
 
 /**
- * Optimize event listeners by using passive mode where appropriate
- * @param element Target DOM element
- * @param eventType Event type
- * @param handler Event handler
- * @param options Event listener options
+ * Run a function when the browser is idle
+ * This helps improve First Input Delay (FID) and Time to Interactive (TTI)
+ * 
+ * @param callback Function to run during idle time
+ * @param timeout Fallback timeout in milliseconds
  */
-export function addOptimizedEventListener<K extends keyof HTMLElementEventMap>(
-  element: HTMLElement,
-  eventType: K,
-  handler: (event: HTMLElementEventMap[K]) => void,
-  options?: boolean | AddEventListenerOptions
-): void {
-  // Auto-detect events that should use passive mode for better performance
-  const touchEvents = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
-  const wheelEvents = ['wheel', 'mousewheel'];
-  
-  const shouldBePassive = [...touchEvents, ...wheelEvents].includes(eventType as string);
-  
-  if (shouldBePassive && typeof options === 'object') {
-    // Use passive listeners for these events to prevent blocking the main thread
-    element.addEventListener(eventType, handler as EventListener, {
-      ...options,
-      passive: options.passive !== false // Default to true unless explicitly set to false
-    });
-  } else if (shouldBePassive && (options === undefined || typeof options === 'boolean')) {
-    // No options provided or boolean passive option
-    element.addEventListener(eventType, handler as EventListener, {
-      passive: true,
-      capture: typeof options === 'boolean' ? options : false
-    });
-  } else {
-    // Use normal event listener for other events
-    element.addEventListener(eventType, handler as EventListener, options);
-  }
-}
-
-/**
- * Monitor JS execution performance
- * @param name Identifier for the code being monitored
- * @param thresholdMs Warning threshold in milliseconds
- * @returns Function to call when finished to measure duration
- */
-export function monitorPerformance(name: string, thresholdMs = 100): () => void {
-  if (typeof performance === 'undefined' || process.env.NODE_ENV !== 'development') {
-    // Return a no-op function if performance API is not available
-    return () => {};
-  }
-  
-  const startTime = performance.now();
-  
-  return () => {
-    const duration = performance.now() - startTime;
-    if (duration > thresholdMs) {
-      console.warn(`Performance warning: "${name}" took ${duration.toFixed(2)}ms, which exceeds the ${thresholdMs}ms threshold.`);
-    }
-  };
-}
-
-/**
- * Initialize deferred JavaScript that isn't needed immediately
- * @param initFunctions Map of functions to initialize
- * @param delay Delay before initialization in ms
- */
-export function initDeferred(
-  initFunctions: Record<string, () => void>,
-  delay = 2000
-): void {
+export function runWhenIdle(callback: () => void, timeout: number = 1000): void {
   if (typeof window === 'undefined') return;
   
-  // Wait until page is fully loaded and initial animations complete
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      // Initialize each function one by one with small delays
-      Object.entries(initFunctions).forEach(([name, fn], index) => {
-        setTimeout(() => {
-          try {
-            fn();
-          } catch (error) {
-            console.error(`Error initializing deferred module "${name}":`, error);
-          }
-        }, index * 100);
-      });
-    }, delay);
-  });
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(callback, { timeout });
+  } else {
+    setTimeout(callback, timeout);
+  }
+}
+
+/**
+ * Log function execution time
+ * 
+ * @param fn Function to measure
+ * @param fnName Optional name for the function in logs
+ * @returns Wrapped function that logs execution time
+ */
+export function measurePerformance<T extends (...args: any[]) => any>(fn: T, fnName?: string): T {
+  return function(this: any, ...args: Parameters<T>): ReturnType<T> {
+    const start = performance.now();
+    const result = fn.apply(this, args);
+    const end = performance.now();
+    
+    console.log(`${fnName || fn.name || 'Anonymous function'} execution time: ${(end - start).toFixed(2)}ms`);
+    
+    return result;
+  } as T;
 }

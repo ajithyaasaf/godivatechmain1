@@ -50,7 +50,7 @@ const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Contact = lazy(() => import("@/pages/Contact"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const AuthPage = lazy(() => import("@/pages/auth-page"));
-const DiagnosticsPage = lazy(() => import("@/pages/diagnostics"));
+// Diagnostics page removed for production
 
 // Admin pages - lazy loaded
 const AdminDashboard = lazy(() => import("@/pages/admin"));
@@ -162,7 +162,7 @@ function App() {
                 <Route path="/blog/:slug" component={BlogPost} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/auth" component={AuthPage} />
-                <Route path="/diagnostics" component={DiagnosticsPage} />
+                {/* Diagnostics route removed for production */}
                 <Route component={NotFound} />
               </Switch>
             </Suspense>

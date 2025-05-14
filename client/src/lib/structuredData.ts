@@ -3,7 +3,17 @@
  * 
  * This file contains functions for generating JSON-LD structured data
  * for different page types to improve SEO and enable rich results in search.
+ * This includes mobile-optimized structured data for better performance across all devices.
  */
+
+// Check if the current device is mobile
+export const isMobileDevice = () => {
+  if (typeof window === 'undefined') return false;
+  
+  const userAgent = navigator.userAgent.toLowerCase();
+  const mobileKeywords = ['android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+  return mobileKeywords.some(keyword => userAgent.indexOf(keyword) !== -1) || window.innerWidth < 768;
+};
 
 // Organization structured data
 export const getOrganizationData = () => ({
@@ -371,6 +381,98 @@ export const getBreadcrumbData = (
     item: item.item
   }))
 });
+
+// Mobile-optimized blog post structured data
+export const getMobileBlogPostData = (
+  title: string,
+  excerpt: string,
+  url: string,
+  image: string = '',
+  datePublished: string = '',
+  dateModified: string = '',
+  authorName: string = 'GodivaTech',
+  authorImage?: string,
+  categoryName?: string,
+  baseUrl: string = 'https://godivatech.com'
+) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": title,
+    "description": excerpt || "",
+    "image": image || `${baseUrl}/images/blog-default.jpg`,
+    "author": {
+      "@type": "Person",
+      "name": authorName || "GodivaTech",
+      "image": authorImage
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "GodivaTech",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${baseUrl}/logo.png`
+      }
+    },
+    "datePublished": datePublished,
+    "dateModified": dateModified,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": url
+    },
+    "articleSection": categoryName || "Technology",
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [".article-title", ".article-body"]
+    },
+    "isAccessibleForFree": "True",
+    "isPartOf": {
+      "@type": "Blog",
+      "name": "GodivaTech Blog",
+      "description": "Latest technology insights and updates from GodivaTech",
+      "url": `${baseUrl}/blog`
+    }
+  };
+};
+
+// Mobile-optimized breadcrumb structured data
+export const getMobileBreadcrumbData = (
+  items: Array<{ name: string; item: string }>,
+  cityName: string = 'Madurai'
+) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.name.includes(cityName) ? item.name : `${item.name} in ${cityName}`,
+      "item": item.item
+    }))
+  };
+};
+
+// Mobile-optimized gallery structured data
+export const getMobileGalleryData = (
+  images: Array<{ url: string; caption: string; width?: number; height?: number }>,
+  title: string,
+  baseUrl: string = 'https://godivatech.com'
+) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    "associatedMedia": images.map(image => ({
+      "@type": "ImageObject",
+      "contentUrl": image.url,
+      "caption": image.caption,
+      "width": image.width || 1200,
+      "height": image.height || 800,
+      "representativeOfPage": false
+    })),
+    "name": title,
+    "url": baseUrl
+  };
+};
 
 // CollectionPage structured data for portfolio or product collections
 export const getCollectionPageData = (

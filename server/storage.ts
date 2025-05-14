@@ -9,14 +9,6 @@ import {
   contactMessages, type ContactMessage, type InsertContactMessage,
   subscribers, type Subscriber, type InsertSubscriber
 } from "@shared/schema";
-import { 
-  sampleBlogPosts, 
-  sampleCategories, 
-  sampleProjects, 
-  sampleServices, 
-  sampleTeamMembers, 
-  sampleTestimonials 
-} from "../client/src/lib/sampleData";
 import session from "express-session";
 
 export interface IStorage {
@@ -129,58 +121,8 @@ export class MemStorage implements IStorage {
     this.contactMessageCurrentId = 1;
     this.subscriberCurrentId = 1;
     
-    // Initialize with sample data
-    this.initializeSampleData();
-  }
-  
-  private initializeSampleData() {
-    // Initialize categories
-    sampleCategories.forEach(category => {
-      this.categories.set(category.id, { ...category });
-      if (category.id >= this.categoryCurrentId) {
-        this.categoryCurrentId = category.id + 1;
-      }
-    });
-    
-    // Initialize blog posts
-    sampleBlogPosts.forEach(post => {
-      this.blogPosts.set(post.id, { ...post });
-      if (post.id >= this.blogPostCurrentId) {
-        this.blogPostCurrentId = post.id + 1;
-      }
-    });
-    
-    // Initialize services
-    sampleServices.forEach(service => {
-      this.services.set(service.id, { ...service });
-      if (service.id >= this.serviceCurrentId) {
-        this.serviceCurrentId = service.id + 1;
-      }
-    });
-    
-    // Initialize team members
-    sampleTeamMembers.forEach(member => {
-      this.teamMembers.set(member.id, { ...member });
-      if (member.id >= this.teamMemberCurrentId) {
-        this.teamMemberCurrentId = member.id + 1;
-      }
-    });
-    
-    // Initialize projects
-    sampleProjects.forEach(project => {
-      this.projects.set(project.id, { ...project });
-      if (project.id >= this.projectCurrentId) {
-        this.projectCurrentId = project.id + 1;
-      }
-    });
-    
-    // Initialize testimonials
-    sampleTestimonials.forEach(testimonial => {
-      this.testimonials.set(testimonial.id, { ...testimonial });
-      if (testimonial.id >= this.testimonialCurrentId) {
-        this.testimonialCurrentId = testimonial.id + 1;
-      }
-    });
+    // In production, data is fetched from API/database instead of initializing with sample data
+    console.log("MemStorage initialized - ready for real data");
   }
 
   // User methods
