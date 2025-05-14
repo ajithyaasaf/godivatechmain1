@@ -10,6 +10,7 @@ import { trackLongTasks, preloadCriticalResources } from "@/lib/performance";
 import LCPOptimizer from "@/components/performance/LCPOptimizer";
 import FontOptimizer from "@/components/performance/FontOptimizer";
 import CriticalCSSOptimizer from "@/components/performance/CriticalCSSOptimizer";
+import { usePageHistory } from "@/hooks/use-page-history";
 
 // Optimized loading component with minimal DOM updates and better UX
 import OptimizedLoadingIndicator from "@/components/OptimizedLoadingIndicator";
@@ -71,6 +72,9 @@ function App() {
 
   // Determine if we're on an admin route
   const isAdminRoute = location.startsWith("/admin");
+  
+  // Track page navigation for the 404 page history feature
+  usePageHistory();
   
   // Initialize performance tracking
   useEffect(() => {
