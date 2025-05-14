@@ -70,13 +70,22 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     })
     .then(() => {
       console.log("Logout successful, redirecting to auth page");
-      // Use a hard redirect to the login page
-      window.location.replace('/auth');
+      
+      // Force redirection with most aggressive approach
+      document.location.href = '/auth';
+      
+      // As a backup, try again after a short delay if still on same page
+      setTimeout(() => {
+        if (window.location.pathname.includes('admin')) {
+          console.log("Still on admin page, trying redirect again");
+          window.location.href = '/auth';
+        }
+      }, 300);
     })
     .catch(error => {
       console.error("Logout failed:", error);
       // Even if logout fails, redirect to login page
-      window.location.replace('/auth');
+      document.location.href = '/auth';
     });
   };
 
