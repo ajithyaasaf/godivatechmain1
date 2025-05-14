@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { insertUserSchema } from "@/lib/schema";
 import { Loader2 } from "lucide-react";
 
@@ -88,7 +88,9 @@ export default function AuthPage() {
                       <FormControl>
                         <Input type="password" placeholder="Enter your password" {...field} />
                       </FormControl>
-                      <p className="text-xs text-muted-foreground mt-1">Default password: admin123</p>
+                      <div className="text-[10px] text-muted-foreground mt-1 italic opacity-70">
+                        Hint: Default is admin123
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
