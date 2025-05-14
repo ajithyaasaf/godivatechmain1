@@ -7,6 +7,7 @@ import { Suspense, lazy, useEffect } from "react";
 import PerformanceMonitor from "@/components/PerformanceMonitor";
 import ResourceHints from "@/components/ResourceHints";
 import { trackLongTasks, preloadCriticalResources } from "@/lib/performance";
+import LCPOptimizer from "@/components/performance/LCPOptimizer";
 
 // Optimized loading component with minimal DOM updates and better UX
 import OptimizedLoadingIndicator from "@/components/OptimizedLoadingIndicator";
@@ -87,6 +88,9 @@ function App() {
     <AuthProvider>
       {/* Add resource hints for performance optimization */}
       <ResourceHints />
+      
+      {/* LCP Optimizer for better performance metrics */}
+      <LCPOptimizer />
       
       {/* Performance monitoring tool - only visible in development */}
       {process.env.NODE_ENV === 'development' && <PerformanceMonitor />}
