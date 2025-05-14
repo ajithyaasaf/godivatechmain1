@@ -120,6 +120,7 @@ function App() {
                 <Route path="/services/:slug" component={ServiceDetail} />
                 <Route path="/portfolio" component={Portfolio} />
                 <Route path="/blog" component={Blog} />
+                <Route path="/blog/category/:categorySlug" component={Blog} />
                 <Route path="/blog/:slug" component={BlogPost} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/auth" component={AuthPage} />

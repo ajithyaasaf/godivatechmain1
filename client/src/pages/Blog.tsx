@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { useParams, useLocation } from "wouter";
 import BlogCard from "@/components/blog/BlogCard";
 import CategoryFilter from "@/components/blog/CategoryFilter";
 import NewsletterSection from "@/components/home/NewsletterSection";
@@ -116,6 +117,8 @@ const Pagination = ({
 );
 
 const Blog = () => {
+  const params = useParams<{ categorySlug?: string }>();
+  const [location, setLocation] = useLocation();
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -136,6 +139,15 @@ const Blog = () => {
         
         setBlogPosts(postsData);
         setCategories(categoriesData);
+        
+        // Check if we have a category slug in the URL path
+        if (params.categorySlug && params.categorySlug !== 'all') {
+          // Find the category ID from the slug
+          const category = categoriesData.find(c => c.slug === params.categorySlug);
+          if (category) {
+            setActiveCategory(category.id);
+          }
+        }
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -144,7 +156,7 @@ const Blog = () => {
     };
     
     loadData();
-  }, []);
+  }, [params.categorySlug]);
   
   // Handle category changes
   useEffect(() => {
