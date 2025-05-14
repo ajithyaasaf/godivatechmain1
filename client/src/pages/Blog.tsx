@@ -331,6 +331,21 @@ const Blog = () => {
           : "Get expert web development, digital marketing, and SEO tips from Madurai's leading tech company. Practical advice for Madurai businesses to grow online."
         }
         keywords={blogKeywords}
+        ogType="website"
+        ogImage="https://godivatech.com/images/blog-og-image.jpg"
+        imageWidth={1200}
+        imageHeight={630}
+        cityName="Madurai"
+        regionName="Tamil Nadu"
+        countryName="India"
+        modifiedTime={new Date().toISOString()}
+        facebookAppId="107394345671850"
+        twitterCard="summary_large_image"
+        twitterSite="@godivatech"
+        twitterCreator="@godivatech"
+        priceRange="₹₹"
+        telephoneNumber="+91-96005-20130"
+        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         canonicalUrl={activeCategory && activeCategory > 0
           ? `/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`
           : "/blog"

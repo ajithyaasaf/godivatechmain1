@@ -185,6 +185,20 @@ const Services = () => {
   
   const [location] = useLocation();
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Prepare structured data for SEO
+  const servicesStructuredData = useMemo(() => [
+    getOrganizationData(),
+    getWebPageData(
+      "Best Web Development & Digital Marketing Services in Madurai | GodivaTech",
+      "GodivaTech offers affordable web development, app development, and digital marketing services in Madurai. Get custom IT solutions at competitive prices for your business.",
+      "https://godivatech.com/services"
+    ),
+    getBreadcrumbData([
+      { name: "Home", item: "https://godivatech.com/" },
+      { name: "Services", item: "https://godivatech.com/services" }
+    ])
+  ], []);
 
   // Detect mobile devices for serving optimized content
   useEffect(() => {
