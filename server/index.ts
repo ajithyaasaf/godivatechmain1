@@ -133,15 +133,88 @@ app.use((req, res, next) => {
 
   // Use appropriate SSR approach based on environment
   // In production, we use a robust metadata-focused approach
-  // In development, we disable SSR to avoid conflicts with Vite
+  // In development, we add crawler-friendly version with internal links
   if (process.env.DISABLE_SSR !== 'true') {
     if (process.env.NODE_ENV === 'production') {
       // Use production-optimized SSR with SEO enhancements
       app.get(/^\/(?!api).*/, ssrProduction);
       log('Production SSR middleware enabled');
     } else {
-      // Development mode - SSR disabled to avoid conflicts with Vite
-      log('SSR disabled in development mode');
+      // Add crawler detection middleware for development mode
+      app.use((req, res, next) => {
+        const userAgent = req.headers['user-agent'] || '';
+        const isCrawler = /bot|crawler|spider|lighthouse|googlebot|bingbot|yandex|duckduck/i.test(userAgent);
+        
+        if (isCrawler && !req.path.startsWith('/api') && !req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|map)$/)) {
+          // If it's a crawler request, generate a snapshot with internal links
+          const navLinksHtml = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>GodivaTech - Web Development & Digital Marketing Services</title>
+              <meta name="description" content="GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business.">
+              <link rel="canonical" href="https://godivatech.com/">
+              <meta property="og:type" content="website">
+              <meta property="og:title" content="Web Development & Digital Marketing Services | GodivaTech Madurai">
+              <meta property="og:description" content="GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business.">
+              <meta property="og:url" content="https://godivatech.com/">
+              <meta property="og:site_name" content="GodivaTech">
+            </head>
+            <body>
+              <h1>GodivaTech - Web Development & Digital Marketing Services</h1>
+              
+              <nav aria-label="Main Navigation">
+                <ul>
+                  <li><a href="/">Home</a></li>
+                  <li><a href="/services">Services</a></li>
+                  <li><a href="/portfolio">Portfolio</a></li>
+                  <li><a href="/about">About</a></li>
+                  <li><a href="/blog">Blog</a></li>
+                  <li><a href="/contact">Contact</a></li>
+                </ul>
+              </nav>
+              
+              <section>
+                <h2>Our Services</h2>
+                <ul>
+                  <li><a href="/services/web-development">Web Development</a></li>
+                  <li><a href="/services/digital-marketing">Digital Marketing</a></li>
+                  <li><a href="/services/app-development">Mobile App Development</a></li>
+                  <li><a href="/services/poster-design">Poster Design</a></li>
+                  <li><a href="/services/ui-ux-design">UI/UX Design</a></li>
+                  <li><a href="/services/logo-brand-design">Logo & Brand Design</a></li>
+                </ul>
+              </section>
+              
+              <div>
+                <p>This is a crawler-friendly snapshot of the GodivaTech website.</p>
+                <p>Please visit our website with a browser to see the full interactive experience.</p>
+              </div>
+              
+              <script type="application/ld+json">
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "GodivaTech",
+                "url": "https://godivatech.com",
+                "logo": "https://godivatech.com/logo.png"
+              }
+              </script>
+            </body>
+            </html>
+          `;
+          
+          res.setHeader('Content-Type', 'text/html');
+          res.send(navLinksHtml);
+          return;
+        }
+        
+        next();
+      });
+      
+      log('Crawler-friendly version enabled in development mode');
     }
   }
   
