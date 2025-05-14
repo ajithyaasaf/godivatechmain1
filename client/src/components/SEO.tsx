@@ -110,7 +110,9 @@ const SEO: React.FC<SEOProps> = memo(({
     domain;
     
   // Ensure canonical tag is not missing from browser inspection
-  console.log("Canonical URL set:", canonical);
+  if (process.env.NODE_ENV === 'development') {
+    console.log("Canonical URL set:", canonical);
+  }
   
   // Format OpenGraph image URL with proper handling
   const formattedOgImage = ogImage ? 
@@ -138,6 +140,13 @@ const SEO: React.FC<SEOProps> = memo(({
       <link rel="canonical" href={canonical} />
       <link rel="sitemap" type="application/xml" href={`${domain}/sitemap.xml`} />
       
+      {/* Add structured data */}
+      {structuredData && structuredData.length > 0 && structuredData.map((data, index) => (
+        <script key={index} type="application/ld+json">
+          {JSON.stringify(data)}
+        </script>
+      ))}
+      
       {/* Mobile optimization */}
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       <meta name="theme-color" content="#4f46e5" /> {/* Primary color */}
@@ -146,15 +155,15 @@ const SEO: React.FC<SEOProps> = memo(({
       {robots && <meta name="robots" content={robots} />}
       {!robots && <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />}
       
-      {/* Open Graph / Facebook - Enhanced */}
+      {/* Open Graph / Facebook - Enhanced and Complete */}
       <meta property="og:type" content={ogType} />
       <meta property="og:title" content={title.length > 60 ? title.substring(0, 57) + '...' : title} />
       <meta property="og:description" content={description.length > 160 ? description.substring(0, 157) + '...' : description} />
+      <meta property="og:url" content={canonical} />
       <meta property="og:image" content={formattedOgImage} />
       <meta property="og:image:width" content={String(imageWidth)} />
       <meta property="og:image:height" content={String(imageHeight)} />
       <meta property="og:image:alt" content={title} />
-      <meta property="og:url" content={canonical} />
       <meta property="og:site_name" content="GodivaTech" />
       <meta property="og:locale" content={ogLocale} />
       {facebookAppId && <meta property="fb:app_id" content={facebookAppId} />}

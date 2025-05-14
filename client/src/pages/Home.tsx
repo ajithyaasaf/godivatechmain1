@@ -30,7 +30,10 @@ const MapSection = lazy(() => import("@/components/home/MapSection"));
  * Enhanced Home page with smooth section transitions and SEO optimization
  */
 const Home = () => {
-  // SEO structured data
+  // Get current date for freshness signals
+  const currentDate = new Date().toISOString();
+  
+  // SEO structured data enhanced with proper IDs and current dates
   const structuredData = [
     getOrganizationData(),
     getLocalBusinessData(),
@@ -48,8 +51,15 @@ const Home = () => {
         title="Web Development & Digital Marketing Services | GodivaTech Madurai"
         description="GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business."
         keywords={homeKeywords}
-        canonicalUrl="/"
+        canonicalUrl="https://godivatech.com/"
         structuredData={structuredData}
+        ogImage="https://godivatech.com/assets/home-og-image.jpg"
+        ogType="website"
+        ogLocale="en_IN"
+        twitterCard="summary_large_image"
+        twitterSite="@godivatech"
+        modifiedTime={currentDate}
+        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
       />
       
       {/* Preload critical resources for hero section */}
