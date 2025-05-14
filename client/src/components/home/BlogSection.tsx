@@ -1,5 +1,5 @@
 import React, { useState, memo, useMemo, useCallback } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import BlogCard from "../blog/BlogCard";
@@ -19,6 +19,7 @@ interface Category {
 const BlogSection = memo(() => {
   // Local state for tracking selected category
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
+  const [, setLocation] = useLocation();
 
   // Fetch categories and blog posts data
   const { data: categories = [] } = useQuery<Category[]>({
@@ -122,7 +123,18 @@ const BlogSection = memo(() => {
   // Memoize event handlers with useCallback
   const handleCategoryChange = useCallback((categoryId: number | null) => {
     setActiveCategory(categoryId === -1 ? null : categoryId);
-  }, []);
+    
+    // If a category is selected (not All Topics), navigate to the category page
+    if (categoryId !== null && categoryId !== -1) {
+      const category = categories.find(c => c.id === categoryId);
+      if (category) {
+        setLocation(`/blog/category/${category.slug}`);
+      }
+    } else {
+      // For "All Topics", navigate to the main blog page
+      setLocation('/blog');
+    }
+  }, [categories, setLocation]);
 
   // Animation variants for section elements
   const containerVariants = {

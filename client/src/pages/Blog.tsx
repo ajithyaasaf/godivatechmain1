@@ -235,6 +235,19 @@ const Blog = () => {
   const handleCategoryChange = (categoryId: number | null) => {
     setActiveCategory(categoryId);
     setPage(1); // Reset to first page when changing category
+    
+    // Update URL to reflect the selected category
+    if (categoryId === null || categoryId === 0) {
+      // Navigate to the base blog URL for "All Topics"
+      setLocation("/blog");
+    } else {
+      // Find the category slug from the ID
+      const category = categories.find(c => c.id === categoryId);
+      if (category) {
+        // Navigate to the category-specific URL
+        setLocation(`/blog/category/${category.slug}`);
+      }
+    }
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -254,12 +267,25 @@ const Blog = () => {
     getWebPageData(
       "Digital Marketing & Web Development Blog | Best SEO Tips for Madurai Businesses",
       "Get expert web development, digital marketing, and SEO tips from Madurai's leading tech company. Practical advice for local businesses to grow online presence.",
-      "https://godivatech.com/blog"
+      activeCategory && activeCategory > 0
+        ? `https://godivatech.com/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`
+        : "https://godivatech.com/blog"
     ),
-    getBreadcrumbData([
-      { name: "Home", item: "https://godivatech.com/" },
-      { name: "Blog", item: "https://godivatech.com/blog" }
-    ])
+    getBreadcrumbData(
+      activeCategory && activeCategory > 0
+        ? [
+            { name: "Home", item: "https://godivatech.com/" },
+            { name: "Blog", item: "https://godivatech.com/blog" },
+            { 
+              name: displayCategories.find(c => c.id === activeCategory)?.name || "Category",
+              item: `https://godivatech.com/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`
+            }
+          ]
+        : [
+            { name: "Home", item: "https://godivatech.com/" },
+            { name: "Blog", item: "https://godivatech.com/blog" }
+          ]
+    )
   ];
 
   // Add blog collection structured data for SEO
@@ -296,10 +322,19 @@ const Blog = () => {
   return (
     <>
       <SEO
-        title="Digital Marketing & Web Development Blog | Best SEO Tips for Madurai Businesses"
-        description="Get expert web development, digital marketing, and SEO tips from Madurai's leading tech company. Practical advice for Madurai businesses to grow online."
+        title={activeCategory && activeCategory > 0 
+          ? `${displayCategories.find(c => c.id === activeCategory)?.name || "Category"} | Digital Marketing & Web Development Blog`
+          : "Digital Marketing & Web Development Blog | Best SEO Tips for Madurai Businesses"
+        }
+        description={activeCategory && activeCategory > 0
+          ? `Expert ${displayCategories.find(c => c.id === activeCategory)?.name || "category"} tips and insights from Madurai's leading tech company. Practical advice for local businesses.`
+          : "Get expert web development, digital marketing, and SEO tips from Madurai's leading tech company. Practical advice for Madurai businesses to grow online."
+        }
         keywords={blogKeywords}
-        canonicalUrl="/blog"
+        canonicalUrl={activeCategory && activeCategory > 0
+          ? `/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`
+          : "/blog"
+        }
         structuredData={structuredData}
         cityName="Madurai"
         regionName="Tamil Nadu"
@@ -414,7 +449,7 @@ const Blog = () => {
                           { name: "Blog", href: "/blog" },
                           { 
                             name: displayCategories.find(c => c.id === activeCategory)?.name || "Category", 
-                            href: `/blog?category=${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`,
+                            href: `/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`,
                             current: true 
                           }
                         ]
