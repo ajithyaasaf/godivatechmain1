@@ -1,96 +1,61 @@
 /**
- * Canonical URL utilities for SEO optimization
- * Prevents duplicate content issues by designating the preferred URL version
+ * Helper functions for canonical URLs and SEO
  */
-
-// Base URL for the website
-const baseUrl = 'https://godivatech.com';
 
 /**
- * Generate the canonical URL for a given path
- * @param path The URL path (without domain)
- * @returns The full canonical URL
+ * Format a path into a canonical URL
+ * Ensures the URL is absolute with proper domain
+ * 
+ * @param path The relative path or absolute URL
+ * @returns Properly formatted canonical URL
  */
-export const getCanonicalUrl = (path: string): string => {
-  // Remove trailing slashes for consistency
-  const normalizedPath = path.endsWith('/') && path !== '/' 
-    ? path.slice(0, -1) 
-    : path;
-    
-  // Format the full URL
-  return `${baseUrl}${normalizedPath}`;
-};
-
-/**
- * Generate alternate URLs for a page (e.g., mobile, AMP, different languages)
- * @param path The base URL path
- * @returns Object containing alternate URLs
- */
-export const getAlternateUrls = (path: string): Record<string, string> => {
-  const canonicalUrl = getCanonicalUrl(path);
+export function formatCanonicalUrl(path: string): string {
+  const domain = 'https://godivatech.com';
   
-  return {
-    // AMP version for mobile devices
-    amp: `${canonicalUrl}?amp=1`,
-    
-    // Language variants - Tamil version is localized
-    'ta-IN': `${canonicalUrl}?lang=ta`,
-    
-    // Mobile version might be the same, using responsive design
-    mobile: canonicalUrl,
-  };
-};
+  // If already absolute URL, return as is
+  if (path.startsWith('http')) {
+    return path;
+  }
+  
+  // Ensure path starts with /
+  const formattedPath = path.startsWith('/') ? path : `/${path}`;
+  
+  // For homepage, return domain without trailing slash
+  if (formattedPath === '/') {
+    return domain;
+  }
+  
+  // Return domain + path
+  return `${domain}${formattedPath}`;
+}
 
 /**
- * Check if the current URL is the canonical one
- * Useful for redirecting from non-canonical to canonical URLs
- * @param currentUrl The current URL (from browser)
- * @param path The expected canonical path
- * @returns Boolean indicating if current URL is canonical
+ * Get canonical URL for current page
+ * Uses window.location in browser, falls back to path parameter on server
+ * 
+ * @param fallbackPath Fallback path to use when window is not available
+ * @returns Canonical URL for current page
  */
-export const isCanonicalUrl = (currentUrl: string, path: string): boolean => {
-  const canonical = getCanonicalUrl(path);
+export function getCurrentCanonicalUrl(fallbackPath: string = '/'): string {
+  if (typeof window !== 'undefined') {
+    // In browser context
+    return formatCanonicalUrl(window.location.pathname);
+  }
   
-  // Remove protocol and domain for comparison
-  const normalizeUrl = (url: string): string => {
-    return url
-      .replace(/^https?:\/\/[^/]+/i, '') // Remove protocol and domain
-      .replace(/\/$/, '') // Remove trailing slash
-      .replace(/\?$/, ''); // Remove empty query string
-  };
-  
-  return normalizeUrl(currentUrl) === normalizeUrl(canonical);
-};
+  // In server context
+  return formatCanonicalUrl(fallbackPath);
+}
 
 /**
- * Generate canonical URLs for location-specific pages (neighborhood targeting)
- * @param path The base URL path
- * @param location The location info: city and neighborhood
- * @returns The canonical URL for the specific location
+ * Get current page URL with query parameters
+ * Useful for share links and OpenGraph URLs
+ * 
+ * @returns Full URL including query parameters
  */
-export const getLocationCanonicalUrl = (
-  path: string, 
-  location: { city: string; neighborhood?: string }
-): string => {
-  // Format the location path segment
-  const locationPath = location.neighborhood 
-    ? `/${location.city.toLowerCase()}/${location.neighborhood}`
-    : `/${location.city.toLowerCase()}`;
-    
-  return getCanonicalUrl(`${path}${locationPath}`);
-};
-
-/**
- * Generate hreflang tags for internationalization
- * @param path The current URL path
- * @returns Array of hreflang objects with language code and URL
- */
-export const getHreflangUrls = (path: string): Array<{lang: string, url: string}> => {
-  const canonicalUrl = getCanonicalUrl(path);
+export function getCurrentPageUrl(): string {
+  if (typeof window !== 'undefined') {
+    return window.location.href;
+  }
   
-  return [
-    { lang: 'en-IN', url: canonicalUrl },
-    { lang: 'ta-IN', url: `${canonicalUrl}?lang=ta` },
-    { lang: 'x-default', url: canonicalUrl }
-  ];
-};
+  return formatCanonicalUrl('/');
+}

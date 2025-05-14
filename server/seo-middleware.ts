@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { injectMetaTags } from './meta-tags';
 
 /**
  * A middleware to ensure every page has proper SEO tags
@@ -19,37 +20,39 @@ export function seoMiddleware(req: Request, res: Response, next: NextFunction) {
         const baseUrl = process.env.BASE_URL || 'https://godivatech.com';
         const canonicalUrl = `${baseUrl}${url === '/' ? '' : url}`;
         
-        // Check if canonical link already exists
-        if (!body.includes('<link rel="canonical"')) {
-          // Add canonical URL tag
-          body = body.replace('</head>', `  <link rel="canonical" href="${canonicalUrl}">\n</head>`);
-        } else {
-          // Update existing canonical URL tag
-          body = body.replace(
-            /<link rel="canonical" href=".*?">/g,
-            `<link rel="canonical" href="${canonicalUrl}">`
-          );
+        // Generate appropriate page title based on path
+        let title = 'GodivaTech - Web Development & Digital Marketing Services in Madurai';
+        let description = "GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business.";
+        
+        // Set specific titles and descriptions based on routes
+        if (url.startsWith('/services')) {
+          title = 'Our Services - Web, App & Digital Marketing Solutions | GodivaTech Madurai';
+          description = 'Explore our comprehensive range of professional web development, mobile app, and digital marketing services in Madurai, Tamil Nadu. Affordable solutions for businesses.';
+        } else if (url.startsWith('/portfolio')) {
+          title = 'Our Portfolio - Successful Web & App Projects | GodivaTech Madurai';
+          description = 'View our portfolio of successful web development, app development, and digital marketing projects. See how we have helped businesses in Madurai achieve digital excellence.';
+        } else if (url.startsWith('/about')) {
+          title = 'About GodivaTech - Leading Web Development Company in Madurai';
+          description = 'Learn about GodivaTech, a leading web development and digital marketing company in Madurai. Know our mission, vision, and the expert team behind our quality services.';
+        } else if (url.startsWith('/blog')) {
+          title = 'Blog - Latest Web Development & Digital Marketing Insights | GodivaTech';
+          description = 'Read our blog for the latest insights, tips, and trends in web development, digital marketing, and technology. Expert advice from Madurai tech companies.';
+        } else if (url.startsWith('/contact')) {
+          title = 'Contact Us - Get Web Development & Digital Marketing Services | GodivaTech';
+          description = 'Contact GodivaTech for professional web development, digital marketing, and app development services in Madurai. Get a free consultation for your business needs.';
         }
         
-        // Add basic meta tags if they don't exist
-        if (!body.includes('<meta name="description"')) {
-          const defaultDescription = "GodivaTech provides web development, digital marketing, and app development services in Madurai. We create high-performance websites and apps for businesses in Tamil Nadu.";
-          body = body.replace('</head>', `  <meta name="description" content="${defaultDescription}">\n</head>`);
-        }
+        // Use the meta tag injector to ensure proper SEO tags
+        body = injectMetaTags(body, {
+          title,
+          description,
+          canonicalUrl,
+          ogType: url === '/' ? 'website' : 'article',
+          ogImage: `${baseUrl}/og-image.jpg`,
+        });
         
-        // Add robots meta tag if not present
-        if (!body.includes('<meta name="robots"')) {
-          body = body.replace('</head>', `  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">\n</head>`);
-        }
-        
-        // Add charset and viewport meta tags if not present
-        if (!body.includes('<meta charset="')) {
-          body = body.replace('<head>', '<head>\n  <meta charset="UTF-8">');
-        }
-        
-        if (!body.includes('<meta name="viewport"')) {
-          body = body.replace('</head>', `  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n</head>`);
-        }
+        // Log for debugging
+        console.log(`[SEO] Enhanced meta tags for ${url}`);
       } catch (error) {
         console.error('Error in SEO middleware:', error);
         // Continue with the original HTML if there's an error

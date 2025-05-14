@@ -1,5 +1,6 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import { getCurrentCanonicalUrl } from '../lib/canonicalUrl';
 
 interface SEOProps {
   title: string;
@@ -104,15 +105,32 @@ const SEO: React.FC<SEOProps> = memo(({
   // Default domain for canonical URLs and images
   const domain = 'https://godivatech.com';
   
-  // Format canonical URL with proper handling - ensure it's always absolute for SEO best practices
+  // Always use getCurrentCanonicalUrl to ensure consistent canonicals across the app
+  // Fall back to provided canonicalUrl or default domain
   const canonical = canonicalUrl ? 
     (canonicalUrl.startsWith('http') ? canonicalUrl : `${domain}${canonicalUrl.startsWith('/') ? canonicalUrl : `/${canonicalUrl}`}`) : 
-    domain;
+    getCurrentCanonicalUrl();
     
-  // Ensure canonical tag is not missing from browser inspection
-  if (process.env.NODE_ENV === 'development') {
-    console.log("Canonical URL set:", canonical);
-  }
+  // Add direct DOM manipulation for critical SEO elements in case React Helmet fails
+  useEffect(() => {
+    // Ensure canonical URL is always added to the DOM even if Helmet has issues
+    let canonicalElement = document.querySelector('link[rel="canonical"]');
+    
+    if (!canonicalElement) {
+      // Create and add canonical link if it doesn't exist
+      canonicalElement = document.createElement('link');
+      canonicalElement.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalElement);
+    }
+    
+    // Set the href attribute to the canonical URL
+    canonicalElement.setAttribute('href', canonical);
+    
+    // Log in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Canonical URL set by useEffect:", canonical);
+    }
+  }, [canonical]);
   
   // Format OpenGraph image URL with proper handling
   const formattedOgImage = ogImage ? 

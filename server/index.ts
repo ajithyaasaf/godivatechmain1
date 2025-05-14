@@ -91,6 +91,9 @@ app.use(express.json({ limit: '10mb' }));
 // Increase URL-encoded body limit to 10MB
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
+// Apply SEO middleware to ensure all pages have canonical URLs and proper meta tags
+app.use(seoMiddleware);
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -147,7 +150,107 @@ app.use((req, res, next) => {
         const isCrawler = /bot|crawler|spider|lighthouse|googlebot|bingbot|yandex|duckduck/i.test(userAgent);
         
         if (isCrawler && !req.path.startsWith('/api') && !req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|map)$/)) {
-          // If it's a crawler request, generate a snapshot with internal links
+          // If it's a crawler request, serve our optimized SEO HTML
+          try {
+            // Read the SEO-optimized HTML file
+            const seoHtmlPath = path.resolve(process.cwd(), 'client', 'public', 'seo.html');
+            
+            if (fs.existsSync(seoHtmlPath)) {
+              // Read the optimized SEO HTML
+              let seoHtml = fs.readFileSync(seoHtmlPath, 'utf-8');
+              
+              // Customize the SEO HTML for the current path
+              let pageTitle = 'GodivaTech - Web Development & Digital Marketing Services in Madurai';
+              let pageDescription = "GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business.";
+              let canonicalUrl = `https://godivatech.com${req.path === '/' ? '' : req.path}`;
+              
+              // Set specific titles and descriptions based on routes
+              if (req.path.startsWith('/services')) {
+                pageTitle = 'Our Services - Web, App & Digital Marketing Solutions | GodivaTech Madurai';
+                pageDescription = 'Explore our comprehensive range of professional web development, mobile app, and digital marketing services in Madurai, Tamil Nadu. Affordable solutions for businesses.';
+              } else if (req.path.startsWith('/portfolio')) {
+                pageTitle = 'Our Portfolio - Successful Web & App Projects | GodivaTech Madurai';
+                pageDescription = 'View our portfolio of successful web development, app development, and digital marketing projects. See how we have helped businesses in Madurai achieve digital excellence.';
+              } else if (req.path.startsWith('/about')) {
+                pageTitle = 'About GodivaTech - Leading Web Development Company in Madurai';
+                pageDescription = 'Learn about GodivaTech, a leading web development and digital marketing company in Madurai. Know our mission, vision, and the expert team behind our quality services.';
+              } else if (req.path.startsWith('/blog')) {
+                pageTitle = 'Blog - Latest Web Development & Digital Marketing Insights | GodivaTech';
+                pageDescription = 'Read our blog for the latest insights, tips, and trends in web development, digital marketing, and technology. Expert advice from Madurai tech companies.';
+              } else if (req.path.startsWith('/contact')) {
+                pageTitle = 'Contact Us - Get Web Development & Digital Marketing Services | GodivaTech';
+                pageDescription = 'Contact GodivaTech for professional web development, digital marketing, and app development services in Madurai. Get a free consultation for your business needs.';
+              }
+              
+              // Update the HTML with page-specific metadata
+              seoHtml = seoHtml.replace(/<title>.*?<\/title>/, `<title>${pageTitle}</title>`);
+              seoHtml = seoHtml.replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${pageDescription}">`);
+              seoHtml = seoHtml.replace(/<link rel="canonical" href=".*?">/, `<link rel="canonical" href="${canonicalUrl}">`);
+              
+              // Update OG tags
+              seoHtml = seoHtml.replace(/<meta property="og:title" content=".*?">/, `<meta property="og:title" content="${pageTitle}">`);
+              seoHtml = seoHtml.replace(/<meta property="og:description" content=".*?">/, `<meta property="og:description" content="${pageDescription}">`);
+              seoHtml = seoHtml.replace(/<meta property="og:url" content=".*?">/, `<meta property="og:url" content="${canonicalUrl}">`);
+              
+              // Update Twitter tags
+              seoHtml = seoHtml.replace(/<meta name="twitter:title" content=".*?">/, `<meta name="twitter:title" content="${pageTitle}">`);
+              seoHtml = seoHtml.replace(/<meta name="twitter:description" content=".*?">/, `<meta name="twitter:description" content="${pageDescription}">`);
+              seoHtml = seoHtml.replace(/<meta name="twitter:url" content=".*?">/, `<meta name="twitter:url" content="${canonicalUrl}">`);
+              
+              // Update breadcrumb JSON-LD
+              const breadcrumbJsonLd = {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://godivatech.com/"
+                  }
+                ]
+              };
+              
+              // Add path segments to breadcrumb
+              if (req.path !== '/') {
+                const pathSegments = req.path.split('/').filter(Boolean);
+                
+                pathSegments.forEach((segment, index) => {
+                  const humanReadableName = segment
+                    .split('-')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+                    
+                  breadcrumbJsonLd.itemListElement.push({
+                    "@type": "ListItem",
+                    "position": index + 2,
+                    "name": humanReadableName,
+                    "item": `https://godivatech.com/${pathSegments.slice(0, index + 1).join('/')}`
+                  });
+                });
+              }
+              
+              // Update breadcrumb JSON-LD in the HTML
+              seoHtml = seoHtml.replace(
+                /<script type="application\/ld\+json">\s*\{\s*"@context": "https:\/\/schema\.org",\s*"@type": "BreadcrumbList",[^<]*<\/script>/s,
+                `<script type="application/ld+json">\n${JSON.stringify(breadcrumbJsonLd, null, 2)}\n</script>`
+              );
+              
+              // Update the H1 tag to match the page title
+              seoHtml = seoHtml.replace(/<h1>.*?<\/h1>/, `<h1>${pageTitle}</h1>`);
+              
+              log(`Serving SEO-optimized HTML for crawler on path: ${req.path}`);
+              
+              res.setHeader('Content-Type', 'text/html');
+              res.send(seoHtml);
+              return;
+            }
+          } catch (error) {
+            console.error('Error serving SEO HTML:', error);
+            // Fall back to default crawler HTML if there's an error
+          }
+          
+          // Fall back to a simple crawler HTML if the SEO file doesn't exist
           const navLinksHtml = `
             <!DOCTYPE html>
             <html lang="en">
@@ -156,12 +259,13 @@ app.use((req, res, next) => {
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>GodivaTech - Web Development & Digital Marketing Services</title>
               <meta name="description" content="GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business.">
-              <link rel="canonical" href="https://godivatech.com/">
+              <link rel="canonical" href="https://godivatech.com${req.path === '/' ? '' : req.path}">
               <meta property="og:type" content="website">
               <meta property="og:title" content="Web Development & Digital Marketing Services | GodivaTech Madurai">
               <meta property="og:description" content="GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business.">
-              <meta property="og:url" content="https://godivatech.com/">
+              <meta property="og:url" content="https://godivatech.com${req.path === '/' ? '' : req.path}">
               <meta property="og:site_name" content="GodivaTech">
+              <meta name="robots" content="index, follow, max-image-preview:large">
             </head>
             <body>
               <h1>GodivaTech - Web Development & Digital Marketing Services</h1>
@@ -200,7 +304,14 @@ app.use((req, res, next) => {
                 "@type": "Organization",
                 "name": "GodivaTech",
                 "url": "https://godivatech.com",
-                "logo": "https://godivatech.com/logo.png"
+                "logo": "https://godivatech.com/logo.png",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Madurai",
+                  "addressRegion": "Tamil Nadu",
+                  "postalCode": "625020",
+                  "addressCountry": "India"
+                }
               }
               </script>
             </body>
