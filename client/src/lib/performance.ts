@@ -3,6 +3,30 @@
  */
 
 /**
+ * Create an Intersection Observer for lazy loading
+ * 
+ * @param callback Function to call when elements intersect
+ * @param options Configuration options for the observer
+ * @returns IntersectionObserver instance
+ */
+export function createLazyLoadObserver(
+  callback: IntersectionObserverCallback,
+  options: IntersectionObserverInit = {}
+): IntersectionObserver {
+  // Set default options for best performance
+  const defaultOptions: IntersectionObserverInit = {
+    rootMargin: '200px', // Start loading before element is visible
+    threshold: 0.1 // Trigger when at least 10% is visible
+  };
+  
+  // Merge with user-provided options
+  const mergedOptions = { ...defaultOptions, ...options };
+  
+  // Create and return the observer
+  return new IntersectionObserver(callback, mergedOptions);
+}
+
+/**
  * Track long-running tasks that may cause poor user experience
  * This helps identify performance bottlenecks
  * 
