@@ -105,6 +105,15 @@ export async function ssrMiddleware(req: Request, res: Response, next: NextFunct
       html = html.replace(headEndMarker, `${dataScript}\n${headEndMarker}`);
     }
     
+    // Add canonical URL tag for SEO - ensures every page has a canonical tag
+    const canonicalUrl = `https://godivatech.com${url === '/' ? '' : url}`;
+    const canonicalTag = `<link rel="canonical" href="${canonicalUrl}" />`;
+    
+    // Check if canonical tag exists and add it if not
+    if (!html.includes('<link rel="canonical"')) {
+      html = html.replace('</head>', `${canonicalTag}\n</head>`);
+    }
+    
     log(`SSR data prefetched for ${url}`, 'ssr');
     
     // Set appropriate headers and send the HTML

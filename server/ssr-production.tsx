@@ -212,6 +212,16 @@ export async function ssrProduction(req: Request, res: Response, next: NextFunct
       );
     }
     
+    // Add canonical URL tag always
+    if (!html.includes('<link rel="canonical"')) {
+      html = html.replace('</head>', `<link rel="canonical" href="${canonicalUrl}">\n</head>`);
+    } else {
+      html = html.replace(
+        /<link rel="canonical" href=".*?">/,
+        `<link rel="canonical" href="${canonicalUrl}">`
+      );
+    }
+    
     // Add OpenGraph and Twitter Card metadata for better social sharing
     const ogTags = `
   <meta property="og:title" content="${title}">
