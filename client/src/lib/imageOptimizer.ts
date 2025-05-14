@@ -123,11 +123,22 @@ export function getOptimalImageFormat(): 'avif' | 'webp' | 'jpg' {
 
 /**
  * Setup lazy loading for all images with data-src attribute
+ * @param options Optional configuration for the lazy loading
  */
-export function setupLazyLoading(): void {
+export function setupLazyLoading(options?: { 
+  rootMargin?: string; 
+  threshold?: number;
+  selector?: string;
+}): void {
   if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') {
     return;
   }
+  
+  const { 
+    rootMargin = '200px', 
+    threshold = 0.1,
+    selector = 'img[data-src]' 
+  } = options || {};
   
   const observer = createLazyLoadObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -149,10 +160,10 @@ export function setupLazyLoading(): void {
         }
       }
     });
-  });
+  }, { rootMargin, threshold });
   
-  // Find all images with data-src attribute
-  document.querySelectorAll('img[data-src]').forEach(img => {
+  // Find all images with data-src attribute using the provided selector
+  document.querySelectorAll(selector).forEach(img => {
     observer.observe(img);
   });
 }

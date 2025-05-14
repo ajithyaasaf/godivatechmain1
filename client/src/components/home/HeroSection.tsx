@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, memo, useMemo, useCallback } from "react";
+import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useScroll, useTransform } from "framer-motion";
@@ -8,9 +8,10 @@ import {
   ArrowUpRight, Sparkles, Code, Layers, BarChart
 } from "lucide-react";
 import { preloadHeroImages, optimizeFonts, decodeImagesAsync } from "@/lib/lcp-optimization";
+import { delayAnimationsUntilAfterLCP, getOptimizedAnimationVariants } from "@/lib/animation-optimizer";
 
-// Memoized Hero Section with optimized animations for performance
-const HeroSection = memo(() => {
+// Hero Section with optimized animations for performance
+const HeroSection = () => {
   // Refs for different elements
   const sectionRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
@@ -33,7 +34,7 @@ const HeroSection = memo(() => {
   // Scroll-based visibility effects
   const scrollOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   
-  // Type animation effect - optimized with useCallback
+  // Type animation effect - optimized for LCP
   useEffect(() => {
     let typingTimeout: NodeJS.Timeout;
     
@@ -57,23 +58,39 @@ const HeroSection = memo(() => {
     // 4. Decode images asynchronously to avoid blocking
     decodeImagesAsync('img[loading="eager"]');
     
-    // Run typing animation
+    // Show subtitle text immediately without animation for better LCP
     if (subtitleRef.current) {
-      // Show subtitle immediately for better LCP
       subtitleRef.current.style.visibility = 'visible';
       subtitleRef.current.textContent = "Providing affordable IT solutions to businesses in Madurai and beyond.";
+    }
+    
+    // Delay animations until after LCP for better performance
+    delayAnimationsUntilAfterLCP(2000).then(() => {
+      // Start animations after LCP
+      setShouldStartAnimations(true);
       
-      // Then run the typing animation for effect (but after content is visible)
-      typingTimeout = setTimeout(() => {
-        subtitleRef.current!.textContent = "";
-        subtitleRef.current!.style.visibility = 'visible';
+      // Run typing animation after LCP
+      if (subtitleRef.current) {
+        subtitleRef.current.textContent = "";
         typeText(
           subtitleRef,
           "Providing affordable IT solutions to businesses in Madurai and beyond.",
           30, // Slightly faster typing for better performance
           300  // Reduced delay for better performance
         );
-      }, 100);
+      }
+    });
+    
+    // Log LCP time for verification
+    if (typeof PerformanceObserver !== 'undefined') {
+      const lcpObserver = new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        console.log(`LCP time: ${Math.round(lastEntry.startTime)}ms`);
+        lcpObserver.disconnect();
+      });
+      
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
     }
     
     // Clean up timeout to prevent memory leaks
@@ -89,15 +106,20 @@ const HeroSection = memo(() => {
     { icon: BarChart, label: "UI/UX Design" }
   ], []);
   
-  // Animation variants - memoized
-  const itemFadeIn = useMemo(() => ({
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" } 
-    }
-  }), []);
+  // Animation state to control when animations start
+  const [shouldStartAnimations, setShouldStartAnimations] = useState(false);
+  
+  // Animation variants - optimized based on device capabilities
+  const itemFadeIn = useMemo(() => 
+    getOptimizedAnimationVariants({
+      hidden: { opacity: 0, y: 20 },
+      visible: { 
+        opacity: 1, 
+        y: 0,
+        transition: { duration: 0.8, ease: "easeOut" } 
+      }
+    })
+  , []);
   
   // Pre-compute sparkles for consistent rendering
   const sparkles = useMemo(() => 
@@ -181,7 +203,7 @@ const HeroSection = memo(() => {
             <m.div 
               className="lg:order-1 mt-8 lg:mt-0 text-center lg:text-left"
               initial="hidden"
-              animate="visible"
+              animate={shouldStartAnimations ? "visible" : "hidden"}
               variants={containerVariants}
             >
               <m.div 
@@ -294,7 +316,7 @@ const HeroSection = memo(() => {
             <m.div 
               className="lg:order-2 flex justify-center items-center"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={{ opacity: shouldStartAnimations ? 1 : 0 }}
               transition={{ duration: 0.3 }} // Faster animation for better performance
               data-below-fold="true" // Mark as below fold for delayed loading
             >
@@ -396,9 +418,10 @@ const HeroSection = memo(() => {
       </div>
     </div>
   );
-});
+};
 
 // Set displayName for React DevTools
 HeroSection.displayName = "HeroSection";
 
-export default HeroSection;
+// Use memo to prevent unnecessary re-renders
+export default React.memo(HeroSection);

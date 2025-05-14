@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useEffect } from "react";
+import React, { ReactNode, useState, useEffect, memo } from "react";
 import { motion } from "framer-motion";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -10,6 +10,7 @@ import { setupLazyLoading } from "@/lib/imageOptimizer";
 import { throttle } from "@/lib/jsOptimizer";
 import { detectUnusedCSS } from "@/lib/styleOptimizer";
 import { trackBundlePerformance } from "@/lib/bundleOptimizer";
+import { trackLCP } from "@/lib/lcp-optimization";
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,42 +18,54 @@ interface LayoutProps {
 
 /**
  * Main layout component with page transitions and background effects
+ * Optimized for performance with LCP tracking and resource prioritization
  */
 const Layout = ({ children }: LayoutProps) => {
   const [showParticles, setShowParticles] = useState(false);
   
   // Setup preloading and optimizations on first render
   useEffect(() => {
+    // Track LCP for performance monitoring
+    trackLCP();
+    
     // Performance monitoring in development mode
     if (process.env.NODE_ENV === 'development') {
       trackBundlePerformance('main-bundle');
       detectUnusedCSS();
     }
     
-    // Setup preconnect for domains we'll load resources from
+    // Setup preconnect for domains we'll load resources from - prioritized order
     preconnect('https://fonts.googleapis.com');
     preconnect('https://fonts.gstatic.com');
-    preconnect('https://cdn.jsdelivr.net');
-    preconnect('https://api.fontshare.com');
     preconnect('https://res.cloudinary.com');
+    setTimeout(() => {
+      // Non-critical connections delayed
+      preconnect('https://cdn.jsdelivr.net');
+      preconnect('https://api.fontshare.com');
+    }, 500);
     
     // DNS prefetch for other domains
     dnsPrefetch('https://randomuser.me');
     dnsPrefetch('https://firebasestorage.googleapis.com');
     
-    // Setup image lazy loading
-    setupLazyLoading();
+    // Setup image lazy loading with higher thresholds for mobile
+    setupLazyLoading({
+      rootMargin: '300px', // Load images when they're within 300px of viewport
+      threshold: 0.01 // Start loading with just 1% visibility
+    });
     
     // Optimize scroll events - throttle to prevent jank
     const handleScroll = throttle(() => {
       // Add any scroll-based logic here
-    }, 100);
-    window.addEventListener('scroll', handleScroll);
+    }, 150); // Increase throttle time to reduce processing
+    window.addEventListener('scroll', handleScroll, { passive: true }); // Add passive flag for better performance
     
-    // Delay showing particle effects for performance
+    // Delay showing particle effects for better initial load performance
     const timer = setTimeout(() => {
-      setShowParticles(true);
-    }, 1000);
+      // Only show particles on desktop devices to improve mobile performance
+      const isMobile = window.innerWidth < 768;
+      setShowParticles(!isMobile);
+    }, 2000); // Increased delay for better initial rendering
     
     return () => {
       clearTimeout(timer);
@@ -97,4 +110,5 @@ const Layout = ({ children }: LayoutProps) => {
   );
 };
 
-export default Layout;
+// Export memoized layout to prevent unnecessary re-renders
+export default memo(Layout);

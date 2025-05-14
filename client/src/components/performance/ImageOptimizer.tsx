@@ -76,7 +76,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({
         decoding={priority ? 'sync' : 'async'}
         onLoad={handleImageLoad}
         className={`w-full h-full object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
-        // Modern browsers attribute for image priority
+        // Modern browsers attribute for image priority (lowercase for React DOM compatibility)
         {...(priority ? { fetchpriority: 'high' } : {})}
         data-above-fold={priority ? 'true' : 'false'}
       />
