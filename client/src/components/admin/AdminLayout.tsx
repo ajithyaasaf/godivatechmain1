@@ -66,10 +66,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       onSuccess: () => {
         // Directly navigate to auth page after successful logout
         console.log("Logout successful, redirecting to auth page");
-        // Force redirect to auth page
-        setTimeout(() => {
-          window.location.href = '/auth';
-        }, 100);
+        // Use setLocation from wouter for proper navigation
+        setLocation('/auth');
       }
     });
   };
