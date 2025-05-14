@@ -6,6 +6,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from 'cors';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { ssrMiddleware } from "./ssr-middleware";
 
 const app = express();
 
@@ -110,7 +111,13 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Add a route handler for all non-api routes to support client-side SPA routing
+  // Add SSR middleware for non-API routes
+  // The SSR middleware will render React components on the server for better SEO
+  if (process.env.DISABLE_SSR !== 'true') {
+    app.get(/^\/(?!api).*/, ssrMiddleware);
+  }
+  
+  // Fallback route handler for all non-api routes to support client-side SPA routing
   app.get(/^\/(?!api).*/, (req, res, next) => {
     // Skip API routes - they're handled above
     if (req.path.startsWith('/api')) {
