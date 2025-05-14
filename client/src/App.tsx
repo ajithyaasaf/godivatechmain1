@@ -4,6 +4,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import Layout from "@/components/Layout";
 import { Suspense, lazy } from "react";
+import PerformanceMonitor from "@/components/PerformanceMonitor";
 
 // Loading component
 const PageLoading = () => (
@@ -57,6 +58,9 @@ function App() {
   
   return (
     <AuthProvider>
+      {/* Performance monitoring tool - only visible in development */}
+      <PerformanceMonitor />
+      
       {!isAdminRoute && (
         <Layout>
           {/* 

@@ -13,6 +13,13 @@ import "./lib/firebase";
 import { initializeFirestoreWithSampleData } from "@/lib/firestore";
 // Import Firebase configuration test
 import { testFirebaseConfig } from "@/lib/firebase-env-test";
+// Import font optimization
+import optimizeFontLoading from "@/lib/fontOptimizer";
+
+// Optimize font loading
+if (typeof window !== 'undefined') {
+  optimizeFontLoading();
+}
 
 // Check and initialize Firestore sample data if needed
 initializeFirestoreWithSampleData()

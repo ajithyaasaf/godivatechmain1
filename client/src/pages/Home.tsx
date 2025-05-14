@@ -52,6 +52,9 @@ const Home = () => {
         structuredData={structuredData}
       />
       
+      {/* Preload critical resources for hero section */}
+      <PreloadHeroResources />
+      
       <PageTransition>
         <div className="relative">
           {/* Hero section with immediate display */}
