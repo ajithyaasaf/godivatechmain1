@@ -3,30 +3,48 @@ import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
 import Layout from "@/components/Layout";
+import { Suspense, lazy } from "react";
 
-// Public pages
+// Loading component
+const PageLoading = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="animate-pulse space-y-4 p-4">
+      <div className="h-6 bg-gray-200 rounded w-1/4 mx-auto"></div>
+      <div className="space-y-2">
+        <div className="h-4 bg-gray-200 rounded"></div>
+        <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+        <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+      </div>
+    </div>
+  </div>
+);
+
+// Lazy load all pages for code splitting
+// Only the Home page is loaded eagerly for fast initial load
 import Home from "@/pages/Home";
-import About from "@/pages/About";
-import Services from "@/pages/Services";
-import ServiceDetail from "@/pages/ServiceDetail";
-import Portfolio from "@/pages/Portfolio";
-import Blog from "@/pages/Blog";
-import BlogPost from "@/pages/BlogPost";
-import Contact from "@/pages/Contact";
-import NotFound from "@/pages/not-found";
-import AuthPage from "@/pages/auth-page";
-import DiagnosticsPage from "@/pages/diagnostics";
 
-// Admin pages
-import AdminDashboard from "@/pages/admin";
-import BlogPostsPage from "@/pages/admin/blog-posts";
-import CategoriesPage from "@/pages/admin/categories";
-import ServicesPage from "@/pages/admin/services";
-import TeamMembersPage from "@/pages/admin/team-members";
-import TestimonialsPage from "@/pages/admin/testimonials";
-import ProjectsPage from "@/pages/admin/projects";
-import ContactMessagesPage from "@/pages/admin/contact-messages";
-import SubscribersPage from "@/pages/admin/subscribers";
+// Public pages - lazy loaded
+const About = lazy(() => import("@/pages/About"));
+const Services = lazy(() => import("@/pages/Services"));
+const ServiceDetail = lazy(() => import("@/pages/ServiceDetail"));
+const Portfolio = lazy(() => import("@/pages/Portfolio"));
+const Blog = lazy(() => import("@/pages/Blog"));
+const BlogPost = lazy(() => import("@/pages/BlogPost"));
+const Contact = lazy(() => import("@/pages/Contact"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+const AuthPage = lazy(() => import("@/pages/auth-page"));
+const DiagnosticsPage = lazy(() => import("@/pages/diagnostics"));
+
+// Admin pages - lazy loaded
+const AdminDashboard = lazy(() => import("@/pages/admin"));
+const BlogPostsPage = lazy(() => import("@/pages/admin/blog-posts"));
+const CategoriesPage = lazy(() => import("@/pages/admin/categories"));
+const ServicesPage = lazy(() => import("@/pages/admin/services"));
+const TeamMembersPage = lazy(() => import("@/pages/admin/team-members"));
+const TestimonialsPage = lazy(() => import("@/pages/admin/testimonials"));
+const ProjectsPage = lazy(() => import("@/pages/admin/projects"));
+const ContactMessagesPage = lazy(() => import("@/pages/admin/contact-messages"));
+const SubscribersPage = lazy(() => import("@/pages/admin/subscribers"));
 
 /**
  * Modern App wrapper with advanced AnimatePresence for page transitions
@@ -50,39 +68,43 @@ function App() {
               Key is necessary for AnimatePresence to identify when the route changes
               Using location as a key forces re-render on route change
             */}
-            <Switch key={location}>
-              <Route path="/" component={Home} />
-              <Route path="/about" component={About} />
-              <Route path="/services" component={Services} />
-              <Route path="/services/:slug" component={ServiceDetail} />
-              <Route path="/portfolio" component={Portfolio} />
-              <Route path="/blog" component={Blog} />
-              <Route path="/blog/:slug" component={BlogPost} />
-              <Route path="/contact" component={Contact} />
-              <Route path="/auth" component={AuthPage} />
-              <Route path="/diagnostics" component={DiagnosticsPage} />
-              <Route component={NotFound} />
-            </Switch>
+            <Suspense fallback={<PageLoading />}>
+              <Switch key={location}>
+                <Route path="/" component={Home} />
+                <Route path="/about" component={About} />
+                <Route path="/services" component={Services} />
+                <Route path="/services/:slug" component={ServiceDetail} />
+                <Route path="/portfolio" component={Portfolio} />
+                <Route path="/blog" component={Blog} />
+                <Route path="/blog/:slug" component={BlogPost} />
+                <Route path="/contact" component={Contact} />
+                <Route path="/auth" component={AuthPage} />
+                <Route path="/diagnostics" component={DiagnosticsPage} />
+                <Route component={NotFound} />
+              </Switch>
+            </Suspense>
           </AnimatePresence>
         </Layout>
       )}
       
       {/* Admin routes without Layout wrapper */}
       {isAdminRoute && (
-        <Switch key={location}>
-          {/* Admin routes protected by authentication */}
-          <ProtectedRoute path="/admin" component={AdminDashboard} />
-          <ProtectedRoute path="/admin/blog-posts" component={BlogPostsPage} />
-          <ProtectedRoute path="/admin/categories" component={CategoriesPage} />
-          <ProtectedRoute path="/admin/services" component={ServicesPage} />
-          <ProtectedRoute path="/admin/team-members" component={TeamMembersPage} />
-          <ProtectedRoute path="/admin/testimonials" component={TestimonialsPage} />
-          <ProtectedRoute path="/admin/projects" component={ProjectsPage} />
-          <ProtectedRoute path="/admin/contact-messages" component={ContactMessagesPage} />
-          <ProtectedRoute path="/admin/subscribers" component={SubscribersPage} />
-          
-          <Route component={NotFound} />
-        </Switch>
+        <Suspense fallback={<PageLoading />}>
+          <Switch key={location}>
+            {/* Admin routes protected by authentication */}
+            <ProtectedRoute path="/admin" component={AdminDashboard} />
+            <ProtectedRoute path="/admin/blog-posts" component={BlogPostsPage} />
+            <ProtectedRoute path="/admin/categories" component={CategoriesPage} />
+            <ProtectedRoute path="/admin/services" component={ServicesPage} />
+            <ProtectedRoute path="/admin/team-members" component={TeamMembersPage} />
+            <ProtectedRoute path="/admin/testimonials" component={TestimonialsPage} />
+            <ProtectedRoute path="/admin/projects" component={ProjectsPage} />
+            <ProtectedRoute path="/admin/contact-messages" component={ContactMessagesPage} />
+            <ProtectedRoute path="/admin/subscribers" component={SubscribersPage} />
+            
+            <Route component={NotFound} />
+          </Switch>
+        </Suspense>
       )}
     </AuthProvider>
   );

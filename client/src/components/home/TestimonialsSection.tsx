@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LazyMotion, domAnimation, m } from "framer-motion";
+import OptimizedImage from "@/components/ui/optimized-image";
 
 interface Testimonial {
   id: number;
@@ -37,12 +38,12 @@ const TestimonialCard = memo(({ testimonial, index, isActive = true }: {
         {testimonial.content}
       </p>
       <div className="flex items-center">
-        <img
+        <OptimizedImage
           src={testimonial.image}
           alt={testimonial.name}
           className="w-12 h-12 rounded-full mr-4"
-          loading="lazy"
-          decoding="async"
+          width={48}
+          height={48}
         />
         <div>
           <p className="font-semibold text-neutral-800">{testimonial.name}</p>
