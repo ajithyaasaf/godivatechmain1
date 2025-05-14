@@ -39,7 +39,14 @@ export default function AuthPage() {
 
   // Handle login submission
   function onLoginSubmit(values: z.infer<typeof loginSchema>) {
-    loginMutation.mutate(values);
+    loginMutation.mutate(values, {
+      onSuccess: () => {
+        // Redirect to admin dashboard after successful login
+        setTimeout(() => {
+          window.location.href = '/admin';
+        }, 500);
+      }
+    });
   }
 
   return (
