@@ -7,6 +7,7 @@ import { typeText } from "@/lib/animation";
 import { 
   ArrowUpRight, Sparkles, Code, Layers, BarChart
 } from "lucide-react";
+import { preloadHeroImages, optimizeFonts, decodeImagesAsync } from "@/lib/lcp-optimization";
 
 // Memoized Hero Section with optimized animations for performance
 const HeroSection = memo(() => {
@@ -36,15 +37,43 @@ const HeroSection = memo(() => {
   useEffect(() => {
     let typingTimeout: NodeJS.Timeout;
     
+    // Optimize LCP (Largest Contentful Paint)
+    // 1. Preload hero images to improve render time
+    preloadHeroImages([
+      '/src/assets/godiva-logo.png',
+      // Add any other critical hero images here
+    ]);
+    
+    // 2. Optimize font loading
+    optimizeFonts();
+    
+    // 3. Add LCP data attribute to main heading for prioritization
+    const mainHeading = document.querySelector('.hero-section h1');
+    if (mainHeading) {
+      mainHeading.setAttribute('data-above-fold', 'true');
+      mainHeading.setAttribute('fetchpriority', 'high');
+    }
+    
+    // 4. Decode images asynchronously to avoid blocking
+    decodeImagesAsync('img[loading="eager"]');
+    
+    // Run typing animation
     if (subtitleRef.current) {
+      // Show subtitle immediately for better LCP
+      subtitleRef.current.style.visibility = 'visible';
+      subtitleRef.current.textContent = "Providing affordable IT solutions to businesses in Madurai and beyond.";
+      
+      // Then run the typing animation for effect (but after content is visible)
       typingTimeout = setTimeout(() => {
+        subtitleRef.current!.textContent = "";
+        subtitleRef.current!.style.visibility = 'visible';
         typeText(
           subtitleRef,
           "Providing affordable IT solutions to businesses in Madurai and beyond.",
           30, // Slightly faster typing for better performance
-          800
+          300  // Reduced delay for better performance
         );
-      }, 500);
+      }, 100);
     }
     
     // Clean up timeout to prevent memory leaks
@@ -94,7 +123,12 @@ const HeroSection = memo(() => {
   return (
     <div 
       ref={sectionRef} 
-      className="relative min-h-[100vh] overflow-hidden flex items-center py-20"
+      className="hero-section relative min-h-[100vh] overflow-hidden flex items-center py-20"
+      style={{ 
+        contain: 'content',  // CSS containment for better performance
+        // @ts-ignore - contentVisibility valid in newer browsers but not in all TS types
+        contentVisibility: 'auto', // Modern browser optimization
+      }}
     >
       {/* Modern mesh gradient background - static elements for better performance */}
       <div className="absolute inset-0 -z-10">
@@ -165,7 +199,16 @@ const HeroSection = memo(() => {
               <m.div 
                 variants={itemFadeIn}
               >
-                <h1 className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight">
+                <h1 
+                  className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
+                  data-above-fold="true"
+                  // High priority for LCP optimization
+                  style={{ 
+                    display: 'block',
+                    // @ts-ignore - contentVisibility valid in newer browsers but not in all TS types
+                    contentVisibility: 'auto',
+                  }}
+                >
                   <span className="block">
                     Affordable big IT & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">technology</span>
                   </span>
@@ -247,12 +290,13 @@ const HeroSection = memo(() => {
               </m.div>
             </m.div>
             
-            {/* Right content - 3D isometric illustration */}
+            {/* Right content - 3D isometric illustration - Loading priority reduced for better LCP */}
             <m.div 
               className="lg:order-2 flex justify-center items-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
+              transition={{ duration: 0.3 }} // Faster animation for better performance
+              data-below-fold="true" // Mark as below fold for delayed loading
             >
               <div className="relative w-full max-w-lg">
                 {/* Glowing background shape - using static effect for better performance */}
