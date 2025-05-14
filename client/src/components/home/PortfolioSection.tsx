@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRightIcon } from "lucide-react";
 import { LazyMotion, domAnimation, m } from "framer-motion";
+import OptimizedImage from "@/components/ui/optimized-image";
 
 interface Project {
   id: number;
@@ -29,12 +30,12 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
       }}
     >
       <div className="relative">
-        <img
+        <OptimizedImage
           src={project.image}
           alt={project.title}
           className="w-full h-64 object-contain bg-white"
-          loading="lazy" // Add lazy loading for images
-          decoding="async" // Add async decoding for images
+          width={400}
+          height={256}
         />
         <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
           {project.category}

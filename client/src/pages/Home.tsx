@@ -7,6 +7,7 @@ import AboutSection from "@/components/home/AboutSection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
 import LazyLoadComponent from "@/components/LazyLoadComponent";
+import PreloadHeroResources from "@/components/PreloadHeroResources";
 import { 
   getLocalBusinessData, 
   getOrganizationData, 

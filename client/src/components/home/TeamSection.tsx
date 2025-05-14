@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FaLinkedin, FaTwitter } from "react-icons/fa";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 import ceoImage from "../../assets/team/ceo.jpg";
+import OptimizedImage from "@/components/ui/optimized-image";
 
 interface TeamMember {
   id: number;
@@ -28,12 +29,12 @@ const TeamMemberCard = memo(({ member, index }: { member: TeamMember; index: num
       }}
     >
       <div className="relative">
-        <img
+        <OptimizedImage
           src={member.image}
           alt={`${member.name} - ${member.position}`}
           className="w-full h-64 object-cover object-center"
-          loading="lazy" // Add lazy loading
-          decoding="async" // Add async decoding
+          width={400}
+          height={256}
         />
         {/* Static gradient overlay instead of animation */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
