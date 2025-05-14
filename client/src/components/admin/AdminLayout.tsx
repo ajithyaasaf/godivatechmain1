@@ -2,7 +2,6 @@ import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
 
 import { 
   BarChart3, 
@@ -64,17 +63,20 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const userInitial = user?.username?.charAt(0).toUpperCase() || 'A';
 
   const handleLogout = () => {
-    // Call the logout mutation from the auth context
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        console.log("Logout successful, redirecting to auth page");
-        
-        // Add a short delay to ensure state updates are processed
-        setTimeout(() => {
-          // Use window.location for a hard redirect that will fully reset the app state
-          window.location.href = '/auth';
-        }, 100);
-      }
+    // First perform a direct HTTP request for server-side logout
+    fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include'
+    })
+    .then(() => {
+      console.log("Logout successful, redirecting to auth page");
+      // Use a hard redirect to the login page
+      window.location.replace('/auth');
+    })
+    .catch(error => {
+      console.error("Logout failed:", error);
+      // Even if logout fails, redirect to login page
+      window.location.replace('/auth');
     });
   };
 
