@@ -174,6 +174,13 @@ const HeroSection = memo(() => {
                 </span>
               </m.h1>
               
+              <m.h2 
+                variants={itemFadeIn}
+                className="text-xl md:text-2xl font-medium text-white/80 mb-4"
+              >
+                Professional Web Development & Digital Marketing Services in Madurai
+              </m.h2>
+              
               <m.div variants={itemFadeIn}>
                 <p 
                   ref={subtitleRef} 

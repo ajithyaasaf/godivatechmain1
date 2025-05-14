@@ -44,7 +44,9 @@ const ServicesPage = lazy(() => import("@/pages/admin/services"));
 const TeamMembersPage = lazy(() => import("@/pages/admin/team-members"));
 const TestimonialsPage = lazy(() => import("@/pages/admin/testimonials"));
 const ProjectsPage = lazy(() => import("@/pages/admin/projects"));
-const ContactMessagesPage = lazy(() => import("@/pages/admin/contact-messages"));
+const ContactMessagesPage = lazy(
+  () => import("@/pages/admin/contact-messages"),
+);
 const SubscribersPage = lazy(() => import("@/pages/admin/subscribers"));
 
 /**
@@ -52,15 +54,15 @@ const SubscribersPage = lazy(() => import("@/pages/admin/subscribers"));
  */
 function App() {
   const [location] = useLocation();
-  
+
   // Determine if we're on an admin route
   const isAdminRoute = location.startsWith("/admin");
-  
+
   return (
     <AuthProvider>
       {/* Performance monitoring tool - only visible in development */}
-      <PerformanceMonitor />
-      
+      {/* <PerformanceMonitor /> */}
+
       {!isAdminRoute && (
         <Layout>
           {/* 
@@ -90,22 +92,40 @@ function App() {
           </AnimatePresence>
         </Layout>
       )}
-      
+
       {/* Admin routes without Layout wrapper */}
       {isAdminRoute && (
         <Suspense fallback={<PageLoading />}>
           <Switch key={location}>
             {/* Admin routes protected by authentication */}
             <ProtectedRoute path="/admin" component={AdminDashboard} />
-            <ProtectedRoute path="/admin/blog-posts" component={BlogPostsPage} />
-            <ProtectedRoute path="/admin/categories" component={CategoriesPage} />
+            <ProtectedRoute
+              path="/admin/blog-posts"
+              component={BlogPostsPage}
+            />
+            <ProtectedRoute
+              path="/admin/categories"
+              component={CategoriesPage}
+            />
             <ProtectedRoute path="/admin/services" component={ServicesPage} />
-            <ProtectedRoute path="/admin/team-members" component={TeamMembersPage} />
-            <ProtectedRoute path="/admin/testimonials" component={TestimonialsPage} />
+            <ProtectedRoute
+              path="/admin/team-members"
+              component={TeamMembersPage}
+            />
+            <ProtectedRoute
+              path="/admin/testimonials"
+              component={TestimonialsPage}
+            />
             <ProtectedRoute path="/admin/projects" component={ProjectsPage} />
-            <ProtectedRoute path="/admin/contact-messages" component={ContactMessagesPage} />
-            <ProtectedRoute path="/admin/subscribers" component={SubscribersPage} />
-            
+            <ProtectedRoute
+              path="/admin/contact-messages"
+              component={ContactMessagesPage}
+            />
+            <ProtectedRoute
+              path="/admin/subscribers"
+              component={SubscribersPage}
+            />
+
             <Route component={NotFound} />
           </Switch>
         </Suspense>
