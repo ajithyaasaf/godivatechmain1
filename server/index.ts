@@ -170,6 +170,11 @@ app.use((req, res, next) => {
     });
   });
 
+  // Serve robots.txt directly
+  app.get('/robots.txt', (req, res) => {
+    res.sendFile('robots.txt', { root: './public', maxAge: 86400000 }); // 1-day cache
+  });
+  
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes

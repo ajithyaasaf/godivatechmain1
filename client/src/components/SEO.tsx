@@ -136,6 +136,7 @@ const SEO: React.FC<SEOProps> = memo(({
       <meta name="description" content={description.length > 160 ? description.substring(0, 157) + '...' : description} />
       <meta name="keywords" content={extendedKeywords} />
       <link rel="canonical" href={canonical} />
+      <link rel="sitemap" type="application/xml" href={`${domain}/sitemap.xml`} />
       
       {/* Mobile optimization */}
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
