@@ -7,6 +7,7 @@ import cors from 'cors';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { ssrMiddleware } from "./ssr-middleware";
+import { ssrProduction } from "./ssr-production";
 
 const app = express();
 
@@ -111,10 +112,18 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Add SSR middleware for non-API routes
-  // The SSR middleware will render React components on the server for better SEO
+  // Use appropriate SSR approach based on environment
+  // In production, we use a robust metadata-focused approach
+  // In development, we disable SSR to avoid conflicts with Vite
   if (process.env.DISABLE_SSR !== 'true') {
-    app.get(/^\/(?!api).*/, ssrMiddleware);
+    if (process.env.NODE_ENV === 'production') {
+      // Use production-optimized SSR with SEO enhancements
+      app.get(/^\/(?!api).*/, ssrProduction);
+      log('Production SSR middleware enabled');
+    } else {
+      // Development mode - SSR disabled to avoid conflicts with Vite
+      log('SSR disabled in development mode');
+    }
   }
   
   // Fallback route handler for all non-api routes to support client-side SPA routing
