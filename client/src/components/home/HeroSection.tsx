@@ -147,9 +147,8 @@ const HeroSection = () => {
       ref={sectionRef} 
       className="hero-section relative min-h-[100vh] overflow-hidden flex items-center py-20"
       style={{ 
-        contain: 'content',  // CSS containment for better performance
-        // @ts-ignore - contentVisibility valid in newer browsers but not in all TS types
-        contentVisibility: 'auto', // Modern browser optimization
+        contain: 'layout style',  // Modified for better color preservation
+        // Content visibility removed to fix gradient colors
       }}
     >
       {/* Modern mesh gradient background - static elements for better performance */}
@@ -224,11 +223,9 @@ const HeroSection = () => {
                 <h1 
                   className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
                   data-above-fold="true"
-                  // High priority for LCP optimization
+                  // High priority for LCP optimization but without content-visibility which affects colors
                   style={{ 
-                    display: 'block',
-                    // @ts-ignore - contentVisibility valid in newer browsers but not in all TS types
-                    contentVisibility: 'auto',
+                    display: 'block'
                   }}
                 >
                   <span className="block">

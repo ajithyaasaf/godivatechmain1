@@ -72,9 +72,14 @@ function inlineCriticalCSS() {
       display: block;
     }
     
-    /* Gradient backgrounds */
-    .bg-gradient-to-br {
-      background-image: linear-gradient(to bottom right, var(--gradient-stops));
+    /* Gradient backgrounds - preserve original colors */
+    .bg-gradient-to-br.from-indigo-900.via-primary.to-purple-800 {
+      background-image: linear-gradient(to bottom right, #3730a3, var(--primary), #6b21a8);
+    }
+    
+    /* Footer and banner gradients */
+    .bg-gradient-to-br.from-gray-900.to-gray-800 {
+      background-image: linear-gradient(to bottom right, #111827, #1f2937);
     }
     
     /* Tailwind-like utility classes for critical elements */
@@ -116,16 +121,17 @@ function deferNonCriticalCSS() {
 
 /**
  * Add CSS containment to optimize rendering
+ * Modified to preserve colors while maintaining performance
  */
 function addCSSContainment() {
   // Add containment to key sections for better rendering performance
   const containmentElements = {
     // Section selectors: containment type
-    '.hero-section': 'content',
-    'header': 'layout style',
-    'footer': 'content',
+    '.hero-section': 'layout style', // Changed from 'content' to preserve colors
+    'header': 'layout',  // Changed to preserve colors
+    'footer': 'layout', // Changed to preserve colors
     '.particle-container': 'strict',
-    'section': 'content',
+    'section:not(.hero-section)': 'layout', // Changed to preserve colors
   };
   
   // Generate CSS text for containment
