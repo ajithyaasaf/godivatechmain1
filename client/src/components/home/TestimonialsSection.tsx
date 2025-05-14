@@ -58,9 +58,32 @@ TestimonialCard.displayName = "TestimonialCard";
 
 // Optimized with memoization
 const TestimonialsSection = memo(() => {
+  // Animation variants for improved performance
+  const headingVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6 }
+    }
+  };
+  
+  const textVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.6, delay: 0.2 }
+    }
+  };
+  
   const { data: testimonials = [] } = useQuery<Testimonial[]>({
     queryKey: ['/api/testimonials'],
   });
+
+  // State management for the carousel
+  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   // Memoize default testimonials to avoid unnecessary re-creation
   const defaultTestimonials = useMemo(() => [
@@ -94,11 +117,6 @@ const TestimonialsSection = memo(() => {
   const displayTestimonials = useMemo(() => 
     testimonials.length > 0 ? testimonials : defaultTestimonials
   , [testimonials, defaultTestimonials]);
-
-  // State management for the carousel
-  const [currentTestimonialIndex, setCurrentTestimonialIndex] = useState(0);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
   
   // Use layout effect for critical UI updates
   useEffect(() => {
@@ -133,24 +151,6 @@ const TestimonialsSection = memo(() => {
       return () => clearInterval(interval);
     }
   }, [displayTestimonials.length, isSmallScreen]);
-  
-  // Animation variants for improved performance
-  const headingVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.6 }
-    }
-  };
-  
-  const textVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { duration: 0.6, delay: 0.2 }
-    }
-  };
   
   return (
     <section className="py-20 overflow-hidden relative bg-gradient-to-br from-blue-800 to-indigo-900">
