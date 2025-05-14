@@ -39,9 +39,8 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         className
       )}
       style={{ 
-        width: width ? `${width}px` : '100%',
-        height: height ? `${height}px` : 'auto',
         backgroundColor: '#f9fafb',
+        // Do not enforce specific dimensions, let the parent container and className control that
         aspectRatio: width && height ? `${width} / ${height}` : 'auto'
       }}
     >
@@ -54,7 +53,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
         height={height}
         onLoad={() => setIsLoaded(true)}
         className={cn(
-          "w-full h-full object-cover transition-opacity duration-500",
+          "w-full h-full transition-opacity duration-500",
           isLoaded ? "opacity-100" : "opacity-0"
         )}
         {...loadingAttrs}
