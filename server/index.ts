@@ -8,6 +8,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { ssrMiddleware } from "./ssr-middleware";
 import { ssrProduction } from "./ssr-production";
+import { staticAssetCache, apiCache, htmlCache, noCache } from "./caching";
 
 const app = express();
 

@@ -1,19 +1,12 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { motion } from "framer-motion";
 import HeroSection from "@/components/home/HeroSection";
 import TrustedBySection from "@/components/home/TrustedBySection";
 import ServiceSection from "@/components/home/ServiceSection";
 import AboutSection from "@/components/home/AboutSection";
-import TeamSection from "@/components/home/TeamSection";
-import PortfolioSection from "@/components/home/PortfolioSection";
-import TestimonialsSection from "@/components/home/TestimonialsSection";
-import BlogSection from "@/components/home/BlogSection";
-import NewsletterSection from "@/components/home/NewsletterSection";
-import CTASection from "@/components/home/CTASection";
-import ContactSection from "@/components/home/ContactSection";
-import MapSection from "@/components/home/MapSection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
+import LazyLoadComponent from "@/components/LazyLoadComponent";
 import { 
   getLocalBusinessData, 
   getOrganizationData, 
@@ -21,6 +14,16 @@ import {
   getWebPageData 
 } from "@/lib/structuredData";
 import { homeKeywords } from "@/lib/seoKeywords";
+
+// Lazy loaded components (below the fold)
+const TeamSection = lazy(() => import("@/components/home/TeamSection"));
+const PortfolioSection = lazy(() => import("@/components/home/PortfolioSection"));
+const TestimonialsSection = lazy(() => import("@/components/home/TestimonialsSection"));
+const BlogSection = lazy(() => import("@/components/home/BlogSection"));
+const NewsletterSection = lazy(() => import("@/components/home/NewsletterSection"));
+const CTASection = lazy(() => import("@/components/home/CTASection"));
+const ContactSection = lazy(() => import("@/components/home/ContactSection"));
+const MapSection = lazy(() => import("@/components/home/MapSection"));
 
 /**
  * Enhanced Home page with smooth section transitions and SEO optimization
@@ -55,7 +58,7 @@ const Home = () => {
             <HeroSection />
           </TransitionItem>
           
-          {/* Other sections with staggered reveal */}
+          {/* Above-the-fold sections loaded immediately */}
           <TransitionItem delay={0.1}>
             <TrustedBySection />
           </TransitionItem>
@@ -68,37 +71,54 @@ const Home = () => {
             <AboutSection />
           </TransitionItem>
           
-          <TransitionItem delay={0.2}>
-            <TeamSection />
-          </TransitionItem>
+          {/* Below-the-fold sections lazy loaded */}
+          <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+            <TransitionItem delay={0.2}>
+              <TeamSection />
+            </TransitionItem>
+          </Suspense>
           
-          <TransitionItem delay={0.1}>
-            <PortfolioSection />
-          </TransitionItem>
+          <Suspense fallback={<div className="min-h-[500px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+            <TransitionItem delay={0.1}>
+              <PortfolioSection />
+            </TransitionItem>
+          </Suspense>
           
-          <TransitionItem delay={0.2}>
-            <TestimonialsSection />
-          </TransitionItem>
+          <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+            <TransitionItem delay={0.2}>
+              <TestimonialsSection />
+            </TransitionItem>
+          </Suspense>
           
-          <TransitionItem delay={0.1}>
-            <BlogSection />
-          </TransitionItem>
+          <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+            <TransitionItem delay={0.1}>
+              <BlogSection />
+            </TransitionItem>
+          </Suspense>
           
-          <TransitionItem delay={0.2}>
-            <NewsletterSection />
-          </TransitionItem>
+          <Suspense fallback={<div className="min-h-[200px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+            <TransitionItem delay={0.2}>
+              <NewsletterSection />
+            </TransitionItem>
+          </Suspense>
           
-          <TransitionItem delay={0.1}>
-            <CTASection />
-          </TransitionItem>
+          <Suspense fallback={<div className="min-h-[200px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+            <TransitionItem delay={0.1}>
+              <CTASection />
+            </TransitionItem>
+          </Suspense>
           
-          <TransitionItem delay={0.2}>
-            <ContactSection />
-          </TransitionItem>
+          <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+            <TransitionItem delay={0.2}>
+              <ContactSection />
+            </TransitionItem>
+          </Suspense>
           
-          <TransitionItem delay={0.1}>
-            <MapSection />
-          </TransitionItem>
+          <Suspense fallback={<div className="min-h-[300px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+            <TransitionItem delay={0.1}>
+              <MapSection />
+            </TransitionItem>
+          </Suspense>
           
           {/* Thin visual separator lines between sections */}
           <motion.div 
