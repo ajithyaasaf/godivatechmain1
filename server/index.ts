@@ -110,6 +110,22 @@ app.use((req, res, next) => {
     throw err;
   });
 
+  // Add a route handler for all non-api routes to support client-side SPA routing
+  app.get(/^\/(?!api).*/, (req, res, next) => {
+    // Skip API routes - they're handled above
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    
+    // For assets and other static files, continue to the next middleware
+    if (req.path.match(/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|map)$/)) {
+      return next();
+    }
+    
+    // For all other routes, we need to serve the index.html for client-side routing
+    next();
+  });
+
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes

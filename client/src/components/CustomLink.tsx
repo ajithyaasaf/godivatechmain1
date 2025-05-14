@@ -13,7 +13,7 @@ interface CustomLinkProps {
  * Custom Link component that uses wouter's useLocation hook
  * to provide proper history-based navigation.
  */
-export const Link: React.FC<CustomLinkProps> = ({ 
+const Link: React.FC<CustomLinkProps> = ({ 
   href, 
   children, 
   className = '',
@@ -39,23 +39,20 @@ export const Link: React.FC<CustomLinkProps> = ({
     ) {
       e.preventDefault();
       
-      // Use history.pushState directly for immediate feedback
-      window.history.pushState(null, '', href);
-      
-      // Then use wouter's navigate to update the app state
+      // Just use wouter's navigate - our enhanced hook will handle everything correctly
       navigate(href);
     }
   };
   
   return (
-    <WouterLink 
+    <a 
       href={href} 
       onClick={handleClick}
       className={className}
       {...props}
     >
       {children}
-    </WouterLink>
+    </a>
   );
 };
 

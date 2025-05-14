@@ -45,15 +45,37 @@ export const useBrowserLocation: LocationHook = () => {
   const navigate: NavigateFn = (to) => {
     // Use history API to change the URL without a page reload
     window.history.pushState(null, '', to);
+    
+    // Update the internal path state
     setPath(to);
+    
+    // Dispatch a custom event to notify other components of the navigation
+    window.dispatchEvent(new CustomEvent('locationchange', { detail: { path: to } }));
   };
   
   // Update path when browser history changes
   useEffect(() => {
     // This handles the back/forward browser buttons
-    const handlePopState = () => setPath(getPath());
+    const handlePopState = () => {
+      const newPath = getPath();
+      setPath(newPath);
+      
+      // Dispatch a custom event here too for consistency
+      window.dispatchEvent(new CustomEvent('locationchange', { detail: { path: newPath } }));
+    };
+    
+    // Listen for our custom event as well
+    const handleLocationChange = () => {
+      setPath(getPath());
+    };
+    
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('locationchange', handleLocationChange);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('locationchange', handleLocationChange);
+    };
   }, []);
 
   return [path, navigate];
