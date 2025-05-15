@@ -73,72 +73,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  // Simplified logout mutation that just clears the client state
+  // The actual navigation is handled by the Logout button in AdminLayout
   const logoutMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (): Promise<Response> => {
       try {
-        console.log("Logging out via API request...");
-        const response = await apiRequest("POST", "/api/logout");
-        console.log("Logout API response:", response.status);
-        return response;
+        console.log("Clearing client-side auth state");
+        return new Response();
       } catch (error) {
-        console.error("Logout API request failed:", error);
+        console.error("Logout state clearing failed:", error);
         throw error;
       }
     },
     onMutate: () => {
       console.log("Logout mutation started");
-      // Immediately set user to null without waiting for API response
-      // This ensures UI updates immediately
+      // Immediately set user to null
       queryClient.setQueryData(["/api/user"], null);
+      // Clear query cache
+      queryClient.clear();
     },
     onSuccess: () => {
-      // Clear any cached admin data
-      console.log("Successfully logged out, clearing query cache");
-      queryClient.setQueryData(["/api/user"], null);
-      queryClient.invalidateQueries();
-      
-      // Clear any auth-related local storage items
-      try {
-        localStorage.removeItem('auth_user');
-        localStorage.removeItem('auth_token');
-        sessionStorage.removeItem('auth_user');
-        sessionStorage.removeItem('auth_token');
-      } catch (e) {
-        console.error("Error clearing auth data from storage:", e);
-      }
-      
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
-      
-      // Force navigation if still on a protected route
-      setTimeout(() => {
-        const currentPath = window.location.pathname;
-        if (currentPath.includes('/admin') || currentPath.includes('/protected')) {
-          console.log("Still on protected route after logout, forcing navigation");
-          window.location.pathname = '/auth';
-        }
-      }, 100);
     },
     onError: (error: Error) => {
       console.error("Logout mutation error:", error);
-      
-      // Even on error, we should clear the user data
+      // Still clear user data on error
       queryClient.setQueryData(["/api/user"], null);
       
       toast({
-        title: "Logout failed",
-        description: error.message,
+        title: "Logout state clearing failed",
+        description: "Attempting to redirect anyway",
         variant: "destructive",
       });
-      
-      // Still try to navigate away from protected routes
-      setTimeout(() => {
-        if (window.location.pathname.includes('/admin')) {
-          window.location.pathname = '/auth';
-        }
-      }, 100);
     },
   });
 

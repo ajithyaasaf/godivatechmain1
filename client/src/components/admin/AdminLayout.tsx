@@ -62,108 +62,39 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   // Get first letter of username for avatar
   const userInitial = user?.username?.charAt(0).toUpperCase() || 'A';
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
+    // This is a simplified, direct approach that will work reliably
+    
+    // First, let the user know we're logging out
+    console.log("Logging out...");
+    
+    // 1. Make the server-side logout call
+    fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include',
+      cache: 'no-cache'
+    });
+    
+    // 2. Clear all client-side storage immediately
     try {
-      console.log("Starting logout process...");
+      // Clear localStorage
+      localStorage.clear();
       
-      // 1. Check if we're using Firebase Auth
-      const firebaseLogout = async () => {
-        try {
-          // Import firebase auth functions dynamically to avoid circular dependencies
-          const { logoutUser } = await import('@/lib/auth');
-          await logoutUser();
-          console.log("Firebase logout completed successfully");
-          return true;
-        } catch (error) {
-          console.error("Firebase logout failed:", error);
-          return false;
-        }
-      };
+      // Clear sessionStorage
+      sessionStorage.clear();
       
-      // 2. Clear client-side auth state via the auth context
-      if (logoutMutation && typeof logoutMutation.mutateAsync === 'function') {
-        try {
-          await logoutMutation.mutateAsync();
-          console.log("Auth context logout mutation completed");
-        } catch (err) {
-          console.error("Auth context logout mutation failed:", err);
-        }
-      }
-      
-      // 3. Try Firebase logout
-      await firebaseLogout();
-      
-      // 4. Call server-side logout API
-      try {
-        const response = await fetch('/api/logout', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache'
-          }
-        });
-        
-        if (response.ok) {
-          console.log("Server-side logout successful");
-        } else {
-          console.error("Server-side logout failed with status:", response.status);
-        }
-      } catch (apiError) {
-        console.error("Server-side logout API call failed:", apiError);
-      }
-      
-      // 5. Clear all local storage and session storage items that might contain auth state
-      console.log("Clearing all storage...");
-      const itemsToClear = [
-        'auth_token', 'auth_state', 'user', 'session', 'firebase:auth', 
-        'firebase:authUser', 'currentUser', 'token'
-      ];
-      
-      itemsToClear.forEach(item => {
-        try {
-          localStorage.removeItem(item);
-          sessionStorage.removeItem(item);
-        } catch (e) {
-          console.error(`Failed to remove ${item} from storage:`, e);
-        }
-      });
-      
-      // 6. Force clear auth related cookies
+      // Clear all cookies
       document.cookie.split(';').forEach(cookie => {
         const [name] = cookie.trim().split('=');
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
       });
-      
-      // 7. Redirect with multiple fallbacks
-      console.log("Redirecting to auth page...");
-      
-      // First try React Router navigation
-      setLocation('/auth');
-      
-      // Then set a timeout to force window location change if still on admin page
-      setTimeout(() => {
-        if (window.location.pathname.includes('admin')) {
-          console.log("Still on admin page after 200ms, forcing hard redirect");
-          window.location.pathname = '/auth';
-          
-          // Final fallback
-          setTimeout(() => {
-            if (window.location.pathname.includes('admin')) {
-              console.log("Still on admin page after 500ms, using full URL redirect");
-              window.location.href = `${window.location.origin}/auth`;
-            }
-          }, 300);
-        }
-      }, 200);
-      
-    } catch (error) {
-      console.error("Logout process failed with unexpected error:", error);
-      
-      // Even if everything fails, try to redirect
-      alert("Logout had some issues. Redirecting to login page.");
-      window.location.href = '/auth';
+    } catch (e) {
+      console.error("Error clearing storage:", e);
     }
+    
+    // 3. CRITICAL: Force a browser hard redirect to /auth 
+    // This is the most reliable way to handle navigation with auth state changes
+    window.location.replace('/auth');
   };
 
   const closeMobileNav = () => {
