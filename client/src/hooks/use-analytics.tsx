@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
-import { initGA, trackPageView, seoTracking } from '../lib/analytics';
+import { initGA, trackPageView, seoTracking, trackTimeOnPage, trackScrollDepth } from '@/lib/analytics';
 
 /**
  * Custom hook for analytics tracking in GodivaTech website
@@ -14,88 +14,60 @@ import { initGA, trackPageView, seoTracking } from '../lib/analytics';
 export const useAnalytics = () => {
   const [location] = useLocation();
   const prevLocationRef = useRef<string>(location);
-  const [initialized, setInitialized] = useState(false);
+  const gaInitializedRef = useRef<boolean>(false);
   
-  // Initialize Google Analytics once
+  // Initialize Google Analytics
   useEffect(() => {
-    // Verify required environment variable is present
-    if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
-      console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
-    } else if (!initialized) {
+    if (!gaInitializedRef.current) {
+      // Initialize Google Analytics
       initGA();
-      setInitialized(true);
-    }
-  }, [initialized]);
-  
-  // Track page views whenever the route changes
-  useEffect(() => {
-    if (!initialized) return;
-    
-    if (location !== prevLocationRef.current) {
-      // Calculate page title based on current page
-      let pageTitle = document.title;
       
-      // Default title if document.title is empty
-      if (!pageTitle) {
-        const pagePath = location.split('/').filter(Boolean).pop() || 'home';
-        const formattedPageName = pagePath
-          .split('-')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
-        pageTitle = `${formattedPageName} | GodivaTech`;
-      }
+      // Start tracking time on page
+      trackTimeOnPage();
       
-      // Track the page view
-      trackPageView(location, pageTitle);
-      prevLocationRef.current = location;
+      // Track Core Web Vitals for SEO
+      seoTracking.trackCoreWebVitals();
       
-      // Track SEO metrics for the page
-      setTimeout(() => {
-        seoTracking.trackCanonicalUsage();
-        seoTracking.trackMetaTagStatus();
+      // Set up scroll depth tracking
+      const handleScroll = () => {
+        if (!document.body) return;
         
-        // Check for structured data
-        const structuredDataElements = document.querySelectorAll('script[type="application/ld+json"]');
-        structuredDataElements.forEach(el => {
-          try {
-            const data = JSON.parse(el.textContent || '{}');
-            if (data['@type']) {
-              seoTracking.trackStructuredDataImpression(data['@type']);
-            }
-          } catch (e) {
-            // Ignore parsing errors
-          }
-        });
-      }, 1000); // Small delay to ensure page is fully rendered
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const documentHeight = Math.max(
+          document.body.scrollHeight,
+          document.body.offsetHeight,
+          document.documentElement.clientHeight,
+          document.documentElement.scrollHeight,
+          document.documentElement.offsetHeight
+        );
+        const windowHeight = window.innerHeight;
+        
+        // Calculate scroll percentage
+        const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+        trackScrollDepth(scrollPercent);
+      };
+      
+      // Throttle scroll events for better performance
+      let scrollTimeout: ReturnType<typeof setTimeout>;
+      window.addEventListener('scroll', () => {
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(handleScroll, 500);
+      });
+      
+      gaInitializedRef.current = true;
     }
-  }, [location, initialized]);
+  }, []);
   
-  // Track scroll depth
+  // Track page views when location changes
   useEffect(() => {
-    if (!initialized) return;
-    
-    const handleScroll = () => {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      const scrollHeight = document.documentElement.scrollHeight;
-      const clientHeight = document.documentElement.clientHeight;
+    if (location !== prevLocationRef.current) {
+      // Track page view in Google Analytics
+      trackPageView(location, document.title);
       
-      // Calculate how far down the page the user has scrolled
-      const scrollPercent = Math.round((scrollTop / (scrollHeight - clientHeight)) * 100);
-      
-      // Track scroll depth at certain thresholds
-      if ([25, 50, 75, 90, 100].includes(scrollPercent)) {
-        import('../lib/analytics').then(({ trackScrollDepth }) => {
-          trackScrollDepth(scrollPercent);
-        });
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [initialized]);
+      // Update reference for comparison
+      prevLocationRef.current = location;
+    }
+  }, [location]);
   
-  return { initialized };
+  return null;
 };

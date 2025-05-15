@@ -83,9 +83,18 @@ function App() {
   
   // Initialize performance tracking and Core Web Vitals optimizations
   useEffect(() => {
+    // Initialize Google Analytics if we have a measurement ID
+    const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+    if (gaId) {
+      // Analytics will be initialized by useAnalytics hook
+      console.log("Google Analytics Measurement ID detected");
+    } else {
+      console.warn("Missing Google Analytics Measurement ID");
+    }
+    
     // Track long tasks to identify performance bottlenecks
     trackLongTasks((duration) => {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.warn(`Long task detected: ${duration.toFixed(2)}ms`);
       }
     });
@@ -104,7 +113,7 @@ function App() {
     ]);
     
     // Report Core Web Vitals to console in development
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       setTimeout(() => {
         if ('performance' in window) {
           // Get the paint metrics
@@ -141,7 +150,7 @@ function App() {
       <LCPOptimizer />
       
       {/* Performance monitoring tool - only visible in development */}
-      {process.env.NODE_ENV === 'development' && <PerformanceMonitor />}
+      {import.meta.env.DEV && <PerformanceMonitor />}
 
       {!isAdminRoute && (
         <Layout>

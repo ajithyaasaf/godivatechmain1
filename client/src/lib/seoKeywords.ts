@@ -1,99 +1,261 @@
 /**
- * SEO Keywords for GodivaTech Website
+ * Centralized SEO keywords for GodivaTech website
  * 
- * This file defines location-specific and service-specific keywords
- * to enhance the site's search engine visibility and local targeting.
+ * These keywords are used across the website for consistent SEO optimization.
+ * Having them in a single file allows for easy updates and maintenance.
  */
 
-// Location-specific SEO targeting
-export const locationKeywords = {
-  primaryCity: "Madurai",
-  region: "Tamil Nadu",
-  country: "India",
-  postalCodes: {
-    annaNagar: "625020", 
-    iyerBungalow: "625014",
-    tamilSangam: "625016",
-    sindhupuram: "625007",
-    aavinDairy: "625010",
-    kKNagar: "625020"
-  },
-  neighborhoods: {
-    webDevelopment: ["Anna Nagar", "K K Nagar", "Kochadai"],
-    mobileApp: ["Iyer Bungalow", "Gomathipuram", "Arasaradi"],
-    digitalMarketing: ["Anna Nagar", "Tamil Sangam Colony", "S S Colony"],
-    branding: ["Anna Nagar", "Teppakulam", "Goripalayam"],
-    software: ["Iyer Bungalow", "Nagamalai", "Vilangudi"]
-  },
-  nearbyAreas: [
-    "Trichy Road",
-    "Dindigul Road",
-    "Melur Road",
-    "Sivaganga Road",
-    "Virudhunagar Road",
-    "Theni Road"
+// Company information
+export const companyName = "GodivaTech";
+export const companyLocation = "Madurai";
+export const companyLocationFull = "Madurai, Tamil Nadu, India";
+export const companyIndustry = "Web Development";
+export const companyPhone = "+91 96005 20130";
+export const companyEmail = "info@godivatech.com";
+
+// Main keywords - primary terms the company wants to rank for
+export const mainKeywords = {
+  primaryServices: [
+    "web development Madurai",
+    "app development Madurai",
+    "digital marketing Madurai",
+    "website design Madurai",
+    "ecommerce website Madurai",
+    "SEO services Madurai",
+    "software development Madurai",
+    "responsive web design Madurai",
+    "custom web development Madurai",
+    "mobile app development Madurai"
+  ],
+  industrySpecific: [
+    "business website development Madurai",
+    "healthcare website development Madurai",
+    "educational website development Madurai",
+    "restaurant website development Madurai",
+    "real estate website development Madurai",
+    "travel website development Madurai"
+  ],
+  technology: [
+    "React development Madurai",
+    "WordPress development Madurai",
+    "Shopify development Madurai",
+    "PHP development Madurai",
+    "NodeJS development Madurai",
+    "Angular development Madurai",
+    "Flutter app development Madurai",
+    "React Native development Madurai"
   ]
 };
 
-// Home page keywords
-export const homeKeywords = "web development company Madurai, app development Madurai, website designers Anna Nagar, digital marketing services Tamil Nadu, affordable web development Madurai, custom software development Iyer Bungalow, website design agency K K Nagar, local marketing agency Madurai, web development price Madurai";
-
-// About page keywords
-export const aboutKeywords = "top web development company Madurai, best IT services Madurai, experienced web designers Anna Nagar, professional app developers Iyer Bungalow, IT company history Madurai, software development team Tamil Nadu, leading digital agency Madurai, tech experts K K Nagar";
-
-// Services page keywords
-export const servicesKeywords = "IT services Madurai, web development services Anna Nagar, app development Iyer Bungalow, digital marketing services K K Nagar, custom software development Madurai, ecommerce website development Tamil Nadu, responsive web design Madurai, SEO services Madurai, website maintenance services Anna Nagar";
-
-// Get service-specific keywords based on service name
-export const getServiceKeywords = (serviceName: string) => {
-  const serviceKeywordsMap: Record<string, string> = {
-    "Web Design & Development": "custom website development Madurai, responsive web design Anna Nagar, ecommerce website developers Madurai, WordPress experts Tamil Nadu, affordable web design K K Nagar, professional website designers Madurai, SEO-friendly websites Anna Nagar, custom web applications Iyer Bungalow",
-    
-    "Branding & Logo Design": "logo design services Madurai, branding agency Anna Nagar, corporate identity design Madurai, brand strategy Tamil Nadu, professional logo designers K K Nagar, visual identity experts Madurai, custom logo creation Anna Nagar, brand guideline development Iyer Bungalow",
-    
-    "Digital Marketing": "digital marketing services Madurai, SEO services Anna Nagar, social media marketing Madurai, PPC campaigns Tamil Nadu, content marketing K K Nagar, local SEO Madurai, email marketing Anna Nagar, digital marketing agency Iyer Bungalow",
-    
-    "E-commerce Solutions": "ecommerce website development Madurai, online store creation Anna Nagar, shopping cart integration Madurai, payment gateway setup Tamil Nadu, inventory management systems K K Nagar, product catalog design Madurai, ecommerce SEO Anna Nagar, mobile shopping experience Iyer Bungalow",
-    
-    "Web Hosting & Maintenance": "website hosting services Madurai, web maintenance Anna Nagar, website security Madurai, performance optimization Tamil Nadu, website updates K K Nagar, technical support services Madurai, affordable web hosting Anna Nagar, website backup solutions Iyer Bungalow",
-    
-    "UI/UX Design": "user interface design Madurai, user experience services Anna Nagar, UI/UX designers Madurai, wireframing and prototyping Tamil Nadu, usability testing K K Nagar, mobile app UI design Madurai, web interface design Anna Nagar, user-centered design Iyer Bungalow"
-  };
-  
-  // Return service-specific keywords or a default if not found
-  return serviceKeywordsMap[serviceName] || servicesKeywords;
+// Keywords for specific pages
+export const pageKeywords = {
+  home: [
+    "best web development company in Madurai",
+    "top app development company in Madurai",
+    "affordable website design Madurai",
+    "professional web developers Madurai",
+    "web development services Madurai",
+    "custom website design Madurai"
+  ],
+  about: [
+    "experienced web development team Madurai",
+    "professional web designers Madurai",
+    "trusted web developers Madurai",
+    "skilled app developers Madurai",
+    "GodivaTech team Madurai",
+    "web development experts Madurai"
+  ],
+  services: [
+    "comprehensive web services Madurai",
+    "end-to-end web development Madurai",
+    "full-stack development services Madurai",
+    "web hosting services Madurai",
+    "website maintenance Madurai",
+    "ecommerce development Madurai"
+  ],
+  portfolio: [
+    "web development projects Madurai",
+    "app development case studies Madurai",
+    "website portfolio Madurai",
+    "successful web projects Madurai",
+    "client websites Madurai",
+    "mobile app portfolio Madurai"
+  ],
+  blog: [
+    "web development blog Madurai",
+    "app development tips Madurai",
+    "website design trends Madurai",
+    "technology insights Madurai",
+    "web development tutorials Madurai",
+    "digital marketing strategies Madurai"
+  ],
+  contact: [
+    "contact web developers Madurai",
+    "hire web design company Madurai",
+    "web development consultation Madurai",
+    "app development quote Madurai",
+    "website design inquiry Madurai",
+    "GodivaTech contact details Madurai"
+  ]
 };
 
-// Portfolio page keywords
-export const portfolioKeywords = "web development portfolio Madurai, mobile app projects Anna Nagar, website samples Madurai, digital marketing case studies Tamil Nadu, successful web projects K K Nagar, client websites Madurai, app development showcase Anna Nagar, completed projects Iyer Bungalow";
+// Long-tail keywords for content marketing
+export const longTailKeywords = [
+  "how to create a business website in Madurai",
+  "cost of developing a website in Madurai",
+  "best ecommerce platform for small business in Madurai",
+  "how to rank website higher on Google in Madurai",
+  "responsive web design services for mobile in Madurai",
+  "custom CRM development for business in Madurai",
+  "fast loading WordPress website development Madurai",
+  "secure ecommerce website development Madurai",
+  "B2B website design and development Madurai",
+  "affordable mobile app development for startups Madurai",
+  "progressive web app development company Madurai",
+  "SEO-friendly website development Madurai"
+];
 
-// Blog page keywords
-export const blogKeywords = "web development blog Madurai, digital marketing tips Anna Nagar, tech news Madurai, IT insights Tamil Nadu, web design tutorials K K Nagar, app development guides Madurai, SEO blog Anna Nagar, technology trends Iyer Bungalow";
-
-// Contact page keywords
-export const contactKeywords = "contact web development company Madurai, hire web designers Anna Nagar, app development consultation Madurai, digital marketing quotes Tamil Nadu, web project inquiry K K Nagar, IT services contact Madurai, get in touch Anna Nagar, free consultation Iyer Bungalow";
-
-// Get location-specific SEO description
-export const getLocationSpecificDescription = (
-  baseDescription: string,
-  neighborhood: string = "Anna Nagar"
-) => {
-  // Extract the main description without unnecessary information
-  const mainPart = baseDescription.split('.')[0];
-  
-  // Add location-specific information
-  return `${mainPart}. Based in ${neighborhood}, Madurai, Tamil Nadu, we provide custom solutions tailored to local businesses and enterprises throughout Southern India.`;
+// Meta description templates
+export const metaDescriptions = {
+  home: `${companyName} is the leading web development company in ${companyLocation}, offering professional website design, app development, and digital marketing services. Get a free consultation today.`,
+  about: `Learn about ${companyName}, the top-rated web and app development company in ${companyLocation}. Our experienced team delivers custom, high-quality digital solutions for businesses of all sizes.`,
+  services: `Explore our comprehensive web design, development, and digital marketing services at ${companyName}. We provide tailored solutions for businesses in ${companyLocation} and beyond.`,
+  portfolio: `View our portfolio of successful web and app development projects at ${companyName}. See how we've helped businesses in ${companyLocation} establish their online presence.`,
+  blog: `Read the latest insights on web development, app design, and digital marketing on the ${companyName} blog. Stay updated with technology trends and tips.`,
+  contact: `Contact ${companyName} for professional web development, app design, and digital marketing services in ${companyLocation}. Request a quote or consultation today.`
 };
 
-// Get city-specific meta title
-export const getCitySpecificTitle = (
-  baseTitle: string,
-  city: string = "Madurai"
-) => {
-  if (baseTitle.includes(city)) {
-    return baseTitle;
+// Schema markup data (for structured data)
+export const schemaMarkupData = {
+  organization: {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": companyName,
+    "url": "https://godivatech.com/",
+    "logo": "https://godivatech.com/logo.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": companyPhone,
+      "contactType": "customer service",
+      "areaServed": "Madurai",
+      "availableLanguage": ["English", "Tamil"]
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "261, Vaigai mainroad 4th Street, Sri Nagar, Iyer Bungalow",
+      "addressLocality": "Madurai",
+      "postalCode": "625007",
+      "addressCountry": "IN"
+    },
+    "sameAs": [
+      "https://www.facebook.com/godivatech",
+      "https://www.instagram.com/godivatech",
+      "https://twitter.com/godivatech",
+      "https://www.linkedin.com/company/godivatech"
+    ]
+  },
+  localBusiness: {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": `${companyName} - Web Development Company in ${companyLocation}`,
+    "image": "https://godivatech.com/images/office.jpg",
+    "@id": "https://godivatech.com/#organization",
+    "url": "https://godivatech.com/",
+    "telephone": companyPhone,
+    "priceRange": "₹₹₹",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "261, Vaigai mainroad 4th Street, Sri Nagar, Iyer Bungalow",
+      "addressLocality": "Madurai",
+      "postalCode": "625007",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 9.9252,
+      "longitude": 78.1198
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "09:00",
+      "closes": "18:00"
+    },
+    "sameAs": [
+      "https://www.facebook.com/godivatech",
+      "https://www.instagram.com/godivatech",
+      "https://twitter.com/godivatech",
+      "https://www.linkedin.com/company/godivatech"
+    ]
   }
-  
-  // If title doesn't contain city name, add it
-  return `${baseTitle} in ${city}`;
+};
+
+// Helper functions for SEO implementation
+export const generateBreadcrumbData = (breadcrumbs: { name: string, item: string }[]) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": breadcrumbs.map((breadcrumb, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": breadcrumb.name,
+      "item": breadcrumb.item
+    }))
+  };
+};
+
+export const generateFAQData = (faqs: { question: string, answer: string }[]) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+};
+
+export const generateServiceData = (service: { name: string, description: string, url: string }) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": service.name,
+    "provider": {
+      "@type": "Organization",
+      "name": companyName
+    },
+    "description": service.description,
+    "url": service.url,
+    "areaServed": {
+      "@type": "City",
+      "name": companyLocation
+    }
+  };
+};
+
+export const getOrganizationData = () => schemaMarkupData.organization;
+export const getLocalBusinessData = () => schemaMarkupData.localBusiness;
+export const getWebPageData = (title: string, description: string, url: string) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": title,
+    "description": description,
+    "url": url,
+    "publisher": {
+      "@type": "Organization",
+      "name": companyName
+    }
+  };
 };
