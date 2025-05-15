@@ -17,5 +17,20 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    sourcemap: true, // For better debugging
+    minify: 'terser',
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-accordion', '@radix-ui/react-dialog']
+        }
+      }
+    }
   },
+  define: {
+    // Define any environment variables with fallbacks for Vercel
+    'import.meta.env.VITE_SERVER_URL': JSON.stringify(process.env.VITE_SERVER_URL || "https://godivatech-backend.onrender.com")
+  }
 });

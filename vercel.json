@@ -1,47 +1,31 @@
 {
-  "name": "godivatech",
-  "version": 2,
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "cd client && npm install && npm run build",
+  "devCommand": "npm run dev",
+  "framework": "vite",
   "outputDirectory": "client/dist",
-  "routes": [
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://godivatech-backend.onrender.com/api/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "/(.*).js",
-      "dest": "/$1.js",
-      "headers": {
-        "content-type": "application/javascript; charset=utf-8",
-        "cache-control": "public, max-age=31536000, immutable"
-      }
+      "source": "/_next/static/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "src": "/(.*).mjs",
-      "dest": "/$1.mjs",
-      "headers": {
-        "content-type": "application/javascript; charset=utf-8",
-        "cache-control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/(.*).css",
-      "dest": "/$1.css",
-      "headers": {
-        "content-type": "text/css; charset=utf-8",
-        "cache-control": "public, max-age=31536000, immutable"
-      }
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "https://godivatech-backend.onrender.com/api/$1"
-    },
-    { 
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)\\.(?:jpg|jpeg|gif|png|svg|ico|css|js)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     }
   ],
   "env": {
