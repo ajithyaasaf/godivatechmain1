@@ -1,12 +1,12 @@
-import { User as FirebaseUser } from 'firebase/auth';
 import { 
-  auth, 
+  User as FirebaseUser, 
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithRedirect
-} from '@/lib/firebase';
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import { queryClient } from '@/lib/queryClient';
 
 /**
@@ -36,7 +36,7 @@ class AuthService {
    */
   private setupAuthListener() {
     // Firebase auth state listener
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, (user: FirebaseUser | null) => {
       this._currentFirebaseUser = user;
       this.notifyListeners(!!user);
     });

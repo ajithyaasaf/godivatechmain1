@@ -1,6 +1,6 @@
 import { Switch, Route, useLocation } from "wouter";
 import { AnimatePresence } from "framer-motion";
-import { AuthProvider } from "@/hooks/use-auth";
+import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/lib/protected-route";
 import Layout from "@/components/Layout";
 import { Suspense, lazy, useEffect } from "react";
