@@ -206,10 +206,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 variant="outline" 
                 className="w-full justify-start"
                 onClick={handleLogout}
-                disabled={logoutMutation.isPending}
+                disabled={isLoggingOut || isLoading}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                {logoutMutation.isPending ? "Logging out..." : "Logout"}
+                {isLoggingOut || isLoading ? "Logging out..." : "Logout"}
               </Button>
             </div>
           </motion.div>
