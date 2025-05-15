@@ -15,7 +15,7 @@ import { queryClient } from '@/lib/queryClient';
  */
 class AuthService {
   // Flag to track if we're using Firebase or session auth
-  private _useFirebase: boolean = true;
+  private _useFirebase: boolean = false;
   
   // Current user from Firebase
   private _currentFirebaseUser: FirebaseUser | null = null;
@@ -54,19 +54,52 @@ class AuthService {
    */
   private async checkSessionAuth(): Promise<boolean> {
     try {
+      // Check localStorage first for quick response
+      const authStatus = localStorage.getItem('auth_status');
+      
+      // If localStorage indicates we're not authenticated, do the full check anyway
+      // This helps prevent session issues if the cookie is valid but localStorage is cleared
+      if (authStatus !== 'authenticated') {
+        console.log('No auth status in localStorage, performing API check');
+      }
+      
+      // Always verify with the server
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      
       const response = await fetch('/api/user', {
         credentials: 'include',
         headers: {
           'Cache-Control': 'no-cache',
           'Pragma': 'no-cache'
-        }
+        },
+        signal: controller.signal
       });
       
+      clearTimeout(timeoutId);
+      
       if (response.ok) {
+        // If the server says we're authenticated but localStorage doesn't, fix that
+        if (authStatus !== 'authenticated') {
+          localStorage.setItem('auth_status', 'authenticated');
+        }
         return true;
       }
+      
+      // If the server says we're not authenticated but localStorage does, fix that
+      if (authStatus === 'authenticated') {
+        console.log('Clearing invalid auth status from localStorage');
+        localStorage.removeItem('auth_status');
+      }
+      
       return false;
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        console.warn('Session auth check timed out');
+        // Fall back to localStorage if API request times out
+        return localStorage.getItem('auth_status') === 'authenticated';
+      }
+      
       console.error('Failed to check session auth:', error);
       return false;
     }
@@ -109,6 +142,8 @@ class AuthService {
         return true;
       } else {
         // Session based login
+        console.log('Attempting session-based login with:', username);
+        
         const response = await fetch('/api/login', {
           method: 'POST',
           headers: {
@@ -116,19 +151,71 @@ class AuthService {
           },
           body: JSON.stringify({ username, password }),
           credentials: 'include',
+          cache: 'no-cache',
         });
         
         if (response.ok) {
+          // Get the user data from the response
+          const userData = await response.json();
+          console.log('Login successful, received user data:', userData);
+          
+          // Store auth status
           localStorage.setItem('auth_status', 'authenticated');
+          
+          // Store last login time for security audit
+          localStorage.setItem('last_login', new Date().toISOString());
+          
+          // Notify listeners
           this.notifyListeners(true);
+          
+          // Fetch user data immediately after login
+          try {
+            await this.fetchCurrentUser();
+          } catch (userFetchError) {
+            console.warn('Failed to fetch user data after login:', userFetchError);
+            // Continue with login success even if user fetch fails
+          }
+          
           return true;
         }
-        return false;
+        
+        if (response.status === 401) {
+          console.error('Login failed: Invalid credentials');
+          throw new Error('Invalid username or password');
+        }
+        
+        if (response.status === 429) {
+          console.error('Login failed: Too many attempts');
+          throw new Error('Too many login attempts. Please try again later.');
+        }
+        
+        // Generic error for other status codes
+        console.error('Login failed with status:', response.status);
+        throw new Error('Login failed. Please try again.');
       }
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
     }
+  }
+  
+  /**
+   * Fetch current user data from API
+   */
+  private async fetchCurrentUser(): Promise<any> {
+    const response = await fetch('/api/user', {
+      credentials: 'include',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch user data');
+    }
+    
+    return await response.json();
   }
   
   /**
@@ -250,11 +337,21 @@ class AuthService {
    * Check if user is authenticated
    */
   public async isAuthenticated(): Promise<boolean> {
-    if (this._useFirebase && this._currentFirebaseUser) {
+    // First check session auth - this is our primary auth method
+    const sessionAuthValid = await this.checkSessionAuth();
+    if (sessionAuthValid) {
       return true;
     }
     
-    return await this.checkSessionAuth();
+    // Fallback to Firebase if we're using it
+    if (this._useFirebase && this._currentFirebaseUser) {
+      console.log('Using Firebase authentication fallback');
+      return true;
+    }
+    
+    // Neither authentication method is valid
+    console.log('No valid authentication found');
+    return false;
   }
 }
 
