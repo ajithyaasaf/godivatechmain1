@@ -13,6 +13,19 @@ export const companyIndustry = "Web Development";
 export const companyPhone = "+91 96005 20130";
 export const companyEmail = "info@godivatech.com";
 
+// Location-specific keywords for mobile optimization
+export const locationKeywords = {
+  neighborhoods: {
+    webDevelopment: ["Anna Nagar", "K.K. Nagar", "Bypass Road"],
+    mobileApp: ["Iyer Bungalow", "Gomathipuram", "Villapuram"],
+    digitalMarketing: ["Anna Nagar", "Arapalayam", "Teppakulam"],
+    branding: ["Anna Nagar", "K.K. Nagar", "Mattuthavani"],
+    software: ["Iyer Bungalow", "Gomathipuram", "Nagamalai Pudukottai"]
+  },
+  nearbyLocations: ["Tiruchirappalli", "Coimbatore", "Salem", "Tirunelveli", "Erode"],
+  landmarks: ["Meenakshi Amman Temple", "Gandhi Museum", "Thirumalai Nayak Palace"]
+};
+
 // Main keywords - primary terms the company wants to rank for
 export const mainKeywords = {
   primaryServices: [
