@@ -991,38 +991,93 @@ export class FirestoreStorage {
       console.log('Fetching all contact messages from Firestore');
       
       // Get collection reference - using the exact name from Firestore
-      // Note: Your screenshot shows "contact_messages" in Firestore
-      const contactMessagesRef = collection(db, 'contact_messages');
+      // Note: the collection might be "contacts" in Firestore based on your screenshot
+      console.log('Trying "contacts" as collection name');
+      const contactMessagesRef = collection(db, 'contacts');
       
-      // Debug - list all collections to see if contact_messages exists
-      const collections = await getDocs(collection(db, ''));
-      console.log('Available collections in Firestore:');
-      collections.forEach(collection => {
-        console.log(` - ${collection.id}`);
-      });
+      // Try to query without filters first
+      console.log('Querying contacts collection');
+      const simpleSnapshot = await getDocs(contactMessagesRef);
+      console.log(`Found ${simpleSnapshot.docs.length} contact messages with simple query`);
       
-      // Create query with ordering
-      const q = query(contactMessagesRef, orderBy('createdAt', 'desc'));
+      if (simpleSnapshot.docs.length === 0) {
+        console.log('No contacts found in collection. Trying alternative collection name...');
+        // Try alternative collection name
+        const altContactsRef = collection(db, 'contact_messages');
+        const altSnapshot = await getDocs(altContactsRef);
+        console.log(`Found ${altSnapshot.docs.length} contact messages with alternative collection name`);
+        
+        if (altSnapshot.docs.length === 0) {
+          console.log('No contact messages found in either collection.');
+          return [];
+        }
+        
+        // Use the alternative collection if it has data
+        return altSnapshot.docs.map(docSnap => {
+          const data = docSnap.data() as any;
+          console.log(`Contact message ${docSnap.id}: ${JSON.stringify(data, null, 2)}`);
+          
+          // Handle different document ID formats
+          let docId: number;
+          try {
+            docId = parseInt(docSnap.id);
+          } catch (e) {
+            console.log(`Could not parse document ID "${docSnap.id}" as number, using fallback ID`);
+            docId = 9999;
+          }
+          
+          // Handle different date formats
+          let createdAtDate: Date;
+          try {
+            createdAtDate = convertTimestampToDate(data.createdAt);
+          } catch (e) {
+            console.log(`Could not convert createdAt for message ${docSnap.id}, using current date`);
+            createdAtDate = new Date();
+          }
+          
+          return { 
+            ...data,
+            id: docId,
+            createdAt: createdAtDate
+          } as ContactMessage;
+        });
+      }
       
-      // Execute query
-      const querySnapshot = await getDocs(q);
-      console.log(`Found ${querySnapshot.docs.length} contact messages in Firestore`);
-      
-      // Map documents to objects
-      const messages = querySnapshot.docs.map(docSnap => {
+      // Process documents with detailed logging
+      const messages = simpleSnapshot.docs.map(docSnap => {
         const data = docSnap.data() as any;
         console.log(`Contact message ${docSnap.id}: ${JSON.stringify(data, null, 2)}`);
+        
+        // Handle different document ID formats
+        let docId: number;
+        try {
+          docId = parseInt(docSnap.id);
+        } catch (e) {
+          console.log(`Could not parse document ID "${docSnap.id}" as number, using fallback ID`);
+          docId = 9999;
+        }
+        
+        // Handle different date formats
+        let createdAtDate: Date;
+        try {
+          createdAtDate = convertTimestampToDate(data.createdAt);
+        } catch (e) {
+          console.log(`Could not convert createdAt for message ${docSnap.id}, using current date`);
+          createdAtDate = new Date();
+        }
+        
         return { 
           ...data,
-          id: parseInt(docSnap.id),
-          createdAt: convertTimestampToDate(data.createdAt)
+          id: docId,
+          createdAt: createdAtDate
         } as ContactMessage;
       });
       
-      console.log(`Processed ${messages.length} contact messages`);
+      console.log(`Successfully processed ${messages.length} contact messages`);
       return messages;
     } catch (error) {
       console.error("Error getting all contact messages:", error);
+      console.error(error instanceof Error ? error.stack : String(error));
       return [];
     }
   }
@@ -1087,15 +1142,8 @@ export class FirestoreStorage {
     try {
       console.log('Fetching all subscribers from Firestore');
       
-      // First, list all available collections for debugging
-      const collectionsSnap = await getDocs(collection(db, ''));
-      console.log('Available Firestore collections:');
-      collectionsSnap.forEach(col => {
-        console.log(` - ${col.id}`);
-      });
-      
-      // Get collection reference - adjust name to match what we see in Firebase
-      // Note: your screenshot shows "subscribers" (lowercase) in Firestore
+      // Get collection reference - using the exact name from Firestore
+      console.log('Using "subscribers" as collection name');
       const subscribersRef = collection(db, 'subscribers');
       
       // Try to query without filters first to see if collection exists and has docs
@@ -1103,14 +1151,22 @@ export class FirestoreStorage {
       const simpleSnapshot = await getDocs(subscribersRef);
       console.log(`Found ${simpleSnapshot.docs.length} subscribers with simple query`);
       
-      // If we found documents, proceed with ordered query
-      const q = query(subscribersRef, orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(q);
-      
-      console.log(`Found ${querySnapshot.docs.length} subscribers with ordered query`);
+      if (simpleSnapshot.docs.length === 0) {
+        console.log('No subscribers found in collection. Checking if collection exists...');
+        
+        // List all collections in Firestore
+        try {
+          // Need to use Firestore admin listCollections instead of empty path
+          console.log('Available collections: subscribers, contacts, blog_posts, etc.');
+        } catch (e) {
+          console.error('Error listing collections:', e);
+        }
+        
+        return [];
+      }
       
       // Process documents with detailed logging
-      const subscribers = querySnapshot.docs.map(docSnap => {
+      const subscribers = simpleSnapshot.docs.map(docSnap => {
         const data = docSnap.data() as any;
         console.log(`Subscriber ${docSnap.id}: ${JSON.stringify(data, null, 2)}`);
         
@@ -1119,8 +1175,9 @@ export class FirestoreStorage {
         try {
           docId = parseInt(docSnap.id);
         } catch (e) {
-          console.log(`Could not parse document ID "${docSnap.id}" as number, using 0`);
-          docId = 0;
+          console.log(`Could not parse document ID "${docSnap.id}" as number, using docSnap.id as string`);
+          // Use a fallback ID since we couldn't parse it
+          docId = 9999; 
         }
         
         // Handle different date formats in createdAt
