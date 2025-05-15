@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import Breadcrumb from "@/components/ui/breadcrumb";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
-import { blogKeywords } from "@/lib/seoKeywords";
+import { pageKeywords } from "@/lib/seoKeywords";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -330,7 +330,7 @@ const Blog = () => {
           ? `Expert ${displayCategories.find(c => c.id === activeCategory)?.name || "category"} tips and insights from Madurai's leading tech company. Practical advice for local businesses.`
           : "Get expert web development, digital marketing, and SEO tips from Madurai's leading tech company. Practical advice for Madurai businesses to grow online."
         }
-        keywords={blogKeywords}
+        keywords={pageKeywords.blog.join(", ")}
         ogType="website"
         ogImage="https://godivatech.com/images/blog-og-image.jpg"
         imageWidth={1200}

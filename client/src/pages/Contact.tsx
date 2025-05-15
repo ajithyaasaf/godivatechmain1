@@ -5,7 +5,7 @@ import ContactSection from "@/components/home/ContactSection";
 import MapSection from "@/components/home/MapSection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
-import { contactKeywords } from "@/lib/seoKeywords";
+import { pageKeywords } from "@/lib/seoKeywords";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -62,7 +62,7 @@ const Contact = memo(() => {
       <SEO
         title="Contact Best Web Development Company in Madurai | GodivaTech"
         description="Contact GodivaTech for affordable web development, mobile app development, and digital marketing services in Madurai. Get in touch for a custom quote and consultation for your business needs."
-        keywords={contactKeywords}
+        keywords={pageKeywords.contact.join(", ")}
         canonicalUrl="/contact"
         ogType="website"
         ogImage="/images/contact-og-image.jpg"
