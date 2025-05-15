@@ -586,6 +586,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Subscribers
+  // Public subscribers endpoint - for admin page that doesn't use /admin prefix
+  app.get("/api/subscribers", isAuthenticated, async (req, res) => {
+    try {
+      const subscribers = await storage.getAllSubscribers();
+      res.json(subscribers);
+    } catch (error) {
+      console.error("Error fetching subscribers:", error);
+      res.status(500).json({ message: "Failed to fetch subscribers" });
+    }
+  });
+
+  // Admin subscribers endpoint - same as above but with /admin prefix for consistency
   app.get("/api/admin/subscribers", isAuthenticated, async (req, res) => {
     try {
       const subscribers = await storage.getAllSubscribers();
