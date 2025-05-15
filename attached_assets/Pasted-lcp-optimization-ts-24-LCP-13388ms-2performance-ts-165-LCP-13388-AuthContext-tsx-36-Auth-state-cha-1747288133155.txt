@@ -1,0 +1,54 @@
+lcp-optimization.ts:24 LCP: 13388ms
+2performance.ts:165 LCP: 13388
+AuthContext.tsx:36 Auth state changed: true
+queryClient.ts:100 Query fetch: GET /api/user (Full URL: /api/user)
+queryClient.ts:103 
+            
+            
+           GET https://19e6ff97-c213-4436-ae75-ba9bcb83f4ff-00-3q29ibxptyj03.pike.replit.dev/api/user 401 (Unauthorized)
+(anonymous) @ queryClient.ts:103
+fetchFn @ @tanstack_react-query.js?v=534b5dcb:840
+run @ @tanstack_react-query.js?v=534b5dcb:494
+start @ @tanstack_react-query.js?v=534b5dcb:536
+fetch @ @tanstack_react-query.js?v=534b5dcb:926
+executeFetch_fn @ @tanstack_react-query.js?v=534b5dcb:2211
+setOptions @ @tanstack_react-query.js?v=534b5dcb:1955
+(anonymous) @ @tanstack_react-query.js?v=534b5dcb:3032
+commitHookEffectListMount @ chunk-7SSXMLWA.js?v=534b5dcb:16915
+commitPassiveMountOnFiber @ chunk-7SSXMLWA.js?v=534b5dcb:18156
+commitPassiveMountEffects_complete @ chunk-7SSXMLWA.js?v=534b5dcb:18129
+commitPassiveMountEffects_begin @ chunk-7SSXMLWA.js?v=534b5dcb:18119
+commitPassiveMountEffects @ chunk-7SSXMLWA.js?v=534b5dcb:18109
+flushPassiveEffectsImpl @ chunk-7SSXMLWA.js?v=534b5dcb:19490
+flushPassiveEffects @ chunk-7SSXMLWA.js?v=534b5dcb:19447
+(anonymous) @ chunk-7SSXMLWA.js?v=534b5dcb:19328
+workLoop @ chunk-7SSXMLWA.js?v=534b5dcb:197
+flushWork @ chunk-7SSXMLWA.js?v=534b5dcb:176
+performWorkUntilDeadline @ chunk-7SSXMLWA.js?v=534b5dcb:384
+queryClient.ts:107 Query response: 401 Unauthorized for GET /api/user
+queryClient.ts:110 Returning null for 401 response on /api/user (unauthorized behavior: returnNull)
+iframe.js:310 Info: The current domain is not authorized for OAuth operations. This will prevent signInWithPopup, signInWithRedirect, linkWithPopup and linkWithRedirect from working. Add your domain (19e6ff97-c213-4436-ae75-ba9bcb83f4ff-00-3q29ibxptyj03.pike.replit.dev) to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> Authorized domains tab.
+ml @ iframe.js:310
+(anonymous) @ iframe.js:579
+a @ iframe.js:155
+(anonymous) @ iframe.js:155
+c @ iframe.js:155
+e.vd @ iframe.js:163
+lg @ iframe.js:166
+hg @ iframe.js:166
+F.zk @ iframe.js:165
+a @ iframe.js:155
+(anonymous) @ iframe.js:155
+c @ iframe.js:155
+Qf @ iframe.js:156
+a
+Jf @ iframe.js:156
+cg @ iframe.js:162
+k.l @ iframe.js:160
+os @ iframe.js:578
+(anonymous) @ iframe.js:579
+aj @ iframe.js:240
+b @ iframe.js:238
+App.tsx:109 first-paint: 12700.00ms
+App.tsx:109 first-contentful-paint: 13104.00ms
+App.tsx:114 Deprecated API for given entry type.
