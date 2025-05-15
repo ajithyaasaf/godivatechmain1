@@ -988,18 +988,38 @@ export class FirestoreStorage {
   // Contact messages methods
   async getAllContactMessages(): Promise<ContactMessage[]> {
     try {
-      const contactMessagesRef = collection(db, 'contact_messages');
-      const q = query(contactMessagesRef, orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(q);
+      console.log('Fetching all contact messages from Firestore');
       
-      return querySnapshot.docs.map(docSnap => {
+      // Get collection reference
+      const contactMessagesRef = collection(db, 'contact_messages');
+      
+      // Debug - list all collections to see if contact_messages exists
+      const collections = await getDocs(collection(db, ''));
+      console.log('Available collections in Firestore:');
+      collections.forEach(collection => {
+        console.log(` - ${collection.id}`);
+      });
+      
+      // Create query with ordering
+      const q = query(contactMessagesRef, orderBy('createdAt', 'desc'));
+      
+      // Execute query
+      const querySnapshot = await getDocs(q);
+      console.log(`Found ${querySnapshot.docs.length} contact messages in Firestore`);
+      
+      // Map documents to objects
+      const messages = querySnapshot.docs.map(docSnap => {
         const data = docSnap.data() as any;
+        console.log(`Contact message ${docSnap.id}: ${JSON.stringify(data, null, 2)}`);
         return { 
           ...data,
           id: parseInt(docSnap.id),
           createdAt: convertTimestampToDate(data.createdAt)
         } as ContactMessage;
       });
+      
+      console.log(`Processed ${messages.length} contact messages`);
+      return messages;
     } catch (error) {
       console.error("Error getting all contact messages:", error);
       return [];

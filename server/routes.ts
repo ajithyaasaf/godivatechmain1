@@ -564,6 +564,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Contact Messages
+  // Public endpoint for contact messages (protected by auth middleware)
+  app.get("/api/contact-messages", isAuthenticated, async (req, res) => {
+    try {
+      const messages = await storage.getAllContactMessages();
+      console.log(`Fetched ${messages.length} contact messages from Firestore`);
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching contact messages:", error);
+      res.status(500).json({ message: "Failed to fetch contact messages" });
+    }
+  });
+  
+  // Admin endpoint for contact messages (with /admin prefix for consistency)
   app.get("/api/admin/contact-messages", isAuthenticated, async (req, res) => {
     try {
       const messages = await storage.getAllContactMessages();
