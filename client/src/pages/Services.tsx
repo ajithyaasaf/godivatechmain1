@@ -3,7 +3,7 @@ import { motion, LazyMotion, domAnimation, m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
 import SEO from "@/components/SEO";
-import { servicesKeywords } from "@/lib/seoKeywords";
+import { pageKeywords } from "@/lib/seoKeywords";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -309,9 +309,9 @@ const Services = () => {
   return (
     <PageTransition>
       <SEO
-        title="Best Web Development & Digital Marketing Services in Madurai | GodivaTech"
-        description="GodivaTech offers affordable web development, app development, and digital marketing services in Madurai. Get custom IT solutions at competitive prices for your business."
-        keywords={servicesKeywords}
+        title="Best Web Development & Digital Marketing in Madurai | GodivaTech"
+        description="GodivaTech provides the best web development, digital marketing, and software development services in Madurai and Tamil Nadu. Award-winning solutions at competitive prices."
+        keywords={pageKeywords.services.join(", ")}
         canonicalUrl="https://godivatech.com/services"
         ogType="website"
         ogImage="https://godivatech.com/images/services-og-image.jpg"
@@ -330,7 +330,7 @@ const Services = () => {
         priceRange="₹₹"
         telephoneNumber="+91-96005-20130"
         businessHours={['Mo-Fr 09:00-18:00', 'Sa 10:00-16:00']}
-        servicedArea={['Madurai', 'Coimbatore', 'Trichy', 'Chennai']}
+        servicedArea={['Madurai', 'Coimbatore', 'Trichy', 'Chennai', 'Tamil Nadu']}
         robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         alternateUrls={[
           { hrefLang: "en-in", href: "https://godivatech.com/services" },
@@ -339,24 +339,75 @@ const Services = () => {
         structuredData={[
           getOrganizationData(),
           getWebPageData(
-            "Best Web Development & Digital Marketing Services in Madurai | GodivaTech",
-            "GodivaTech offers affordable web development, app development, and digital marketing services in Madurai. Get custom IT solutions at competitive prices for your business.",
+            "Best Web Development & Digital Marketing in Madurai | GodivaTech",
+            "GodivaTech provides the best web development, digital marketing, and software development services in Madurai and Tamil Nadu. Award-winning solutions at competitive prices.",
             "https://godivatech.com/services"
           ),
           getBreadcrumbData([
             { name: "Home", item: "https://godivatech.com/" },
-            { name: "Services", item: "https://godivatech.com/services" }
-          ])
+            { name: "Best Services in Madurai", item: "https://godivatech.com/services" }
+          ]),
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "name": "Best Web Development in Madurai",
+            "serviceType": "Web Development",
+            "provider": {
+              "@type": "Organization",
+              "name": "GodivaTech",
+              "areaServed": {
+                "@type": "State",
+                "name": "Tamil Nadu"
+              }
+            },
+            "areaServed": {
+              "@type": "City",
+              "name": "Madurai"
+            },
+            "description": "Professional web development services for businesses in Madurai, featuring responsive design, ecommerce solutions, and custom CMS development.",
+            "offers": {
+              "@type": "Offer",
+              "price": "20000",
+              "priceCurrency": "INR"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "ratingCount": "89",
+              "bestRating": "5"
+            }
+          }
         ]}
       />
       
       {/* Add mobile-specific schema for better search results on mobile devices */}
       {isMobile && (
         <>
-          {/* FAQ Schema for mobile rich results */}
+          {/* FAQ Schema for mobile rich results with target keywords */}
           <MobileSchema 
             type="faq" 
-            data={getCommonServiceFAQs("IT Services", "Madurai")}
+            data={[
+              {
+                question: "Who offers the best web development services in Madurai?",
+                answer: "GodivaTech is recognized as the best web development company in Madurai, delivering high-quality, responsive websites with advanced functionality for businesses throughout Tamil Nadu."
+              },
+              {
+                question: "What makes GodivaTech the best digital marketing agency in Madurai?",
+                answer: "GodivaTech's digital marketing services in Madurai combine advanced SEO techniques, targeted social media campaigns, and data-driven strategies to maximize ROI, making us the best digital marketing partner for local businesses."
+              },
+              {
+                question: "Why choose GodivaTech for software development in Madurai?",
+                answer: "As the best software development company in Madurai, GodivaTech creates custom business applications, enterprise solutions, and mobile apps with cutting-edge technology and local business expertise."
+              },
+              {
+                question: "Does GodivaTech offer the best logo design services in Madurai?",
+                answer: "Yes, GodivaTech provides the best logo design services in Madurai with a team of creative designers who craft unique brand identities that perfectly represent your business values and appeal to your target audience."
+              },
+              {
+                question: "How does GodivaTech compare to other web development companies in Tamil Nadu?",
+                answer: "GodivaTech stands out as the best web development company in Tamil Nadu through our combination of technical expertise, industry knowledge, affordable pricing, and exceptional support for businesses across the state."
+              }
+            ]}
             pageUrl="https://godivatech.com/services" 
           />
           
@@ -365,19 +416,19 @@ const Services = () => {
             type="breadcrumb" 
             data={[
               { name: "Home", url: "https://godivatech.com/" },
-              { name: "IT Services in Anna Nagar, Madurai", url: "https://godivatech.com/services" }
+              { name: "Best Digital Services in Madurai", url: "https://godivatech.com/services" }
             ]}
             pageUrl="https://godivatech.com/services"
-            categoryName="Services"
+            categoryName="Best Services"
           />
           
-          {/* Service Schema for mobile rankings */}
+          {/* Service Schema for mobile rankings with target keywords */}
           <MobileSchema 
             type="service" 
             data={{
-              name: "IT Services & Digital Solutions",
-              description: "Professional web development, app development, and digital marketing services tailored for businesses in Madurai and surrounding areas.",
-              category: "Technology Services",
+              name: "Best Web Development & Digital Marketing in Madurai",
+              description: "Award-winning web development, digital marketing, software development, and logo design services for businesses in Madurai and throughout Tamil Nadu.",
+              category: "Professional Technology Services",
               image: "https://godivatech.com/images/services-overview.jpg"
             }}
             pageUrl="https://godivatech.com/services"
@@ -418,7 +469,7 @@ const Services = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
                 >
-                  Comprehensive <span className="text-white/90">IT Services</span> for Modern Businesses
+                  <span className="text-white/90">Best Web Development</span> & Digital Marketing in <span className="text-white/90">Madurai</span>
                 </motion.h1>
                 
                 <motion.p 
@@ -427,7 +478,7 @@ const Services = () => {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8, delay: 0.3 }}
                 >
-                  From enterprise web development to digital transformation, we provide strategic technology solutions that help businesses thrive in today's digital landscape.
+                  Award-winning software development, website design, and digital marketing services that deliver exceptional results for businesses throughout Tamil Nadu. Trusted by leading companies for our expertise and local knowledge.
                 </motion.p>
                 
                 <motion.div
