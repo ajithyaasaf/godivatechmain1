@@ -5,7 +5,7 @@ import { ArrowRight, ExternalLink, Loader2, AlertCircle } from "lucide-react";
 import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
-import { portfolioKeywords } from "@/lib/seoKeywords";
+import { pageKeywords } from "@/lib/seoKeywords";
 import OptimizedImage from "@/components/ui/optimized-image";
 import { getAllProjects, Project as FirestoreProject } from "@/lib/firestore";
 import { 
@@ -240,9 +240,9 @@ const Portfolio = () => {
   return (
     <PageTransition>
       <SEO
-        title="Successful Project Portfolio | Best Web Development in Madurai - GodivaTech"
+        title="Best Web Development in Madurai | Our Successful Project Portfolio - GodivaTech"
         description="Explore GodivaTech's portfolio of successful web development, app development, and digital marketing projects. See how we've helped businesses in Madurai achieve digital excellence."
-        keywords={portfolioKeywords}
+        keywords={pageKeywords.portfolio.join(", ")}
         canonicalUrl="/portfolio"
         ogType="website"
         ogImage="/images/portfolio-og-image.jpg"
