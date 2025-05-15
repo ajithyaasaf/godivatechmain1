@@ -3,7 +3,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "vercel-build.sh",
+      "src": "vercel-build-new.sh",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "client/dist"
