@@ -14,7 +14,7 @@ import {
   getWebsiteData,
   getWebPageData 
 } from "@/lib/structuredData";
-import { homeKeywords } from "@/lib/seoKeywords";
+import { pageKeywords } from "@/lib/seoKeywords";
 
 // Lazy loaded components (below the fold)
 const TeamSection = lazy(() => import("@/components/home/TeamSection"));
@@ -50,7 +50,7 @@ const Home = () => {
       <SEO
         title="Web Development & Digital Marketing Services | GodivaTech Madurai"
         description="GodivaTech offers quality web development, digital marketing, and app services in Madurai at competitive prices. Get custom solutions for your business."
-        keywords={homeKeywords}
+        keywords={pageKeywords.home.join(", ")}
         canonicalUrl="https://godivatech.com/"
         structuredData={structuredData}
         ogImage="https://godivatech.com/assets/home-og-image.jpg"

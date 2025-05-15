@@ -7,7 +7,7 @@ import TestimonialsSection from "@/components/home/TestimonialsSection";
 import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
-import { aboutKeywords } from "@/lib/seoKeywords";
+import { pageKeywords } from "@/lib/seoKeywords";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -36,7 +36,7 @@ const About = () => {
       <SEO
         title="Best Software Company in Madurai | About GodivaTech"
         description="GodivaTech provides affordable web development, digital marketing, and app development services in Madurai since 2010. Learn about our experienced team, mission, and values as a leading IT company in Tamil Nadu."
-        keywords={aboutKeywords}
+        keywords={pageKeywords.about.join(", ")}
         canonicalUrl="/about"
         ogType="profile"
         ogImage="/images/about-og-image.jpg"
