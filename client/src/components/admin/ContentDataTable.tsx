@@ -61,8 +61,19 @@ const ContentDataTable = ({
   const adminApiPath = `/api/admin${endpoint}`;
   
   // Fetch data with React Query
-  const { data = [], isLoading, refetch } = useQuery<any[]>({
+  const { data = [], isLoading, refetch, error } = useQuery<any[]>({
     queryKey: [apiPath],
+    onSuccess: (data) => {
+      console.log(`Data fetched for ${title}:`, data);
+      if (Array.isArray(data)) {
+        console.log(`Fetched ${data.length} ${title.toLowerCase()} items`);
+      } else {
+        console.error(`Expected array for ${title} but got:`, typeof data);
+      }
+    },
+    onError: (err) => {
+      console.error(`Error fetching ${title}:`, err);
+    }
   });
   
   // Setup WebSocket for real-time updates

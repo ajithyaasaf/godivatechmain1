@@ -566,9 +566,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Contact Messages
   // Public endpoint for contact messages (protected by auth middleware)
   app.get("/api/contact-messages", isAuthenticated, async (req, res) => {
+    console.log('GET /api/contact-messages endpoint called');
     try {
+      console.log('Calling storage.getAllContactMessages()');
       const messages = await storage.getAllContactMessages();
-      console.log(`Fetched ${messages.length} contact messages from Firestore`);
+      console.log(`Fetched ${messages.length} contact messages from Firestore through storage interface`);
+      console.log('Contact message data:', messages);
+      
       res.json(messages);
     } catch (error) {
       console.error("Error fetching contact messages:", error);
@@ -601,8 +605,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Subscribers
   // Public subscribers endpoint - for admin page that doesn't use /admin prefix
   app.get("/api/subscribers", isAuthenticated, async (req, res) => {
+    console.log('GET /api/subscribers endpoint called');
     try {
+      console.log('Calling storage.getAllSubscribers()');
       const subscribers = await storage.getAllSubscribers();
+      console.log(`Fetched ${subscribers.length} subscribers from Firestore through storage interface`);
+      console.log('Subscriber data:', subscribers);
+      
+      // Manually check the collection name in Firestore directly
+      // For logging/debugging only
+      console.log('Manually checking "subscribers" collection');
+      
       res.json(subscribers);
     } catch (error) {
       console.error("Error fetching subscribers:", error);
