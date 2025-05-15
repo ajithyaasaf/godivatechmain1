@@ -1,15 +1,8 @@
 {
   "name": "godivatech",
   "version": 2,
-  "builds": [
-    {
-      "src": "vercel-build-new.sh",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "client/dist"
-      }
-    }
-  ],
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
   "routes": [
     {
       "src": "/assets/(.*)",
