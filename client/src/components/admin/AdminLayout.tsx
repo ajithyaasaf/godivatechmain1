@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/context/AuthContext";
 
 import { 
   BarChart3, 
@@ -55,46 +55,34 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [location, setLocation] = useLocation();
-  const { user, logoutMutation } = useAuth();
+  const { user, logout, isLoading } = useAuth();
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Get first letter of username for avatar
   const userInitial = user?.username?.charAt(0).toUpperCase() || 'A';
 
-  const handleLogout = () => {
-    // This is a simplified, direct approach that will work reliably
-    
-    // First, let the user know we're logging out
-    console.log("Logging out...");
-    
-    // 1. Make the server-side logout call
-    fetch('/api/logout', {
-      method: 'POST',
-      credentials: 'include',
-      cache: 'no-cache'
-    });
-    
-    // 2. Clear all client-side storage immediately
+  const handleLogout = async () => {
     try {
-      // Clear localStorage
-      localStorage.clear();
+      // Set loading state
+      setIsLoggingOut(true);
       
-      // Clear sessionStorage
-      sessionStorage.clear();
+      // Log for debugging
+      console.log("AdminLayout: Initiating logout process");
       
-      // Clear all cookies
-      document.cookie.split(';').forEach(cookie => {
-        const [name] = cookie.trim().split('=');
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-      });
-    } catch (e) {
-      console.error("Error clearing storage:", e);
+      // Use centralized logout from AuthService via AuthContext
+      await logout();
+      
+      // Note: No need to manually redirect as our AuthService handles it
+      console.log("AdminLayout: Logout sequence completed");
+      
+    } catch (error) {
+      console.error("AdminLayout: Error during logout:", error);
+      
+      // Even if there's an error, force redirect to auth page
+      window.location.replace('/auth');
     }
-    
-    // 3. CRITICAL: Force a browser hard redirect to /auth 
-    // This is the most reliable way to handle navigation with auth state changes
-    window.location.replace('/auth');
   };
 
   const closeMobileNav = () => {
@@ -153,10 +141,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             variant="outline" 
             className="w-full justify-start"
             onClick={handleLogout}
-            disabled={logoutMutation.isPending}
+            disabled={isLoggingOut || isLoading}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            {logoutMutation.isPending ? "Logging out..." : "Logout"}
+            {isLoggingOut || isLoading ? "Logging out..." : "Logout"}
           </Button>
         </div>
       </aside>

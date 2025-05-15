@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useAuth } from "@/hooks/use-auth";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,15 +18,17 @@ const loginSchema = insertUserSchema.pick({
 });
 
 export default function AuthPage() {
-  const { user, loginMutation } = useAuth();
+  const { user, isAuthenticated, login, isLoading } = useAuth();
   const [location, setLocation] = useLocation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // If user is already logged in, redirect to home page
+  // If user is already logged in, redirect to admin page
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated && user) {
+      console.log("User is already authenticated, redirecting to /admin");
       setLocation("/admin");
     }
-  }, [user, setLocation]);
+  }, [isAuthenticated, user, setLocation]);
 
   // Login form
   const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -38,15 +40,35 @@ export default function AuthPage() {
   });
 
   // Handle login submission
-  function onLoginSubmit(values: z.infer<typeof loginSchema>) {
-    loginMutation.mutate(values, {
-      onSuccess: () => {
+  async function onLoginSubmit(values: z.infer<typeof loginSchema>) {
+    try {
+      setIsSubmitting(true);
+      console.log("Attempting login with:", values.username);
+      
+      const success = await login(values.username, values.password);
+      
+      if (success) {
+        console.log("Login successful, redirecting to /admin");
         // Redirect to admin dashboard after successful login
         setTimeout(() => {
           window.location.href = '/admin';
         }, 500);
+      } else {
+        console.log("Login failed");
+        loginForm.setError("password", { 
+          type: "manual", 
+          message: "Invalid username or password" 
+        });
       }
-    });
+    } catch (error) {
+      console.error("Login error:", error);
+      loginForm.setError("password", { 
+        type: "manual", 
+        message: error instanceof Error ? error.message : "An unknown error occurred" 
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -98,9 +120,9 @@ export default function AuthPage() {
                 <Button 
                   type="submit" 
                   className="w-full" 
-                  disabled={loginMutation.isPending}
+                  disabled={isSubmitting || isLoading}
                 >
-                  {loginMutation.isPending ? (
+                  {(isSubmitting || isLoading) ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Logging in...
