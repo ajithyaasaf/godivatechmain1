@@ -990,7 +990,8 @@ export class FirestoreStorage {
     try {
       console.log('Fetching all contact messages from Firestore');
       
-      // Get collection reference
+      // Get collection reference - using the exact name from Firestore
+      // Note: Your screenshot shows "contact_messages" in Firestore
       const contactMessagesRef = collection(db, 'contact_messages');
       
       // Debug - list all collections to see if contact_messages exists
@@ -1084,20 +1085,65 @@ export class FirestoreStorage {
   // Subscribers methods
   async getAllSubscribers(): Promise<Subscriber[]> {
     try {
+      console.log('Fetching all subscribers from Firestore');
+      
+      // First, list all available collections for debugging
+      const collectionsSnap = await getDocs(collection(db, ''));
+      console.log('Available Firestore collections:');
+      collectionsSnap.forEach(col => {
+        console.log(` - ${col.id}`);
+      });
+      
+      // Get collection reference - adjust name to match what we see in Firebase
+      // Note: your screenshot shows "subscribers" (lowercase) in Firestore
       const subscribersRef = collection(db, 'subscribers');
+      
+      // Try to query without filters first to see if collection exists and has docs
+      console.log('Querying subscribers collection');
+      const simpleSnapshot = await getDocs(subscribersRef);
+      console.log(`Found ${simpleSnapshot.docs.length} subscribers with simple query`);
+      
+      // If we found documents, proceed with ordered query
       const q = query(subscribersRef, orderBy('createdAt', 'desc'));
       const querySnapshot = await getDocs(q);
       
-      return querySnapshot.docs.map(docSnap => {
+      console.log(`Found ${querySnapshot.docs.length} subscribers with ordered query`);
+      
+      // Process documents with detailed logging
+      const subscribers = querySnapshot.docs.map(docSnap => {
         const data = docSnap.data() as any;
+        console.log(`Subscriber ${docSnap.id}: ${JSON.stringify(data, null, 2)}`);
+        
+        // Handle different document ID formats
+        let docId: number;
+        try {
+          docId = parseInt(docSnap.id);
+        } catch (e) {
+          console.log(`Could not parse document ID "${docSnap.id}" as number, using 0`);
+          docId = 0;
+        }
+        
+        // Handle different date formats in createdAt
+        let createdAtDate: Date;
+        try {
+          createdAtDate = convertTimestampToDate(data.createdAt);
+        } catch (e) {
+          console.log(`Could not convert createdAt for subscriber ${docSnap.id}, using current date`);
+          createdAtDate = new Date();
+        }
+        
         return { 
           ...data,
-          id: parseInt(docSnap.id),
-          createdAt: convertTimestampToDate(data.createdAt)
+          id: docId,
+          createdAt: createdAtDate
         } as Subscriber;
       });
+      
+      console.log(`Successfully processed ${subscribers.length} subscribers`);
+      return subscribers;
     } catch (error) {
       console.error("Error getting all subscribers:", error);
+      console.error(error instanceof Error ? error.stack : String(error));
       return [];
     }
   }
