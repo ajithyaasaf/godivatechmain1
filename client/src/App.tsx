@@ -12,6 +12,7 @@ import FontOptimizer from "@/components/performance/FontOptimizer";
 import CriticalCSSOptimizer from "@/components/performance/CriticalCSSOptimizer";
 import { usePageHistory } from "@/hooks/use-page-history";
 import { initializePerformanceOptimizations } from "@/lib/performance";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 // Optimized loading component with minimal DOM updates and better UX
 import OptimizedLoadingIndicator from "@/components/OptimizedLoadingIndicator";
@@ -76,6 +77,9 @@ function App() {
   
   // Track page navigation for the 404 page history feature
   usePageHistory();
+  
+  // Initialize Google Analytics and track page views
+  useAnalytics();
   
   // Initialize performance tracking and Core Web Vitals optimizations
   useEffect(() => {
