@@ -71,7 +71,7 @@ Disallow: /auth
 Disallow: /api/
 
 # Sitemaps - Point to enhanced sitemap index
-Sitemap: https://godivatech-backend.onrender.com/sitemap.xml
+Sitemap: https://godivatech-backend.onrender.com/sitemap-index.xml
 
 # Request rate for all crawlers
 Request-rate: 1/10s
