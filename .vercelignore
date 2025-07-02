@@ -1,0 +1,61 @@
+# Replit specific files
+.replit
+.nix
+.gitattributes
+replit.lock
+pyproject.toml
+poetry.lock
+
+# Server files (not needed for frontend-only deployment)
+server/
+api/index.js
+api/standalone.js
+
+# Development files
+.env.local
+.env.development
+tsconfig.node.json
+eslint.config.js
+
+# Documentation
+docs/
+*.md
+CHANGELOG.md
+README.md
+DEPLOYMENT*.md
+PRODUCTION*.md
+
+# Build artifacts
+dist/
+build/
+.vite/
+.cache/
+
+# Node modules
+node_modules/
+
+# Testing
+**/*.test.*
+**/*.spec.*
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Development scripts
+scripts/
+update-imports.js
+cloudinary-test.js
+cloudinary-verify.js
+
+# Database and server configs
+drizzle.config.ts

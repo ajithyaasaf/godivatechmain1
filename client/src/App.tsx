@@ -1,3 +1,4 @@
+// This is app.tsx - Main application entry point
 import { Switch, Route, useLocation } from "wouter";
 import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/context/AuthContext";
