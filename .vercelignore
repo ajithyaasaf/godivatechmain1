@@ -54,7 +54,6 @@ logs/
 # Development scripts
 scripts/
 update-imports.js
-verify-build.js
 cloudinary-test.js
 cloudinary-verify.js
 
