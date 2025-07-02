@@ -3,8 +3,11 @@ export default {
   darkMode: ["class"],
   content: [
     "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}"
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./src/**/*.{vue,html}",
+    "./src/**/*.css"
   ],
+  important: true,
   theme: {
     extend: {
       borderRadius: {

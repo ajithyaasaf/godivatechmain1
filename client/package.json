@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node verify-build.js",
+    "build:vercel": "vite build",
+    "verify": "node verify-build.js",
     "preview": "vite preview"
   },
   "dependencies": {
