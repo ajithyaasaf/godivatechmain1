@@ -59,5 +59,3 @@ cloudinary-verify.js
 
 # Database and server configs
 drizzle.config.ts
-tailwind.config.ts
-postcss.config.js
