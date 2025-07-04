@@ -14,6 +14,7 @@ import CriticalCSSOptimizer from "@/components/performance/CriticalCSSOptimizer"
 import { usePageHistory } from "@/hooks/use-page-history";
 import { initializePerformanceOptimizations } from "@/lib/performance";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useFacebookPixel } from "@/hooks/useFacebookPixel";
 
 // Optimized loading component with minimal DOM updates and better UX
 import OptimizedLoadingIndicator from "@/components/OptimizedLoadingIndicator";
@@ -81,6 +82,14 @@ function App() {
   
   // Initialize Google Analytics and track page views
   useAnalytics();
+  
+  // Initialize Facebook Pixel tracking
+  const { trackPageView } = useFacebookPixel();
+  
+  // Track page views with Facebook Pixel on location changes
+  useEffect(() => {
+    trackPageView(location);
+  }, [location, trackPageView]);
   
   // Initialize performance tracking and Core Web Vitals optimizations
   useEffect(() => {

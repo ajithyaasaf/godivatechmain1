@@ -111,24 +111,11 @@ const SEO: React.FC<SEOProps> = memo(({
     (canonicalUrl.startsWith('http') ? canonicalUrl : `${domain}${canonicalUrl.startsWith('/') ? canonicalUrl : `/${canonicalUrl}`}`) : 
     getCurrentCanonicalUrl();
     
-  // Add direct DOM manipulation for critical SEO elements in case React Helmet fails
+  // Note: Canonical tag is handled by server-side SEO middleware to prevent duplication
+  // Only log in development for debugging
   useEffect(() => {
-    // Ensure canonical URL is always added to the DOM even if Helmet has issues
-    let canonicalElement = document.querySelector('link[rel="canonical"]');
-    
-    if (!canonicalElement) {
-      // Create and add canonical link if it doesn't exist
-      canonicalElement = document.createElement('link');
-      canonicalElement.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonicalElement);
-    }
-    
-    // Set the href attribute to the canonical URL
-    canonicalElement.setAttribute('href', canonical);
-    
-    // Log in development
     if (process.env.NODE_ENV === 'development') {
-      console.log("Canonical URL set by useEffect:", canonical);
+      console.log("Canonical URL (handled by server):", canonical);
     }
   }, [canonical]);
   
