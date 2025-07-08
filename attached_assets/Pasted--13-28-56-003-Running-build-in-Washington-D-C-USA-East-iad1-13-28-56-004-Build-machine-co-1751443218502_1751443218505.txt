@@ -1,0 +1,105 @@
+[13:28:56.003] Running build in Washington, D.C., USA (East) – iad1
+[13:28:56.004] Build machine configuration: 2 cores, 8 GB
+[13:28:56.021] Cloning github.com/ajithyaasaf/godivatechmain1 (Branch: main, Commit: c5307ab)
+[13:28:56.419] Cloning completed: 397.000ms
+[13:28:56.483] Found .vercelignore
+[13:28:56.497] Removed 25 ignored files defined in .vercelignore
+[13:28:56.498]   /.git/logs/HEAD
+[13:28:56.498]   /.git/logs/refs/heads/master
+[13:28:56.498]   /.replit
+[13:28:56.498]   /client/postcss.config.js
+[13:28:56.498]   /drizzle.config.ts
+[13:28:56.498]   /postcss.config.js
+[13:28:56.498]   /replit.md
+[13:28:56.498]   /scripts/sitemap-automation.js
+[13:28:56.498]   /server/auth.ts
+[13:28:56.498]   /server/caching.ts
+[13:28:57.809] Restored build cache from previous deployment (DqtoX1gSnGs9YdhgYEpf4rHuYR3E)
+[13:28:58.544] Running "vercel build"
+[13:28:59.003] Vercel CLI 43.3.0
+[13:28:59.609] Installing dependencies...
+[13:29:01.478] 
+[13:29:01.479] changed 1 package in 1s
+[13:29:01.480] 
+[13:29:01.480] 77 packages are looking for funding
+[13:29:01.480]   run `npm fund` for details
+[13:29:01.621] 
+[13:29:01.622] > rest-express@1.0.0 build
+[13:29:01.622] > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+[13:29:01.622] 
+[13:29:02.064] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[13:29:02.128] transforming...
+[13:29:10.786] [32m✓[39m 2553 modules transformed.
+[13:29:11.322] rendering chunks...
+[13:29:12.040] computing gzip size...
+[13:29:12.097] [2m../dist/public/[22m[32mindex.html                              [39m[1m[2m    2.38 kB[22m[1m[22m[2m │ gzip:   1.03 kB[22m
+[13:29:12.097] [2m../dist/public/[22m[2massets/[22m[32mgodiva-logo-C316X4_3.png         [39m[1m[2m   17.03 kB[22m[1m[22m
+[13:29:12.097] [2m../dist/public/[22m[2massets/[22m[32mmodern-workspace-Bii4tqxV.jpeg   [39m[1m[2m   49.82 kB[22m[1m[22m
+[13:29:12.097] [2m../dist/public/[22m[2massets/[22m[32mceo-FxtVRioG.jpg                 [39m[1m[2m1,077.43 kB[22m[1m[22m
+[13:29:12.098] [2m../dist/public/[22m[2massets/[22m[35mindex-C4r_k6O4.css               [39m[1m[2m    0.87 kB[22m[1m[22m[2m │ gzip:   0.38 kB[22m
+[13:29:12.098] [2m../dist/public/[22m[2massets/[22m[36mindex-GtnAQxHu.js                [39m[1m[2m    0.14 kB[22m[1m[22m[2m │ gzip:   0.14 kB[22m
+[13:29:12.099] [2m../dist/public/[22m[2massets/[22m[36mindex-AytApV8c.js                [39m[1m[2m    0.23 kB[22m[1m[22m[2m │ gzip:   0.17 kB[22m
+[13:29:12.099] [2m../dist/public/[22m[2massets/[22m[36mchevron-right-CIDOjAsm.js        [39m[1m[2m    0.30 kB[22m[1m[22m[2m │ gzip:   0.25 kB[22m
+[13:29:12.099] [2m../dist/public/[22m[2massets/[22m[36marrow-left-m6ahRjVe.js           [39m[1m[2m    0.33 kB[22m[1m[22m[2m │ gzip:   0.27 kB[22m
+[13:29:12.100] [2m../dist/public/[22m[2massets/[22m[36mcircle-check-big-TmVgsQEJ.js     [39m[1m[2m    0.36 kB[22m[1m[22m[2m │ gzip:   0.28 kB[22m
+[13:29:12.100] [2m../dist/public/[22m[2massets/[22m[36mcircle-alert-BeD7E0X7.js         [39m[1m[2m    0.42 kB[22m[1m[22m[2m │ gzip:   0.29 kB[22m
+[13:29:12.100] [2m../dist/public/[22m[2massets/[22m[36mexternal-link-Bjk8GlEp.js        [39m[1m[2m    0.42 kB[22m[1m[22m[2m │ gzip:   0.30 kB[22m
+[13:29:12.100] [2m../dist/public/[22m[2massets/[22m[36mcalendar-9q5VBNgX.js             [39m[1m[2m    0.43 kB[22m[1m[22m[2m │ gzip:   0.31 kB[22m
+[13:29:12.100] [2m../dist/public/[22m[2massets/[22m[36moptimized-image-BAtTExzo.js      [39m[1m[2m    0.45 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+[13:29:12.100] [2m../dist/public/[22m[2massets/[22m[36mhouse-l5iyFuvC.js                [39m[1m[2m    0.46 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+[13:29:12.100] [2m../dist/public/[22m[2massets/[22m[36mfile-text-D9TkPXEs.js            [39m[1m[2m    0.50 kB[22m[1m[22m[2m │ gzip:   0.32 kB[22m
+[13:29:12.101] [2m../dist/public/[22m[2massets/[22m[36mtextarea-B16_37TQ.js             [39m[1m[2m    0.61 kB[22m[1m[22m[2m │ gzip:   0.40 kB[22m
+[13:29:12.101] [2m../dist/public/[22m[2massets/[22m[36minput-CP7uhMkf.js                [39m[1m[2m    0.69 kB[22m[1m[22m[2m │ gzip:   0.42 kB[22m
+[13:29:12.101] [2m../dist/public/[22m[2massets/[22m[36mbadge-C0yiB12q.js                [39m[1m[2m    0.82 kB[22m[1m[22m[2m │ gzip:   0.45 kB[22m
+[13:29:12.101] [2m../dist/public/[22m[2massets/[22m[36mCategoryFilter-DlyuTle4.js       [39m[1m[2m    0.94 kB[22m[1m[22m[2m │ gzip:   0.56 kB[22m
+[13:29:12.101] [2m../dist/public/[22m[2massets/[22m[36muse-firestore-CgEHCpjF.js        [39m[1m[2m    1.13 kB[22m[1m[22m[2m │ gzip:   0.51 kB[22m
+[13:29:12.101] [2m../dist/public/[22m[2massets/[22m[36mMapSection-Djdonzlg.js           [39m[1m[2m    1.62 kB[22m[1m[22m[2m │ gzip:   0.78 kB[22m
+[13:29:12.101] [2m../dist/public/[22m[2massets/[22m[36mcard-lxjAoPC2.js                 [39m[1m[2m    1.66 kB[22m[1m[22m[2m │ gzip:   0.47 kB[22m
+[13:29:12.102] [2m../dist/public/[22m[2massets/[22m[36mbreadcrumb-CK_c7Ey0.js           [39m[1m[2m    2.05 kB[22m[1m[22m[2m │ gzip:   0.62 kB[22m
+[13:29:12.102] [2m../dist/public/[22m[2massets/[22m[36msubscribers-CoKJU2vs.js          [39m[1m[2m    2.95 kB[22m[1m[22m[2m │ gzip:   0.76 kB[22m
+[13:29:12.102] [2m../dist/public/[22m[2massets/[22m[36mfirestore-Yrp_NvAL.js            [39m[1m[2m    3.07 kB[22m[1m[22m[2m │ gzip:   1.16 kB[22m
+[13:29:12.102] [2m../dist/public/[22m[2massets/[22m[36mNewsletterSection-CWeXq_lR.js    [39m[1m[2m    3.30 kB[22m[1m[22m[2m │ gzip:   1.13 kB[22m
+[13:29:12.102] [2m../dist/public/[22m[2massets/[22m[36mcheckbox-D1c3yfpu.js             [39m[1m[2m    4.21 kB[22m[1m[22m[2m │ gzip:   1.80 kB[22m
+[13:29:12.102] [2m../dist/public/[22m[2massets/[22m[36mFileUpload-CKnxHW1c.js           [39m[1m[2m    4.29 kB[22m[1m[22m[2m │ gzip:   1.51 kB[22m
+[13:29:12.102] [2m../dist/public/[22m[2massets/[22m[36mnot-found-hfM3JL-5.js            [39m[1m[2m    5.79 kB[22m[1m[22m[2m │ gzip:   1.32 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mCTASection-Cgxj6JR0.js           [39m[1m[2m    5.95 kB[22m[1m[22m[2m │ gzip:   1.79 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mBlogSection-CSbYMaMe.js          [39m[1m[2m    6.77 kB[22m[1m[22m[2m │ gzip:   2.24 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mtabs-CmqfHCND.js                 [39m[1m[2m    6.96 kB[22m[1m[22m[2m │ gzip:   2.73 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mcontact-messages-h1esiUvi.js     [39m[1m[2m    7.64 kB[22m[1m[22m[2m │ gzip:   1.50 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mContact-B2nGdV5E.js              [39m[1m[2m    7.73 kB[22m[1m[22m[2m │ gzip:   2.28 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mTestimonialsSection--ofpGpzg.js  [39m[1m[2m    7.97 kB[22m[1m[22m[2m │ gzip:   2.35 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mcategories-BeIqUJAD.js           [39m[1m[2m    8.19 kB[22m[1m[22m[2m │ gzip:   1.95 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mTeamSection-CyRnsTb4.js          [39m[1m[2m    8.25 kB[22m[1m[22m[2m │ gzip:   2.29 kB[22m
+[13:29:12.103] [2m../dist/public/[22m[2massets/[22m[36mPortfolioSection-CFuXP1jp.js     [39m[1m[2m    8.80 kB[22m[1m[22m[2m │ gzip:   2.48 kB[22m
+[13:29:12.104] [2m../dist/public/[22m[2massets/[22m[36mBlogCard-PqQBCFf3.js             [39m[1m[2m    8.84 kB[22m[1m[22m[2m │ gzip:   2.64 kB[22m
+[13:29:12.104] [2m../dist/public/[22m[2massets/[22m[36mservices-Cc7AYW1l.js             [39m[1m[2m   10.04 kB[22m[1m[22m[2m │ gzip:   2.26 kB[22m
+[13:29:12.104] [2m../dist/public/[22m[2massets/[22m[36mauth-page-B25NQlBO.js            [39m[1m[2m   10.53 kB[22m[1m[22m[2m │ gzip:   2.23 kB[22m
+[13:29:12.105] [2m../dist/public/[22m[2massets/[22m[36mtestimonials-DNvPvXN0.js         [39m[1m[2m   11.14 kB[22m[1m[22m[2m │ gzip:   2.25 kB[22m
+[13:29:12.106] [2m../dist/public/[22m[2massets/[22m[36mteam-members-CfTVZayn.js         [39m[1m[2m   11.73 kB[22m[1m[22m[2m │ gzip:   2.22 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mAbout-Cc_GUM6O.js                [39m[1m[2m   14.01 kB[22m[1m[22m[2m │ gzip:   2.93 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mAdminLayout-B9pg3bCT.js          [39m[1m[2m   16.41 kB[22m[1m[22m[2m │ gzip:   4.00 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mBlog-Cem3apAK.js                 [39m[1m[2m   16.58 kB[22m[1m[22m[2m │ gzip:   4.44 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mContactSection-DuLmxjDd.js       [39m[1m[2m   19.65 kB[22m[1m[22m[2m │ gzip:   3.40 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mPortfolio-DOaPslZv.js            [39m[1m[2m   19.96 kB[22m[1m[22m[2m │ gzip:   4.57 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mformat-CoLFXwEe.js               [39m[1m[2m   20.29 kB[22m[1m[22m[2m │ gzip:   5.75 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mBlogPost-Dk8slJrn.js             [39m[1m[2m   26.31 kB[22m[1m[22m[2m │ gzip:   5.78 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mindex-C68CcQNJ.js                [39m[1m[2m   31.74 kB[22m[1m[22m[2m │ gzip:   7.25 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mblog-posts-DkXWHJIj.js           [39m[1m[2m   43.13 kB[22m[1m[22m[2m │ gzip:  10.61 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mServiceDetail-ComGk3ci.js        [39m[1m[2m   45.05 kB[22m[1m[22m[2m │ gzip:  11.38 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mprojects-zTDYdqvo.js             [39m[1m[2m   47.70 kB[22m[1m[22m[2m │ gzip:   7.71 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mContentDataTable-C1Lcsanb.js     [39m[1m[2m   50.47 kB[22m[1m[22m[2m │ gzip:  15.41 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mServices-DvICJGUr.js             [39m[1m[2m   55.97 kB[22m[1m[22m[2m │ gzip:  10.72 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mtypes-BqAjLyII.js                [39m[1m[2m   83.70 kB[22m[1m[22m[2m │ gzip:  23.08 kB[22m
+[13:29:12.107] [2m../dist/public/[22m[2massets/[22m[36mindex-swVX5SJZ.js                [39m[1m[33m1,487.91 kB[39m[22m[2m │ gzip: 418.66 kB[22m
+[13:29:12.118] [33m
+[13:29:12.118] (!) Some chunks are larger than 500 kB after minification. Consider:
+[13:29:12.118] - Using dynamic import() to code-split the application
+[13:29:12.118] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[13:29:12.119] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+[13:29:12.119] [32m✓ built in 10.02s[39m
+[13:29:12.192] ✘ [ERROR] The entry point "server/index.ts" cannot be marked as external
+[13:29:12.192] 
+[13:29:12.194] 1 error
+[13:29:12.204] Error: Command "npm run build" exited with 1
+[13:29:12.581] 
+[13:29:16.574] Exiting build container

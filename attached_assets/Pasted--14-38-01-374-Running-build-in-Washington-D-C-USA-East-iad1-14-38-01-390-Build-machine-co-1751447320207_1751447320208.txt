@@ -1,0 +1,61 @@
+[14:38:01.374] Running build in Washington, D.C., USA (East) – iad1
+[14:38:01.390] Build machine configuration: 2 cores, 8 GB
+[14:38:01.478] Cloning github.com/ajithyaasaf/godivatechmain1 (Branch: main, Commit: 3c4378c)
+[14:38:03.578] Cloning completed: 2.100s
+[14:38:03.856] Found .vercelignore
+[14:38:03.938] Removed 24 ignored files defined in .vercelignore
+[14:38:03.941]   /.git/logs/HEAD
+[14:38:03.941]   /.git/logs/refs/heads/master
+[14:38:03.941]   /.replit
+[14:38:03.941]   /client/postcss.config.js
+[14:38:03.941]   /DEPLOYMENT.md
+[14:38:03.941]   /drizzle.config.ts
+[14:38:03.941]   /postcss.config.js
+[14:38:03.941]   /replit.md
+[14:38:03.942]   /scripts/sitemap-automation.js
+[14:38:03.942]   /server/auth.ts
+[14:38:04.368] Restored build cache from previous deployment (411xNbwJDYFqhF9j33vsGE8Sdyx9)
+[14:38:05.317] Running "vercel build"
+[14:38:06.135] Vercel CLI 43.3.0
+[14:38:06.729] Installing dependencies...
+[14:38:11.487] 
+[14:38:11.488] removed 496 packages, and changed 1 package in 3s
+[14:38:11.488] 
+[14:38:11.488] 43 packages are looking for funding
+[14:38:11.488]   run `npm fund` for details
+[14:38:12.619] 
+[14:38:12.620] up to date, audited 187 packages in 1s
+[14:38:12.620] 
+[14:38:12.621] 40 packages are looking for funding
+[14:38:12.621]   run `npm fund` for details
+[14:38:12.629] 
+[14:38:12.629] 2 moderate severity vulnerabilities
+[14:38:12.629] 
+[14:38:12.630] To address all issues (including breaking changes), run:
+[14:38:12.630]   npm audit fix --force
+[14:38:12.630] 
+[14:38:12.630] Run `npm audit` for details.
+[14:38:12.756] 
+[14:38:12.756] > godivatech-frontend@0.0.0 build
+[14:38:12.756] > vite build
+[14:38:12.757] 
+[14:38:13.125] [36mvite v5.4.19 [32mbuilding for production...[36m[39m
+[14:38:13.185] transforming...
+[14:38:13.292] [32m✓[39m 10 modules transformed.
+[14:38:13.299] [31mx[39m Build failed in 147ms
+[14:38:13.300] [31merror during build:
+[14:38:13.300] [31m[vite]: Rollup failed to resolve import "firebase/app" from "/vercel/path0/client/src/lib/firebase.ts".
+[14:38:13.301] This is most likely unintended because it can break your application at runtime.
+[14:38:13.301] If you do want to externalize this module explicitly add it to
+[14:38:13.301] `build.rollupOptions.external`[31m
+[14:38:13.301]     at viteWarn (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65839:17)
+[14:38:13.301]     at onwarn (file:///vercel/path0/client/node_modules/@vitejs/plugin-react/dist/index.mjs:104:9)
+[14:38:13.301]     at onRollupWarning (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65869:5)
+[14:38:13.302]     at onwarn (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-C6uTJdX2.js:65534:7)
+[14:38:13.302]     at file:///vercel/path0/client/node_modules/rollup/dist/es/shared/node-entry.js:20817:13
+[14:38:13.302]     at Object.logger [as onLog] (file:///vercel/path0/client/node_modules/rollup/dist/es/shared/node-entry.js:22683:9)
+[14:38:13.302]     at ModuleLoader.handleInvalidResolvedId (file:///vercel/path0/client/node_modules/rollup/dist/es/shared/node-entry.js:21429:26)
+[14:38:13.302]     at file:///vercel/path0/client/node_modules/rollup/dist/es/shared/node-entry.js:21387:26[39m
+[14:38:13.317] Error: Command "cd client && npm install && npm run build" exited with 1
+[14:38:13.622] 
+[14:38:16.436] Exiting build container
