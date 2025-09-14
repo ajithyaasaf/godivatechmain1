@@ -36,8 +36,9 @@ const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, i
                       opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
       
       {/* Main card */}
-      <div className="relative bg-white rounded-2xl shadow-lg border border-gray-100 p-8 
-                      group-hover:shadow-xl group-hover:-translate-y-2 transition-all duration-300">
+      <div className="relative bg-white rounded-2xl shadow-lg border border-gray-100 p-8 h-full
+                      group-hover:shadow-xl group-hover:-translate-y-2 transition-all duration-300 
+                      flex flex-col">
         
         {/* Icon section */}
         <div className="flex items-center justify-between mb-6">
@@ -57,54 +58,86 @@ const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, i
           </div>
         </div>
         
-        {/* Content */}
-        <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
-          {service.title}
-        </h3>
-        
-        <p className="text-gray-600 mb-6 leading-relaxed">
-          {service.description}
-        </p>
-        
-        {/* Features list */}
-        <div className="space-y-2 mb-6">
-          {(service.features || ["Professional Service", "Quick Delivery", "24/7 Support"]).map((feature, idx) => (
-            <div key={idx} className="flex items-center text-sm text-gray-600">
-              <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-              {feature}
-            </div>
-          ))}
+        {/* Content - flex-grow to push button to bottom */}
+        <div className="flex-grow">
+          <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
+            {service.title}
+          </h3>
+          
+          <p className="text-gray-600 mb-6 leading-relaxed">
+            {service.description}
+          </p>
+          
+          {/* Features list */}
+          <div className="space-y-2 mb-6">
+            {(service.features || ["Professional Service", "Quick Delivery", "24/7 Support"]).map((feature, idx) => (
+              <div key={idx} className="flex items-center text-sm text-gray-600">
+                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
+                {feature}
+              </div>
+            ))}
+          </div>
         </div>
         
-        {/* CTA Button */}
-        <Link href={`/services/${service.slug}`}>
-          <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white 
-                           py-3 px-6 rounded-xl font-semibold group-hover:from-blue-600 
-                           group-hover:to-indigo-700 transition-all duration-300 
-                           flex items-center justify-center">
-            Learn More
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </Link>
+        {/* CTA Button - always at bottom */}
+        <div className="mt-auto">
+          <Link href={`/services/${service.slug}`}>
+            <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white 
+                             py-3 px-6 rounded-xl font-semibold group-hover:from-blue-600 
+                             group-hover:to-indigo-700 transition-all duration-300 
+                             flex items-center justify-center">
+              Learn More
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
 
-// Icon mapping function
-const getIconComponent = (iconName?: string): React.ElementType => {
-  if (!iconName) return Globe;
+// Enhanced icon mapping function with service title fallback
+const getIconComponent = (iconName?: string, serviceTitle?: string): React.ElementType => {
+  // If we have an explicit icon name, try to map it
+  if (iconName) {
+    const iconMap: Record<string, React.ElementType> = {
+      'globe': Globe,
+      'megaphone': Megaphone,
+      'smartphone': Smartphone,
+      'pentool': PenTool,
+      'pen-tool': PenTool,
+      'layout': Layout,
+      'palette': Palette,
+      'marketing': Megaphone,
+      'design': Palette,
+      'web': Globe,
+      'app': Smartphone,
+      'mobile': Smartphone,
+      'brand': Palette,
+      'branding': Palette,
+      'logo': Palette,
+      'ux': Layout,
+      'ui': Layout,
+      'poster': PenTool,
+    };
+    
+    const mapped = iconMap[iconName.toLowerCase()];
+    if (mapped) return mapped;
+  }
   
-  const iconMap: Record<string, React.ElementType> = {
-    'globe': Globe,
-    'megaphone': Megaphone,
-    'smartphone': Smartphone,
-    'pentool': PenTool,
-    'layout': Layout,
-    'palette': Palette,
-  };
+  // Fallback based on service title keywords
+  if (serviceTitle) {
+    const title = serviceTitle.toLowerCase();
+    
+    if (title.includes('web') || title.includes('website')) return Globe;
+    if (title.includes('marketing') || title.includes('digital')) return Megaphone;
+    if (title.includes('app') || title.includes('mobile')) return Smartphone;
+    if (title.includes('poster') || title.includes('design') && title.includes('poster')) return PenTool;
+    if (title.includes('ui') || title.includes('ux') || title.includes('interface')) return Layout;
+    if (title.includes('logo') || title.includes('brand') || title.includes('branding')) return Palette;
+  }
   
-  return iconMap[iconName.toLowerCase()] || Globe;
+  return Globe; // Default fallback
 };
 
 // Main services section component
@@ -167,10 +200,10 @@ const ServiceSection: React.FC = () => {
     }
   ];
 
-  // Convert API services to Service format
+  // Convert API services to Service format with proper icon mapping
   const convertApiToService = (apiService: ApiService): Service => ({
     ...apiService,
-    icon: getIconComponent(apiService.icon),
+    icon: getIconComponent(apiService.icon, apiService.title),
     features: ["Professional Service", "Quick Delivery", "24/7 Support"] // Default features for API services
   });
 
