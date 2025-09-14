@@ -90,27 +90,43 @@ const TestimonialsSection = memo(() => {
   const defaultTestimonials = useMemo(() => [
     {
       id: 1,
-      name: "Siva Prakash",
-      position: "Owner",
-      company: "Give Grants",
-      content: "Godiva Technologies revamped our website with a modern design and improved user experience. Their team was quick to understand our requirements and delivered exactly what we needed for our business.",
-      image: "https://randomuser.me/api/portraits/men/32.jpg"
+      name: "Murugan Selvam",
+      position: "Managing Director",
+      company: "Madurai Silk Palace",
+      content: "Godiva Technologies created a beautiful website for our traditional silk business. The design perfectly showcases our products and has helped us reach customers across Tamil Nadu. Very professional team!",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
     },
     {
       id: 2,
-      name: "Ahmed Al-Maktoum",
-      position: "Director",
-      company: "UAE Business Solutions",
-      content: "We appreciate Godiva Tech's professional approach to website development. They created a website that perfectly represents our brand and has helped increase our customer inquiries by 40%.",
-      image: "https://randomuser.me/api/portraits/men/33.jpg"
+      name: "Sarah Johnson",
+      position: "Brand Manager",
+      company: "Phoenix Creative Studio, USA",
+      content: "Godiva Tech delivered exceptional logo design and branding services for our US-based creative agency. Their understanding of modern design trends and attention to detail exceeded our expectations. Highly recommended for branding projects!",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
     },
     {
       id: 3,
-      name: "Priya Venkatesh",
-      position: "Marketing Manager",
-      company: "Padmarajam Textiles",
-      content: "The social media marketing campaigns designed by Godiva Technologies have significantly improved our online presence. Their team is responsive, creative, and delivers great results on time.",
-      image: "https://randomuser.me/api/portraits/women/28.jpg"
+      name: "Karthik Ramasamy",
+      position: "Owner",
+      company: "Meenakshi Restaurant",
+      content: "Our restaurant's online presence improved dramatically after Godiva Technologies built our website. Online orders increased by 60% and customer engagement is much better. Great work by the Madurai team!",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+      id: 4,
+      name: "Lakshmi Sundar",
+      position: "Director",
+      company: "Sundar Jewellers",
+      content: "The digital marketing strategies implemented by Godiva Technologies have brought more customers to our jewelry store. Their social media campaigns perfectly capture our brand essence. Excellent service!",
+      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
+    },
+    {
+      id: 5,
+      name: "Vinoth Kumar",
+      position: "Founder",
+      company: "Tamil Tech Solutions",
+      content: "As a fellow tech company in Madurai, we appreciate Godiva's technical expertise in web development. They helped us build a robust platform that serves our clients effectively. Top-notch development skills!",
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
     }
   ], []);
 
