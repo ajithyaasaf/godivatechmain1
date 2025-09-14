@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FaLinkedin, FaTwitter } from "react-icons/fa";
+import { FaLinkedin, FaInstagram } from "react-icons/fa";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Link } from "wouter";
 import { Users, ArrowRight } from "lucide-react";
@@ -15,7 +15,7 @@ interface TeamMember {
   bio: string;
   image: string;
   linkedIn?: string;
-  twitter?: string;
+  instagram?: string;
 }
 
 // Optimized for performance with memoization
@@ -35,7 +35,7 @@ const TeamMemberCard = memo(({ member, index }: { member: TeamMember; index: num
         <OptimizedImage
           src={member.image}
           alt={`${member.name} - ${member.position}`}
-          className="w-full h-64 object-cover object-center"
+          className="w-full h-64 object-cover object-top"
           width={400}
           height={256}
         />
@@ -47,28 +47,20 @@ const TeamMemberCard = memo(({ member, index }: { member: TeamMember; index: num
         <p className="text-neutral-700 font-medium mt-3 mb-3">{member.position}</p>
         <p className="text-neutral-600 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">{member.bio}</p>
         <div className="flex space-x-3">
-          {member.linkedIn && (
-            <a
-              href={member.linkedIn}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-400 hover:text-primary transition-colors"
-              aria-label={`${member.name}'s LinkedIn profile`}
-            >
-              <FaLinkedin />
-            </a>
-          )}
-          {member.twitter && (
-            <a
-              href={member.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-400 hover:text-primary transition-colors"
-              aria-label={`${member.name}'s Twitter profile`}
-            >
-              <FaTwitter />
-            </a>
-          )}
+          <button
+            className="text-neutral-400 hover:text-primary transition-colors cursor-pointer"
+            aria-label={`${member.name}'s LinkedIn profile (Coming Soon)`}
+            title="LinkedIn - Coming Soon"
+          >
+            <FaLinkedin className="text-xl" />
+          </button>
+          <button
+            className="text-neutral-400 hover:text-primary transition-colors cursor-pointer"
+            aria-label={`${member.name}'s Instagram profile (Coming Soon)`}
+            title="Instagram - Coming Soon"
+          >
+            <FaInstagram className="text-xl" />
+          </button>
         </div>
       </div>
     </div>
@@ -92,8 +84,8 @@ const TeamSection = memo(() => {
       position: "Founder & CEO",
       bio: "Founded Godiva Technologies in 2012 with a vision to provide innovative web solutions and digital transformation services to businesses worldwide.",
       image: ceoImage,
-      linkedIn: "https://linkedin.com",
-      twitter: "https://twitter.com"
+      linkedIn: "#",
+      instagram: "#"
     },
     {
       id: 2,
@@ -101,8 +93,8 @@ const TeamSection = memo(() => {
       position: "Senior Software Developer",
       bio: "Specializes in building scalable web applications and modern software solutions with expertise in full-stack development and system architecture.",
       image: ajithImage,
-      linkedIn: "https://linkedin.com",
-      twitter: "https://twitter.com"
+      linkedIn: "#",
+      instagram: "#"
     }
   ], []);
 
