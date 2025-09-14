@@ -91,7 +91,7 @@ const TestimonialsSection = memo(() => {
     {
       id: 1,
       name: "Murugan Selvam",
-      position: "Managing Director",
+      position: "",
       company: "Madurai",
       content: "Godiva Technologies created a beautiful website for our traditional silk business. The design perfectly showcases our products and has helped us reach customers across Tamil Nadu. Very professional team!",
       image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
@@ -99,7 +99,7 @@ const TestimonialsSection = memo(() => {
     {
       id: 2,
       name: "Sarah Johnson",
-      position: "Brand Manager",
+      position: "",
       company: "US",
       content: "Godiva Tech delivered exceptional logo design and branding services for our US-based creative agency. Their understanding of modern design trends and attention to detail exceeded our expectations. Highly recommended for branding projects!",
       image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
@@ -107,7 +107,7 @@ const TestimonialsSection = memo(() => {
     {
       id: 3,
       name: "Karthik Ramasamy",
-      position: "Owner",
+      position: "",
       company: "Madurai",
       content: "Our restaurant's online presence improved dramatically after Godiva Technologies built our website. Online orders increased by 60% and customer engagement is much better. Great work by the Madurai team!",
       image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
@@ -115,7 +115,7 @@ const TestimonialsSection = memo(() => {
     {
       id: 4,
       name: "Lakshmi Sundar",
-      position: "Director",
+      position: "",
       company: "Chennai",
       content: "The digital marketing strategies implemented by Godiva Technologies have brought more customers to our jewelry store. Their social media campaigns perfectly capture our brand essence. Excellent service!",
       image: "https://images.unsplash.com/photo-1594736797933-d0401ba6fe65?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
@@ -123,7 +123,7 @@ const TestimonialsSection = memo(() => {
     {
       id: 5,
       name: "Vinoth Kumar",
-      position: "Founder",
+      position: "",
       company: "Chennai",
       content: "As a fellow tech company in Chennai, we appreciate Godiva's technical expertise in web development. They helped us build a robust platform that serves our clients effectively. Top-notch development skills!",
       image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
