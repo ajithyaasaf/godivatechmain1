@@ -144,8 +144,8 @@ async function uploadActualImages() {
     try {
       console.log(`\n📁 Processing: ${update.projectTitle}`);
       
-      // Check if image file exists
-      const fullImagePath = path.resolve(update.imagePath);
+      // Check if image file exists (resolve from project root)
+      const fullImagePath = path.resolve(process.cwd(), '..', update.imagePath);
       if (!fs.existsSync(fullImagePath)) {
         console.log(`⚠️  Image file not found: ${fullImagePath}`);
         continue;
