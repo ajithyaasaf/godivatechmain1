@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "wouter";
 import { 
   Globe, Megaphone, Smartphone, PenTool, Layout, Palette, 
-  ArrowRight, Star, CheckCircle 
+  ArrowRight, Star, CheckCircle, Cloud, Box, User, Database 
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -108,6 +108,11 @@ const getIconComponent = (iconName?: string, serviceTitle?: string): React.Eleme
       'pen-tool': PenTool,
       'layout': Layout,
       'palette': Palette,
+      'cloud': Cloud,
+      'box': Box,
+      'user': User,
+      'circleuser': User,
+      'database': Database,
       'marketing': Megaphone,
       'design': Palette,
       'web': Globe,
@@ -119,6 +124,8 @@ const getIconComponent = (iconName?: string, serviceTitle?: string): React.Eleme
       'ux': Layout,
       'ui': Layout,
       'poster': PenTool,
+      'ecommerce': Box,
+      'hosting': Database,
     };
     
     const mapped = iconMap[iconName.toLowerCase()];
