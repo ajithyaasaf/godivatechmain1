@@ -5,6 +5,7 @@ import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Link } from "wouter";
 import { Users, ArrowRight } from "lucide-react";
 import ceoImage from "../../assets/team/ceo.jpg";
+import ajithImage from "@assets/Photo_1757830422668.jpg";
 import OptimizedImage from "@/components/ui/optimized-image";
 
 interface TeamMember {
@@ -96,28 +97,10 @@ const TeamSection = memo(() => {
     },
     {
       id: 2,
-      name: "Priya Sankar",
-      position: "Creative Director",
-      bio: "Leads our creative design team with over 8 years of experience in branding and visual communications.",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-      linkedIn: "https://linkedin.com",
-      twitter: "https://twitter.com"
-    },
-    {
-      id: 3,
-      name: "Karthik Rajan",
-      position: "Technical Lead",
-      bio: "Heads our web development team with expertise in responsive design and modern frameworks.",
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-      linkedIn: "https://linkedin.com",
-      twitter: "https://twitter.com"
-    },
-    {
-      id: 4,
-      name: "Meena Krishnan",
-      position: "Digital Marketing Specialist",
-      bio: "Manages our digital marketing strategies with a focus on SEO, content marketing, and social media campaigns.",
-      image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+      name: "Ajith",
+      position: "Senior Software Developer",
+      bio: "Specializes in building scalable web applications and modern software solutions with expertise in full-stack development and system architecture.",
+      image: ajithImage,
       linkedIn: "https://linkedin.com",
       twitter: "https://twitter.com"
     }
