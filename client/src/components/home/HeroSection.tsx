@@ -69,16 +69,8 @@ const HeroSection = () => {
       // Start animations after LCP
       setShouldStartAnimations(true);
       
-      // Run typing animation after LCP
-      if (subtitleRef.current) {
-        subtitleRef.current.textContent = "";
-        typeText(
-          subtitleRef,
-          "Providing affordable IT solutions to businesses in Madurai and beyond.",
-          30, // Slightly faster typing for better performance
-          300  // Reduced delay for better performance
-        );
-      }
+      // Note: Typing animation disabled to prevent character duplication issues
+      // Text is already set above for better performance and user experience
     });
     
     // Log LCP time for verification
