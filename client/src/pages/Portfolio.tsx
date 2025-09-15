@@ -26,6 +26,29 @@ interface Project {
   gallery?: string[];
 }
 
+// Helper function to determine if a project should show the overlay
+const shouldShowOverlay = (project: Project): boolean => {
+  // Don't show overlay if project has gallery (prioritize gallery functionality)
+  const hasGallery = project.gallery && project.gallery.length > 0;
+  if (hasGallery) return false;
+  
+  // Don't show overlay for certain categories that don't need external links
+  const categoriesWithoutOverlay = [
+    'E-commerce Development',
+    'Brand Design', 
+    'UI/UX Design',
+    'Software Development'
+  ];
+  
+  if (categoriesWithoutOverlay.includes(project.category)) return false;
+  
+  // Show overlay only for Web Development projects that should have external links
+  // or projects that already have links
+  return project.link !== null || 
+         (project.category === 'Web Development' && 
+          ['JP FInserv', 'OM Vinayaga Associates', 'Smart Group of Companies', 'Smart Shine Solar'].includes(project.title));
+};
+
 // Enhanced Project card component with gallery support and animation
 const ProjectCard = memo(({ project, index }: { project: Project; index: number }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -68,8 +91,8 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
         whileHover={{ y: -8 }}
       >
         <div className="relative overflow-hidden group h-64">
-          {/* Overlay effect on hover - only for projects without external links */}
-          {!project.link && (
+          {/* Overlay effect on hover - only for projects that need external links and don't have galleries */}
+          {shouldShowOverlay(project) && (
             <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
               <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300">
                 View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
@@ -178,6 +201,14 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               </span>
               <ArrowRight className="ml-1 h-3.5 w-3.5" />
             </a>
+          ) : shouldShowOverlay(project) ? (
+            <button className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors text-sm group">
+              <span className="relative">
+                Coming Soon
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary origin-left group-hover:w-full transition-all duration-300" />
+              </span>
+              <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </button>
           ) : (
             <button className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors text-sm group">
               <span className="relative">
