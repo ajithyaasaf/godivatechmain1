@@ -93,8 +93,17 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
         <div className="relative overflow-hidden group h-64">
           {/* Overlay effect on hover - only for projects that need external links and don't have galleries */}
           {shouldShowOverlay(project) && (
-            <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-              <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300">
+            <div 
+              className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30 cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (project.link) {
+                  window.open(project.link, '_blank', 'noopener,noreferrer');
+                }
+              }}
+            >
+              <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300 pointer-events-none">
                 View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
               </div>
             </div>

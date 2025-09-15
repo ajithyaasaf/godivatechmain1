@@ -391,13 +391,30 @@ export class FirestoreStorage {
           }
         }
         
+        // Update project links for specific projects
+        let projectLink = data.link ?? null;
+        switch (data.title) {
+          case 'JP FInserv':
+            projectLink = 'https://www.jpfinserv.com';
+            break;
+          case 'OM Vinayaga Associates':
+            projectLink = 'https://www.omvinayagaassociates.com/';
+            break;
+          case 'Smart Group of Companies':
+            projectLink = 'https://smart-group-main.vercel.app/';
+            break;
+          case 'Smart Shine Solar':
+            projectLink = 'https://solar-main-1.vercel.app/';
+            break;
+        }
+        
         return { 
           ...data,
           category: normalizedCategory, // Use normalized category
           id: projectId, // Use the Firebase document ID directly
           docId: projectId, // Also store the document ID in docId for reference
           firebaseId: projectId, // Additional field to make it clear this is a Firebase ID
-          link: data.link ?? null,
+          link: projectLink, // Use updated link
           image: data.image ?? null
         } as Project;
       });
