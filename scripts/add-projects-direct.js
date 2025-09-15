@@ -27,11 +27,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Configure Cloudinary (will use environment variables)
+// Configure Cloudinary (using working credentials)
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'doeodacsg',
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: 'doeodacsg',
+  api_key: '269267633995791',
+  api_secret: 'wUw9Seu6drQEIbQ1tAvYeVyqHdU',
 });
 
 // Helper function to upload image to Cloudinary
@@ -81,43 +81,40 @@ async function addProjectsDirect() {
   
   const projectsToAdd = [
     {
-      title: "Truewaves Letterpad Design",
-      description: "Professional letterpad mockup design for Truewaves showcasing modern branding and corporate identity.",
-      fullDescription: "A comprehensive letterpad design project for Truewaves, featuring clean typography, strategic brand placement, and professional layout. The design emphasizes readability while maintaining strong brand presence through careful use of colors and spacing.",
-      imagePath: "attached_assets/Mockup.jpg",
-      category: "Brand Design",
-      technologies: ["Graphic Design", "Brand Identity", "Print Design", "Typography", "Adobe Creative Suite"],
-      clientName: "Truewaves",
+      title: "ElevateHQ Social Media Campaign",
+      description: "Comprehensive social media poster campaign for ElevateHQ's Revenue Planning for 2023 virtual roundtable event.",
+      fullDescription: "A complete social media marketing campaign designed for ElevateHQ, featuring 6 unique poster variations for their 'Compensation Simplified - Revenue Planning for 2023' virtual roundtable. Each design showcases the same event information with different visual approaches, demonstrating versatility in social media design while maintaining brand consistency. The campaign features speaker profiles, event details, and strong call-to-action elements across multiple layout styles.",
+      imagePath: "attached_assets/A. SM Poster - 1_1757918134721.jpg",
+      galleryPaths: [
+        "attached_assets/A. SM Poster - 1_1757918134721.jpg",
+        "attached_assets/SM Poster - 2_1757918134723.jpg",
+        "attached_assets/SM Poster - 3_1757918134724.jpg",
+        "attached_assets/SM Poster - 4_1757918134725.jpg",
+        "attached_assets/SM Poster - 5_1757918134726.jpg",
+        "attached_assets/SM Poster - 6_1757918134727.jpg"
+      ],
+      category: "Digital Marketing",
+      technologies: ["Social Media Design", "Campaign Design", "Brand Consistency", "Event Marketing", "Adobe Creative Suite", "Typography"],
+      clientName: "ElevateHQ",
+      location: "Gurugram, Haryana",
       featured: true,
-      challengeDescription: "Creating a letterpad design that balances professional appearance with strong brand recognition while ensuring print-ready quality.",
-      solutionDescription: "Developed a clean, professional layout with strategic brand element placement and typography that enhances readability and brand recall.",
-      resultsDescription: "Delivered a versatile letterpad design that effectively represents the Truewaves brand in professional correspondence."
+      challengeDescription: "Creating multiple engaging social media poster variations for a virtual event while maintaining brand consistency and clear information hierarchy across different design approaches.",
+      solutionDescription: "Developed 6 distinct poster designs using ElevateHQ's purple brand palette, each featuring unique layouts and visual treatments while ensuring all essential event information remains prominent and accessible.",
+      resultsDescription: "Delivered a comprehensive campaign that provided ElevateHQ with versatile social media assets for maximum audience engagement across different platforms and posting strategies."
     },
     {
-      title: "Healthy Home Loans Business Card",
-      description: "Professional business card design for Healthy Home Loans with modern aesthetics and clear contact information hierarchy.",
-      fullDescription: "A sophisticated business card design for Healthy Home Loans that combines professionalism with approachability. The design features clear information hierarchy, modern typography, and a color scheme that conveys trust and reliability in the financial services sector.",
-      imagePath: "attached_assets/Mockup 2.jpg",
-      category: "Brand Design",
-      technologies: ["Business Card Design", "Brand Design", "Print Design", "Typography", "Contact Design"],
-      clientName: "Healthy Home Loans",
+      title: "ElevateHQ Landing Page Design",
+      description: "Modern, conversion-focused landing page design for ElevateHQ's SaaS platform featuring compelling value propositions and customer testimonials.",
+      fullDescription: "A professionally designed landing page for ElevateHQ that effectively communicates their value proposition 'Say Goodbye to Spreadsheets, Say Hello to Awesome.' The design features a gradient hero section with compelling copy, customer testimonials, trust badges, and clear call-to-action elements. The layout emphasizes user engagement with personalized demo offers and showcases the platform's benefits through strategic use of typography, imagery, and social proof.",
+      imagePath: "attached_assets/B. Landing Page-2_1757918177625.jpg",
+      category: "UI/UX Design",
+      technologies: ["Landing Page Design", "UI/UX Design", "Conversion Optimization", "Web Design", "SaaS Design", "User Experience"],
+      clientName: "ElevateHQ",
+      location: "Gurugram, Haryana",
       featured: true,
-      challengeDescription: "Designing a business card that conveys trust and professionalism in the competitive financial services market while maintaining visual appeal.",
-      solutionDescription: "Created a clean, trustworthy design with optimal information hierarchy and professional color palette that reflects the company's reliability.",
-      resultsDescription: "Produced an effective business card that enhances brand recognition and professional credibility in client interactions."
-    },
-    {
-      title: "Truewaves Business Card Design",
-      description: "Modern business card mockup design for Truewaves featuring contemporary layout and professional branding elements.",
-      fullDescription: "A contemporary business card design for Truewaves that showcases modern design principles while maintaining professional standards. The design incorporates brand colors effectively and ensures all contact information is clearly presented with optimal readability.",
-      imagePath: "attached_assets/Business Card.jpg",
-      category: "Brand Design", 
-      technologies: ["Business Card Design", "Brand Design", "Print Design", "Modern Typography", "Brand Consistency"],
-      clientName: "Truewaves",
-      featured: true,
-      challengeDescription: "Creating a business card design that stands out in professional settings while maintaining brand consistency with other Truewaves materials.",
-      solutionDescription: "Developed a modern, memorable design that effectively uses whitespace and typography to create a professional yet distinctive business card.",
-      resultsDescription: "Delivered a business card design that enhances professional networking opportunities and reinforces brand identity."
+      challengeDescription: "Designing a high-converting landing page that effectively communicates complex SaaS benefits while maintaining visual appeal and user engagement throughout the conversion funnel.",
+      solutionDescription: "Created a modern, gradient-rich design with strategic placement of trust elements, customer testimonials, and clear value propositions. Used progressive disclosure and visual hierarchy to guide users toward the demo signup action.",
+      resultsDescription: "Delivered a conversion-optimized landing page that effectively showcases ElevateHQ's platform benefits and provides a seamless user experience from first impression to demo request."
     }
   ];
   
@@ -127,15 +124,42 @@ async function addProjectsDirect() {
     try {
       console.log(`\n📁 Processing: ${project.title}`);
       
-      // Check if image file exists
+      // Check if main image file exists
       const fullImagePath = path.resolve(project.imagePath);
       if (!fs.existsSync(fullImagePath)) {
-        console.log(`⚠️  Image file not found: ${fullImagePath}`);
+        console.log(`⚠️  Main image file not found: ${fullImagePath}`);
         continue;
       }
       
-      // Upload image to Cloudinary
+      // Upload main image to Cloudinary
       const imageUrl = await uploadImageToCloudinary(fullImagePath);
+      
+      // Handle gallery images if they exist
+      let galleryUrls = [imageUrl]; // Start with main image
+      
+      if (project.galleryPaths && project.galleryPaths.length > 0) {
+        console.log(`📸 Processing ${project.galleryPaths.length} gallery images...`);
+        
+        for (const galleryPath of project.galleryPaths) {
+          const fullGalleryPath = path.resolve(galleryPath);
+          
+          if (fs.existsSync(fullGalleryPath)) {
+            try {
+              const galleryUrl = await uploadImageToCloudinary(fullGalleryPath);
+              if (!galleryUrls.includes(galleryUrl)) {
+                galleryUrls.push(galleryUrl);
+              }
+              console.log(`✅ Gallery image uploaded: ${path.basename(galleryPath)}`);
+            } catch (galleryError) {
+              console.log(`⚠️  Failed to upload gallery image ${galleryPath}:`, galleryError.message);
+            }
+          } else {
+            console.log(`⚠️  Gallery image not found: ${fullGalleryPath}`);
+          }
+        }
+        
+        console.log(`📚 Total gallery images: ${galleryUrls.length}`);
+      }
       
       // Create project data
       const projectData = {
@@ -143,7 +167,7 @@ async function addProjectsDirect() {
         description: project.description,
         fullDescription: project.fullDescription,
         image: imageUrl,
-        gallery: [imageUrl], // Add to gallery as well
+        gallery: galleryUrls,
         category: project.category,
         technologies: project.technologies,
         link: null, // Can be added later if needed
