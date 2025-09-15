@@ -68,12 +68,14 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
         whileHover={{ y: -8 }}
       >
         <div className="relative overflow-hidden group h-64">
-          {/* Overlay effect on hover */}
-          <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
-            <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300">
-              View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
+          {/* Overlay effect on hover - only for single image projects */}
+          {!hasMultipleImages && (
+            <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+              <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
+              </div>
             </div>
-          </div>
+          )}
           
           {/* Project image with fixed height container */}
           <div className="w-full h-64 bg-white">
