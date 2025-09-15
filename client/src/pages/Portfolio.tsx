@@ -28,9 +28,8 @@ interface Project {
 
 // Helper function to determine if a project should show the overlay
 const shouldShowOverlay = (project: Project): boolean => {
-  // Don't show overlay if project has gallery (prioritize gallery functionality)
-  const hasGallery = project.gallery && project.gallery.length > 0;
-  if (hasGallery) return false;
+  // Always show overlay for projects with external links that need to be accessed
+  if (project.link !== null) return true;
   
   // Don't show overlay for certain categories that don't need external links
   const categoriesWithoutOverlay = [
@@ -42,11 +41,9 @@ const shouldShowOverlay = (project: Project): boolean => {
   
   if (categoriesWithoutOverlay.includes(project.category)) return false;
   
-  // Show overlay only for Web Development projects that should have external links
-  // or projects that already have links
-  return project.link !== null || 
-         (project.category === 'Web Development' && 
-          ['JP FInserv', 'OM Vinayaga Associates', 'Smart Group of Companies', 'Smart Shine Solar'].includes(project.title));
+  // Show overlay for Web Development projects that should have external links
+  return project.category === 'Web Development' && 
+         ['JP FInserv', 'OM Vinayaga Associates', 'Smart Group of Companies', 'Smart Shine Solar'].includes(project.title);
 };
 
 // Enhanced Project card component with gallery support and animation
@@ -114,7 +111,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
             <OptimizedImage
               src={images[currentImageIndex]}
               alt={`${project.title} - Image ${currentImageIndex + 1}`}
-              className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-full object-contain bg-white transition-transform duration-500 group-hover:scale-105"
               width={800}
               height={600}
             />
