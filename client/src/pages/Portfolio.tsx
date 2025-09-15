@@ -1,7 +1,7 @@
-import React, { useState, memo, useMemo, useEffect } from "react";
+import React, { useState, memo, useMemo, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence, LazyMotion, domAnimation, m } from "framer-motion";
-import { ArrowRight, ExternalLink, Loader2, AlertCircle } from "lucide-react";
+import { ArrowRight, ExternalLink, Loader2, AlertCircle, ChevronLeftIcon, ChevronRight, ImageIcon } from "lucide-react";
 import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
@@ -23,10 +23,36 @@ interface Project {
   category: string;
   technologies: string[];
   link?: string;
+  gallery?: string[];
 }
 
-// Project card component with animation - optimized with memo and LazyMotion
+// Enhanced Project card component with gallery support and animation
 const ProjectCard = memo(({ project, index }: { project: Project; index: number }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Use gallery if available, otherwise fall back to single image
+  const images = useMemo(() => {
+    if (project.gallery && project.gallery.length > 0) {
+      return project.gallery;
+    }
+    return [project.image];
+  }, [project.gallery, project.image]);
+  
+  const hasMultipleImages = images.length > 1;
+  
+  // Navigation functions
+  const nextImage = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  }, [images.length]);
+  
+  const prevImage = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  }, [images.length]);
+
   return (
     <LazyMotion features={domAnimation}>
       <m.div
@@ -43,7 +69,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
       >
         <div className="relative overflow-hidden group h-64">
           {/* Overlay effect on hover */}
-          <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+          <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
             <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300">
               View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
             </div>
@@ -52,8 +78,8 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
           {/* Project image with fixed height container */}
           <div className="w-full h-64 bg-white">
             <OptimizedImage
-              src={project.image}
-              alt={project.title}
+              src={images[currentImageIndex]}
+              alt={`${project.title} - Image ${currentImageIndex + 1}`}
               className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
               width={800}
               height={600}
@@ -64,12 +90,69 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
           <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md z-10">
             {project.category}
           </div>
+
+          {/* Gallery indicators and controls */}
+          {hasMultipleImages && (
+            <>
+              {/* Gallery count indicator */}
+              <div className="absolute top-4 left-4 bg-black/70 text-white text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 z-10">
+                <ImageIcon className="h-3 w-3" />
+                {images.length}
+              </div>
+              
+              {/* Navigation arrows - only show on hover */}
+              <button
+                onClick={prevImage}
+                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                aria-label="Previous image"
+              >
+                <ChevronLeftIcon className="h-4 w-4" />
+              </button>
+              
+              <button
+                onClick={nextImage}
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                aria-label="Next image"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+              
+              {/* Dot indicators */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                {images.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setCurrentImageIndex(idx);
+                    }}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      idx === currentImageIndex 
+                        ? 'bg-white scale-125' 
+                        : 'bg-white/60 hover:bg-white/80'
+                    }`}
+                    aria-label={`View image ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
         <div className="p-6">
           <h3 className="text-lg font-bold text-neutral-800 mb-2 group-hover:text-primary transition-colors">
             {project.title}
           </h3>
           <p className="text-neutral-600 mb-4 text-sm">{project.description}</p>
+          
+          {/* Show image count for multi-image projects */}
+          {hasMultipleImages && (
+            <div className="text-sm text-neutral-500 mb-3 flex items-center gap-1">
+              <ImageIcon className="h-4 w-4" />
+              {images.length} design variations
+            </div>
+          )}
+          
           <div className="flex flex-wrap gap-2 mb-4">
             {project.technologies.map((tech, idx) => (
               <span
