@@ -1,8 +1,8 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, ChevronLeftIcon, ChevronRight, ImageIcon } from "lucide-react";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 import OptimizedImage from "@/components/ui/optimized-image";
 
@@ -14,12 +14,36 @@ interface Project {
   category: string;
   technologies: string[];
   link?: string;
+  gallery?: string[];
 }
 
-// Optimized with memoization to prevent unnecessary re-renders
+// Enhanced ProjectCard with gallery support
 const ProjectCard = memo(({ project, index }: { project: Project; index: number }) => {
-  // Pre-calculate any values used in rendering to avoid calculations during re-renders
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const animationDelay = useMemo(() => Math.min(index * 0.1, 0.4), [index]);
+  
+  // Use gallery if available, otherwise fall back to single image
+  const images = useMemo(() => {
+    if (project.gallery && project.gallery.length > 0) {
+      return project.gallery;
+    }
+    return [project.image];
+  }, [project.gallery, project.image]);
+  
+  const hasMultipleImages = images.length > 1;
+  
+  // Navigation functions
+  const nextImage = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  }, [images.length]);
+  
+  const prevImage = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  }, [images.length]);
   
   return (
     <div 
@@ -29,21 +53,83 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
         animationDelay: `${animationDelay}s`
       }}
     >
-      <div className="relative">
+      <div className="relative group">
         <OptimizedImage
-          src={project.image}
-          alt={project.title}
-          className="w-full h-64 object-contain bg-white"
+          src={images[currentImageIndex]}
+          alt={`${project.title} - Image ${currentImageIndex + 1}`}
+          className="w-full h-64 object-contain bg-white transition-opacity duration-300"
           width={400}
           height={256}
         />
+        
+        {/* Category badge */}
         <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
           {project.category}
         </div>
+        
+        {/* Gallery indicators and controls */}
+        {hasMultipleImages && (
+          <>
+            {/* Gallery count indicator */}
+            <div className="absolute top-4 left-4 bg-black/70 text-white text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1">
+              <ImageIcon className="h-3 w-3" />
+              {images.length}
+            </div>
+            
+            {/* Navigation arrows - only show on hover */}
+            <button
+              onClick={prevImage}
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              aria-label="Previous image"
+            >
+              <ChevronLeftIcon className="h-4 w-4" />
+            </button>
+            
+            <button
+              onClick={nextImage}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              aria-label="Next image"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            
+            {/* Dot indicators */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setCurrentImageIndex(idx);
+                  }}
+                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                    idx === currentImageIndex 
+                      ? 'bg-white scale-125' 
+                      : 'bg-white/60 hover:bg-white/80'
+                  }`}
+                  aria-label={`View image ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
+      
       <div className="p-6">
         <h3 className="text-xl font-semibold text-neutral-800 mb-2">{project.title}</h3>
-        <p className="text-neutral-600 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">{project.description}</p>
+        <p className="text-neutral-600 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">
+          {project.description}
+        </p>
+        
+        {/* Show image count for multi-image projects */}
+        {hasMultipleImages && (
+          <div className="text-sm text-neutral-500 mb-3 flex items-center gap-1">
+            <ImageIcon className="h-4 w-4" />
+            {images.length} design variations
+          </div>
+        )}
+        
         <div className="flex flex-wrap gap-2 mb-4">
           {project.technologies.map((tech, index) => (
             <span
@@ -54,6 +140,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
             </span>
           ))}
         </div>
+        
         <Link
           href={project.link || "/portfolio"}
           className="text-primary font-medium hover:text-primary/90 transition duration-150 flex items-center group"
