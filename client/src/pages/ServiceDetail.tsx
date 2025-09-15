@@ -14,7 +14,7 @@ import CTASection from "@/components/home/CTASection";
 import FAQSection from "@/components/ui/faq-section";
 import Breadcrumb from "@/components/ui/breadcrumb";
 import SEO from "@/components/SEO";
-import { servicesKeywords } from "@/lib/seoKeywords";
+import { pageKeywords } from "@/lib/seoKeywords";
 import { 
   getOrganizationData, 
   getWebPageData,
@@ -192,6 +192,75 @@ const defaultServiceData: Record<string, ServiceType> = {
       "Designed based on real user behavior and feedback"
     ],
     technologies: ["Figma", "Adobe XD", "Sketch", "InVision", "User Testing Platforms"]
+  },
+  "app-development": {
+    id: 7,
+    title: "Mobile App Development",
+    description: "Native and cross-platform mobile applications that deliver exceptional user experiences on iOS and Android devices.",
+    slug: "app-development",
+    features: ["Native iOS & Android", "Cross-Platform Solutions", "App Store Optimization"],
+    longDescription: "Our mobile app development services create powerful, user-friendly applications that engage your customers and drive business growth. We specialize in both native iOS/Android development and cross-platform solutions using cutting-edge technologies to deliver apps that perform flawlessly across all devices.",
+    processSteps: [
+      { title: "Strategy & Planning", description: "We define your app's core functionality, target audience, and technical requirements." },
+      { title: "UI/UX Design", description: "Our designers create intuitive interfaces optimized for mobile interaction patterns." },
+      { title: "Development & Testing", description: "We build your app using best practices and conduct thorough testing on multiple devices." },
+      { title: "App Store Submission", description: "We handle the entire app store submission process for both iOS and Android platforms." },
+      { title: "Launch & Maintenance", description: "Post-launch support includes updates, monitoring, and feature enhancements." }
+    ],
+    benefits: [
+      "Direct customer engagement through mobile devices",
+      "Push notifications for increased user retention",
+      "Native device features integration",
+      "Offline functionality for better user experience",
+      "Revenue generation through app stores"
+    ],
+    technologies: ["React Native", "Flutter", "Swift", "Kotlin", "Firebase", "Native APIs"]
+  },
+  "cyber-security": {
+    id: 8,
+    title: "Cyber Security Solutions",
+    description: "Comprehensive security services to protect your business from digital threats and ensure data privacy compliance.",
+    slug: "cyber-security",
+    features: ["Security Audits", "Threat Detection", "Compliance Management"],
+    longDescription: "Our cyber security solutions protect your business from evolving digital threats. We provide comprehensive security assessments, implement robust protection measures, and ensure your systems comply with industry standards. Our proactive approach includes monitoring, threat detection, and incident response to keep your data and operations secure.",
+    processSteps: [
+      { title: "Security Assessment", description: "We conduct thorough audits to identify vulnerabilities in your systems and processes." },
+      { title: "Risk Analysis", description: "We prioritize threats based on potential impact and likelihood of occurrence." },
+      { title: "Security Implementation", description: "We deploy appropriate security measures including firewalls, encryption, and access controls." },
+      { title: "Monitoring Setup", description: "We establish 24/7 monitoring systems to detect and respond to threats in real-time." },
+      { title: "Training & Compliance", description: "We provide staff training and ensure compliance with relevant security standards." }
+    ],
+    benefits: [
+      "Protection against data breaches and cyber attacks",
+      "Compliance with industry regulations and standards",
+      "Reduced business disruption from security incidents",
+      "Enhanced customer trust and brand reputation",
+      "Comprehensive incident response and recovery plans"
+    ],
+    technologies: ["Network Security Tools", "Encryption Technologies", "SIEM Systems", "Vulnerability Scanners", "Compliance Frameworks"]
+  },
+  "cloud-solutions": {
+    id: 9,
+    title: "Cloud Solutions & Migration",
+    description: "Scalable cloud infrastructure and migration services that improve performance, reduce costs, and enhance business agility.",
+    slug: "cloud-solutions",
+    features: ["Cloud Migration", "Infrastructure Management", "Scalability Solutions"],
+    longDescription: "Our cloud solutions help businesses leverage the power of cloud computing for improved scalability, cost-efficiency, and performance. We provide end-to-end cloud services including migration planning, implementation, and ongoing management across major cloud platforms. Our expertise ensures seamless transitions with minimal disruption to your operations.",
+    processSteps: [
+      { title: "Cloud Strategy", description: "We assess your current infrastructure and develop a comprehensive cloud migration strategy." },
+      { title: "Architecture Design", description: "We design scalable cloud architectures optimized for your specific business requirements." },
+      { title: "Migration Execution", description: "We execute the migration with minimal downtime using proven methodologies and tools." },
+      { title: "Optimization", description: "We optimize your cloud environment for performance, security, and cost-effectiveness." },
+      { title: "Ongoing Management", description: "We provide continuous monitoring, maintenance, and support for your cloud infrastructure." }
+    ],
+    benefits: [
+      "Reduced IT infrastructure costs and maintenance",
+      "Improved scalability and flexibility",
+      "Enhanced disaster recovery and business continuity",
+      "Automatic software updates and security patches",
+      "Access to advanced cloud-native services and AI tools"
+    ],
+    technologies: ["AWS", "Microsoft Azure", "Google Cloud Platform", "Docker", "Kubernetes", "DevOps Tools"]
   }
 };
 
