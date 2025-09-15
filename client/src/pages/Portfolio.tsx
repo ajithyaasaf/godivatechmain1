@@ -95,7 +95,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
           {hasMultipleImages && (
             <>
               {/* Gallery count indicator */}
-              <div className="absolute top-4 left-4 bg-black/70 text-white text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 z-10">
+              <div className="absolute top-4 left-4 bg-black/70 text-white text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 z-30">
                 <ImageIcon className="h-3 w-3" />
                 {images.length}
               </div>
@@ -103,7 +103,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               {/* Navigation arrows - only show on hover */}
               <button
                 onClick={prevImage}
-                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30"
                 aria-label="Previous image"
               >
                 <ChevronLeftIcon className="h-4 w-4" />
@@ -111,14 +111,14 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               
               <button
                 onClick={nextImage}
-                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30"
                 aria-label="Next image"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
               
               {/* Dot indicators */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
                 {images.map((_, idx) => (
                   <button
                     key={idx}
