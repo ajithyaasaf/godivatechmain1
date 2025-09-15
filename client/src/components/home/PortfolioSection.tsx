@@ -54,6 +54,15 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
       }}
     >
       <div className="relative group">
+        {/* Overlay effect on hover - only for projects without external links */}
+        {!project.link && (
+          <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+            <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300">
+              View Project <ChevronRightIcon className="w-3.5 h-3.5 ml-1" />
+            </div>
+          </div>
+        )}
+        
         <OptimizedImage
           src={images[currentImageIndex]}
           alt={`${project.title} - Image ${currentImageIndex + 1}`}
@@ -141,13 +150,25 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
           ))}
         </div>
         
-        <Link
-          href={project.link || "/portfolio"}
-          className="text-primary font-medium hover:text-primary/90 transition duration-150 flex items-center group"
-        >
-          View Case Study 
-          <ChevronRightIcon className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
-        </Link>
+        {project.link ? (
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary font-medium hover:text-primary/90 transition duration-150 flex items-center group"
+          >
+            Visit Website
+            <ChevronRightIcon className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+          </a>
+        ) : (
+          <Link
+            href="/portfolio"
+            className="text-primary font-medium hover:text-primary/90 transition duration-150 flex items-center group"
+          >
+            View Case Study 
+            <ChevronRightIcon className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+          </Link>
+        )}
       </div>
     </div>
   );
@@ -219,6 +240,41 @@ const PortfolioSection = memo(() => {
       image: "/attached_assets/prakash green energy software_1757930984361.jpg",
       category: "Software Development",
       technologies: ["ERP Development", "Solar Industry", "Business Management", "Multi-Module Integration", "Role-Based Access"]
+    },
+    {
+      id: 8,
+      title: "OM Vinayaga Associates",
+      description: "Comprehensive building solutions website providing expert diagnosis and treatment for all building ailments with precision and over 10 years of experience.",
+      image: "/attached_assets/OM Vinayaga Associates_1757931851659.jpg",
+      category: "Web Development",
+      technologies: ["React", "TypeScript", "Firestore Database", "Framer Motion", "Tailwind CSS"],
+      link: "https://www.omvinayagaassociates.com"
+    },
+    {
+      id: 9,
+      title: "Copper Bear Electrical",
+      description: "Modern e-commerce platform for electrical products featuring scalable architecture, optimized performance, and comprehensive product catalog management.",
+      image: "/attached_assets/copperbear_1757931994763.jpg",
+      category: "E-commerce Development",
+      technologies: ["React", "TypeScript", "Express.js", "Node.js", "MongoDB", "Performance Optimization"]
+    },
+    {
+      id: 10,
+      title: "Smart Group of Companies", 
+      description: "Innovative corporate website showcasing sustainable future solutions with modern design principles and comprehensive business portfolio presentation.",
+      image: "/attached_assets/smart main site_1757932105967.jpg",
+      category: "Corporate Website",
+      technologies: ["Modern Web Technologies", "Responsive Design", "Corporate Branding"],
+      link: "https://smart-group-main.vercel.app/"
+    },
+    {
+      id: 11,
+      title: "Smart Shine Solar",
+      description: "Leading solar solutions website in Madurai featuring modern design principles, energy savings calculators, and comprehensive solar service information.",
+      image: "/attached_assets/smart shine solar_1757932290390.jpg",
+      category: "Solar Solutions Website", 
+      technologies: ["Modern Design Principles", "Energy Calculators", "Responsive Design"],
+      link: "https://solar-main-1.vercel.app/"
     }
   ], []);
 

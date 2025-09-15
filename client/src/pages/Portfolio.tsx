@@ -68,8 +68,8 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
         whileHover={{ y: -8 }}
       >
         <div className="relative overflow-hidden group h-64">
-          {/* Overlay effect on hover - only for single image projects */}
-          {!hasMultipleImages && (
+          {/* Overlay effect on hover - only for projects without external links */}
+          {!project.link && (
             <div className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
               <div className="px-4 py-2 bg-white/90 rounded-full text-primary font-medium text-sm flex items-center gap-1 transform scale-0 group-hover:scale-100 transition-transform duration-300">
                 View Project <ExternalLink className="w-3.5 h-3.5 ml-1" />
@@ -165,16 +165,28 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               </span>
             ))}
           </div>
-          <a
-            href={project.link || "#"}
-            className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors text-sm group"
-          >
-            <span className="relative">
-              View Case Study
-              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary origin-left group-hover:w-full transition-all duration-300" />
-            </span>
-            <ArrowRight className="ml-1 h-3.5 w-3.5" />
-          </a>
+          {project.link ? (
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors text-sm group"
+            >
+              <span className="relative">
+                Visit Website
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary origin-left group-hover:w-full transition-all duration-300" />
+              </span>
+              <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </a>
+          ) : (
+            <button className="inline-flex items-center text-primary font-medium hover:text-primary-dark transition-colors text-sm group">
+              <span className="relative">
+                View Case Study
+                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary origin-left group-hover:w-full transition-all duration-300" />
+              </span>
+              <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </m.div>
     </LazyMotion>
