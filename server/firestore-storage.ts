@@ -378,8 +378,22 @@ export class FirestoreStorage {
         const projectId = docSnap.id;
         console.log(`Processing project: id=${projectId}, title=${data.title}`);
         
+        // Normalize category names
+        let normalizedCategory = data.category;
+        if (normalizedCategory) {
+          // Fix case sensitivity - convert all web development variations to consistent format
+          if (normalizedCategory.toLowerCase() === 'web development') {
+            normalizedCategory = 'Web Development';
+          }
+          // Consolidate Corporate Website and Solar Solutions Website under Web Development
+          else if (normalizedCategory === 'Corporate Website' || normalizedCategory === 'Solar Solutions Website') {
+            normalizedCategory = 'Web Development';
+          }
+        }
+        
         return { 
           ...data,
+          category: normalizedCategory, // Use normalized category
           id: projectId, // Use the Firebase document ID directly
           docId: projectId, // Also store the document ID in docId for reference
           firebaseId: projectId, // Additional field to make it clear this is a Firebase ID
