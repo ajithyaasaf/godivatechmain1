@@ -81,40 +81,18 @@ async function addProjectsDirect() {
   
   const projectsToAdd = [
     {
-      title: "ElevateHQ Social Media Campaign",
-      description: "Comprehensive social media poster campaign for ElevateHQ's Revenue Planning for 2023 virtual roundtable event.",
-      fullDescription: "A complete social media marketing campaign designed for ElevateHQ, featuring 6 unique poster variations for their 'Compensation Simplified - Revenue Planning for 2023' virtual roundtable. Each design showcases the same event information with different visual approaches, demonstrating versatility in social media design while maintaining brand consistency. The campaign features speaker profiles, event details, and strong call-to-action elements across multiple layout styles.",
-      imagePath: "attached_assets/A. SM Poster - 1_1757918134721.jpg",
-      galleryPaths: [
-        "attached_assets/A. SM Poster - 1_1757918134721.jpg",
-        "attached_assets/SM Poster - 2_1757918134723.jpg",
-        "attached_assets/SM Poster - 3_1757918134724.jpg",
-        "attached_assets/SM Poster - 4_1757918134725.jpg",
-        "attached_assets/SM Poster - 5_1757918134726.jpg",
-        "attached_assets/SM Poster - 6_1757918134727.jpg"
-      ],
-      category: "Digital Marketing",
-      technologies: ["Social Media Design", "Campaign Design", "Brand Consistency", "Event Marketing", "Adobe Creative Suite", "Typography"],
-      clientName: "ElevateHQ",
-      location: "Gurugram, Haryana",
+      title: "Prakash Green Energy - ERP System",
+      description: "Comprehensive Vertical ERP System designed specifically for solar energy companies, integrating field service management, HR, payroll, CRM, product management, and analytics into one unified platform.",
+      fullDescription: "A complete Enterprise Resource Planning (ERP) solution tailored specifically for solar energy business operations. This vertical ERP system integrates all critical business functions including field service management, HR and payroll processing, customer relationship management (CRM), product and inventory management, and comprehensive analytics. The system features industry-specific workflows for technical teams, marketing departments, and administrative functions with role-based access control and multi-department support. The dashboard provides real-time insights into overall performance, customer management, inventory tracking, and operational analytics specifically designed for the unique needs of solar energy companies.",
+      imagePath: "attached_assets/prakash-green-energy-erp.jpg",
+      category: "Software Development",
+      technologies: ["ERP Development", "Solar Industry Solutions", "Business Management Systems", "Multi-Module Integration", "Role-Based Access Control", "Dashboard Analytics", "Field Service Management"],
+      clientName: "Prakash Green Energy",
+      location: "India",
       featured: true,
-      challengeDescription: "Creating multiple engaging social media poster variations for a virtual event while maintaining brand consistency and clear information hierarchy across different design approaches.",
-      solutionDescription: "Developed 6 distinct poster designs using ElevateHQ's purple brand palette, each featuring unique layouts and visual treatments while ensuring all essential event information remains prominent and accessible.",
-      resultsDescription: "Delivered a comprehensive campaign that provided ElevateHQ with versatile social media assets for maximum audience engagement across different platforms and posting strategies."
-    },
-    {
-      title: "ElevateHQ Landing Page Design",
-      description: "Modern, conversion-focused landing page design for ElevateHQ's SaaS platform featuring compelling value propositions and customer testimonials.",
-      fullDescription: "A professionally designed landing page for ElevateHQ that effectively communicates their value proposition 'Say Goodbye to Spreadsheets, Say Hello to Awesome.' The design features a gradient hero section with compelling copy, customer testimonials, trust badges, and clear call-to-action elements. The layout emphasizes user engagement with personalized demo offers and showcases the platform's benefits through strategic use of typography, imagery, and social proof.",
-      imagePath: "attached_assets/B. Landing Page-2_1757918177625.jpg",
-      category: "UI/UX Design",
-      technologies: ["Landing Page Design", "UI/UX Design", "Conversion Optimization", "Web Design", "SaaS Design", "User Experience"],
-      clientName: "ElevateHQ",
-      location: "Gurugram, Haryana",
-      featured: true,
-      challengeDescription: "Designing a high-converting landing page that effectively communicates complex SaaS benefits while maintaining visual appeal and user engagement throughout the conversion funnel.",
-      solutionDescription: "Created a modern, gradient-rich design with strategic placement of trust elements, customer testimonials, and clear value propositions. Used progressive disclosure and visual hierarchy to guide users toward the demo signup action.",
-      resultsDescription: "Delivered a conversion-optimized landing page that effectively showcases ElevateHQ's platform benefits and provides a seamless user experience from first impression to demo request."
+      challengeDescription: "Developing a comprehensive ERP system that addresses the unique operational challenges of solar energy companies, requiring integration of field operations, back-office administration, customer management, and industry-specific analytics in one unified platform.",
+      solutionDescription: "Built a vertical ERP system with specialized modules for solar energy operations including quotation management, invoice processing, attendance tracking, leave management, site visit monitoring, employee management, and departmental coordination. Implemented role-based access control and real-time dashboard analytics for performance monitoring.",
+      resultsDescription: "Delivered an integrated business management platform that streamlines operations across technical, marketing, and administrative departments, providing solar energy companies with comprehensive visibility and control over their entire business operations from field service to financial management."
     }
   ];
   

@@ -211,6 +211,14 @@ const PortfolioSection = memo(() => {
       image: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
       category: "Marketing",
       technologies: ["Event Promotion", "Community Outreach", "Visual Design"]
+    },
+    {
+      id: 7,
+      title: "Prakash Green Energy - ERP System",
+      description: "Comprehensive Vertical ERP System designed specifically for solar energy companies, integrating field service management, HR, payroll, CRM, product management, and analytics into one unified platform.",
+      image: "/attached_assets/prakash green energy software_1757930984361.jpg",
+      category: "Software Development",
+      technologies: ["ERP Development", "Solar Industry", "Business Management", "Multi-Module Integration", "Role-Based Access"]
     }
   ], []);
 
