@@ -281,8 +281,8 @@ const ServiceDetail = () => {
     }
   }, [slug, service, isLoading, setLocation]);
   
-  // Use default service data if API returns nothing
-  const serviceData = service || defaultServiceData[slug];
+  // Merge API data with default content so missing fields fall back to enriched defaults
+  const serviceData = service ? { ...defaultServiceData[slug], ...service } : defaultServiceData[slug];
   const Icon = getIconForService(slug);
   
   // If loading or redirecting, show a loading state
