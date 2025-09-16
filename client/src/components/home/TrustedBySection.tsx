@@ -1,5 +1,4 @@
 import React from "react";
-import godivaLogo from "../../assets/godiva-logo.png";
 import omVinayagaLogo from "../../assets/om-vinayaga-logo.png";
 import padmarajamLogo from "../../assets/padmarajam-logo.png";
 import ambikasLogo from "../../assets/ambikas-logo.png";
@@ -12,14 +11,7 @@ const TrustedBySection = () => {
         <p className="text-center text-neutral-500 font-medium mb-8">
           Trusted by innovative companies
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center justify-items-center">
-          {/* First client logo is our actual logo, others are placeholders */}
-          <img 
-            src={godivaLogo} 
-            alt="GodivaTech" 
-            className="h-10 opacity-80 hover:opacity-100 transition-opacity"
-          />
-          
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
           {/* Client logos in order */}
           <img 
             src={omVinayagaLogo} 
