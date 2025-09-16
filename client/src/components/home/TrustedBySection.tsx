@@ -1,5 +1,9 @@
 import React from "react";
 import godivaLogo from "../../assets/godiva-logo.png";
+import omVinayagaLogo from "../../assets/om-vinayaga-logo.png";
+import padmarajamLogo from "../../assets/padmarajam-logo.png";
+import ambikasLogo from "../../assets/ambikas-logo.png";
+import prakashGreenEnergyLogo from "../../assets/prakash-green-energy-logo.png";
 
 const TrustedBySection = () => {
   return (
@@ -8,7 +12,7 @@ const TrustedBySection = () => {
         <p className="text-center text-neutral-500 font-medium mb-8">
           Trusted by innovative companies
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center justify-items-center">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 items-center justify-items-center">
           {/* First client logo is our actual logo, others are placeholders */}
           <img 
             src={godivaLogo} 
@@ -16,31 +20,30 @@ const TrustedBySection = () => {
             className="h-10 opacity-80 hover:opacity-100 transition-opacity"
           />
           
-          {/* The rest remain as placeholder logos */}
-          <svg className="h-8 opacity-60 hover:opacity-100 transition-opacity" viewBox="0 0 150 50" xmlns="http://www.w3.org/2000/svg">
-            <rect width="150" height="50" fill="none"/>
-            <text x="75" y="30" fontSize="14" textAnchor="middle" fill="#555">Client Logo</text>
-          </svg>
+          {/* Client logos in order */}
+          <img 
+            src={omVinayagaLogo} 
+            alt="OM VINAYAGA ASSOCIATES" 
+            className="h-10 opacity-80 hover:opacity-100 transition-opacity"
+          />
           
-          <svg className="h-8 opacity-60 hover:opacity-100 transition-opacity" viewBox="0 0 150 50" xmlns="http://www.w3.org/2000/svg">
-            <rect width="150" height="50" fill="none"/>
-            <text x="75" y="30" fontSize="14" textAnchor="middle" fill="#555">Client Logo</text>
-          </svg>
+          <img 
+            src={padmarajamLogo} 
+            alt="PADMARAJAM INSTITUTE OF MANAGEMENT" 
+            className="h-10 opacity-80 hover:opacity-100 transition-opacity"
+          />
           
-          <svg className="h-8 opacity-60 hover:opacity-100 transition-opacity" viewBox="0 0 150 50" xmlns="http://www.w3.org/2000/svg">
-            <rect width="150" height="50" fill="none"/>
-            <text x="75" y="30" fontSize="14" textAnchor="middle" fill="#555">Client Logo</text>
-          </svg>
+          <img 
+            src={ambikasLogo} 
+            alt="Ambika's" 
+            className="h-10 opacity-80 hover:opacity-100 transition-opacity"
+          />
           
-          <svg className="h-8 opacity-60 hover:opacity-100 transition-opacity" viewBox="0 0 150 50" xmlns="http://www.w3.org/2000/svg">
-            <rect width="150" height="50" fill="none"/>
-            <text x="75" y="30" fontSize="14" textAnchor="middle" fill="#555">Client Logo</text>
-          </svg>
-          
-          <svg className="h-8 opacity-60 hover:opacity-100 transition-opacity" viewBox="0 0 150 50" xmlns="http://www.w3.org/2000/svg">
-            <rect width="150" height="50" fill="none"/>
-            <text x="75" y="30" fontSize="14" textAnchor="middle" fill="#555">Client Logo</text>
-          </svg>
+          <img 
+            src={prakashGreenEnergyLogo} 
+            alt="Prakash Green Energy" 
+            className="h-10 opacity-80 hover:opacity-100 transition-opacity"
+          />
         </div>
       </div>
     </section>
