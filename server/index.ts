@@ -147,6 +147,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// Serve attached_assets folder as static files
+const attachmentsDir = path.resolve(process.cwd(), 'attached_assets');
+app.use('/attached_assets', express.static(attachmentsDir, {
+  fallthrough: false,               // 404 if file not found; avoids SPA index.html
+  immutable: true,
+  maxAge: '7d',                     // baseline; staticAssetCache will also apply
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=86400, immutable');
+  },
+}));
+
 (async () => {
   const server = await registerRoutes(app);
 
