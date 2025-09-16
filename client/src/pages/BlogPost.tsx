@@ -5,11 +5,7 @@ import NewsletterSection from "@/components/home/NewsletterSection";
 import BlogCard from "@/components/blog/BlogCard";
 import { Button } from "@/components/ui/button";
 import type { BlogPost, Category } from "@/lib/schema";
-import { 
-  getBlogPostBySlug, 
-  getAllBlogPosts,
-  getCategoryById
-} from "@/lib/firestore";
+import { useQuery } from "@tanstack/react-query";
 import SEO from "@/components/SEO";
 import AmpBlogPost from "@/components/AmpBlogPost";
 import OptimizedImage from "@/components/ui/optimized-image";
@@ -33,57 +29,50 @@ import {
 const BlogPost = () => {
   const { slug } = useParams();
   const [, navigate] = useLocation();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
-  const [category, setCategory] = useState<Category | null>(null);
-  const [loading, setLoading] = useState(true);
+  
+  // Use React Query to fetch blog posts and categories
+  const { data: allBlogPosts = [], isLoading: postsLoading } = useQuery<BlogPost[]>({
+    queryKey: ['/api/blog-posts'],
+  });
+
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<Category[]>({
+    queryKey: ['/api/categories'],
+  });
+
+  const loading = postsLoading || categoriesLoading;
+  
+  // Find the current post by slug
+  const post = allBlogPosts.find(p => p.slug === slug) || null;
+  
+  // Find the category for this post
+  const category = post && post.categoryId 
+    ? categories.find(c => c.id === post.categoryId) || null 
+    : null;
+  
+  // Find related posts (same category, different post)
+  const relatedPosts = post && post.categoryId
+    ? allBlogPosts
+        .filter(p => p.categoryId === post.categoryId && p.id !== post.id)
+        .slice(0, 3)
+    : [];
 
   useEffect(() => {
-    const loadPost = async () => {
-      setLoading(true);
-      try {
-        // Fetch the blog post by slug
-        const fetchedPost = await getBlogPostBySlug(slug || "");
-        
-        if (!fetchedPost) {
-          navigate("/blog");
-          return;
-        }
-        
-        setPost(fetchedPost);
-        
-        // If post has a category, fetch the category details
-        if (fetchedPost.categoryId) {
-          const categoryData = await getCategoryById(fetchedPost.categoryId);
-          if (categoryData) {
-            setCategory(categoryData);
-          }
-        }
-        
-        // Fetch all posts to get related posts
-        const allPosts = await getAllBlogPosts();
-        const related = allPosts
-          .filter(p => p.categoryId === fetchedPost.categoryId && p.id !== fetchedPost.id)
-          .slice(0, 3);
-          
-        setRelatedPosts(related);
-      } catch (error) {
-        console.error("Error loading blog post:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    if (slug) {
-      loadPost();
+    // If we have posts loaded but can't find the post by slug, redirect to blog
+    if (!loading && !post && slug) {
+      navigate("/blog");
+      return;
     }
     
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-  }, [slug, navigate]);
+  }, [slug, navigate, post, loading]);
+
+  if (loading) {
+    return <div className="py-20 text-center">Loading...</div>;
+  }
 
   if (!post) {
-    return <div className="py-20 text-center">Loading...</div>;
+    return <div className="py-20 text-center">Blog post not found.</div>;
   }
 
   const formattedDate = format(new Date(post.publishedAt), "MMMM dd, yyyy");
