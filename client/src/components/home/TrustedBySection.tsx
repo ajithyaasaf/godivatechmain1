@@ -13,27 +13,27 @@ const TrustedBySection = () => {
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
           {/* Client logos in order */}
-          <img 
-            src={omVinayagaLogo} 
-            alt="OM VINAYAGA ASSOCIATES" 
+          <img
+            src={omVinayagaLogo}
+            alt="OM VINAYAGA ASSOCIATES"
             className="h-10 opacity-80 hover:opacity-100 transition-opacity"
           />
-          
-          <img 
-            src={padmarajamLogo} 
-            alt="PADMARAJAM INSTITUTE OF MANAGEMENT" 
+
+          <img
+            src={padmarajamLogo}
+            alt="PADMARAJAM INSTITUTE OF MANAGEMENT"
             className="h-10 opacity-80 hover:opacity-100 transition-opacity"
           />
-          
-          <img 
-            src={ambikasLogo} 
-            alt="Ambika's" 
-            className="h-12 opacity-80 hover:opacity-100 transition-opacity"
+
+          <img
+            src={ambikasLogo}
+            alt="Ambika's"
+            className="h-16 opacity-80 hover:opacity-100 transition-opacity"
           />
-          
-          <img 
-            src={prakashGreenEnergyLogo} 
-            alt="Prakash Green Energy" 
+
+          <img
+            src={prakashGreenEnergyLogo}
+            alt="Prakash Green Energy"
             className="h-16 opacity-80 hover:opacity-100 transition-opacity"
           />
         </div>
