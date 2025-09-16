@@ -18,7 +18,7 @@ import {
   getCollectionPageData
 } from "@/lib/structuredData";
 import type { BlogPost, Category } from "@/lib/schema";
-import { getAllBlogPosts, getAllCategories, getBlogPostsByCategoryId, searchBlogPosts } from "@/lib/firestore";
+import { useQuery } from "@tanstack/react-query";
 
 // Animated empty state component
 const EmptyState = ({ onReset }: { onReset: () => void }) => (
@@ -123,94 +123,40 @@ const Blog = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const postsPerPage = 6;
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Use React Query to fetch blog posts and categories
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery<Category[]>({
+    queryKey: ['/api/categories'],
+  });
+
+  const { data: allBlogPosts = [], isLoading: postsLoading } = useQuery<BlogPost[]>({
+    queryKey: ['/api/blog-posts'],
+  });
+
+  const loading = categoriesLoading || postsLoading;
   
-  // Load initial data
+  // Set up category from URL parameters
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const [postsData, categoriesData] = await Promise.all([
-          getAllBlogPosts(),
-          getAllCategories()
-        ]);
-        
-        setBlogPosts(postsData);
-        setCategories(categoriesData);
-        
-        // Check if we have a category slug in the URL path
-        if (params.categorySlug && params.categorySlug !== 'all') {
-          // Find the category ID from the slug
-          const category = categoriesData.find(c => c.slug === params.categorySlug);
-          if (category) {
-            setActiveCategory(category.id);
-          }
-        }
-      } catch (error) {
-        console.error("Error loading data:", error);
-      } finally {
-        setLoading(false);
+    if (params.categorySlug && params.categorySlug !== 'all' && categories.length > 0) {
+      // Find the category ID from the slug
+      const category = categories.find(c => c.slug === params.categorySlug);
+      if (category) {
+        setActiveCategory(category.id);
       }
-    };
-    
-    loadData();
-  }, [params.categorySlug]);
+    }
+  }, [params.categorySlug, categories]);
   
-  // Handle category changes
-  useEffect(() => {
-    const filterByCategory = async () => {
-      if (activeCategory === null) {
-        // If no category filter, load all posts
-        const posts = await getAllBlogPosts();
-        setBlogPosts(posts);
-      } else if (activeCategory > 0) {
-        // If specific category selected, filter by category
-        const filteredPosts = await getBlogPostsByCategoryId(activeCategory);
-        setBlogPosts(filteredPosts);
-      }
-    };
-    
-    filterByCategory();
-  }, [activeCategory]);
-  
-  // Handle search term changes
-  useEffect(() => {
-    const handleSearch = async () => {
-      if (searchTerm.trim() === '') {
-        // If search term is empty, reset to all posts or filtered by category
-        if (activeCategory === null || activeCategory === 0) {
-          const posts = await getAllBlogPosts();
-          setBlogPosts(posts);
-        } else {
-          const filteredPosts = await getBlogPostsByCategoryId(activeCategory);
-          setBlogPosts(filteredPosts);
-        }
-      } else {
-        // Search posts
-        const searchResults = await searchBlogPosts(searchTerm);
-        
-        // If category is also selected, filter the search results by category
-        if (activeCategory !== null && activeCategory > 0) {
-          setBlogPosts(searchResults.filter(post => post.categoryId === activeCategory));
-        } else {
-          setBlogPosts(searchResults);
-        }
-      }
-    };
-    
-    // Debounce search for better performance
-    const debounceTimer = setTimeout(handleSearch, 300);
-    return () => clearTimeout(debounceTimer);
-  }, [searchTerm, activeCategory]);
+  // Filter and search logic moved to filteredPosts computation
 
   // Filter posts by category and search term
-  const filteredPosts = blogPosts.filter(post => {
-    const matchesCategory = !activeCategory || post.categoryId === activeCategory;
+  const filteredPosts = allBlogPosts.filter(post => {
+    // Category filter
+    const matchesCategory = activeCategory === null || activeCategory === 0 || post.categoryId === activeCategory;
+    
+    // Search filter
     const matchesSearch = !searchTerm || 
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchTerm.toLowerCase());
     
     return matchesCategory && matchesSearch;
   });
@@ -289,12 +235,12 @@ const Blog = () => {
   ];
 
   // Add blog collection structured data for SEO
-  if (blogPosts.length > 0) {
+  if (allBlogPosts.length > 0) {
     // Add collection page data
     structuredData.push(
       getCollectionPageData(
         "Digital Marketing & Web Development Blog by GodivaTech Madurai",
-        blogPosts.slice(0, 10).map(post => ({
+        allBlogPosts.slice(0, 10).map(post => ({
           name: post.title,
           description: post.excerpt,
           image: post.coverImage || "https://godivatech.com/assets/blog-default.jpg"
@@ -303,7 +249,7 @@ const Blog = () => {
     );
     
     // Also add the latest blog post schema
-    const latestPost = blogPosts[0];
+    const latestPost = allBlogPosts[0];
     if (latestPost) {
       const blogPostSchema = getBlogPostData(
         latestPost.title,
