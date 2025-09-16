@@ -28,13 +28,13 @@ const TrustedBySection = () => {
           <img 
             src={ambikasLogo} 
             alt="Ambika's" 
-            className="h-10 opacity-80 hover:opacity-100 transition-opacity"
+            className="h-12 opacity-80 hover:opacity-100 transition-opacity"
           />
           
           <img 
             src={prakashGreenEnergyLogo} 
             alt="Prakash Green Energy" 
-            className="h-10 opacity-80 hover:opacity-100 transition-opacity"
+            className="h-14 opacity-80 hover:opacity-100 transition-opacity"
           />
         </div>
       </div>
