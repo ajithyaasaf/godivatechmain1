@@ -87,7 +87,7 @@ const About = () => {
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 to-transparent" />
                       </h2>
                       <p className="text-lg text-neutral-600 mb-6">
-                        Godiva Technologies was established by Rajesh Kumar in 2010, with a vision of providing comprehensive IT solutions that combine creativity, innovation, and technical expertise to meet diverse business needs. We started as a small web development company and gradually expanded our service offerings.
+                        Godiva Technologies was established by Ananth in 2010, with a vision of providing comprehensive IT solutions that combine creativity, innovation, and technical expertise to meet diverse business needs. We started as a small web development company and gradually expanded our service offerings.
                       </p>
                       <p className="text-lg text-neutral-600 mb-6">
                         Today, we've grown into a full-service digital transformation partner offering web development, digital marketing, app development, video production, UI/UX design, and creative designing services to businesses in Madurai and beyond.

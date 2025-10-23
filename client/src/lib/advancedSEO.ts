@@ -78,7 +78,7 @@ export const generateReviewSchema = () => {
         },
         "author": {
           "@type": "Person",
-          "name": "Rajesh Kumar"
+          "name": "Ananth"
         },
         "reviewBody": "Excellent web development services! GodivaTech delivered our e-commerce website in just 10 days. Sales increased by 300% within first month. Highly recommended!",
         "datePublished": "2024-12-15"
