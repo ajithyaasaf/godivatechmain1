@@ -45,6 +45,13 @@ const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Contact = lazy(() => import("@/pages/Contact"));
 const AreasWeServe = lazy(() => import("@/pages/AreasWeServe"));
+const Virudhunagar = lazy(() => import("@/pages/locations/Virudhunagar"));
+const Aruppukottai = lazy(() => import("@/pages/locations/Aruppukottai"));
+const Ramanathapuram = lazy(() => import("@/pages/locations/Ramanathapuram"));
+const Paramakudi = lazy(() => import("@/pages/locations/Paramakudi"));
+const Manamadurai = lazy(() => import("@/pages/locations/Manamadurai"));
+const Dindigul = lazy(() => import("@/pages/locations/Dindigul"));
+const Theni = lazy(() => import("@/pages/locations/Theni"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const AuthPage = lazy(() => import("@/pages/auth-page"));
 // Diagnostics page removed for production
@@ -104,6 +111,13 @@ function App() {
                 <Route path="/" component={Home} />
                 <Route path="/about" component={About} />
                 <Route path="/areas-we-serve" component={AreasWeServe} />
+                <Route path="/web-design-virudhunagar" component={Virudhunagar} />
+                <Route path="/web-design-aruppukottai" component={Aruppukottai} />
+                <Route path="/web-design-ramanathapuram" component={Ramanathapuram} />
+                <Route path="/web-design-paramakudi" component={Paramakudi} />
+                <Route path="/web-design-manamadurai" component={Manamadurai} />
+                <Route path="/web-design-dindigul" component={Dindigul} />
+                <Route path="/web-design-theni" component={Theni} />
                 <Route path="/services" component={Services} />
                 <Route path="/services/:slug" component={ServiceDetail} />
                 <Route path="/portfolio" component={Portfolio} />
