@@ -835,7 +835,6 @@ const ContentDataTable = ({
       
       // Keep track of original item fields to avoid losing data
       // that wasn't included in the form (like special IDs, timestamps, etc.)
-      const item = selectedItem as any;
       updateMutation.mutate({ 
         id: itemId, 
         data: {
