@@ -73,13 +73,6 @@ const HeroSection = () => {
       
       lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
     }
-    
-    // Clean up timeout to prevent memory leaks
-    return () => {
-      if (typingTimeout) {
-        clearTimeout(typingTimeout);
-      }
-    };
   }, []);
   
   // Featured services to display in hero - memoized to prevent recreation
