@@ -27,10 +27,45 @@ import { pageKeywords } from "@/lib/seoKeywords";
 import { getOrganizationData, getWebPageData, getBreadcrumbData } from "@/lib/structuredData";
 
 const Home = () => {
+  const structuredData = [
+    getOrganizationData(),
+    getWebPageData(
+      "Web Development Company in Madurai | Godiva Tech (Starts @ ₹15k)",
+      "Affordable web development services starting at ₹15,000. Expert digital solutions for businesses in Madurai and Tamil Nadu.",
+      "https://godivatech.com/"
+    ),
+    getBreadcrumbData([
+      { name: "Home", item: "https://godivatech.com/" }
+    ])
+  ];
+
   return (
-    <div className="relative">
-      {/* Hero section with immediate display - skip transitions for LCP */}
-      <HeroSection />
+    <>
+      <SEO
+        title="Web Development Company in Madurai | Godiva Tech (Starts @ ₹15k)"
+        description="Affordable web development services starting at ₹15,000. Expert digital solutions for businesses in Madurai and Tamil Nadu."
+        keywords={pageKeywords.home.join(", ")}
+        canonicalUrl="https://godivatech.com/"
+        ogType="website"
+        ogImage="https://godivatech.com/images/home-og-image.jpg"
+        imageWidth={1200}
+        imageHeight={630}
+        cityName="Madurai"
+        regionName="Tamil Nadu"
+        countryName="India"
+        twitterCard="summary_large_image"
+        twitterSite="@godivatech"
+        twitterCreator="@godivatech"
+        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        alternateUrls={[
+          { hrefLang: "en-in", href: "https://godivatech.com/" },
+          { hrefLang: "ta-in", href: "https://godivatech.com/ta/" }
+        ]}
+        structuredData={structuredData}
+      />
+      <div className="relative">
+        {/* Hero section with immediate display - skip transitions for LCP */}
+        <HeroSection />
       
       {/* Above-the-fold sections loaded immediately */}
       <TrustedBySection />
@@ -87,7 +122,8 @@ const Home = () => {
           <MapSection />
         </TransitionItem>
       </Suspense>
-    </div>
+      </div>
+    </>
   );
 };
 

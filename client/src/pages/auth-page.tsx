@@ -76,7 +76,7 @@ export default function AuthPage() {
     <>
       <Helmet>
         <title>Client Login | Godiva Tech</title>
-        <meta name="robots" content="noindex, nofollow" />
+        <meta name="robots" content="noindex" />
       </Helmet>
       <div className="flex min-h-screen">
       {/* Left side - Form */}
