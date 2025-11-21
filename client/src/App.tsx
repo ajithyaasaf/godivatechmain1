@@ -84,83 +84,9 @@ function App() {
     trackPageView(location);
   }, [location, trackPageView]);
   
-  // Initialize performance tracking and Core Web Vitals optimizations
-  useEffect(() => {
-    // Initialize Google Analytics if we have a measurement ID
-    const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-    if (gaId) {
-      // Analytics will be initialized by useAnalytics hook
-      console.log("Google Analytics Measurement ID detected");
-    } else {
-      console.warn("Missing Google Analytics Measurement ID");
-    }
-    
-    // Track long tasks to identify performance bottlenecks
-    trackLongTasks((duration) => {
-      if (import.meta.env.DEV) {
-        console.warn(`Long task detected: ${duration.toFixed(2)}ms`);
-      }
-    });
-    
-    // Initialize all performance optimizations for Core Web Vitals
-    initializePerformanceOptimizations();
-    
-    // Preload critical resources
-    preloadCriticalResources([
-      // Hero image
-      '/home-hero.jpg',
-      // Fonts
-      '/fonts/main-font.woff2',
-      // Critical CSS
-      '/critical.css'
-    ]);
-    
-    // Report Core Web Vitals to console in development
-    if (import.meta.env.DEV) {
-      setTimeout(() => {
-        if ('performance' in window) {
-          // Get the paint metrics
-          const paintMetrics = performance.getEntriesByType('paint');
-          paintMetrics.forEach(metric => {
-            console.log(`${metric.name}: ${metric.startTime.toFixed(2)}ms`);
-          });
-          
-          // Get LCP if available
-          try {
-            const lcpEntries = performance.getEntriesByType('largest-contentful-paint');
-            if (lcpEntries.length > 0) {
-              console.log(`Largest Contentful Paint: ${lcpEntries[0].startTime.toFixed(2)}ms`);
-            }
-          } catch (e) {
-            // LCP not supported
-          }
-        }
-      }, 3000);
-    }
-    
-    // Clean up event listeners on unmount
-    return () => {
-      // Cleanup code here if needed
-    };
-  }, []);
 
   return (
     <AuthProvider>
-      {/* Critical performance optimizations */}
-      <CriticalCSSInliner />
-      <PerformanceTracker />
-      
-      {/* Fast loading wrapper for improved perceived performance */}
-      <FastLoadingOptimizer>
-        {/* Add resource hints for performance optimization */}
-        <ResourceHints />
-        
-        {/* Performance optimization components */}
-        <LCPOptimizer />
-        
-        {/* Performance monitoring tool - only visible in development */}
-        {import.meta.env.DEV && <PerformanceMonitor />}
-
       {!isAdminRoute && (
         <Layout>
           {/* 
@@ -229,7 +155,6 @@ function App() {
           </Switch>
         </Suspense>
       )}
-      </FastLoadingOptimizer>
     </AuthProvider>
   );
 }

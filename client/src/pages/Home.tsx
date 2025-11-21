@@ -5,17 +5,12 @@ import TrustedBySection from "@/components/home/TrustedBySection";
 import ServiceSection from "@/components/home/ServiceSection";
 import AboutSection from "@/components/home/AboutSection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
-import SEO from "@/components/SEO";
-import AdvancedSEO from "@/components/AdvancedSEO";
-import LazyLoadComponent from "@/components/LazyLoadComponent";
-import PreloadHeroResources from "@/components/PreloadHeroResources";
-import { 
-  getLocalBusinessData, 
-  getOrganizationData, 
-  getWebsiteData,
-  getWebPageData 
-} from "@/lib/structuredData";
-import { pageKeywords, metaDescriptions } from "@/lib/seoKeywords";
+import PageLazy from "@/components/LazyLoadComponent";
+
+// Lazy load SEO-heavy components that block initial render
+const SEO = lazy(() => import("@/components/SEO"));
+const AdvancedSEO = lazy(() => import("@/components/AdvancedSEO"));
+const PreloadHeroResources = lazy(() => import("@/components/PreloadHeroResources"));
 
 // Lazy loaded components (below the fold)
 const TeamSection = lazy(() => import("@/components/home/TeamSection"));
@@ -31,54 +26,23 @@ const MapSection = lazy(() => import("@/components/home/MapSection"));
  * Enhanced Home page with smooth section transitions and SEO optimization
  */
 const Home = () => {
-  // Get current date for freshness signals
-  const currentDate = new Date().toISOString();
-  
-  // SEO structured data enhanced with proper IDs and current dates
-  const structuredData = [
-    getOrganizationData(),
-    getLocalBusinessData(),
-    getWebsiteData(),
-    getWebPageData(
-      "Web Development & Digital Marketing Services | GodivaTech Madurai",
-      "GodivaTech offers web development, digital marketing, and app development services in Madurai at affordable prices. Get custom technology solutions for your business.",
-      "https://godivatech.com/"
-    )
-  ];
-  
   return (
     <>
-      <AdvancedSEO
-        title="🚀 Best Web Development Company Madurai | Transform Your Business | Free Quote 24hrs"
-        description={metaDescriptions.home}
-        keywords={pageKeywords.home.join(", ")}
-        image="https://godivatech.com/assets/home-og-image.jpg"
-      />
+      {/* Lazy load SEO components - they're heavy and don't affect initial paint */}
+      <Suspense fallback={null}>
+        <SEO 
+          title="🚀 Best Web Development Company Madurai | Transform Your Business | Free Quote 24hrs"
+          description="Leading web development, digital marketing & design company in Madurai. Expert solutions & services for business growth. Get your free quote today!"
+        />
+      </Suspense>
       
-      <SEO
-        title="🚀 Best Web Development Company Madurai | Transform Your Business | Free Quote 24hrs"
-        description={metaDescriptions.home}
-        keywords={pageKeywords.home.join(", ")}
-        canonicalUrl="https://godivatech.com/"
-        structuredData={structuredData}
-        ogImage="https://godivatech.com/assets/home-og-image.jpg"
-        ogType="website"
-        ogLocale="en_IN"
-        twitterCard="summary_large_image"
-        twitterSite="@godivatech"
-        modifiedTime={currentDate}
-        cityName="Madurai"
-        regionName="Tamil Nadu"
-        countryName="India"
-        postalCode="625007"
-        facebookAppId="107394345671850"
-        priceRange="₹₹"
-        businessHours={['Mo-Fr 09:00-18:00', 'Sa 10:00-16:00']}
-        robots="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-      />
+      <Suspense fallback={null}>
+        <AdvancedSEO />
+      </Suspense>
       
-      {/* Preload critical resources for hero section */}
-      <PreloadHeroResources />
+      <Suspense fallback={null}>
+        <PreloadHeroResources />
+      </Suspense>
       
       <PageTransition>
         <div className="relative">
