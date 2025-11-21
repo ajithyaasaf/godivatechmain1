@@ -19,7 +19,8 @@ export function ReactDOMWarningShield({
   enableStrictMode = true,
   enableAutofix = true 
 }: ReactDOMWarningShieldProps) {
-  const { warningCount, clearWarnings } = useReactDOMWarningPrevention('ReactDOMWarningShield');
+  // Don't initialize the hook - just pass through children
+  // The hook causes issues in some environments
 
   useEffect(() => {
     if (import.meta.env.MODE !== 'development') return;
@@ -69,19 +70,6 @@ export function ReactDOMWarningShield({
     return cleanup;
   }, []);
 
-  // Auto-clear warnings periodically in development
-  useEffect(() => {
-    if (import.meta.env.MODE !== 'development') return;
-    
-    const interval = setInterval(() => {
-      if (warningCount > 0) {
-        console.log(`🛡️ Shield Report: ${warningCount} warnings blocked and prevented`);
-        clearWarnings();
-      }
-    }, 30000); // Report every 30 seconds
-
-    return () => clearInterval(interval);
-  }, [warningCount, clearWarnings]);
 
   // Wrap children in strict mode if enabled
   if (enableStrictMode && import.meta.env.MODE === 'development') {

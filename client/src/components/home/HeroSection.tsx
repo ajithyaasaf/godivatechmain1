@@ -36,7 +36,7 @@ const HeroSection = () => {
   
   // Type animation effect - optimized for LCP
   useEffect(() => {
-    let typingTimeout: NodeJS.Timeout;
+    let typingTimeout: NodeJS.Timeout | null = null;
     
     // Optimize LCP (Largest Contentful Paint)
     // 1. Preload hero images to improve render time
@@ -87,7 +87,9 @@ const HeroSection = () => {
     
     // Clean up timeout to prevent memory leaks
     return () => {
-      clearTimeout(typingTimeout);
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
     };
   }, []);
   

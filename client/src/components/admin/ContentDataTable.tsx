@@ -53,7 +53,7 @@ const ContentDataTable = ({
 }: ContentDataTableProps) => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   // API endpoint paths
@@ -63,18 +63,23 @@ const ContentDataTable = ({
   // Fetch data with React Query
   const { data = [], isLoading, refetch, error } = useQuery<any[]>({
     queryKey: [apiPath],
-    onSuccess: (data) => {
-      console.log(`Data fetched for ${title}:`, data);
-      if (Array.isArray(data)) {
-        console.log(`Fetched ${data.length} ${title.toLowerCase()} items`);
-      } else {
-        console.error(`Expected array for ${title} but got:`, typeof data);
-      }
-    },
-    onError: (err) => {
-      console.error(`Error fetching ${title}:`, err);
-    }
   });
+
+  // Handle success/error after query completes
+  useEffect(() => {
+    if (data && Array.isArray(data)) {
+      console.log(`Data fetched for ${title}:`, data);
+      console.log(`Fetched ${data.length} ${title.toLowerCase()} items`);
+    } else if (data) {
+      console.error(`Expected array for ${title} but got:`, typeof data);
+    }
+  }, [data, title]);
+
+  useEffect(() => {
+    if (error) {
+      console.error(`Error fetching ${title}:`, error);
+    }
+  }, [error, title]);
   
   // Setup WebSocket for real-time updates
   useEffect(() => {
@@ -111,11 +116,13 @@ const ContentDataTable = ({
           
           // Send a ping to verify the connection
           try {
-            socket.send(JSON.stringify({ 
-              type: 'ping', 
-              component: title,
-              timestamp: new Date().toISOString() 
-            }));
+            if (socket && socket.readyState === WebSocket.OPEN) {
+              socket.send(JSON.stringify({ 
+                type: 'ping', 
+                component: title,
+                timestamp: new Date().toISOString() 
+              }));
+            }
           } catch (pingError) {
             console.warn(`Failed to send initial ping: ${pingError}`);
           }
@@ -790,28 +797,29 @@ const ContentDataTable = ({
       console.log(`Updating existing item:`, selectedItem);
       
       // Enhanced ID detection for various backend systems
-      let itemId = null;
+      let itemId: any = null;
+      const item = selectedItem as any;
       
-      if (selectedItem && typeof selectedItem === 'object') {
+      if (item && typeof item === 'object') {
         // Prioritize Firestore-specific IDs
-        if (selectedItem.firebaseId !== undefined && selectedItem.firebaseId !== null) {
-          console.log(`Using firebaseId for update: ${selectedItem.firebaseId}`);
-          itemId = selectedItem.firebaseId;
+        if (item.firebaseId !== undefined && item.firebaseId !== null) {
+          console.log(`Using firebaseId for update: ${item.firebaseId}`);
+          itemId = item.firebaseId;
         }
         // Then try docId which is also a Firestore ID
-        else if (selectedItem.docId !== undefined && selectedItem.docId !== null) {
-          console.log(`Using docId for update: ${selectedItem.docId}`);
-          itemId = selectedItem.docId;
+        else if (item.docId !== undefined && item.docId !== null) {
+          console.log(`Using docId for update: ${item.docId}`);
+          itemId = item.docId;
         }
         // Finally use regular id
-        else if (selectedItem.id !== undefined && selectedItem.id !== null) {
-          console.log(`Using id for update: ${selectedItem.id} (type: ${typeof selectedItem.id})`);
-          itemId = selectedItem.id;
+        else if (item.id !== undefined && item.id !== null) {
+          console.log(`Using id for update: ${item.id} (type: ${typeof item.id})`);
+          itemId = item.id;
         }
         // Legacy ID format
-        else if (selectedItem.__id !== undefined && selectedItem.__id !== null) {
-          console.log(`Using __id for update: ${selectedItem.__id}`);
-          itemId = selectedItem.__id;
+        else if (item.__id !== undefined && item.__id !== null) {
+          console.log(`Using __id for update: ${item.__id}`);
+          itemId = item.__id;
         }
       }
       
@@ -827,14 +835,15 @@ const ContentDataTable = ({
       
       // Keep track of original item fields to avoid losing data
       // that wasn't included in the form (like special IDs, timestamps, etc.)
+      const item = selectedItem as any;
       updateMutation.mutate({ 
         id: itemId, 
         data: {
           ...formData,
           // Keep any special fields
-          ...(selectedItem.firebaseId && { firebaseId: selectedItem.firebaseId }),
-          ...(selectedItem.docId && { docId: selectedItem.docId }),
-          ...(selectedItem.__id && { __id: selectedItem.__id }),
+          ...(item.firebaseId && { firebaseId: item.firebaseId }),
+          ...(item.docId && { docId: item.docId }),
+          ...(item.__id && { __id: item.__id }),
         } 
       });
     } else {
@@ -845,12 +854,13 @@ const ContentDataTable = ({
   };
   
   // Handler for deleting items with enhanced ID detection
-  const handleDelete = (item: any) => {
+  const handleDelete = (itemToDelete: any) => {
     if (confirm(`Are you sure you want to delete this ${title.toLowerCase()}?`)) {
-      console.log("Deleting item:", item);
+      console.log("Deleting item:", itemToDelete);
       
       // Enhanced ID detection for Firebase/Firestore documents
-      let itemId = null;
+      let itemId: any = null;
+      const item = itemToDelete as any;
       
       if (item && typeof item === 'object') {
         // Detailed logging to debug ID issues
