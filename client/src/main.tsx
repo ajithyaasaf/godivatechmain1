@@ -21,9 +21,31 @@ window.addEventListener('unhandledrejection', (event) => {
   }
 });
 
-// Initialize performance monitoring
+// Start API calls immediately via the queryClient to warm up cache
 if (typeof window !== 'undefined') {
-  // Start monitoring performance metrics (defer to avoid forced reflows)
+  // Warm up cache with API calls immediately (they're already prefetching in HTML)
+  const warmupAPIs = async () => {
+    const endpoints = ['/api/services', '/api/projects', '/api/team-members', '/api/testimonials', '/api/categories', '/api/blog-posts'];
+    endpoints.forEach(endpoint => {
+      queryClient.prefetchQuery({
+        queryKey: [endpoint],
+        queryFn: async () => {
+          const res = await fetch(endpoint);
+          if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
+          return res.json();
+        }
+      }).catch(() => {}); // Silently fail, queries will retry
+    });
+  };
+  
+  // Start warming up APIs immediately without blocking
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', warmupAPIs);
+  } else {
+    Promise.resolve().then(warmupAPIs);
+  }
+  
+  // Initialize performance monitoring (defer to avoid forced reflows)
   requestAnimationFrame(() => {
     initPerformanceMonitoring();
   });

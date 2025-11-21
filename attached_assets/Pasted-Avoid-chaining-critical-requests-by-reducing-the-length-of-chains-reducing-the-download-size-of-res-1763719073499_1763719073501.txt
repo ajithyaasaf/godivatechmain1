@@ -1,0 +1,36 @@
+Avoid chaining critical requests by reducing the length of chains, reducing the download size of resources, or deferring the download of unnecessary resources to improve page load.LCPUnscored
+Maximum critical path latency: 2,304 ms
+Initial Navigation
+https://www.godivatech.com - 98 ms, 2.37 KiB
+/assets/index-CL_nt0FZ.js(www.godivatech.com) - 273 ms, 290.09 KiB
+/assets/TeamSecti….js(www.godivatech.com) - 787 ms, 2.63 KiB
+/assets/optimized….js(www.godivatech.com) - 787 ms, 0.96 KiB
+/assets/users-OGeb0yxu.js(www.godivatech.com) - 789 ms, 0.97 KiB
+/assets/Portfolio….js(www.godivatech.com) - 788 ms, 4.65 KiB
+/assets/chevron-r….js(www.godivatech.com) - 791 ms, 0.81 KiB
+/assets/image-DIV_IQuf.js(www.godivatech.com) - 796 ms, 0.94 KiB
+/assets/chevron-l….js(www.godivatech.com) - 791 ms, 0.81 KiB
+/assets/Testimoni….js(www.godivatech.com) - 795 ms, 3.31 KiB
+/api/team-members(godivatech-backend.onrender.com) - 2,237 ms, 1.34 KiB
+/api/projects(godivatech-backend.onrender.com) - 2,304 ms, 10.46 KiB
+/api/testimonials(godivatech-backend.onrender.com) - 1,873 ms, 1.34 KiB
+/api/categories(godivatech-backend.onrender.com) - 2,270 ms, 1.49 KiB
+/api/blog-posts(godivatech-backend.onrender.com) - 2,073 ms, 3.46 KiB
+/assets/BlogSecti….js(www.godivatech.com) - 797 ms, 2.80 KiB
+/assets/BlogCard-Br4g8Qqb.js(www.godivatech.com) - 790 ms, 3.24 KiB
+/assets/format-B2FXVs-x.js(www.godivatech.com) - 793 ms, 6.31 KiB
+/assets/CategoryF….js(www.godivatech.com) - 798 ms, 1.43 KiB
+/assets/Newslette….js(www.godivatech.com) - 794 ms, 1.67 KiB
+/assets/input-DLalH6Xj.js(www.godivatech.com) - 794 ms, 1.18 KiB
+/assets/ContactSe….js(www.godivatech.com) - 800 ms, 3.89 KiB
+/assets/textarea-CRMQdq2C.js(www.godivatech.com) - 795 ms, 1.11 KiB
+/assets/checkbox-DlfVuhJm.js(www.godivatech.com) - 799 ms, 2.53 KiB
+/assets/index-CA5KrNTK.js(www.godivatech.com) - 799 ms, 0.73 KiB
+/api/services(godivatech-backend.onrender.com) - 1,398 ms, 2.25 KiB
+/api/user(www.godivatech.com) - 882 ms, 2.39 KiB
+/assets/CTASection-Df-INNnP.js(www.godivatech.com) - 803 ms, 2.36 KiB
+/assets/MapSectio….js(www.godivatech.com) - 804 ms, 1.66 KiB
+/api/user(godivatech-backend.onrender.com) - 1,668 ms, 1.35 KiB
+…1:801…:web:f030b47…/webConfig(firebase.googleapis.com) - 881 ms, 0.66 KiB
+…godiva-tech/installations(firebaseinstallations.googleapis.com) - 1,666 ms, 0.95 KiB
+/assets/style.B9KwkOzW.css(www.godivatech.com) - 122 ms, 21.32 KiB

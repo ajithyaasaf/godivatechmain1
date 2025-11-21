@@ -13,8 +13,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://res.cloudinary.com">
     <link rel="dns-prefetch" href="https://godivatech-backend.onrender.com">
-    <link rel="preload" href="/api/services" as="fetch" crossorigin>
-    <link rel="preload" href="/api/projects" as="fetch" crossorigin>
+    
+    <!-- Prefetch all API calls to start loading immediately in parallel -->
+    <link rel="prefetch" href="/api/services" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/projects" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/team-members" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/testimonials" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/categories" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/blog-posts" as="fetch" crossorigin>
+    
+    <!-- Parallel loading of critical chunks via modulepreload -->
+    <link rel="modulepreload" href="/src/components/home/TeamSection.tsx">
+    <link rel="modulepreload" href="/src/components/home/PortfolioSection.tsx">
+    <link rel="modulepreload" href="/src/components/home/TestimonialsSection.tsx">
+    <link rel="modulepreload" href="/src/components/home/BlogSection.tsx">
     
     <!-- Optimized font loading to prevent render blocking -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
