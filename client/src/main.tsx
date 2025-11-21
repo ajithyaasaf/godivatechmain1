@@ -14,12 +14,17 @@ import { initPerformanceMonitoring } from "./lib/performance";
 // React DOM Warning Shield - Global protection
 import ReactDOMWarningShield from "./components/ReactDOMWarningShield";
 
-// Suppress Vite HMR WebSocket errors - they don't affect app functionality
+// Suppress Vite HMR WebSocket errors with capture phase
 window.addEventListener('unhandledrejection', (event) => {
   if (event.reason?.message?.includes('WebSocket')) {
     event.preventDefault();
   }
-});
+}, true);
+window.addEventListener('error', (event) => {
+  if (event.message?.includes('WebSocket')) {
+    event.preventDefault();
+  }
+}, true);
 
 // Start API calls immediately via the queryClient to warm up cache
 if (typeof window !== 'undefined') {

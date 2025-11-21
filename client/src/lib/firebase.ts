@@ -39,15 +39,19 @@ export const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Initialize analytics only if supported (prevents errors in test/development environments)
+// Initialize analytics only after page load to reduce main-thread work
 let analytics = null;
-isSupported().then(yes => {
-  if (yes) {
-    analytics = getAnalytics(app);
-  }
-}).catch(e => {
-  console.log("Firebase analytics not supported:", e);
-});
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    isSupported().then(yes => {
+      if (yes) {
+        analytics = getAnalytics(app);
+      }
+    }).catch(e => {
+      console.log("Firebase analytics not supported:", e);
+    });
+  });
+}
 
 const auth = getAuth(app);
 const storage = getStorage(app);

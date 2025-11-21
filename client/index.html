@@ -8,6 +8,12 @@
     <meta name="keywords" content="web development, digital marketing, design solutions, madurai, services, business growth, website design, app development, seo, branding" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     
+    <!-- Suppress Vite HMR WebSocket errors globally at the earliest point -->
+    <script>
+      window.addEventListener('error', function(e) { if (e.message?.includes('WebSocket')) e.preventDefault(); }, true);
+      window.addEventListener('unhandledrejection', function(e) { if (e.reason?.message?.includes('WebSocket')) e.preventDefault(); }, true);
+    </script>
+    
     <!-- Critical resource hints for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,56 +70,38 @@
       @media print { #root { display: none; } }
     </style>
 
-    <!-- Google Analytics - Deferred to not block rendering -->
-    <script defer async src="https://www.googletagmanager.com/gtag/js?id=G-MEASUREMENT_ID"></script>
-    <script defer>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-MEASUREMENT_ID');
-    </script>
-
-    <!-- Facebook Pixel Code - Deferred to not block rendering -->
-    <script defer>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', 'YOUR_PIXEL_ID');
-      fbq('track', 'PageView');
+    <!-- Analytics deferred to after page load to not block rendering -->
+    <script>
+      // Load analytics after page is fully interactive
+      window.addEventListener('load', function() {
+        // GTM - defer to after load
+        var script = document.createElement('script');
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-KHE7CZP6EZ';
+        script.async = true;
+        document.head.appendChild(script);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-KHE7CZP6EZ');
+        
+        // Facebook Pixel - defer to after load
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', 'YOUR_PIXEL_ID');
+        fbq('track', 'PageView');
+      });
     </script>
   </head>
   <body>
-    <!-- Facebook Pixel Code (noscript fallback) -->
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Facebook Pixel Code -->
     
     <div id="root"></div>
-    
-    <!-- Immediately suppress Vite HMR WebSocket errors before any scripts load -->
-    <script>
-      (function() {
-        const originalHandler = window.onunhandledrejection;
-        window.onunhandledrejection = function(event) {
-          if (event.reason?.message?.includes('WebSocket')) {
-            event.preventDefault();
-            return;
-          }
-          if (originalHandler) originalHandler(event);
-        };
-        window.addEventListener('unhandledrejection', function(event) {
-          if (event.reason?.message?.includes('WebSocket')) {
-            event.preventDefault();
-          }
-        });
-      })();
-    </script>
     
     <script type="module" src="/src/main.tsx"></script>
 
