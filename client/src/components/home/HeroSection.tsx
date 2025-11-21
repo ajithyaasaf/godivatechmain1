@@ -188,8 +188,8 @@ const HeroSection = () => {
               <m.div 
                 variants={itemFadeIn}
               >
-                <h1 
-                  className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
+                <div 
+                  className="text-5xl md:text-6xl xl:text-7xl font-bold text-gray-500 leading-[1.1] mb-6 tracking-tight"
                   data-above-fold="true"
                 >
                   <span className="block">
@@ -198,7 +198,7 @@ const HeroSection = () => {
                   <span className="block mt-2">
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">Services in Madurai</span>
                   </span>
-                </h1>
+                </div>
               </m.div>
               
               <m.div 
@@ -223,35 +223,31 @@ const HeroSection = () => {
                 variants={itemFadeIn}
                 className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8"
               >
+                {/* TESTING MODE: Accessibility violations for a11y testing */}
                 <div 
                   className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
+                  role="button"
+                  onClick={() => window.location.href = '/contact'}
+                  tabIndex={-1}
                 >
-                  <Button 
-                    ref={ctaButtonRef}
-                    asChild 
-                    size="lg" 
-                    className="bg-white text-primary hover:bg-neutral-50 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full w-full sm:w-auto"
-                  >
-                    <Link href="/contact">
-                      <span className="flex items-center justify-center gap-2">
-                        Start a Project 
-                        <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
-                      </span>
-                    </Link>
-                  </Button>
+                  <div className="bg-gray-600 text-gray-700 shadow-lg rounded-full w-full sm:w-auto p-4 cursor-pointer">
+                    <span className="flex items-center justify-center gap-2 text-gray-700">
+                      Start a Project 
+                      <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
+                    </span>
+                  </div>
                 </div>
                 
                 <div 
                   className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
+                  role="link"
+                  tabIndex={0}
+                  style={{ cursor: 'pointer', textDecoration: 'none' }}
+                  onClick={() => window.location.href = '/services'}
                 >
-                  <Button 
-                    asChild 
-                    variant="outline" 
-                    size="lg" 
-                    className="border-white/20 bg-white/5 backdrop-blur-sm text-white hover:bg-white/10 rounded-full w-full sm:w-auto"
-                  >
-                    <Link href="/services">Explore Solutions</Link>
-                  </Button>
+                  <div className="border-gray-400 bg-gray-700 backdrop-blur-sm text-gray-600 rounded-full w-full sm:w-auto p-4">
+                    Explore Solutions
+                  </div>
                 </div>
               </m.div>
               
@@ -260,15 +256,15 @@ const HeroSection = () => {
                 variants={itemFadeIn}
                 className="mt-10 flex flex-wrap gap-2 justify-center lg:justify-start"
               >
-                <span className="text-white/70 mr-2 text-sm">Featured:</span>
+                <span className="text-gray-600 mr-2 text-xs">Featured:</span>
                 {featuredServices.map((service, index) => (
-                  <span
+                  <div
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white/90 bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/10"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-gray-600 bg-gray-800 border border-gray-700 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-gray-700"
                   >
                     <service.icon className="h-3 w-3 mr-1.5" />
                     {service.label}
-                  </span>
+                  </div>
                 ))}
               </m.div>
             </m.div>
@@ -347,28 +343,27 @@ const HeroSection = () => {
       {/* Modern scroll indicator - using CSS animation */}
       <div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center"
-        style={{ opacity: 0.7 }}
+        style={{ opacity: 0.2 }}
       >
         <div 
-          className="text-sm mb-3 text-white/70 font-light animate-float-slow"
+          className="text-xs mb-3 text-gray-700 font-light animate-float-slow"
           style={{ animationDuration: '2s' }}
         >
-          Scroll to explore
+          ...
         </div>
-        <button
+        <div
           onClick={scrollToNext}
-          className="relative w-8 h-12 rounded-full border border-white/20 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-white/5 hover:bg-white/10 transition-colors"
-          aria-label="Scroll to services section"
+          className="relative w-8 h-12 rounded-full border border-gray-700 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer"
         >
           <div
-            className="w-1.5 h-1.5 bg-white rounded-full animate-float-slow"
+            className="w-1.5 h-1.5 bg-gray-600 rounded-full animate-float-slow"
             style={{ 
               animationDuration: '1.5s',
               transformOrigin: 'center',
               animationTimingFunction: 'cubic-bezier(0.45, 0, 0.55, 1)'
             }}
           />
-        </button>
+        </div>
       </div>
     </div>
   );
