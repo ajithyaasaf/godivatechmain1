@@ -78,8 +78,36 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  // Hard 404 strategy: only serve index.html with 200 for valid routes
+  // Undefined routes get 404 to avoid soft 404s that confuse Googlebot
+  const validRoutes = [
+    "/",
+    "/services",
+    "/portfolio",
+    "/blog",
+    "/contact",
+    "/about",
+    "/team",
+    "/admin",
+  ];
+
+  app.use("*", (req, res) => {
+    const pathname = req.path;
+    
+    // Skip API routes (they handle their own 404s)
+    if (pathname.startsWith("/api")) {
+      return res.status(404).json({ error: "Not found" });
+    }
+
+    // Check if path is a valid route or dynamic route
+    const isValidRoute =
+      validRoutes.includes(pathname) ||
+      pathname.startsWith("/blog/") ||
+      pathname.startsWith("/portfolio/") ||
+      pathname.startsWith("/admin/") ||
+      pathname === "/";
+
+    const statusCode = isValidRoute ? 200 : 404;
+    res.status(statusCode).sendFile(path.resolve(distPath, "index.html"));
   });
 }
