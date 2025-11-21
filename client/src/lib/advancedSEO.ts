@@ -156,6 +156,44 @@ export const generateLocalBusinessSchema = () => {
       "latitude": "9.9252",
       "longitude": "78.1198"
     },
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": "Madurai"
+      },
+      {
+        "@type": "City",
+        "name": "Virudhunagar"
+      },
+      {
+        "@type": "City",
+        "name": "Rajapalayam"
+      },
+      {
+        "@type": "City",
+        "name": "Sivakasi"
+      },
+      {
+        "@type": "City",
+        "name": "Dindigul"
+      },
+      {
+        "@type": "City",
+        "name": "Theni"
+      },
+      {
+        "@type": "City",
+        "name": "Manamadurai"
+      },
+      {
+        "@type": "City",
+        "name": "Paramakudi"
+      },
+      {
+        "@type": "City",
+        "name": "Ramanathapuram"
+      }
+    ],
     "openingHoursSpecification": [
       {
         "@type": "OpeningHoursSpecification",
@@ -165,11 +203,6 @@ export const generateLocalBusinessSchema = () => {
       }
     ],
     "priceRange": "₹₹₹",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "150"
-    },
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
       "name": "Web Development Services",
