@@ -4,6 +4,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
+import compression from 'compression';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { ssrMiddleware } from "./ssr-middleware";
@@ -12,6 +13,18 @@ import { staticAssetCache, apiCache, htmlCache, noCache } from "./caching";
 import { seoMiddleware } from "./seo-middleware";
 
 const app = express();
+
+// Enable gzip compression for all responses - reduces transfer size by 60-80%
+app.use(compression({
+  level: 6,
+  threshold: 1024,
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  }
+}));
 
 // Configure CORS for cross-origin requests
 let allowedOrigins;

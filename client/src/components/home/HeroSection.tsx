@@ -148,12 +148,10 @@ const HeroSection = () => {
         <div className="absolute inset-0 opacity-[0.15] 
           [background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]" />
         
-        {/* Animated gradient blobs - reduced from 3 to 2 for performance */}
-        <div className="absolute top-1/4 -left-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" 
-          style={{ animationDuration: '15s' }}
+        {/* Static gradient blobs - animation removed for better performance (TBT reduction) */}
+        <div className="absolute top-1/4 -left-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10" 
         />
-        <div className="absolute -bottom-10 left-1/4 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-slow" 
-          style={{ animationDuration: '20s', animationDelay: '3s' }}
+        <div className="absolute -bottom-10 left-1/4 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10" 
         />
         
         {/* Grid lines with larger size for better performance */}
@@ -162,12 +160,12 @@ const HeroSection = () => {
           [background-size:6rem_6rem]" />
       </div>
       
-      {/* Static sparkles with CSS animations - reduced quantity for performance */}
+      {/* Static sparkles - animation disabled for better performance (TBT reduction) */}
       <div className="absolute inset-0 overflow-hidden z-10 pointer-events-none">
         {sparkles.map(sparkle => (
           <div
             key={sparkle.id}
-            className="absolute rounded-full bg-white animate-pulse-slow"
+            className="absolute rounded-full bg-white"
             style={{
               top: sparkle.top,
               left: sparkle.left,
@@ -175,10 +173,7 @@ const HeroSection = () => {
               height: `${sparkle.size}px`,
               filter: 'blur(1px)',
               boxShadow: '0 0 6px 2px rgba(255, 255, 255, 0.3)',
-              animationDelay: sparkle.animationDelay,
-              animationDuration: '3s',
-              opacity: 0.6,
-              willChange: 'opacity'
+              opacity: 0.3
             }}
           />
         ))}
@@ -312,28 +307,24 @@ const HeroSection = () => {
               {/* Simplified 3D visuals with minimal animation */}
               <div className="relative mx-auto">
                 <div
-                  className="relative mx-auto animate-fade-in"
-                  style={{ animationDuration: '1s', animationDelay: '0.8s' }}
+                  className="relative mx-auto"
                 >
                   {/* Main image container */}
                   <div className="relative w-full max-w-[400px] aspect-square mx-auto">
                     {/* Shadow */}
-                    <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl opacity-40 blur-xl transform rotate-3" />
+                    <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl opacity-20 blur-xl" />
                     
-                    {/* Image - Using CSS animations instead of JS animations */}
+                    {/* Image - Static for better performance */}
                     <div
-                      className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl transform rotate-2 bg-gradient-to-br from-indigo-900/90 to-purple-900/90 backdrop-blur-sm animate-float-slow"
+                      className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl bg-gradient-to-br from-indigo-900/90 to-purple-900/90 backdrop-blur-sm"
                       style={{ 
-                        transformStyle: 'preserve-3d',
-                        animationDuration: '20s',
-                        willChange: 'transform'
+                        transformStyle: 'preserve-3d'
                       }}
                     >
                       {/* Display 3D visualization */}
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div 
-                          className="text-white/90 text-center relative z-20 animate-fade-in"
-                          style={{ animationDuration: '1s', animationDelay: '1s' }}
+                          className="text-white/90 text-center relative z-20"
                         >
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div className="w-32 h-32 rounded-full bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center">
@@ -345,20 +336,17 @@ const HeroSection = () => {
                             </div>
                           </div>
                           
-                          {/* Floating feature boxes with CSS animations instead of JS */}
+                          {/* Static feature boxes - animations removed for performance */}
                           <div
-                            className="absolute top-8 right-8 w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600/80 to-blue-400/80 border border-white/20 backdrop-blur-sm shadow-lg animate-float-slow"
-                            style={{ animationDuration: '10s' }}
+                            className="absolute top-8 right-8 w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600/60 to-blue-400/60 border border-white/20 backdrop-blur-sm shadow-lg"
                           />
                           
                           <div
-                            className="absolute top-8 left-8 w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600/80 to-purple-400/80 border border-white/20 backdrop-blur-sm shadow-lg rotate-12 animate-float-reverse"
-                            style={{ animationDuration: '15s' }}
+                            className="absolute top-8 left-8 w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600/60 to-purple-400/60 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
                           />
                           
                           <div
-                            className="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-lg bg-gradient-to-br from-cyan-400 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg rotate-12 animate-float-slow"
-                            style={{ animationDuration: '12s' }}
+                            className="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-lg bg-gradient-to-br from-cyan-400/60 to-cyan-600/60 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
                           />
                         </div>
                       </div>
