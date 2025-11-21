@@ -34,8 +34,8 @@ const About = () => {
   return (
     <>
       <SEO
-        title="Best Software Company in Madurai | About GodivaTech"
-        description="GodivaTech provides affordable web development, digital marketing, and app development services in Madurai since 2010. Learn about our experienced team, mission, and values as a leading IT company in Tamil Nadu."
+        title="About Godiva Tech | Best Web Design Agency in Madurai & Rajapalayam"
+        description="We are a team of expert developers and marketers bridging the gap between Rajapalayam and Madurai. Learn about our mission to help small businesses grow."
         keywords={pageKeywords.about.join(", ")}
         canonicalUrl="/about"
         ogType="profile"

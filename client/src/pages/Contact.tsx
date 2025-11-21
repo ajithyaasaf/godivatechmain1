@@ -60,8 +60,8 @@ const Contact = memo(() => {
   return (
     <>
       <SEO
-        title="Contact Godiva Tech | Web Design Agency in Madurai"
-        description="Looking for web development in Madurai or Rajapalayam? Visit our office in Iyer Bungalow or call us for a free consultation."
+        title="Contact Godiva Tech | Web Design Office in Madurai"
+        description="Looking for web development? Visit our office in Iyer Bungalow, Madurai or call us. We serve Rajapalayam, Virudhunagar, and Sivakasi."
         keywords={pageKeywords.contact.join(", ")}
         canonicalUrl="/contact"
         ogType="website"

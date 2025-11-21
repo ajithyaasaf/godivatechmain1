@@ -22,6 +22,10 @@ const MapSection = lazy(() => import("@/components/home/MapSection"));
  * Home page - optimized for maximum performance
  * SEO is handled entirely in index.html to avoid render blocking
  */
+import SEO from "@/components/SEO";
+import { pageKeywords } from "@/lib/seoKeywords";
+import { getOrganizationData, getWebPageData, getBreadcrumbData } from "@/lib/structuredData";
+
 const Home = () => {
   return (
     <div className="relative">
