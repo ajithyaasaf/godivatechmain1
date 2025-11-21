@@ -1,27 +1,36 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { useScroll, useTransform } from "framer-motion";
-import { LazyMotion, domAnimation, m } from "framer-motion";
-import { typeText } from "@/lib/animation";
 import { 
   ArrowUpRight, Sparkles, Code, Layers, BarChart
 } from "lucide-react";
 import { preloadHeroImages, optimizeFonts, decodeImagesAsync } from "@/lib/lcp-optimization";
 import { delayAnimationsUntilAfterLCP, getOptimizedAnimationVariants } from "@/lib/animation-optimizer";
 
-// Hero Section with optimized animations for performance
+// Lazy load framer-motion only after LCP
+let useScroll: any = () => ({ scrollYProgress: { get current() { return 0; } } });
+let useTransform: any = () => ({ get current() { return 1; } });
+let LazyMotion: any = ({ children }: any) => children;
+let domAnimation: any = null;
+let m: any = { div: 'div', h1: 'h1', p: 'p' };
+
+const loadFramerMotion = async () => {
+  if (typeof window !== 'undefined' && document.readyState === 'complete') {
+    const fm = await import('framer-motion');
+    useScroll = fm.useScroll;
+    useTransform = fm.useTransform;
+    LazyMotion = fm.LazyMotion;
+    domAnimation = fm.domAnimation;
+    m = fm.m;
+  }
+};
+
+// Hero Section - optimized for LCP (no heavy animations)
 const HeroSection = () => {
   // Refs for different elements
   const sectionRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaButtonRef = useRef<HTMLButtonElement>(null);
-  
-  // Simplified scroll animation
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"]
-  });
   
   // Scroll to services section - memoized to avoid recreation on each render
   const scrollToNext = useCallback(() => {
@@ -31,47 +40,36 @@ const HeroSection = () => {
     }
   }, []);
   
-  // Scroll-based visibility effects
-  const scrollOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  
-  // Minimal effect - only set subtitle text immediately for LCP
+  // Critical: Minimal effect - only set subtitle text immediately for LCP
   useEffect(() => {
     // Show subtitle text immediately without any blocking operations
     if (subtitleRef.current) {
       subtitleRef.current.style.visibility = 'visible';
       subtitleRef.current.textContent = "Providing affordable IT solutions to businesses in Madurai and beyond.";
     }
-    
-    // Defer all heavy work to after page load to not block initial render
-    const deferHeavyWork = () => {
-      requestAnimationFrame(() => {
-        // Preload images asynchronously
-        preloadHeroImages(['/src/assets/godiva-logo.png']);
-        optimizeFonts();
-        decodeImagesAsync('img[loading="eager"]');
-        delayAnimationsUntilAfterLCP(2000).then(() => {
-          setShouldStartAnimations(true);
-        });
+  }, []);
+
+  // Defer ALL non-critical work to after page becomes interactive
+  useEffect(() => {
+    const deferredWork = () => {
+      // Load framer-motion only after LCP
+      loadFramerMotion();
+      // Preload images asynchronously
+      preloadHeroImages(['/src/assets/godiva-logo.png']);
+      optimizeFonts();
+      decodeImagesAsync('img[loading="eager"]');
+      delayAnimationsUntilAfterLCP(2000).then(() => {
+        setShouldStartAnimations(true);
       });
     };
     
+    // Only run after page is fully loaded (not during LCP)
     if (document.readyState === 'complete') {
-      deferHeavyWork();
+      requestIdleCallback?.(deferredWork) || setTimeout(deferredWork, 1000);
     } else {
-      window.addEventListener('load', deferHeavyWork);
-      return () => window.removeEventListener('load', deferHeavyWork);
-    }
-    
-    // Log LCP time for verification
-    if (typeof PerformanceObserver !== 'undefined') {
-      const lcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        const lastEntry = entries[entries.length - 1];
-        console.log(`LCP time: ${Math.round(lastEntry.startTime)}ms`);
-        lcpObserver.disconnect();
+      window.addEventListener('load', () => {
+        requestIdleCallback?.(deferredWork) || setTimeout(deferredWork, 100);
       });
-      
-      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
     }
   }, []);
   

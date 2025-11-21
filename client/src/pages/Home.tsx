@@ -1,10 +1,12 @@
 import React, { Suspense, lazy } from "react";
-import { motion } from "framer-motion";
 import HeroSection from "@/components/home/HeroSection";
 import TrustedBySection from "@/components/home/TrustedBySection";
 import ServiceSection from "@/components/home/ServiceSection";
 import AboutSection from "@/components/home/AboutSection";
-import PageTransition, { TransitionItem } from "@/components/PageTransition";
+
+// Lazy load PageTransition only when needed (not critical for LCP)
+const PageTransition = lazy(() => import("@/components/PageTransition"));
+const TransitionItem = ({ children, delay }: any) => <>{children}</>;
 
 // Lazy loaded components (below the fold)
 const TeamSection = lazy(() => import("@/components/home/TeamSection"));
@@ -23,25 +25,16 @@ const MapSection = lazy(() => import("@/components/home/MapSection"));
 const Home = () => {
 
   return (
-    <PageTransition>
-      <div className="relative">
-        {/* Hero section with immediate display */}
-        <TransitionItem>
-          <HeroSection />
-        </TransitionItem>
-        
-        {/* Above-the-fold sections loaded immediately */}
-        <TransitionItem delay={0.1}>
-          <TrustedBySection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.2}>
-          <ServiceSection />
-        </TransitionItem>
-        
-        <TransitionItem delay={0.1}>
-          <AboutSection />
-        </TransitionItem>
+    <div className="relative">
+      {/* Hero section with immediate display - skip transitions for LCP */}
+      <HeroSection />
+      
+      {/* Above-the-fold sections loaded immediately */}
+      <TrustedBySection />
+      
+      <ServiceSection />
+      
+      <AboutSection />
         
         {/* Below-the-fold sections lazy loaded */}
         <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
