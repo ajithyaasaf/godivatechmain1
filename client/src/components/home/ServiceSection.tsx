@@ -25,73 +25,71 @@ interface ApiService {
   slug: string;
 }
 
-// Modern service card component - ACCESSIBILITY TEST MODE
+// Modern service card component
 const ServiceCard: React.FC<{ service: Service; index: number }> = ({ service, index }) => {
   const IconComponent = service.icon;
   
   return (
-    <div className="group relative" id={`card${index}`} id={`card${index}`}>
+    <div className="group relative">
       {/* Background gradient effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl 
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl 
                       opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
       
       {/* Main card */}
-      <div className="relative bg-gray-900 rounded-2xl shadow-lg border border-gray-900 p-8 h-full
+      <div className="relative bg-white rounded-2xl shadow-lg border border-gray-100 p-8 h-full
                       group-hover:shadow-xl group-hover:-translate-y-2 transition-all duration-300 
                       flex flex-col">
         
         {/* Icon section */}
-        <div className="flex items-center justify-between mb-6" aria-hidden="true">
-          <div className="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl 
+        <div className="flex items-center justify-between mb-6">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl 
                           flex items-center justify-center shadow-lg">
-            <IconComponent className="w-8 h-8 text-gray-800" />
+            <IconComponent className="w-8 h-8 text-white" />
           </div>
           <div className="text-right">
-            <div className="flex items-center text-gray-700 mb-1">
+            <div className="flex items-center text-amber-500 mb-1">
               <Star className="w-4 h-4 fill-current" />
               <Star className="w-4 h-4 fill-current" />
               <Star className="w-4 h-4 fill-current" />
               <Star className="w-4 h-4 fill-current" />
               <Star className="w-4 h-4 fill-current" />
             </div>
-            <span className="text-xs text-gray-800">Top Rated</span>
+            <span className="text-sm text-gray-500">Top Rated</span>
           </div>
         </div>
         
         {/* Content - flex-grow to push button to bottom */}
         <div className="flex-grow">
-          <div className="text-lg font-bold text-gray-800 mb-3 group-hover:text-gray-700 transition-colors">
+          <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
             {service.title}
-          </div>
+          </h3>
           
-          <div className="text-gray-800 mb-6 leading-relaxed text-xs">
+          <p className="text-gray-600 mb-6 leading-relaxed">
             {service.description}
-          </div>
+          </p>
           
-          {/* Features list - hidden but still rendered */}
-          <div className="space-y-2 mb-6" style={{ visibility: 'hidden' }}>
+          {/* Features list */}
+          <div className="space-y-2 mb-6">
             {(service.features || ["Professional Service", "Quick Delivery", "24/7 Support"]).map((feature, idx) => (
-              <div key={idx} className="flex items-center text-xs text-gray-800">
-                <CheckCircle className="w-4 h-4 text-gray-700 mr-2 flex-shrink-0" />
+              <div key={idx} className="flex items-center text-sm text-gray-600">
+                <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
                 {feature}
               </div>
             ))}
           </div>
         </div>
         
-        {/* CTA Button - divs instead of buttons */}
+        {/* CTA Button - always at bottom */}
         <div className="mt-auto">
-          <div onClick={() => window.location.href = `/services/${service.slug}`} 
-               className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-gray-800 
-                             py-3 px-6 rounded-xl font-semibold group-hover:from-gray-700 
-                             group-hover:to-gray-800 transition-all duration-300 
-                             flex items-center justify-center cursor-pointer"
-               id={`btn-${index}`}
-               tabIndex={-1}
-          >
-            Learn More
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-          </div>
+          <Link href={`/services/${service.slug}`}>
+            <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white 
+                             py-3 px-6 rounded-xl font-semibold group-hover:from-blue-600 
+                             group-hover:to-indigo-700 transition-all duration-300 
+                             flex items-center justify-center">
+              Learn More
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </Link>
         </div>
       </div>
     </div>

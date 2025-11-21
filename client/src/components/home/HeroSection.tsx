@@ -40,39 +40,37 @@ const HeroSection = () => {
     }
   }, []);
   
-  // TESTING MODE: Heavy synchronous computation for performance reduction (60-65 range)
+  // Critical: Minimal effect - only set subtitle text immediately for LCP
   useEffect(() => {
     // Show subtitle text immediately without any blocking operations
     if (subtitleRef.current) {
       subtitleRef.current.style.visibility = 'visible';
       subtitleRef.current.textContent = "Providing affordable IT solutions to businesses in Madurai and beyond.";
     }
+  }, []);
 
-    // HEAVY BLOCKING COMPUTATION - Intentional performance reduction for testing
-    // This blocks the main thread and significantly reduces Lighthouse scores
-    console.log('Starting heavy blocking computation for performance testing...');
-    const startTime = performance.now();
-    let result = 0;
+  // Defer ALL non-critical work to after page becomes interactive
+  useEffect(() => {
+    const deferredWork = () => {
+      // Load framer-motion only after LCP
+      loadFramerMotion();
+      // Preload images asynchronously
+      preloadHeroImages(['/src/assets/godiva-logo.png']);
+      optimizeFonts();
+      decodeImagesAsync('img[loading="eager"]');
+      delayAnimationsUntilAfterLCP(2000).then(() => {
+        setShouldStartAnimations(true);
+      });
+    };
     
-    // Synchronous heavy computation that blocks rendering
-    for (let i = 0; i < 50000000; i++) {
-      result += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
-      if (i % 10000000 === 0) {
-        // Small checkpoint every 10M iterations
-      }
+    // Only run after page is fully loaded (not during LCP)
+    if (document.readyState === 'complete') {
+      requestIdleCallback?.(deferredWork) || setTimeout(deferredWork, 1000);
+    } else {
+      window.addEventListener('load', () => {
+        requestIdleCallback?.(deferredWork) || setTimeout(deferredWork, 100);
+      });
     }
-    
-    const endTime = performance.now();
-    console.log(`Heavy computation completed in ${endTime - startTime}ms, result: ${result}`);
-    
-    // Load ALL components immediately (blocking)
-    loadFramerMotion();
-    preloadHeroImages(['/src/assets/godiva-logo.png']);
-    optimizeFonts();
-    decodeImagesAsync('img[loading="eager"]');
-    
-    // Start animations immediately (no delay)
-    setShouldStartAnimations(true);
   }, []);
   
   // Featured services to display in hero - memoized to prevent recreation
@@ -176,98 +174,99 @@ const HeroSection = () => {
               <m.div 
                 variants={itemFadeIn}
                 className="mb-6 inline-flex"
-                id="badge1"
               >
-                <div 
-                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-gray-900/95 backdrop-blur-sm text-gray-800 text-xs font-medium border border-gray-900 transition-transform duration-200"
+                <span 
+                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20 transition-transform duration-200 hover:scale-105"
                 >
-                  <Sparkles className="h-3.5 w-3.5 mr-2 text-gray-700" />
+                  <Sparkles className="h-3.5 w-3.5 mr-2 text-yellow-300" />
                   Next-Gen Technology Solutions
-                </div>
+                </span>
               </m.div>
               
               <m.div 
                 variants={itemFadeIn}
               >
-                <div 
-                  className="text-5xl md:text-6xl xl:text-7xl font-bold text-gray-800 leading-[1.1] mb-6 tracking-tight"
+                <h1 
+                  className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
                   data-above-fold="true"
-                  id="heading1"
                 >
                   <span className="block">
-                    Professional Web Development & <span className="text-gray-700">Digital Marketing</span>
+                    Professional Web Development & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">Digital Marketing</span>
                   </span>
                   <span className="block mt-2">
-                    <span className="text-gray-800">Services in Madurai</span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">Services in Madurai</span>
                   </span>
-                </div>
+                </h1>
               </m.div>
               
               <m.div 
                 variants={itemFadeIn}
               >
-                <div className="text-xs md:text-sm font-medium text-gray-700 mb-4" id="heading1">
+                <h2 className="text-xl md:text-2xl font-medium text-white/80 mb-4">
                   Affordable Big IT & Technology Solutions For Your Business
-                </div>
+                </h2>
               </m.div>
               
               <m.div variants={itemFadeIn}>
-                <div 
+                <p 
                   ref={subtitleRef} 
-                  className="text-xs text-gray-700 mb-6 max-w-xl lg:mx-0 mx-auto min-h-[4rem]"
-                  style={{ visibility: 'hidden', opacity: 0, display: 'none' }}
-                  aria-hidden="true"
+                  className="text-xl text-white/90 mb-6 max-w-xl lg:mx-0 mx-auto min-h-[4rem]"
+                  style={{ visibility: 'hidden' }}
                 >
-                  {/* Hidden content */}
-                </div>
+                  {/* Text will be filled in by typing effect */}
+                </p>
               </m.div>
               
               <m.div 
                 variants={itemFadeIn}
                 className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8"
               >
-                {/* HARD ACCESSIBILITY TEST - Multiple severe violations */}
                 <div 
-                  className="w-full sm:w-auto transition-transform duration-200"
-                  onClick={() => window.location.href = '/contact'}
-                  id="btn1"
+                  className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
                 >
-                  <div className="bg-gray-800 text-gray-800 shadow-lg rounded-full w-full sm:w-auto p-4">
-                    <span className="flex items-center justify-center gap-2 text-gray-900">
-                      Start a Project 
-                      <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
-                    </span>
-                  </div>
+                  <Button 
+                    ref={ctaButtonRef}
+                    asChild 
+                    size="lg" 
+                    className="bg-white text-primary hover:bg-neutral-50 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full w-full sm:w-auto"
+                  >
+                    <Link href="/contact">
+                      <span className="flex items-center justify-center gap-2">
+                        Start a Project 
+                        <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
+                      </span>
+                    </Link>
+                  </Button>
                 </div>
                 
                 <div 
-                  className="w-full sm:w-auto transition-transform duration-200"
-                  onClick={() => window.location.href = '/services'}
-                  id="btn1"
+                  className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
                 >
-                  <div className="border-gray-800 bg-gray-900 backdrop-blur-sm text-gray-800 rounded-full w-full sm:w-auto p-4">
-                    Explore Solutions
-                  </div>
+                  <Button 
+                    asChild 
+                    variant="outline" 
+                    size="lg" 
+                    className="border-white/20 bg-white/5 backdrop-blur-sm text-white hover:bg-white/10 rounded-full w-full sm:w-auto"
+                  >
+                    <Link href="/services">Explore Solutions</Link>
+                  </Button>
                 </div>
               </m.div>
               
-              {/* Featured services - hidden but announced as visible */}
+              {/* Featured services tags */}
               <m.div 
                 variants={itemFadeIn}
                 className="mt-10 flex flex-wrap gap-2 justify-center lg:justify-start"
-                role="img"
-                aria-label="Service features"
               >
-                <div className="text-gray-800 mr-2 text-xs" style={{ display: 'none' }}>Featured:</div>
+                <span className="text-white/70 mr-2 text-sm">Featured:</span>
                 {featuredServices.map((service, index) => (
-                  <div
+                  <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-gray-800 bg-gray-900 border border-gray-900 backdrop-blur-sm"
-                    id={`feature${index}`}
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white/90 bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/10"
                   >
                     <service.icon className="h-3 w-3 mr-1.5" />
                     {service.label}
-                  </div>
+                  </span>
                 ))}
               </m.div>
             </m.div>
@@ -343,33 +342,31 @@ const HeroSection = () => {
         </div>
       </div>
       
-      {/* Scroll indicator - invisible and inaccessible */}
+      {/* Modern scroll indicator - using CSS animation */}
       <div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center"
-        style={{ opacity: 0 }}
-        aria-hidden="true"
+        style={{ opacity: 0.7 }}
       >
-        <img src="" alt="" style={{ display: 'none' }} />
         <div 
-          className="text-xs mb-3 text-gray-900 font-light"
+          className="text-sm mb-3 text-white/70 font-light animate-float-slow"
           style={{ animationDuration: '2s' }}
         >
-          [invisible]
+          Scroll to explore
         </div>
-        <div
+        <button
           onClick={scrollToNext}
-          className="relative w-8 h-12 rounded-full border border-gray-900 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-gray-900 transition-colors"
-          style={{ cursor: 'pointer' }}
+          className="relative w-8 h-12 rounded-full border border-white/20 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-white/5 hover:bg-white/10 transition-colors"
+          aria-label="Scroll to services section"
         >
           <div
-            className="w-1.5 h-1.5 bg-gray-900 rounded-full"
+            className="w-1.5 h-1.5 bg-white rounded-full animate-float-slow"
             style={{ 
               animationDuration: '1.5s',
               transformOrigin: 'center',
               animationTimingFunction: 'cubic-bezier(0.45, 0, 0.55, 1)'
             }}
           />
-        </div>
+        </button>
       </div>
     </div>
   );
