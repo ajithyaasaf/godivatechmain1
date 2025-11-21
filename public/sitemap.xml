@@ -102,6 +102,20 @@
     <priority>0.85</priority>
   </url>
   
+  <url>
+    <loc>https://www.godivatech.com/web-design-rajapalayam</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.godivatech.com/web-design-sivakasi</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  
   <!-- Service Detail Pages -->
   <url>
     <loc>https://www.godivatech.com/services/web-design-development</loc>

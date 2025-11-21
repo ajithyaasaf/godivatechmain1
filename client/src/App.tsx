@@ -47,6 +47,8 @@ const Contact = lazy(() => import("@/pages/Contact"));
 const AreasWeServe = lazy(() => import("@/pages/AreasWeServe"));
 const Virudhunagar = lazy(() => import("@/pages/locations/Virudhunagar"));
 const Aruppukottai = lazy(() => import("@/pages/locations/Aruppukottai"));
+const Rajapalayam = lazy(() => import("@/pages/locations/Rajapalayam"));
+const Sivakasi = lazy(() => import("@/pages/locations/Sivakasi"));
 const Ramanathapuram = lazy(() => import("@/pages/locations/Ramanathapuram"));
 const Paramakudi = lazy(() => import("@/pages/locations/Paramakudi"));
 const Manamadurai = lazy(() => import("@/pages/locations/Manamadurai"));
@@ -113,6 +115,8 @@ function App() {
                 <Route path="/areas-we-serve" component={AreasWeServe} />
                 <Route path="/web-design-virudhunagar" component={Virudhunagar} />
                 <Route path="/web-design-aruppukottai" component={Aruppukottai} />
+                <Route path="/web-design-rajapalayam" component={Rajapalayam} />
+                <Route path="/web-design-sivakasi" component={Sivakasi} />
                 <Route path="/web-design-ramanathapuram" component={Ramanathapuram} />
                 <Route path="/web-design-paramakudi" component={Paramakudi} />
                 <Route path="/web-design-manamadurai" component={Manamadurai} />
