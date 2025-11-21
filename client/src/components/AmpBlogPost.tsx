@@ -172,14 +172,7 @@ const AmpBlogPost: React.FC<AmpBlogPostProps> = ({
     </html>
   `;
   
-  return (
-    <div style={{ display: 'none' }}>
-      <link 
-        rel="amphtml" 
-        href={`${canonicalUrl}/amp`} 
-      />
-    </div>
-  );
+  return null;
 };
 
 export default AmpBlogPost;
