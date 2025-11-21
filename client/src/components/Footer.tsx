@@ -138,6 +138,30 @@ const Footer = () => {
           </motion.div>
 
           <motion.div variants={itemVariants}>
+            <h3 className="text-lg font-semibold mb-6 relative pl-3 border-l-2 border-primary">Serving TN</h3>
+            <ul className="space-y-3">
+              {[
+                { label: "Areas We Serve", path: "/areas-we-serve", title: "Web Design Service Areas in Tamil Nadu" }
+              ].map((item, index) => (
+                <motion.li 
+                  key={index}
+                  whileHover={{ x: 5 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
+                  <Link
+                    href={item.path}
+                    title={item.title}
+                    className="text-neutral-300 hover:text-white transition-colors flex items-center"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/70 mr-2"></span>
+                    {item.label}
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
             <h3 className="text-lg font-semibold mb-6 relative pl-3 border-l-2 border-primary">Contact</h3>
             <ul className="space-y-4">
               <li className="flex items-start group">
