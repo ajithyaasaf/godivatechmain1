@@ -1,0 +1,45 @@
+[aria-*] attributes do not match their roles
+Each ARIA role supports a specific subset of aria-* attributes. Mismatching these invalidates the aria-* attributes. Learn how to match ARIA attributes to their roles.
+Failing Elements
+All Topics
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Digital Marketing
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+SEO
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Technology Trends
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+UI/UX Design
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Web Development
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+[role]s are not contained by their required parent element
+Some ARIA child roles must be contained by specific parent roles to properly perform their intended accessibility functions. Learn more about ARIA roles and required parent element.
+Failing Elements
+All Topics
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Digital Marketing
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+SEO
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Technology Trends
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+UI/UX Design
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Web Development
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+[aria-*] attributes do not have valid values
+Assistive technologies, like screen readers, can't interpret ARIA attributes with invalid values. Learn more about valid values for ARIA attributes.
+Failing Elements
+All Topics
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Digital Marketing
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+SEO
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Technology Trends
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+UI/UX Design
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Web Development
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">

@@ -35,9 +35,6 @@ const CategoryFilter = memo(({ categories, activeCategory, onCategoryChange }: C
                 ? "filter-active bg-primary text-white shadow-md"
                 : "bg-neutral-100 hover:bg-neutral-200"
             }`}
-            role="tab"
-            aria-controls="blog-posts"
-            aria-selected={isActive}
           >
             {category.name}
           </button>
