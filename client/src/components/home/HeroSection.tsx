@@ -345,7 +345,7 @@ const HeroSection = () => {
       {/* Modern scroll indicator - using CSS animation */}
       <div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center"
-        style={{ opacity: String(scrollOpacity) }}
+        style={{ opacity: 0.7 }}
       >
         <div 
           className="text-sm mb-3 text-white/70 font-light animate-float-slow"

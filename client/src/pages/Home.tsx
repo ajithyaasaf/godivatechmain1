@@ -23,7 +23,6 @@ const MapSection = lazy(() => import("@/components/home/MapSection"));
  * SEO is handled entirely in index.html to avoid render blocking
  */
 const Home = () => {
-
   return (
     <div className="relative">
       {/* Hero section with immediate display - skip transitions for LCP */}
@@ -35,71 +34,56 @@ const Home = () => {
       <ServiceSection />
       
       <AboutSection />
-        
-        {/* Below-the-fold sections lazy loaded */}
-        <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
-          <TransitionItem delay={0.2}>
-            <TeamSection />
-          </TransitionItem>
-        </Suspense>
-        
-        <Suspense fallback={<div className="min-h-[500px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
-          <TransitionItem delay={0.1}>
-            <PortfolioSection />
-          </TransitionItem>
-        </Suspense>
-        
-        <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
-          <TransitionItem delay={0.2}>
-            <TestimonialsSection />
-          </TransitionItem>
-        </Suspense>
-        
-        <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
-          <TransitionItem delay={0.1}>
-            <BlogSection />
-          </TransitionItem>
-        </Suspense>
-        
-        <Suspense fallback={<div className="min-h-[200px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
-          <TransitionItem delay={0.2}>
-            <NewsletterSection />
-          </TransitionItem>
-        </Suspense>
-        
-        <Suspense fallback={<div className="min-h-[200px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
-          <TransitionItem delay={0.1}>
-            <CTASection />
-          </TransitionItem>
-        </Suspense>
-        
-        <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
-          <TransitionItem delay={0.2}>
-            <ContactSection />
-          </TransitionItem>
-        </Suspense>
-        
-        <Suspense fallback={<div className="min-h-[300px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
-          <TransitionItem delay={0.1}>
-            <MapSection />
-          </TransitionItem>
-        </Suspense>
-        
-        {/* Thin visual separator lines between sections */}
-        <motion.div 
-          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        />
-        <motion.div 
-          className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        />
-      </div>
-    </PageTransition>
+      
+      {/* Below-the-fold sections lazy loaded */}
+      <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+        <TransitionItem delay={0.2}>
+          <TeamSection />
+        </TransitionItem>
+      </Suspense>
+      
+      <Suspense fallback={<div className="min-h-[500px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+        <TransitionItem delay={0.1}>
+          <PortfolioSection />
+        </TransitionItem>
+      </Suspense>
+      
+      <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+        <TransitionItem delay={0.2}>
+          <TestimonialsSection />
+        </TransitionItem>
+      </Suspense>
+      
+      <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+        <TransitionItem delay={0.1}>
+          <BlogSection />
+        </TransitionItem>
+      </Suspense>
+      
+      <Suspense fallback={<div className="min-h-[200px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+        <TransitionItem delay={0.2}>
+          <NewsletterSection />
+        </TransitionItem>
+      </Suspense>
+      
+      <Suspense fallback={<div className="min-h-[200px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+        <TransitionItem delay={0.1}>
+          <CTASection />
+        </TransitionItem>
+      </Suspense>
+      
+      <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+        <TransitionItem delay={0.2}>
+          <ContactSection />
+        </TransitionItem>
+      </Suspense>
+      
+      <Suspense fallback={<div className="min-h-[300px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
+        <TransitionItem delay={0.1}>
+          <MapSection />
+        </TransitionItem>
+      </Suspense>
+    </div>
   );
 };
 

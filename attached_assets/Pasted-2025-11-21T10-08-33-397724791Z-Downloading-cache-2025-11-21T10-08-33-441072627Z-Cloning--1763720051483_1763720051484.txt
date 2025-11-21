@@ -1,0 +1,38 @@
+2025-11-21T10:08:33.397724791Z ==> Downloading cache...
+2025-11-21T10:08:33.441072627Z ==> Cloning from https://github.com/ajithyaasaf/godivatechmain1
+2025-11-21T10:08:35.114524218Z ==> Checking out commit 8001c4319b7408f2d5c91c78546d2ed5026f72c3 in branch main
+2025-11-21T10:08:48.491719897Z ==> Downloaded 445MB in 2s. Extraction took 13s.
+2025-11-21T10:08:59.333526329Z ==> Using Node.js version 22.14.0 (default)
+2025-11-21T10:08:59.360550854Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-11-21T10:08:59.519984494Z ==> Running build command 'npm install; npm run build'...
+2025-11-21T10:09:01.200183046Z 
+2025-11-21T10:09:01.200207387Z up to date, audited 781 packages in 2s
+2025-11-21T10:09:01.200336319Z 
+2025-11-21T10:09:01.200351249Z 92 packages are looking for funding
+2025-11-21T10:09:01.200357189Z   run `npm fund` for details
+2025-11-21T10:09:01.229510165Z 
+2025-11-21T10:09:01.229527915Z 8 vulnerabilities (1 low, 5 moderate, 1 high, 1 critical)
+2025-11-21T10:09:01.229531615Z 
+2025-11-21T10:09:01.229534686Z To address issues that do not require attention, run:
+2025-11-21T10:09:01.229537595Z   npm audit fix
+2025-11-21T10:09:01.229540375Z 
+2025-11-21T10:09:01.229543316Z To address all issues (including breaking changes), run:
+2025-11-21T10:09:01.229546806Z   npm audit fix --force
+2025-11-21T10:09:01.229549636Z 
+2025-11-21T10:09:01.229553166Z Run `npm audit` for details.
+2025-11-21T10:09:01.44637254Z 
+2025-11-21T10:09:01.44639173Z > rest-express@1.0.0 build
+2025-11-21T10:09:01.44639675Z > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+2025-11-21T10:09:01.44640206Z 
+2025-11-21T10:09:02.196178914Z vite v5.4.20 building for production...
+2025-11-21T10:09:02.677578722Z transforming...
+2025-11-21T10:09:11.7721431Z ✓ 2551 modules transformed.
+2025-11-21T10:09:12.214207498Z x Build failed in 9.59s
+2025-11-21T10:09:12.23949262Z error during build:
+2025-11-21T10:09:12.239517371Z [vite:terser] terser not found. Since Vite v3, terser has become an optional dependency. You need to install it.
+2025-11-21T10:09:12.239524901Z     at loadTerserPath (file:///opt/render/project/src/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:19705:13)
+2025-11-21T10:09:12.239528761Z     at Object.renderChunk (file:///opt/render/project/src/node_modules/vite/dist/node/chunks/dep-D_zLpgQd.js:19740:27)
+2025-11-21T10:09:12.239532921Z     at file:///opt/render/project/src/node_modules/rollup/dist/es/shared/node-entry.js:20789:40
+2025-11-21T10:09:12.239536501Z     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2025-11-21T10:09:12.510373204Z ==> Build failed 😞
+2025-11-21T10:09:12.510392555Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
