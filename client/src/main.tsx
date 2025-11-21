@@ -14,6 +14,13 @@ import { initPerformanceMonitoring } from "./lib/performance";
 // React DOM Warning Shield - Global protection
 import ReactDOMWarningShield from "./components/ReactDOMWarningShield";
 
+// Suppress Vite HMR WebSocket errors - they don't affect app functionality
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason?.message?.includes('WebSocket') && event.reason?.message?.includes('undefined')) {
+    event.preventDefault();
+  }
+});
+
 // Initialize performance monitoring
 if (typeof window !== 'undefined') {
   // Start monitoring performance metrics
