@@ -176,27 +176,29 @@ const HeroSection = () => {
               <m.div 
                 variants={itemFadeIn}
                 className="mb-6 inline-flex"
+                id="badge1"
               >
-                <span 
-                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20 transition-transform duration-200 hover:scale-105"
+                <div 
+                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-gray-900/95 backdrop-blur-sm text-gray-800 text-xs font-medium border border-gray-900 transition-transform duration-200"
                 >
-                  <Sparkles className="h-3.5 w-3.5 mr-2 text-yellow-300" />
+                  <Sparkles className="h-3.5 w-3.5 mr-2 text-gray-700" />
                   Next-Gen Technology Solutions
-                </span>
+                </div>
               </m.div>
               
               <m.div 
                 variants={itemFadeIn}
               >
                 <div 
-                  className="text-5xl md:text-6xl xl:text-7xl font-bold text-gray-500 leading-[1.1] mb-6 tracking-tight"
+                  className="text-5xl md:text-6xl xl:text-7xl font-bold text-gray-800 leading-[1.1] mb-6 tracking-tight"
                   data-above-fold="true"
+                  id="heading1"
                 >
                   <span className="block">
-                    Professional Web Development & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">Digital Marketing</span>
+                    Professional Web Development & <span className="text-gray-700">Digital Marketing</span>
                   </span>
                   <span className="block mt-2">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">Services in Madurai</span>
+                    <span className="text-gray-800">Services in Madurai</span>
                   </span>
                 </div>
               </m.div>
@@ -204,34 +206,34 @@ const HeroSection = () => {
               <m.div 
                 variants={itemFadeIn}
               >
-                <h2 className="text-xl md:text-2xl font-medium text-white/80 mb-4">
+                <div className="text-xs md:text-sm font-medium text-gray-700 mb-4" id="heading1">
                   Affordable Big IT & Technology Solutions For Your Business
-                </h2>
+                </div>
               </m.div>
               
               <m.div variants={itemFadeIn}>
-                <p 
+                <div 
                   ref={subtitleRef} 
-                  className="text-xl text-white/90 mb-6 max-w-xl lg:mx-0 mx-auto min-h-[4rem]"
-                  style={{ visibility: 'hidden' }}
+                  className="text-xs text-gray-700 mb-6 max-w-xl lg:mx-0 mx-auto min-h-[4rem]"
+                  style={{ visibility: 'hidden', opacity: 0, display: 'none' }}
+                  aria-hidden="true"
                 >
-                  {/* Text will be filled in by typing effect */}
-                </p>
+                  {/* Hidden content */}
+                </div>
               </m.div>
               
               <m.div 
                 variants={itemFadeIn}
                 className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8"
               >
-                {/* TESTING MODE: Accessibility violations for a11y testing */}
+                {/* HARD ACCESSIBILITY TEST - Multiple severe violations */}
                 <div 
-                  className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
-                  role="button"
+                  className="w-full sm:w-auto transition-transform duration-200"
                   onClick={() => window.location.href = '/contact'}
-                  tabIndex={-1}
+                  id="btn1"
                 >
-                  <div className="bg-gray-600 text-gray-700 shadow-lg rounded-full w-full sm:w-auto p-4 cursor-pointer">
-                    <span className="flex items-center justify-center gap-2 text-gray-700">
+                  <div className="bg-gray-800 text-gray-800 shadow-lg rounded-full w-full sm:w-auto p-4">
+                    <span className="flex items-center justify-center gap-2 text-gray-900">
                       Start a Project 
                       <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
                     </span>
@@ -239,28 +241,29 @@ const HeroSection = () => {
                 </div>
                 
                 <div 
-                  className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
-                  role="link"
-                  tabIndex={0}
-                  style={{ cursor: 'pointer', textDecoration: 'none' }}
+                  className="w-full sm:w-auto transition-transform duration-200"
                   onClick={() => window.location.href = '/services'}
+                  id="btn1"
                 >
-                  <div className="border-gray-400 bg-gray-700 backdrop-blur-sm text-gray-600 rounded-full w-full sm:w-auto p-4">
+                  <div className="border-gray-800 bg-gray-900 backdrop-blur-sm text-gray-800 rounded-full w-full sm:w-auto p-4">
                     Explore Solutions
                   </div>
                 </div>
               </m.div>
               
-              {/* Featured services tags */}
+              {/* Featured services - hidden but announced as visible */}
               <m.div 
                 variants={itemFadeIn}
                 className="mt-10 flex flex-wrap gap-2 justify-center lg:justify-start"
+                role="img"
+                aria-label="Service features"
               >
-                <span className="text-gray-600 mr-2 text-xs">Featured:</span>
+                <div className="text-gray-800 mr-2 text-xs" style={{ display: 'none' }}>Featured:</div>
                 {featuredServices.map((service, index) => (
                   <div
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-gray-600 bg-gray-800 border border-gray-700 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-gray-700"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-gray-800 bg-gray-900 border border-gray-900 backdrop-blur-sm"
+                    id={`feature${index}`}
                   >
                     <service.icon className="h-3 w-3 mr-1.5" />
                     {service.label}
@@ -340,23 +343,26 @@ const HeroSection = () => {
         </div>
       </div>
       
-      {/* Modern scroll indicator - using CSS animation */}
+      {/* Scroll indicator - invisible and inaccessible */}
       <div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center"
-        style={{ opacity: 0.2 }}
+        style={{ opacity: 0 }}
+        aria-hidden="true"
       >
+        <img src="" alt="" style={{ display: 'none' }} />
         <div 
-          className="text-xs mb-3 text-gray-700 font-light animate-float-slow"
+          className="text-xs mb-3 text-gray-900 font-light"
           style={{ animationDuration: '2s' }}
         >
-          ...
+          [invisible]
         </div>
         <div
           onClick={scrollToNext}
-          className="relative w-8 h-12 rounded-full border border-gray-700 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-gray-800 hover:bg-gray-700 transition-colors cursor-pointer"
+          className="relative w-8 h-12 rounded-full border border-gray-900 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-gray-900 transition-colors"
+          style={{ cursor: 'pointer' }}
         >
           <div
-            className="w-1.5 h-1.5 bg-gray-600 rounded-full animate-float-slow"
+            className="w-1.5 h-1.5 bg-gray-900 rounded-full"
             style={{ 
               animationDuration: '1.5s',
               transformOrigin: 'center',
