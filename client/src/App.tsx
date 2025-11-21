@@ -44,6 +44,7 @@ const Portfolio = lazy(() => import("@/pages/Portfolio"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Contact = lazy(() => import("@/pages/Contact"));
+const AreasWeServe = lazy(() => import("@/pages/AreasWeServe"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const AuthPage = lazy(() => import("@/pages/auth-page"));
 // Diagnostics page removed for production
@@ -102,6 +103,7 @@ function App() {
               <Switch key={location}>
                 <Route path="/" component={Home} />
                 <Route path="/about" component={About} />
+                <Route path="/areas-we-serve" component={AreasWeServe} />
                 <Route path="/services" component={Services} />
                 <Route path="/services/:slug" component={ServiceDetail} />
                 <Route path="/portfolio" component={Portfolio} />
