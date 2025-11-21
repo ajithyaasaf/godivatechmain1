@@ -58,6 +58,7 @@ const TeamMembersPage = () => {
     <AdminLayout>
       <Helmet>
         <title>Manage Team Members | GodivaTech Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <ContentDataTable

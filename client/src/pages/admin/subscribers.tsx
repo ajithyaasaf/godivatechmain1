@@ -52,6 +52,7 @@ const SubscribersPage = () => {
     <AdminLayout>
       <Helmet>
         <title>Newsletter Subscribers | GodivaTech Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <ContentDataTable

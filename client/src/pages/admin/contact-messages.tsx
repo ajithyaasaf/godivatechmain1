@@ -151,6 +151,7 @@ const ContactMessagesPage = () => {
     <AdminLayout>
       <Helmet>
         <title>Contact Messages | GodivaTech Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <ContentDataTable

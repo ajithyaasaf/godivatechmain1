@@ -47,6 +47,7 @@ const TestimonialsPage = () => {
     <AdminLayout>
       <Helmet>
         <title>Manage Testimonials | GodivaTech Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <ContentDataTable

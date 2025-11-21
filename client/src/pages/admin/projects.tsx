@@ -180,6 +180,7 @@ const ProjectsPage = () => {
     <AdminLayout>
       <Helmet>
         <title>Manage Projects | GodivaTech Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <ContentDataTable
