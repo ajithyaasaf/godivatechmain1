@@ -40,37 +40,39 @@ const HeroSection = () => {
     }
   }, []);
   
-  // Critical: Minimal effect - only set subtitle text immediately for LCP
+  // TESTING MODE: Heavy synchronous computation for performance reduction (60-65 range)
   useEffect(() => {
     // Show subtitle text immediately without any blocking operations
     if (subtitleRef.current) {
       subtitleRef.current.style.visibility = 'visible';
       subtitleRef.current.textContent = "Providing affordable IT solutions to businesses in Madurai and beyond.";
     }
-  }, []);
 
-  // Defer ALL non-critical work to after page becomes interactive
-  useEffect(() => {
-    const deferredWork = () => {
-      // Load framer-motion only after LCP
-      loadFramerMotion();
-      // Preload images asynchronously
-      preloadHeroImages(['/src/assets/godiva-logo.png']);
-      optimizeFonts();
-      decodeImagesAsync('img[loading="eager"]');
-      delayAnimationsUntilAfterLCP(2000).then(() => {
-        setShouldStartAnimations(true);
-      });
-    };
+    // HEAVY BLOCKING COMPUTATION - Intentional performance reduction for testing
+    // This blocks the main thread and significantly reduces Lighthouse scores
+    console.log('Starting heavy blocking computation for performance testing...');
+    const startTime = performance.now();
+    let result = 0;
     
-    // Only run after page is fully loaded (not during LCP)
-    if (document.readyState === 'complete') {
-      requestIdleCallback?.(deferredWork) || setTimeout(deferredWork, 1000);
-    } else {
-      window.addEventListener('load', () => {
-        requestIdleCallback?.(deferredWork) || setTimeout(deferredWork, 100);
-      });
+    // Synchronous heavy computation that blocks rendering
+    for (let i = 0; i < 50000000; i++) {
+      result += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
+      if (i % 10000000 === 0) {
+        // Small checkpoint every 10M iterations
+      }
     }
+    
+    const endTime = performance.now();
+    console.log(`Heavy computation completed in ${endTime - startTime}ms, result: ${result}`);
+    
+    // Load ALL components immediately (blocking)
+    loadFramerMotion();
+    preloadHeroImages(['/src/assets/godiva-logo.png']);
+    optimizeFonts();
+    decodeImagesAsync('img[loading="eager"]');
+    
+    // Start animations immediately (no delay)
+    setShouldStartAnimations(true);
   }, []);
   
   // Featured services to display in hero - memoized to prevent recreation
