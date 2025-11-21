@@ -5,15 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ProtectedRoute } from "@/lib/protected-route";
 import Layout from "@/components/Layout";
 import { Suspense, lazy, useEffect } from "react";
-import PerformanceMonitor from "@/components/PerformanceMonitor";
-import ResourceHints from "@/components/ResourceHints";
-import { trackLongTasks, preloadCriticalResources } from "@/lib/performance";
-import LCPOptimizer from "@/components/performance/LCPOptimizer";
-import FontOptimizer from "@/components/performance/FontOptimizer";
-import CriticalCSSOptimizer from "@/components/performance/CriticalCSSOptimizer";
-import { FastLoadingOptimizer, CriticalCSSInliner, PerformanceTracker } from "@/components/FastLoadingOptimizer";
 import { usePageHistory } from "@/hooks/use-page-history";
-import { initializePerformanceOptimizations } from "@/lib/performance";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useFacebookPixel } from "@/hooks/useFacebookPixel";
 
