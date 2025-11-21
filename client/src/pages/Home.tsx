@@ -20,7 +20,32 @@ const MapSection = lazy(() => import("@/components/home/MapSection"));
  * Home page - optimized for maximum performance
  * SEO is handled entirely in index.html to avoid render blocking
  */
+// Global gate to prevent below-fold queries during LCP
+let lcpComplete = false;
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', () => {
+    lcpComplete = true;
+  });
+  // Also set after 3s as fallback
+  setTimeout(() => { lcpComplete = true; }, 3000);
+}
+
 const Home = () => {
+  // Preload API calls only AFTER LCP using requestIdleCallback
+  React.useEffect(() => {
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(() => {
+        // Signal to lazy sections that they can now fetch data
+        window.dispatchEvent(new CustomEvent('below-fold-ready'));
+      });
+    } else {
+      // Fallback for browsers without requestIdleCallback
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('below-fold-ready'));
+      }, 2000);
+    }
+  }, []);
+
   return (
     <PageTransition>
       <div className="relative">
