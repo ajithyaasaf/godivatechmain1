@@ -270,11 +270,11 @@ const Blog = () => {
       <SEO
         title={activeCategory && activeCategory > 0 
           ? `${displayCategories.find(c => c.id === activeCategory)?.name || "Category"} | Digital Marketing & Web Development Blog`
-          : "Digital Marketing & Web Development Blog | Best SEO Tips for Madurai Businesses"
+          : "Digital Marketing Insights & Tech Blog | Godiva Tech"
         }
         description={activeCategory && activeCategory > 0
           ? `Expert ${displayCategories.find(c => c.id === activeCategory)?.name || "category"} tips and insights from Madurai's leading tech company. Practical advice for local businesses.`
-          : "Get expert web development, digital marketing, and SEO tips from Madurai's leading tech company. Practical advice for Madurai businesses to grow online."
+          : "Read the latest tips on SEO, Web Design trends, and Marketing strategies for business owners in Tamil Nadu."
         }
         keywords={pageKeywords.blog.join(", ")}
         ogType="website"

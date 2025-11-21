@@ -343,8 +343,8 @@ const Portfolio = () => {
   return (
     <PageTransition>
       <SEO
-        title="Best Web Development in Madurai | Our Successful Project Portfolio - GodivaTech"
-        description="Explore GodivaTech's portfolio of successful web development, app development, and digital marketing projects. See how we've helped businesses in Madurai achieve digital excellence."
+        title="Our Work | Web Design Projects in Madurai & Tamil Nadu"
+        description="Browse our latest website projects and success stories. See how we helped businesses in Madurai transform their digital presence."
         keywords={pageKeywords.portfolio.join(", ")}
         canonicalUrl="/portfolio"
         ogType="website"
