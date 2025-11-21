@@ -41,6 +41,7 @@ const ServicesPage = () => {
     <AdminLayout>
       <Helmet>
         <title>Manage Services | GodivaTech Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <ContentDataTable

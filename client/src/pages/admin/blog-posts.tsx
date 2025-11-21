@@ -62,6 +62,7 @@ const BlogPostsPage = () => {
     <AdminLayout>
       <Helmet>
         <title>Manage Blog Posts | GodivaTech Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <ContentDataTable

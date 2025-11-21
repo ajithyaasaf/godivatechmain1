@@ -39,6 +39,7 @@ const CategoriesPage = () => {
     <AdminLayout>
       <Helmet>
         <title>Manage Categories | GodivaTech Admin</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <ContentDataTable

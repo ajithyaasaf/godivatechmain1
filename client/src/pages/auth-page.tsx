@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useAuth } from "@/context/AuthContext";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -72,7 +73,12 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <>
+      <Helmet>
+        <title>Client Login | Godiva Tech</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
+      <div className="flex min-h-screen">
       {/* Left side - Form */}
       <div className="w-full lg:w-1/2 p-8 flex items-center justify-center">
         <Card className="w-full max-w-md">
@@ -182,6 +188,7 @@ export default function AuthPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

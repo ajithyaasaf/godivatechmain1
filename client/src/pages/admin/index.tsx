@@ -73,10 +73,12 @@ const AdminDashboard = () => {
   });
 
   return (
-    <AdminLayout>
+    <>
       <Helmet>
-        <title>Admin Dashboard | GodivaTech</title>
+        <title>Admin Dashboard - Godiva Tech</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
+      <AdminLayout>
 
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -183,7 +185,8 @@ const AdminDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </AdminLayout>
+      </AdminLayout>
+    </>
   );
 };
 
