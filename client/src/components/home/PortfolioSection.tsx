@@ -103,7 +103,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
             </button>
             
             {/* Dot indicators */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-30">
               {images.map((_, idx) => (
                 <button
                   key={idx}
@@ -112,7 +112,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
                     e.stopPropagation();
                     setCurrentImageIndex(idx);
                   }}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                  className={`w-2 h-2 rounded-full transition-all duration-200 p-2 ${
                     idx === currentImageIndex 
                       ? 'bg-white scale-125' 
                       : 'bg-white/60 hover:bg-white/80'

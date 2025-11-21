@@ -247,12 +247,12 @@ const TestimonialsSection = memo(() => {
               </div>
               
               {/* Carousel indicators */}
-              <div className="flex justify-center mt-8 space-x-2">
+              <div className="flex justify-center mt-8 gap-3">
                 {displayTestimonials.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentTestimonialIndex(index)}
-                    className={`w-3 h-3 rounded-full ${
+                    className={`w-3 h-3 rounded-full p-2 ${
                       index === currentTestimonialIndex 
                         ? 'bg-white' 
                         : 'bg-white/50 hover:bg-white/70'
