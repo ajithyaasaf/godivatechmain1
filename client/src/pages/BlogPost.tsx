@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import SEO from "@/components/SEO";
 import AmpBlogPost from "@/components/AmpBlogPost";
 import OptimizedImage from "@/components/ui/optimized-image";
-import { blogKeywords, getLocationSpecificDescription } from "@/lib/seoKeywords";
 import Breadcrumbs from "@/components/common/Breadcrumbs";
 import { formatCanonicalUrl } from "@/lib/canonicalUrl";
 import { 
@@ -309,7 +308,6 @@ const BlogPost = () => {
                   className="w-12 h-12 rounded-full mr-4"
                   width={48}
                   height={48}
-                  priority={true}
                 />
                 <div>
                   <p className="font-semibold text-neutral-800">{post.authorName}</p>
@@ -326,7 +324,6 @@ const BlogPost = () => {
                   className="w-full h-auto rounded-lg shadow-lg"
                   width={800}
                   height={450}
-                  priority={true}
                   sizes="100vw"
                 />
                 <figcaption className="text-center text-neutral-500 text-sm mt-2">
