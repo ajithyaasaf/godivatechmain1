@@ -26,6 +26,14 @@ export default defineConfig({
     },
   },
   root: path.resolve(import.meta.dirname, "client"),
+  server: {
+    middlewareMode: false,
+    hmr: process.env.REPLIT_DEV_DOMAIN ? {
+      host: process.env.REPLIT_DEV_DOMAIN,
+      port: 443,
+      protocol: 'wss',
+    } : true,
+  },
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,

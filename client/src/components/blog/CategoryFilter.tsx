@@ -30,12 +30,11 @@ const CategoryFilter = memo(({ categories, activeCategory, onCategoryChange }: C
           <button
             key={`category-${category.id}-${index}`}
             onClick={createClickHandler(category.id)}
-            className={`py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 transform hover:scale-105 ${
+            className={`py-2 px-4 rounded-full text-sm font-medium transition-all duration-150 transform hover:scale-105 ${
               isActive
                 ? "filter-active bg-primary text-white shadow-md"
                 : "bg-neutral-100 hover:bg-neutral-200"
             }`}
-            aria-pressed={isActive}
             role="tab"
             aria-controls="blog-posts"
             aria-selected={isActive}
