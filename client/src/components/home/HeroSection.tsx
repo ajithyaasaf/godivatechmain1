@@ -34,44 +34,33 @@ const HeroSection = () => {
   // Scroll-based visibility effects
   const scrollOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   
-  // Type animation effect - optimized for LCP
+  // Minimal effect - only set subtitle text immediately for LCP
   useEffect(() => {
-    let typingTimeout: NodeJS.Timeout | null = null;
-    
-    // Optimize LCP (Largest Contentful Paint)
-    // 1. Preload hero images to improve render time
-    preloadHeroImages([
-      '/src/assets/godiva-logo.png',
-      // Add any other critical hero images here
-    ]);
-    
-    // 2. Optimize font loading
-    optimizeFonts();
-    
-    // 3. Add LCP data attribute to main heading for prioritization
-    const mainHeading = document.querySelector('.hero-section h1');
-    if (mainHeading) {
-      mainHeading.setAttribute('data-above-fold', 'true');
-      mainHeading.setAttribute('fetchpriority', 'high');
-    }
-    
-    // 4. Decode images asynchronously to avoid blocking
-    decodeImagesAsync('img[loading="eager"]');
-    
-    // Show subtitle text immediately without animation for better LCP
+    // Show subtitle text immediately without any blocking operations
     if (subtitleRef.current) {
       subtitleRef.current.style.visibility = 'visible';
       subtitleRef.current.textContent = "Providing affordable IT solutions to businesses in Madurai and beyond.";
     }
     
-    // Delay animations until after LCP for better performance
-    delayAnimationsUntilAfterLCP(2000).then(() => {
-      // Start animations after LCP
-      setShouldStartAnimations(true);
-      
-      // Note: Typing animation disabled to prevent character duplication issues
-      // Text is already set above for better performance and user experience
-    });
+    // Defer all heavy work to after page load to not block initial render
+    const deferHeavyWork = () => {
+      requestAnimationFrame(() => {
+        // Preload images asynchronously
+        preloadHeroImages(['/src/assets/godiva-logo.png']);
+        optimizeFonts();
+        decodeImagesAsync('img[loading="eager"]');
+        delayAnimationsUntilAfterLCP(2000).then(() => {
+          setShouldStartAnimations(true);
+        });
+      });
+    };
+    
+    if (document.readyState === 'complete') {
+      deferHeavyWork();
+    } else {
+      window.addEventListener('load', deferHeavyWork);
+      return () => window.removeEventListener('load', deferHeavyWork);
+    }
     
     // Log LCP time for verification
     if (typeof PerformanceObserver !== 'undefined') {

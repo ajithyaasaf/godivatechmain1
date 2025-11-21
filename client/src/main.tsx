@@ -26,34 +26,35 @@ window.addEventListener('error', (event) => {
   }
 }, true);
 
-// Start API calls immediately via the queryClient to warm up cache
+// Defer all non-critical initialization to after page load to reduce TBT
 if (typeof window !== 'undefined') {
-  // Warm up cache with API calls immediately (they're already prefetching in HTML)
-  const warmupAPIs = async () => {
-    const endpoints = ['/api/services', '/api/projects', '/api/team-members', '/api/testimonials', '/api/categories', '/api/blog-posts'];
-    endpoints.forEach(endpoint => {
-      queryClient.prefetchQuery({
-        queryKey: [endpoint],
-        queryFn: async () => {
-          const res = await fetch(endpoint);
-          if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
-          return res.json();
-        }
-      }).catch(() => {}); // Silently fail, queries will retry
-    });
+  const deferredInit = () => {
+    // Warm up cache with API calls only after LCP
+    const warmupAPIs = async () => {
+      const endpoints = ['/api/services', '/api/projects', '/api/team-members', '/api/testimonials', '/api/categories', '/api/blog-posts'];
+      endpoints.forEach(endpoint => {
+        queryClient.prefetchQuery({
+          queryKey: [endpoint],
+          queryFn: async () => {
+            const res = await fetch(endpoint);
+            if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
+            return res.json();
+          }
+        }).catch(() => {});
+      });
+    };
+    
+    // Performance monitoring after page load
+    initPerformanceMonitoring();
+    
+    warmupAPIs();
   };
   
-  // Start warming up APIs immediately without blocking
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', warmupAPIs);
+  if (document.readyState === 'complete') {
+    deferredInit();
   } else {
-    Promise.resolve().then(warmupAPIs);
+    window.addEventListener('load', deferredInit);
   }
-  
-  // Initialize performance monitoring (defer to avoid forced reflows)
-  requestAnimationFrame(() => {
-    initPerformanceMonitoring();
-  });
 }
 
 // Sample data initialization removed for production
