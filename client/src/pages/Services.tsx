@@ -528,13 +528,13 @@ const Services = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="text-center mb-16">
                 <motion.div 
-                  className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10"
+                  className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary text-white"
                   initial={{ opacity: 0, y: -10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
                 >
-                  <span className="text-primary font-semibold text-sm">OUR SERVICES</span>
+                  <span className="font-semibold text-sm">OUR SERVICES</span>
                 </motion.div>
                 
                 <motion.h2 
