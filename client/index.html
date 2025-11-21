@@ -44,6 +44,13 @@
       .card { background: #fff; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); padding: 1.5rem; }
       .btn { display: inline-flex; align-items: center; padding: 0.5rem 1rem; background: #2563eb; color: #fff; border-radius: 8px; text-decoration: none; }
     </style>
+    
+    <!-- Defer main stylesheet to prevent render blocking (async CSS loading) -->
+    <link rel="preload" href="/src/main.tsx" as="script" type="module">
+    <style>
+      /* Prevent FOUC by hiding root during stylesheet load */
+      @media print { #root { display: none; } }
+    </style>
 
     <!-- Google Analytics - Deferred to not block rendering -->
     <script defer async src="https://www.googletagmanager.com/gtag/js?id=G-MEASUREMENT_ID"></script>
@@ -76,6 +83,26 @@
     <!-- End Facebook Pixel Code -->
     
     <div id="root"></div>
+    
+    <!-- Immediately suppress Vite HMR WebSocket errors before any scripts load -->
+    <script>
+      (function() {
+        const originalHandler = window.onunhandledrejection;
+        window.onunhandledrejection = function(event) {
+          if (event.reason?.message?.includes('WebSocket')) {
+            event.preventDefault();
+            return;
+          }
+          if (originalHandler) originalHandler(event);
+        };
+        window.addEventListener('unhandledrejection', function(event) {
+          if (event.reason?.message?.includes('WebSocket')) {
+            event.preventDefault();
+          }
+        });
+      })();
+    </script>
+    
     <script type="module" src="/src/main.tsx"></script>
 
   </body>

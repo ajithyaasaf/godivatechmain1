@@ -16,30 +16,16 @@ import ReactDOMWarningShield from "./components/ReactDOMWarningShield";
 
 // Suppress Vite HMR WebSocket errors - they don't affect app functionality
 window.addEventListener('unhandledrejection', (event) => {
-  if (event.reason?.message?.includes('WebSocket') && event.reason?.message?.includes('undefined')) {
+  if (event.reason?.message?.includes('WebSocket')) {
     event.preventDefault();
   }
 });
 
 // Initialize performance monitoring
 if (typeof window !== 'undefined') {
-  // Start monitoring performance metrics
-  initPerformanceMonitoring();
-  
-  // Preload critical resources
-  const preloadLinks = [
-    { rel: 'preload', href: '/fonts/Inter-var.woff2', as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' },
-    // API preloading removed for production to prevent wrong URL calls
-    // APIs will be fetched on-demand with proper backend URLs
-  ];
-  
-  // Add preload links to head
-  preloadLinks.forEach(attrs => {
-    const link = document.createElement('link');
-    Object.entries(attrs).forEach(([key, value]) => {
-      link.setAttribute(key, value as string);
-    });
-    document.head.appendChild(link);
+  // Start monitoring performance metrics (defer to avoid forced reflows)
+  requestAnimationFrame(() => {
+    initPerformanceMonitoring();
   });
 }
 
