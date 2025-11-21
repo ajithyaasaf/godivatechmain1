@@ -309,8 +309,8 @@ const Services = () => {
   return (
     <PageTransition>
       <SEO
-        title="Best Web Development & Digital Marketing in Madurai | GodivaTech"
-        description="GodivaTech provides the best web development, digital marketing, and software development services in Madurai and Tamil Nadu. Award-winning solutions at competitive prices."
+        title="Digital Marketing & SEO Services in Madurai | Godiva Tech"
+        description="Boost your business with expert SEO, Social Media Marketing (SMM), and Google Ads services in Madurai and Virudhunagar district. ROI-focused strategies."
         keywords={pageKeywords.services.join(", ")}
         canonicalUrl="https://godivatech.com/services"
         ogType="website"

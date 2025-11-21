@@ -60,8 +60,8 @@ const Contact = memo(() => {
   return (
     <>
       <SEO
-        title="Contact Best Web Development Company in Madurai | GodivaTech"
-        description="Contact GodivaTech for affordable web development, mobile app development, and digital marketing services in Madurai. Get in touch for a custom quote and consultation for your business needs."
+        title="Contact Godiva Tech | Web Design Agency in Madurai"
+        description="Looking for web development in Madurai or Rajapalayam? Visit our office in Iyer Bungalow or call us for a free consultation."
         keywords={pageKeywords.contact.join(", ")}
         canonicalUrl="/contact"
         ogType="website"
