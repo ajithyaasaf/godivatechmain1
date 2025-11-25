@@ -86,16 +86,14 @@ export function injectMetaTags(html: string, options: MetaTagOptions = {}): stri
     html = html.replace('</head>', `${ogTags}\n</head>`);
   }
   
-  // Add Twitter card meta tags
-  if (!html.includes('<meta name="twitter:card"')) {
-    const twitterTags = `
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${title}">
-  <meta name="twitter:description" content="${description}">
-  <meta name="twitter:image" content="${ogImage}">
-  <meta name="twitter:site" content="@godivatech">`;
+  // Add social media meta tags
+  if (!html.includes('<meta property="og:url"')) {
+    const socialTags = `
+  <meta property="og:url" content="${canonicalUrl}">
+  <meta property="og:type" content="${ogType}">
+  <meta name="facebook:app_id" content="">`;
     
-    html = html.replace('</head>', `${twitterTags}\n</head>`);
+    html = html.replace('</head>', `${socialTags}\n</head>`);
   }
   
   return html;

@@ -39,10 +39,8 @@ export const getOrganizationData = () => ({
     addressCountry: 'IN'
   },
   sameAs: [
-    'https://www.facebook.com/godivatech',
-    'https://www.linkedin.com/company/godivatech',
-    'https://twitter.com/godivatech',
-    'https://www.instagram.com/godivatech'
+    'https://www.facebook.com/GodivaTech/',
+    'https://www.instagram.com/p/DOg6n1hkvE9/'
   ]
 });
 
@@ -212,10 +210,8 @@ export const getLocalBusinessData = () => ({
   ],
   // Social profiles
   sameAs: [
-    'https://www.facebook.com/godivatech',
-    'https://www.linkedin.com/company/godivatech',
-    'https://twitter.com/godivatech',
-    'https://www.instagram.com/godivatech'
+    'https://www.facebook.com/GodivaTech/',
+    'https://www.instagram.com/p/DOg6n1hkvE9/'
   ]
 });
 

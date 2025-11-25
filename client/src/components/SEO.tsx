@@ -257,11 +257,8 @@ const SEO: React.FC<SEOProps> = memo(({
             "telephone": telephoneNumber,
             "email": "contact@godivatech.com",
             "sameAs": [
-              "https://www.facebook.com/godivatech",
-              "https://www.linkedin.com/company/godivatech",
-              "https://twitter.com/godivatech",
-              "https://www.instagram.com/godivatech",
-              "https://www.youtube.com/channel/godivatech"
+              "https://www.facebook.com/GodivaTech/",
+              "https://www.instagram.com/p/DOg6n1hkvE9/"
             ],
             "address": {
               "@type": "PostalAddress",
@@ -308,10 +305,9 @@ const SEO: React.FC<SEOProps> = memo(({
             "founder": {
               "@type": "Person",
               "name": "Rajkumar Singh",
-              "jobTitle": "CEO & Founder",
-              "sameAs": "https://www.linkedin.com/in/rajkumar-godivatech/"
+              "jobTitle": "CEO & Founder"
             },
-            "foundingDate": "2015-06-01",
+            "foundingDate": "2020-06-01",
             "numberOfEmployees": {
               "@type": "QuantitativeValue",
               "value": "20-50"

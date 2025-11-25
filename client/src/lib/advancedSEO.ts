@@ -234,10 +234,8 @@ export const generateLocalBusinessSchema = () => {
       ]
     },
     "sameAs": [
-      "https://www.facebook.com/godivatech",
-      "https://www.instagram.com/godivatech",
-      "https://twitter.com/godivatech",
-      "https://www.linkedin.com/company/godivatech"
+      "https://www.facebook.com/GodivaTech/",
+      "https://www.instagram.com/p/DOg6n1hkvE9/"
     ]
   };
 };

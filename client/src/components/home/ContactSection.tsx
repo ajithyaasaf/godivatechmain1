@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { MapPinIcon, PhoneIcon, MailIcon, ClockIcon, LinkedinIcon, TwitterIcon, FacebookIcon, InstagramIcon } from "lucide-react";
+import { MapPinIcon, PhoneIcon, MailIcon, ClockIcon, FacebookIcon, InstagramIcon } from "lucide-react";
 import { trackEvent, trackFormSubmission } from "@/lib/analytics";
 
 const ContactSection = () => {
@@ -214,25 +214,7 @@ const ContactSection = () => {
                 <h4 className="font-medium text-neutral-800 mb-4">Follow Us</h4>
                 <div className="flex space-x-4">
                   <a
-                    href="https://linkedin.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                    aria-label="LinkedIn"
-                  >
-                    <LinkedinIcon className="h-5 w-5" />
-                  </a>
-                  <a
-                    href="https://twitter.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
-                    aria-label="Twitter"
-                  >
-                    <TwitterIcon className="h-5 w-5" />
-                  </a>
-                  <a
-                    href="https://facebook.com"
+                    href="https://www.facebook.com/GodivaTech/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
@@ -241,7 +223,7 @@ const ContactSection = () => {
                     <FacebookIcon className="h-5 w-5" />
                   </a>
                   <a
-                    href="https://instagram.com"
+                    href="https://www.instagram.com/p/DOg6n1hkvE9/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center hover:bg-primary hover:text-white transition-colors"

@@ -413,24 +413,6 @@ const BlogPost = () => {
               <div className="flex flex-wrap gap-2">
                 <span className="text-neutral-700 font-medium">Share this article:</span>
                 <a 
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-neutral-500 hover:text-primary transition-colors"
-                  aria-label="Share on Twitter"
-                >
-                  <i className="fab fa-twitter"></i>
-                </a>
-                <a 
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-neutral-500 hover:text-primary transition-colors"
-                  aria-label="Share on LinkedIn"
-                >
-                  <i className="fab fa-linkedin-in"></i>
-                </a>
-                <a 
                   href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
                   target="_blank"
                   rel="noopener noreferrer"

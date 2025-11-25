@@ -25,8 +25,8 @@ const teamMemberSchema = z.object({
   position: z.string().min(2, "Position must be at least 2 characters"),
   bio: z.string().min(10, "Bio must be at least 10 characters"),
   image: z.string().optional().nullable(),
-  linkedIn: z.string().url("Must be a valid URL").optional().nullable(),
-  twitter: z.string().url("Must be a valid URL").optional().nullable(),
+  facebook: z.string().url("Must be a valid URL").optional().nullable(),
+  instagram: z.string().url("Must be a valid URL").optional().nullable(),
 });
 
 type TeamMemberFormValues = z.infer<typeof teamMemberSchema>;
@@ -54,8 +54,8 @@ const TeamMemberForm = ({ teamMember, onSave, onCancel }: TeamMemberFormProps) =
       position: teamMember?.position || "",
       bio: teamMember?.bio || "",
       image: teamMember?.image || "",
-      linkedIn: teamMember?.linkedIn || "",
-      twitter: teamMember?.twitter || "",
+      facebook: teamMember?.facebook || "",
+      instagram: teamMember?.instagram || "",
     },
   });
 
@@ -181,13 +181,13 @@ const TeamMemberForm = ({ teamMember, onSave, onCancel }: TeamMemberFormProps) =
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
-            name="linkedIn"
+            name="facebook"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>LinkedIn URL</FormLabel>
+                <FormLabel>Facebook URL</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="https://linkedin.com/in/username"
+                    placeholder="https://facebook.com/username"
                     {...field}
                     value={field.value || ''}
                   />
@@ -199,13 +199,13 @@ const TeamMemberForm = ({ teamMember, onSave, onCancel }: TeamMemberFormProps) =
 
           <FormField
             control={form.control}
-            name="twitter"
+            name="instagram"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Twitter URL</FormLabel>
+                <FormLabel>Instagram URL</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="https://twitter.com/username"
+                    placeholder="https://instagram.com/username"
                     {...field}
                     value={field.value || ''}
                   />

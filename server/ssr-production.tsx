@@ -76,8 +76,8 @@ export async function ssrProduction(req: Request, res: Response, next: NextFunct
           "logo": "https://godivatech.com/images/logo.png",
           "description": description,
           "sameAs": [
-            "https://twitter.com/godivatech",
-            "https://www.linkedin.com/company/godivatech"
+            "https://www.facebook.com/GodivaTech/",
+            "https://www.instagram.com/p/DOg6n1hkvE9/"
           ]
         };
       }

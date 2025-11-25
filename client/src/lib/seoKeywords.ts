@@ -267,10 +267,8 @@ export const schemaMarkupData = {
       "addressCountry": "IN"
     },
     "sameAs": [
-      "https://www.facebook.com/godivatech",
-      "https://www.instagram.com/godivatech",
-      "https://twitter.com/godivatech",
-      "https://www.linkedin.com/company/godivatech"
+      "https://www.facebook.com/GodivaTech/",
+      "https://www.instagram.com/p/DOg6n1hkvE9/"
     ]
   },
   localBusiness: {
@@ -308,10 +306,8 @@ export const schemaMarkupData = {
       "closes": "18:00"
     },
     "sameAs": [
-      "https://www.facebook.com/godivatech",
-      "https://www.instagram.com/godivatech",
-      "https://twitter.com/godivatech",
-      "https://www.linkedin.com/company/godivatech"
+      "https://www.facebook.com/GodivaTech/",
+      "https://www.instagram.com/p/DOg6n1hkvE9/"
     ]
   }
 };

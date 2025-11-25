@@ -73,9 +73,8 @@ export const createMobileAppStructuredData = (
       "url": "https://godivatech.com/"
     },
     "sameAs": [
-      "https://www.facebook.com/godivatech",
-      "https://twitter.com/godivatech",
-      "https://www.instagram.com/godivatech/"
+      "https://www.facebook.com/GodivaTech/",
+      "https://www.instagram.com/p/DOg6n1hkvE9/"
     ]
   };
 };

@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FaLinkedin, FaInstagram } from "react-icons/fa";
+import { FaFacebook, FaInstagram } from "react-icons/fa";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Link } from "wouter";
 import { Users, ArrowRight } from "lucide-react";
@@ -49,10 +49,10 @@ const TeamMemberCard = memo(({ member, index }: { member: TeamMember; index: num
         <div className="flex space-x-3">
           <button
             className="text-neutral-400 hover:text-primary transition-colors cursor-pointer"
-            aria-label={`${member.name}'s LinkedIn profile (Coming Soon)`}
-            title="LinkedIn - Coming Soon"
+            aria-label={`${member.name}'s Facebook profile (Coming Soon)`}
+            title="Facebook - Coming Soon"
           >
-            <FaLinkedin className="text-xl" />
+            <FaFacebook className="text-xl" />
           </button>
           <button
             className="text-neutral-400 hover:text-primary transition-colors cursor-pointer"
