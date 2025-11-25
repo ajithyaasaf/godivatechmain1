@@ -163,18 +163,18 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-6 relative pl-3 border-l-2 border-primary">Contact</h3>
             <ul className="space-y-4">
               <li className="flex items-start group">
-                <MapPin className="h-5 w-5 mt-1 mr-3 text-primary group-hover:text-white transition-colors" />
-                <span className="text-neutral-300 group-hover:text-white transition-colors">
-                  261, Vaigai Mainroad 4th Street, Sri Nagar, Iyer Bungalow, Madurai 625007, India
+                <MapPin className="h-5 w-5 mt-0.5 mr-3 text-primary group-hover:text-white transition-colors flex-shrink-0" />
+                <span className="text-neutral-300 group-hover:text-white transition-colors text-sm sm:text-base break-words">
+                  261, Vaigai Mainroad 4th Street<br/>Sri Nagar, Iyer Bungalow<br/>Madurai 625007, India
                 </span>
               </li>
               <li className="flex items-start group">
-                <Phone className="h-5 w-5 mt-1 mr-3 text-primary group-hover:text-white transition-colors" />
-                <span className="text-neutral-300 group-hover:text-white transition-colors">+91 96005 20130</span>
+                <Phone className="h-5 w-5 mt-0.5 mr-3 text-primary group-hover:text-white transition-colors flex-shrink-0" />
+                <a href="tel:+919600520130" className="text-neutral-300 group-hover:text-white transition-colors text-sm sm:text-base hover:underline">+91 96005 20130</a>
               </li>
               <li className="flex items-start group">
-                <Mail className="h-5 w-5 mt-1 mr-3 text-primary group-hover:text-white transition-colors" />
-                <span className="text-neutral-300 group-hover:text-white transition-colors">info@godivatech.com</span>
+                <Mail className="h-5 w-5 mt-0.5 mr-3 text-primary group-hover:text-white transition-colors flex-shrink-0" />
+                <a href="mailto:info@godivatech.com" className="text-neutral-300 group-hover:text-white transition-colors text-sm sm:text-base hover:underline">info@godivatech.com</a>
               </li>
             </ul>
           </motion.div>
