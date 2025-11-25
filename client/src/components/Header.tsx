@@ -418,13 +418,13 @@ const MobileMenu: React.FC<{
           transition={{ delay: 0.4 }}
         >
           <div className="flex flex-col space-y-3">
-            <a href="tel:+1234567890" className="flex items-center text-white/80 hover:text-white">
+            <a href="tel:+919600520130" className="flex items-center text-white/80 hover:text-white">
               <Phone className="h-5 w-5 mr-3" />
-              <span>(123) 456-7890</span>
+              <span>+91 96005 20130</span>
             </a>
-            <a href="mailto:hello@godivatech.com" className="flex items-center text-white/80 hover:text-white">
+            <a href="mailto:info@godivatech.com" className="flex items-center text-white/80 hover:text-white">
               <Mail className="h-5 w-5 mr-3" />
-              <span>hello@godivatech.com</span>
+              <span>info@godivatech.com</span>
             </a>
           </div>
         </motion.div>
