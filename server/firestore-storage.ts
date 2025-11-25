@@ -706,14 +706,76 @@ export class FirestoreStorage {
   // Services methods
   async getAllServices(): Promise<Service[]> {
     try {
-      const servicesRef = collection(db, 'services');
-      const q = query(servicesRef, orderBy('title'));
-      const querySnapshot = await getDocs(q);
+      // Return updated services with new structure and order
+      // Web Development, Digital Marketing, Custom Software, Ecommerce, Mobile App, UI/UX, Logo & Brand, Poster & Graphics
+      const defaultServices: Service[] = [
+        {
+          id: 1,
+          title: "Web Design & Development",
+          description: "Custom websites with responsive designs that work seamlessly across all devices, providing optimal user experiences.",
+          slug: "web-design-development",
+          icon: "globe",
+          features: ["Responsive Design", "SEO Optimization", "Custom CMS Integration"]
+        },
+        {
+          id: 2,
+          title: "Digital Marketing",
+          description: "Strategic marketing solutions to increase your online visibility, engage with customers, and drive conversions.",
+          slug: "digital-marketing",
+          icon: "cloud",
+          features: ["SEO & SEM", "Social Media Marketing", "Content Strategy"]
+        },
+        {
+          id: 3,
+          title: "Custom Software Solutions",
+          description: "Build enterprise-grade custom software including CRM systems, ERP solutions, and business management platforms tailored to your needs.",
+          slug: "custom-software",
+          icon: "database",
+          features: ["CRM Systems", "ERP Solutions", "Cloud Ready", "Scalable Architecture"]
+        },
+        {
+          id: 4,
+          title: "E-commerce Solutions",
+          description: "End-to-end e-commerce platforms with secure payment processing and inventory management systems.",
+          slug: "ecommerce-solutions",
+          icon: "box",
+          features: ["Secure Payments", "Inventory Management", "Mobile Shopping Experience"]
+        },
+        {
+          id: 5,
+          title: "Mobile App Development",
+          description: "Native and cross-platform mobile applications that deliver exceptional user experiences on iOS and Android devices.",
+          slug: "app-development",
+          icon: "users",
+          features: ["Native iOS & Android", "Cross-Platform Solutions", "App Store Optimization"]
+        },
+        {
+          id: 6,
+          title: "UI/UX Design",
+          description: "User-centered design approaches that enhance usability and create engaging digital experiences.",
+          slug: "ui-ux-design",
+          icon: "layout",
+          features: ["User Research", "Wireframing & Prototyping", "Usability Testing"]
+        },
+        {
+          id: 7,
+          title: "Logo & Brand Design",
+          description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
+          slug: "logo-brand-design",
+          icon: "palette",
+          features: ["Logo Design", "Brand Guidelines", "Color Palette", "Typography"]
+        },
+        {
+          id: 8,
+          title: "Poster & Graphics Design",
+          description: "Craft eye-catching posters, banners, and marketing materials that effectively communicate your message and attract customer attention.",
+          slug: "poster-design",
+          icon: "code",
+          features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
+        }
+      ];
       
-      return querySnapshot.docs.map(docSnap => {
-        const data = docSnap.data() as Service;
-        return { ...data, id: parseInt(docSnap.id) };
-      });
+      return defaultServices;
     } catch (error) {
       console.error("Error getting all services:", error);
       return [];
@@ -722,13 +784,9 @@ export class FirestoreStorage {
 
   async getService(id: number): Promise<Service | undefined> {
     try {
-      const docRef = doc(db, 'services', id.toString());
-      const docSnap = await getDoc(docRef);
-      
-      if (!docSnap.exists()) return undefined;
-      
-      const data = docSnap.data() as Service;
-      return { ...data, id };
+      // Get all services and find by ID
+      const allServices = await this.getAllServices();
+      return allServices.find(s => s.id === id);
     } catch (error) {
       console.error("Error getting service:", error);
       return undefined;
@@ -737,16 +795,9 @@ export class FirestoreStorage {
 
   async getServiceBySlug(slug: string): Promise<Service | undefined> {
     try {
-      const servicesRef = collection(db, 'services');
-      const q = query(servicesRef, where('slug', '==', slug), limit(1));
-      const querySnapshot = await getDocs(q);
-      
-      if (querySnapshot.empty) return undefined;
-      
-      const docSnap = querySnapshot.docs[0];
-      const data = docSnap.data() as Service;
-      
-      return { ...data, id: parseInt(docSnap.id) };
+      // Get all services and find by slug
+      const allServices = await this.getAllServices();
+      return allServices.find(s => s.slug === slug);
     } catch (error) {
       console.error("Error getting service by slug:", error);
       return undefined;
