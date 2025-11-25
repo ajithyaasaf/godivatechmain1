@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "wouter";
 import { Box, MapPin, Phone, Mail, ArrowUpCircle } from "lucide-react";
-import { FaLinkedinIn, FaTwitter, FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { motion } from "framer-motion";
 import godivaLogo from "../assets/godiva-logo.png";
 
@@ -61,10 +61,8 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               {[
-                { icon: <FaLinkedinIn />, href: "https://linkedin.com", label: "LinkedIn" },
-                { icon: <FaTwitter />, href: "https://twitter.com", label: "Twitter" },
-                { icon: <FaFacebookF />, href: "https://facebook.com", label: "Facebook" },
-                { icon: <FaInstagram />, href: "https://instagram.com", label: "Instagram" }
+                { icon: <FaFacebookF />, href: "https://www.facebook.com/GodivaTech/", label: "Facebook" },
+                { icon: <FaInstagram />, href: "https://www.instagram.com/p/DOg6n1hkvE9/", label: "Instagram" }
               ].map((social, index) => (
                 <motion.a
                   key={index}
