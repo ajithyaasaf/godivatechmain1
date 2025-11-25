@@ -41,7 +41,7 @@ const AboutSection = () => {
               <div className="text-center">
                 <p className="text-4xl font-bold text-primary mb-2">13+</p>
                 <p className="text-neutral-600">Years of Experience</p>
-                <p className="text-sm text-neutral-500 mt-1">Delivering quality IT solutions since 2010</p>
+                <p className="text-sm text-neutral-500 mt-1">Delivering quality IT solutions since 2020</p>
               </div>
               <div className="text-center">
                 <p className="text-4xl font-bold text-primary mb-2">150+</p>

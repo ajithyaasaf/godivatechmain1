@@ -57,7 +57,7 @@ const Footer = () => {
               </motion.span>
             </div>
             <p className="text-neutral-300 mb-6 leading-relaxed">
-              Empowering businesses through innovative technology solutions since 2010.
+              Empowering businesses through innovative technology solutions since 2020.
             </p>
             <div className="flex space-x-4">
               {[
