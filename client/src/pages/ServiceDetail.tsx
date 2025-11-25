@@ -78,31 +78,8 @@ const defaultServiceData: Record<string, ServiceType> = {
     ],
     technologies: ["HTML5", "CSS3", "JavaScript", "React", "Node.js", "WordPress", "PHP"]
   },
-  "branding-logo-design": {
-    id: 2,
-    title: "Branding & Logo Design",
-    description: "Comprehensive branding solutions that help establish your unique identity in the market.",
-    slug: "branding-logo-design",
-    features: ["Logo Creation", "Brand Guidelines", "Visual Identity Systems"],
-    longDescription: "Our branding service helps businesses establish a strong, recognizable identity in the marketplace. We create comprehensive brand packages including logos, color schemes, typography, and design elements that communicate your brand's values and personality consistently across all touchpoints.",
-    processSteps: [
-      { title: "Brand Discovery", description: "We explore your business values, mission, target audience, and competitive landscape." },
-      { title: "Concept Development", description: "Our designers create multiple concepts based on research and brand positioning." },
-      { title: "Refinement", description: "We refine the selected concept into a polished, professional brand identity." },
-      { title: "Brand Guidelines", description: "We develop comprehensive guidelines for consistent application across all media." },
-      { title: "Implementation", description: "We help integrate your new branding across various platforms and materials." }
-    ],
-    benefits: [
-      "Strong brand recognition and recall",
-      "Consistent representation across all media",
-      "Professional image that builds customer trust",
-      "Visual identity that communicates your brand values",
-      "Differentiation from competitors in your market"
-    ],
-    technologies: ["Adobe Creative Suite", "Figma", "Brand Strategy Frameworks", "Color Theory", "Typography"]
-  },
   "digital-marketing": {
-    id: 3,
+    id: 2,
     title: "Digital Marketing",
     description: "Strategic marketing solutions to increase your online visibility, engage with customers, and drive conversions.",
     slug: "digital-marketing",
@@ -123,6 +100,29 @@ const defaultServiceData: Record<string, ServiceType> = {
       "Cost-effective targeting of specific audience segments"
     ],
     technologies: ["Google Analytics", "SEO Tools", "Social Media Platforms", "Email Marketing Software", "Content Management Systems"]
+  },
+  "custom-software": {
+    id: 3,
+    title: "Custom Software Solutions",
+    description: "Build enterprise-grade custom software including CRM systems, ERP solutions, and business management platforms tailored to your needs.",
+    slug: "custom-software",
+    features: ["CRM Systems", "ERP Solutions", "Cloud Ready", "Scalable Architecture"],
+    longDescription: "Our custom software solutions help businesses streamline operations and improve efficiency with enterprise-grade systems. We develop CRM platforms, ERP systems, and custom business management solutions tailored to your specific needs, built with scalable architecture for growth.",
+    processSteps: [
+      { title: "Requirements Analysis", description: "We gather detailed business requirements and technical specifications." },
+      { title: "Architecture & Design", description: "We design scalable, maintainable software architecture aligned with your business goals." },
+      { title: "Development", description: "Our experienced developers build robust, tested software solutions." },
+      { title: "Integration", description: "We integrate with your existing systems and tools for seamless operation." },
+      { title: "Deployment & Support", description: "We handle deployment and provide ongoing support and maintenance." }
+    ],
+    benefits: [
+      "Tailored solutions that fit your unique business needs",
+      "Improved operational efficiency and productivity",
+      "Scalable architecture for future growth",
+      "Integration with existing business systems",
+      "Expert technical support and maintenance"
+    ],
+    technologies: ["C#", "Java", "Python", "Node.js", "PostgreSQL", "Cloud Platforms", "API Development"]
   },
   "ecommerce-solutions": {
     id: 4,
@@ -147,28 +147,28 @@ const defaultServiceData: Record<string, ServiceType> = {
     ],
     technologies: ["Shopify", "WooCommerce", "Magento", "Payment Gateways", "Inventory Management Systems"]
   },
-  "web-hosting-maintenance": {
+  "app-development": {
     id: 5,
-    title: "Web Hosting & Maintenance",
-    description: "Reliable hosting solutions with regular maintenance to ensure your website remains secure and performs optimally.",
-    slug: "web-hosting-maintenance",
-    features: ["24/7 Support", "Security Updates", "Performance Optimization"],
-    longDescription: "Our web hosting and maintenance services ensure your website remains secure, up-to-date, and performing at its best. We provide reliable hosting infrastructure combined with regular monitoring, updates, and technical support to minimize downtime and maximize website performance.",
+    title: "Mobile App Development",
+    description: "Native and cross-platform mobile applications that deliver exceptional user experiences on iOS and Android devices.",
+    slug: "app-development",
+    features: ["Native iOS & Android", "Cross-Platform Solutions", "App Store Optimization"],
+    longDescription: "Our mobile app development services create powerful, user-friendly applications that engage your customers and drive business growth. We specialize in both native iOS/Android development and cross-platform solutions using cutting-edge technologies to deliver apps that perform flawlessly across all devices.",
     processSteps: [
-      { title: "Hosting Setup", description: "We configure secure, high-performance hosting tailored to your website's needs." },
-      { title: "Migration (if needed)", description: "We handle the transition from your current host with minimal disruption." },
-      { title: "Security Implementation", description: "We install SSL certificates and security measures to protect your site." },
-      { title: "Monitoring Setup", description: "We implement monitoring systems to track uptime and performance." },
-      { title: "Ongoing Maintenance", description: "Regular updates, backups, and optimization to keep your site running smoothly." }
+      { title: "Strategy & Planning", description: "We define your app's core functionality, target audience, and technical requirements." },
+      { title: "UI/UX Design", description: "Our designers create intuitive interfaces optimized for mobile interaction patterns." },
+      { title: "Development & Testing", description: "We build your app using best practices and conduct thorough testing on multiple devices." },
+      { title: "App Store Submission", description: "We handle the entire app store submission process for both iOS and Android platforms." },
+      { title: "Launch & Maintenance", description: "Post-launch support includes updates, monitoring, and feature enhancements." }
     ],
     benefits: [
-      "Improved website security and protection from threats",
-      "Faster loading speeds and better user experience",
-      "Reduced downtime and technical issues",
-      "Regular backups to prevent data loss",
-      "Expert support when you need assistance"
+      "Direct customer engagement through mobile devices",
+      "Push notifications for increased user retention",
+      "Native device features integration",
+      "Offline functionality for better user experience",
+      "Revenue generation through app stores"
     ],
-    technologies: ["Cloud Hosting", "SSL Certificates", "CDN Services", "Security Scanning Tools", "Backup Systems"]
+    technologies: ["React Native", "Flutter", "Swift", "Kotlin", "Firebase", "Native APIs"]
   },
   "ui-ux-design": {
     id: 6,
@@ -193,74 +193,51 @@ const defaultServiceData: Record<string, ServiceType> = {
     ],
     technologies: ["Figma", "Adobe XD", "Sketch", "InVision", "User Testing Platforms"]
   },
-  "app-development": {
+  "logo-brand-design": {
     id: 7,
-    title: "Mobile App Development",
-    description: "Native and cross-platform mobile applications that deliver exceptional user experiences on iOS and Android devices.",
-    slug: "app-development",
-    features: ["Native iOS & Android", "Cross-Platform Solutions", "App Store Optimization"],
-    longDescription: "Our mobile app development services create powerful, user-friendly applications that engage your customers and drive business growth. We specialize in both native iOS/Android development and cross-platform solutions using cutting-edge technologies to deliver apps that perform flawlessly across all devices.",
+    title: "Logo & Brand Design",
+    description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
+    slug: "logo-brand-design",
+    features: ["Logo Design", "Brand Guidelines", "Color Palette", "Typography"],
+    longDescription: "Our branding service helps businesses establish a strong, recognizable identity in the marketplace. We create comprehensive brand packages including logos, color schemes, typography, and design elements that communicate your brand's values and personality consistently across all touchpoints.",
     processSteps: [
-      { title: "Strategy & Planning", description: "We define your app's core functionality, target audience, and technical requirements." },
-      { title: "UI/UX Design", description: "Our designers create intuitive interfaces optimized for mobile interaction patterns." },
-      { title: "Development & Testing", description: "We build your app using best practices and conduct thorough testing on multiple devices." },
-      { title: "App Store Submission", description: "We handle the entire app store submission process for both iOS and Android platforms." },
-      { title: "Launch & Maintenance", description: "Post-launch support includes updates, monitoring, and feature enhancements." }
+      { title: "Brand Discovery", description: "We explore your business values, mission, target audience, and competitive landscape." },
+      { title: "Concept Development", description: "Our designers create multiple concepts based on research and brand positioning." },
+      { title: "Refinement", description: "We refine the selected concept into a polished, professional brand identity." },
+      { title: "Brand Guidelines", description: "We develop comprehensive guidelines for consistent application across all media." },
+      { title: "Implementation", description: "We help integrate your new branding across various platforms and materials." }
     ],
     benefits: [
-      "Direct customer engagement through mobile devices",
-      "Push notifications for increased user retention",
-      "Native device features integration",
-      "Offline functionality for better user experience",
-      "Revenue generation through app stores"
+      "Strong brand recognition and recall",
+      "Consistent representation across all media",
+      "Professional image that builds customer trust",
+      "Visual identity that communicates your brand values",
+      "Differentiation from competitors in your market"
     ],
-    technologies: ["React Native", "Flutter", "Swift", "Kotlin", "Firebase", "Native APIs"]
+    technologies: ["Adobe Creative Suite", "Figma", "Brand Strategy Frameworks", "Color Theory", "Typography"]
   },
-  "cyber-security": {
+  "poster-design": {
     id: 8,
-    title: "Cyber Security Solutions",
-    description: "Comprehensive security services to protect your business from digital threats and ensure data privacy compliance.",
-    slug: "cyber-security",
-    features: ["Security Audits", "Threat Detection", "Compliance Management"],
-    longDescription: "Our cyber security solutions protect your business from evolving digital threats. We provide comprehensive security assessments, implement robust protection measures, and ensure your systems comply with industry standards. Our proactive approach includes monitoring, threat detection, and incident response to keep your data and operations secure.",
+    title: "Poster & Graphics Design",
+    description: "Craft eye-catching posters, banners, and marketing materials that effectively communicate your message and attract customer attention.",
+    slug: "poster-design",
+    features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"],
+    longDescription: "Our poster and graphics design services create visually stunning materials that capture attention and communicate your message effectively. We design print-ready posters, banners, and marketing materials that align with your brand and achieve your marketing objectives.",
     processSteps: [
-      { title: "Security Assessment", description: "We conduct thorough audits to identify vulnerabilities in your systems and processes." },
-      { title: "Risk Analysis", description: "We prioritize threats based on potential impact and likelihood of occurrence." },
-      { title: "Security Implementation", description: "We deploy appropriate security measures including firewalls, encryption, and access controls." },
-      { title: "Monitoring Setup", description: "We establish 24/7 monitoring systems to detect and respond to threats in real-time." },
-      { title: "Training & Compliance", description: "We provide staff training and ensure compliance with relevant security standards." }
+      { title: "Concept & Briefing", description: "We understand your campaign goals and target audience." },
+      { title: "Design Creation", description: "Our designers create eye-catching designs with compelling visuals." },
+      { title: "Refinement", description: "We refine designs based on your feedback and requirements." },
+      { title: "Print Preparation", description: "We prepare files in appropriate formats and specifications for printing." },
+      { title: "Delivery", description: "We deliver print-ready files or coordinate printing as needed." }
     ],
     benefits: [
-      "Protection against data breaches and cyber attacks",
-      "Compliance with industry regulations and standards",
-      "Reduced business disruption from security incidents",
-      "Enhanced customer trust and brand reputation",
-      "Comprehensive incident response and recovery plans"
+      "Visually striking designs that grab attention",
+      "Professional print-quality materials",
+      "Consistent brand representation across materials",
+      "Quick turnaround on projects",
+      "Multiple format options for different needs"
     ],
-    technologies: ["Network Security Tools", "Encryption Technologies", "SIEM Systems", "Vulnerability Scanners", "Compliance Frameworks"]
-  },
-  "cloud-solutions": {
-    id: 9,
-    title: "Cloud Solutions & Migration",
-    description: "Scalable cloud infrastructure and migration services that improve performance, reduce costs, and enhance business agility.",
-    slug: "cloud-solutions",
-    features: ["Cloud Migration", "Infrastructure Management", "Scalability Solutions"],
-    longDescription: "Our cloud solutions help businesses leverage the power of cloud computing for improved scalability, cost-efficiency, and performance. We provide end-to-end cloud services including migration planning, implementation, and ongoing management across major cloud platforms. Our expertise ensures seamless transitions with minimal disruption to your operations.",
-    processSteps: [
-      { title: "Cloud Strategy", description: "We assess your current infrastructure and develop a comprehensive cloud migration strategy." },
-      { title: "Architecture Design", description: "We design scalable cloud architectures optimized for your specific business requirements." },
-      { title: "Migration Execution", description: "We execute the migration with minimal downtime using proven methodologies and tools." },
-      { title: "Optimization", description: "We optimize your cloud environment for performance, security, and cost-effectiveness." },
-      { title: "Ongoing Management", description: "We provide continuous monitoring, maintenance, and support for your cloud infrastructure." }
-    ],
-    benefits: [
-      "Reduced IT infrastructure costs and maintenance",
-      "Improved scalability and flexibility",
-      "Enhanced disaster recovery and business continuity",
-      "Automatic software updates and security patches",
-      "Access to advanced cloud-native services and AI tools"
-    ],
-    technologies: ["AWS", "Microsoft Azure", "Google Cloud Platform", "Docker", "Kubernetes", "DevOps Tools"]
+    technologies: ["Adobe Photoshop", "Adobe Illustrator", "Figma", "Canva Pro", "Print Design Standards"]
   }
 };
 

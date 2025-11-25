@@ -16,7 +16,7 @@ import {
   GraduationCap, ArrowRight, Globe, Layers, Code, Cloud, 
   Database, Palette, BrainCircuit, BarChart, ShieldCheck,
   Cpu, ScrollText, Users, Box, Bookmark, ChevronRight, 
-  CheckCircle2, Sparkles, FileCheck, MessageCircle
+  CheckCircle2, Sparkles, FileCheck, MessageCircle, Layout
 } from "lucide-react";
 import ServiceSection from "@/components/home/ServiceSection";
 import NewsletterSection from "@/components/home/NewsletterSection";
@@ -229,19 +229,19 @@ const Services = () => {
     },
     { 
       id: 2,
-      icon: Palette, 
-      title: "Branding & Logo Design", 
-      description: "Comprehensive branding solutions that help establish your unique identity in the market.",
-      slug: "branding-logo-design",
-      features: ["Logo Creation", "Brand Guidelines", "Visual Identity Systems"]
-    },
-    { 
-      id: 3,
       icon: Cloud, 
       title: "Digital Marketing", 
       description: "Strategic marketing solutions to increase your online visibility, engage with customers, and drive conversions.",
       slug: "digital-marketing",
       features: ["SEO & SEM", "Social Media Marketing", "Content Strategy"]
+    },
+    { 
+      id: 3,
+      icon: Database, 
+      title: "Custom Software Solutions", 
+      description: "Build enterprise-grade custom software including CRM systems, ERP solutions, and business management platforms tailored to your needs.",
+      slug: "custom-software",
+      features: ["CRM Systems", "ERP Solutions", "Cloud Ready", "Scalable Architecture"]
     },
     { 
       id: 4,
@@ -253,19 +253,35 @@ const Services = () => {
     },
     { 
       id: 5,
-      icon: Database, 
-      title: "Web Hosting & Maintenance", 
-      description: "Reliable hosting solutions with regular maintenance to ensure your website remains secure and performs optimally.",
-      slug: "web-hosting-maintenance",
-      features: ["24/7 Support", "Security Updates", "Performance Optimization"]
+      icon: Users, 
+      title: "Mobile App Development", 
+      description: "Build custom mobile applications for Android and iOS platforms that connect you with your customers wherever they are.",
+      slug: "app-development",
+      features: ["iOS & Android", "Native Performance", "App Store Ready", "Cloud Integration"]
     },
     { 
       id: 6,
-      icon: Users, 
+      icon: Layout, 
       title: "UI/UX Design", 
       description: "User-centered design approaches that enhance usability and create engaging digital experiences.",
       slug: "ui-ux-design",
       features: ["User Research", "Wireframing & Prototyping", "Usability Testing"]
+    },
+    { 
+      id: 7,
+      icon: Palette, 
+      title: "Logo & Brand Design", 
+      description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
+      slug: "logo-brand-design",
+      features: ["Logo Design", "Brand Guidelines", "Color Palette", "Typography"]
+    },
+    { 
+      id: 8,
+      icon: Code, 
+      title: "Poster & Graphics Design", 
+      description: "Craft eye-catching posters, banners, and marketing materials that effectively communicate your message and attract customer attention.",
+      slug: "poster-design",
+      features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
     }
   ];
   
