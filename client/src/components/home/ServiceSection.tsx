@@ -175,6 +175,22 @@ const ServiceSection: React.FC = () => {
     },
     {
       id: 3,
+      title: "Custom Software Solutions",
+      description: "Build enterprise-grade custom software including CRM systems, ERP solutions, and business management platforms tailored to your needs.",
+      icon: Database,
+      slug: "custom-software",
+      features: ["CRM Systems", "ERP Solutions", "Cloud Ready", "Scalable Architecture"]
+    },
+    {
+      id: 4,
+      title: "Ecommerce Solutions",
+      description: "Launch powerful online stores with secure payment integration, inventory management, and seamless customer experience to drive sales.",
+      icon: Box,
+      slug: "ecommerce-solutions",
+      features: ["Shopping Cart", "Payment Gateway", "Inventory System", "Order Management"]
+    },
+    {
+      id: 5,
       title: "Mobile App Development",
       description: "Build custom mobile applications for Android and iOS platforms that connect you with your customers wherever they are.",
       icon: Smartphone,
@@ -182,15 +198,7 @@ const ServiceSection: React.FC = () => {
       features: ["iOS & Android", "Native Performance", "App Store Ready", "Cloud Integration"]
     },
     {
-      id: 4,
-      title: "Poster Design",
-      description: "Craft eye-catching posters and marketing materials that effectively communicate your message and attract customer attention.",
-      icon: PenTool,
-      slug: "poster-design",
-      features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
-    },
-    {
-      id: 5,
+      id: 6,
       title: "UI/UX Design",
       description: "Create intuitive and engaging user interfaces that provide exceptional user experiences and keep customers coming back.",
       icon: Layout,
@@ -198,12 +206,20 @@ const ServiceSection: React.FC = () => {
       features: ["User Research", "Wireframing", "Prototyping", "User Testing"]
     },
     {
-      id: 6,
+      id: 7,
       title: "Logo & Brand Design",
       description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
       icon: Palette,
       slug: "logo-brand-design",
       features: ["Logo Design", "Brand Guidelines", "Color Palette", "Typography"]
+    },
+    {
+      id: 8,
+      title: "Poster & Graphics Design",
+      description: "Craft eye-catching posters, banners, and marketing materials that effectively communicate your message and attract customer attention.",
+      icon: PenTool,
+      slug: "poster-design",
+      features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
     }
   ];
 
