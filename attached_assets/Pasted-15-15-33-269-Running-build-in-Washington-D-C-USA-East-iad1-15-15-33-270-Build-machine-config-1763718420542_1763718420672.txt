@@ -1,0 +1,72 @@
+15:15:33.269 Running build in Washington, D.C., USA (East) – iad1
+15:15:33.270 Build machine configuration: 2 cores, 8 GB
+15:15:33.398 Cloning github.com/ajithyaasaf/godivatechmain1 (Branch: main, Commit: 108f810)
+15:15:34.593 Cloning completed: 1.195s
+15:15:34.692 Found .vercelignore
+15:15:34.716 Removed 42 ignored files defined in .vercelignore
+15:15:34.716   /.git/logs/HEAD
+15:15:34.716   /.git/logs/refs/heads/master
+15:15:34.716   /.replit
+15:15:34.716   /deploy-instructions.md
+15:15:34.716   /DEPLOYMENT.md
+15:15:34.716   /drizzle.config.ts
+15:15:34.717   /replit.md
+15:15:34.717   /route-analysis.md
+15:15:34.717   /scripts/add-blog-posts.js
+15:15:34.717   /scripts/add-logo-projects-firestore.js
+15:15:36.275 Restored build cache from previous deployment (9z5Pp98f8cb7YLdhteKGu8bv7xC7)
+15:15:38.050 Running "vercel build"
+15:15:38.465 Vercel CLI 48.10.5
+15:15:39.281 Installing dependencies...
+15:15:41.009 
+15:15:41.010 added 6 packages in 2s
+15:15:41.010 
+15:15:41.010 92 packages are looking for funding
+15:15:41.010   run `npm fund` for details
+15:16:39.483 
+15:16:39.484 up to date, audited 315 packages in 58s
+15:16:39.485 
+15:16:39.485 45 packages are looking for funding
+15:16:39.485   run `npm fund` for details
+15:16:40.172 
+15:16:40.173 13 vulnerabilities (12 moderate, 1 high)
+15:16:40.173 
+15:16:40.173 To address issues that do not require attention, run:
+15:16:40.173   npm audit fix
+15:16:40.174 
+15:16:40.174 To address all issues (including breaking changes), run:
+15:16:40.174   npm audit fix --force
+15:16:40.174 
+15:16:40.174 Run `npm audit` for details.
+15:16:40.300 
+15:16:40.300 > godivatech-frontend@0.0.0 build
+15:16:40.300 > vite build && node verify-build.js
+15:16:40.300 
+15:16:40.598 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
+15:16:40.663 transforming...
+15:16:46.126 [32m✓[39m 2261 modules transformed.
+15:16:46.127 [31mx[39m Build failed in 5.50s
+15:16:46.128 [31merror during build:
+15:16:46.128 [31m[vite:esbuild] Transform failed with 1 error:
+15:16:46.128 /vercel/path0/client/src/components/admin/ContentDataTable.tsx:838:12: ERROR: The symbol "item" has already been declared[31m
+15:16:46.129 file: [36m/vercel/path0/client/src/components/admin/ContentDataTable.tsx:838:12[31m
+15:16:46.129 [33m
+15:16:46.129 [33mThe symbol "item" has already been declared[33m
+15:16:46.129 836|        // Keep track of original item fields to avoid losing data
+15:16:46.129 837|        // that wasn't included in the form (like special IDs, timestamps, etc.)
+15:16:46.129 838|        const item = selectedItem as any;
+15:16:46.129    |              ^
+15:16:46.129 839|        updateMutation.mutate({ 
+15:16:46.129 840|          id: itemId, 
+15:16:46.129 [31m
+15:16:46.129     at failureErrorWithLog (/vercel/path0/client/node_modules/esbuild/lib/main.js:1472:15)
+15:16:46.130     at /vercel/path0/client/node_modules/esbuild/lib/main.js:755:50
+15:16:46.130     at responseCallbacks.<computed> (/vercel/path0/client/node_modules/esbuild/lib/main.js:622:9)
+15:16:46.130     at handleIncomingPacket (/vercel/path0/client/node_modules/esbuild/lib/main.js:677:12)
+15:16:46.130     at Socket.readFromStdout (/vercel/path0/client/node_modules/esbuild/lib/main.js:600:7)
+15:16:46.130     at Socket.emit (node:events:519:28)
+15:16:46.130     at addChunk (node:internal/streams/readable:561:12)
+15:16:46.130     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+15:16:46.130     at Readable.push (node:internal/streams/readable:392:5)
+15:16:46.130     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+15:16:46.163 Error: Command "cd client && npm install && npm run build" exited with 1

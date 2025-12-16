@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: godivatech-backend
+    runtime: node
+    buildCommand: chmod +x build-server.sh && ./build-server.sh
+    startCommand: node dist/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CLOUDINARY_URL
+        sync: false # Add this via Render dashboard
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: FIREBASE_API_KEY
+        sync: false # Add this via Render dashboard
+      - key: FIREBASE_PROJECT_ID
+        sync: false # Add this via Render dashboard
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false # Add this via Render dashboard
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false # Add this via Render dashboard

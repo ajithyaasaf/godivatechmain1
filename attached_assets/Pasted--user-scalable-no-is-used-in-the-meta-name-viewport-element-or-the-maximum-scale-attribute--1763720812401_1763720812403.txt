@@ -1,0 +1,76 @@
+[user-scalable="no"] is used in the <meta name="viewport"> element or the [maximum-scale] attribute is less than 5.
+Disabling zooming is problematic for users with low vision who rely on screen magnification to properly see the contents of a web page. Learn more about the viewport meta tag.
+Failing Elements
+head > meta
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+Touch targets do not have sufficient size or spacing.
+Touch targets with sufficient size and spacing help users who may have difficulty targeting small controls to activate the targets. Learn more about touch targets.
+Failing Elements
+Start Your Project
+<a href="/contact">
+Start Your Project
+<button class="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold …">
+View image 1
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white scale-125" aria-label="View image 1">
+View image 2
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 2">
+View image 2
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 2">
+View image 1
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white scale-125" aria-label="View image 1">
+View image 3
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 3">
+View image 3
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 3">
+View image 2
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 2">
+View image 4
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 4">
+View image 4
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 4">
+View image 3
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 3">
+View image 5
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 5">
+View image 5
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 5">
+View image 4
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 4">
+View image 6
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 6">
+View image 6
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 6">
+View image 5
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 5">
+View image 7
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 7">
+View image 7
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 7">
+View image 6
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 6">
+Go to testimonial 1
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 1">
+Go to testimonial 2
+<button class="w-3 h-3 rounded-full bg-white transition-colors duration-300" aria-label="Go to testimonial 2">
+Go to testimonial 2
+<button class="w-3 h-3 rounded-full bg-white transition-colors duration-300" aria-label="Go to testimonial 2">
+Go to testimonial 1
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 1">
+Go to testimonial 3
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 3">
+Go to testimonial 3
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 3">
+Go to testimonial 2
+<button class="w-3 h-3 rounded-full bg-white transition-colors duration-300" aria-label="Go to testimonial 2">
+Go to testimonial 4
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 4">
+Go to testimonial 4
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 4">
+Go to testimonial 3
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 3">
+Go to testimonial 5
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 5">
+Go to testimonial 5
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 5">
+Go to testimonial 4
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 4">

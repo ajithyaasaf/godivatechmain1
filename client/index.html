@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Development Company in Madurai | Godiva Tech (Starts @ ₹15k)</title>
+    <meta name="description" content="Top-rated web design & digital marketing agency in Madurai & Rajapalayam. Custom websites, SEO, and branding solutions. Get a free quote today!" />
+    <meta name="keywords" content="web development, digital marketing, design solutions, madurai, services, business growth, website design, app development, seo, branding" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="apple-touch-icon" sizes="48x48" href="/favicon-48x48.png" />
+    
+    <!-- Suppress Vite HMR WebSocket errors globally at the earliest point -->
+    <script>
+      window.addEventListener('error', function(e) { if (e.message?.includes('WebSocket')) e.preventDefault(); }, true);
+      window.addEventListener('unhandledrejection', function(e) { if (e.reason?.message?.includes('WebSocket')) e.preventDefault(); }, true);
+    </script>
+    
+    <!-- Critical resource hints for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://res.cloudinary.com">
+    <link rel="dns-prefetch" href="https://godivatech-backend.onrender.com">
+    
+    <!-- Prefetch all API calls to start loading immediately in parallel -->
+    <link rel="prefetch" href="/api/services" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/projects" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/team-members" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/testimonials" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/categories" as="fetch" crossorigin>
+    <link rel="prefetch" href="/api/blog-posts" as="fetch" crossorigin>
+    
+    <!-- Parallel loading of critical chunks via modulepreload -->
+    <link rel="modulepreload" href="/src/components/home/TeamSection.tsx">
+    <link rel="modulepreload" href="/src/components/home/PortfolioSection.tsx">
+    <link rel="modulepreload" href="/src/components/home/TestimonialsSection.tsx">
+    <link rel="modulepreload" href="/src/components/home/BlogSection.tsx">
+    
+    <!-- Optimized font loading to prevent render blocking -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    
+    <!-- Critical CSS fallback for Vercel deployment -->
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-family: Inter, system-ui, sans-serif; scroll-behavior: smooth; }
+      body { margin: 0; min-height: 100vh; background: #fff; color: #1f2937; }
+      #root { width: 100%; }
+      .container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 1rem; }
+      .grid { display: grid; }
+      .flex { display: flex; }
+      .text-center { text-align: center; }
+      .font-bold { font-weight: 700; }
+      .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
+      .text-blue-600 { color: #2563eb; }
+      .bg-gray-50 { background-color: #f9fafb; }
+      .py-20 { padding: 5rem 0; }
+      .mb-6 { margin-bottom: 1.5rem; }
+      .gap-8 { gap: 2rem; }
+      .items-center { align-items: center; }
+      .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+      @media (min-width: 768px) { .md\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (min-width: 1024px) { .lg\\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      .card { background: #fff; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); padding: 1.5rem; }
+      .btn { display: inline-flex; align-items: center; padding: 0.5rem 1rem; background: #2563eb; color: #fff; border-radius: 8px; text-decoration: none; }
+    </style>
+    
+    <!-- Defer main stylesheet to prevent render blocking (async CSS loading) -->
+    <link rel="preload" href="/src/main.tsx" as="script" type="module">
+    <style>
+      /* Prevent FOUC by hiding root during stylesheet load */
+      @media print { #root { display: none; } }
+    </style>
+
+    <!-- Analytics deferred to after page load to not block rendering -->
+    <script>
+      // Load analytics after page is fully interactive
+      window.addEventListener('load', function() {
+        // GTM - defer to after load
+        var script = document.createElement('script');
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-KHE7CZP6EZ';
+        script.async = true;
+        document.head.appendChild(script);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-KHE7CZP6EZ');
+        
+        // Facebook Pixel - defer to after load
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', 'YOUR_PIXEL_ID');
+        fbq('track', 'PageView');
+      });
+    </script>
+  </head>
+  <body>
+    
+    <div id="root"></div>
+    
+    <script type="module" src="/src/main.tsx"></script>
+
+  </body>
+</html>

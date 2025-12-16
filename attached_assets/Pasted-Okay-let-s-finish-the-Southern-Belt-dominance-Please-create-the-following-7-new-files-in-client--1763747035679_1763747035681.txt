@@ -1,0 +1,143 @@
+Okay, let's finish the 'Southern Belt' dominance. Please create the following 7 new files in client/src/pages/locations/ using our CityLandingPage component.
+
+1. Virudhunagar (Hub for Oil & Trading) File: client/src/pages/locations/Virudhunagar.tsx
+
+TypeScript
+
+import React from 'react';
+import CityLandingPage from '@/components/CityLandingPage';
+
+const VirudhunagarPage = () => {
+  return (
+    <CityLandingPage 
+      city="Virudhunagar"
+      district="Virudhunagar"
+      industryFocus="Edible Oil & Merchant Trading"
+      landmark="the business capital of the district"
+      metaDescription="Web design company in Virudhunagar. Digital marketing for oil mills, wholesale merchants, and trading businesses."
+      industryText="Virudhunagar is the trading pulse of Southern Tamil Nadu. From edible oil production to massive wholesale markets, your business moves fast. We build high-performance websites that handle inventory catalogs and B2B inquiries, helping traditional merchants expand their reach to new markets across India."
+    />
+  );
+};
+export default VirudhunagarPage;
+2. Aruppukottai (Textiles & Weaving) File: client/src/pages/locations/Aruppukottai.tsx
+
+TypeScript
+
+import React from 'react';
+import CityLandingPage from '@/components/CityLandingPage';
+
+const AruppukottaiPage = () => {
+  return (
+    <CityLandingPage 
+      city="Aruppukottai"
+      district="Virudhunagar"
+      industryFocus="Spinning Mills & Handloom"
+      landmark="the textile corridor"
+      metaDescription="Web development in Aruppukottai for weaving centers and spinning mills. Showcase your textile products to global buyers."
+      industryText="Famous for its rich weaving tradition and modern spinning mills, Aruppukottai needs digital visibility. International textile buyers search online first. We create stunning portfolios for textile manufacturers to showcase fabric quality, certifications, and production capacity to overseas clients."
+    />
+  );
+};
+export default AruppukottaiPage;
+3. Ramanathapuram (Solar & Exports) File: client/src/pages/locations/Ramanathapuram.tsx
+
+TypeScript
+
+import React from 'react';
+import CityLandingPage from '@/components/CityLandingPage';
+
+const RamanathapuramPage = () => {
+  return (
+    <CityLandingPage 
+      city="Ramanathapuram"
+      district="Ramanathapuram"
+      industryFocus="Solar Energy & Marine Exports"
+      landmark="the coastal energy hub"
+      metaDescription="Web design services in Ramnad. Specialized in websites for solar power companies, marine exporters, and logistics."
+      industryText="With the massive growth in Solar Energy (Kamuthi) and marine exports, Ramnad is booming. Godiva Tech helps energy contractors and seafood exporters build professional corporate websites that establish trust with government bodies and international partners."
+    />
+  );
+};
+export default RamanathapuramPage;
+4. Paramakudi (Trading & Retail) File: client/src/pages/locations/Paramakudi.tsx
+
+TypeScript
+
+import React from 'react';
+import CityLandingPage from '@/components/CityLandingPage';
+
+const ParamakudiPage = () => {
+  return (
+    <CityLandingPage 
+      city="Paramakudi"
+      district="Ramanathapuram"
+      industryFocus="Charcoal & Agri-Trading"
+      landmark="the Vaigai river bank"
+      metaDescription="Digital marketing agency in Paramakudi. We help local traders and retail businesses grow their online presence."
+      industryText="Paramakudi is a vital trading hub connecting Madurai and Rameswaram. Whether you are in the charcoal industry or retail trading, a local SEO strategy helps you capture customers searching on their mobile phones. We bring affordable digital marketing to Paramakudi businesses."
+    />
+  );
+};
+export default ParamakudiPage;
+5. Manamadurai (SIPCOT & Manufacturing) File: client/src/pages/locations/Manamadurai.tsx
+
+TypeScript
+
+import React from 'react';
+import CityLandingPage from '@/components/CityLandingPage';
+
+const ManamaduraiPage = () => {
+  return (
+    <CityLandingPage 
+      city="Manamadurai"
+      district="Sivaganga"
+      industryFocus="SIPCOT Industries & Ceramics"
+      landmark="the SIPCOT industrial complex"
+      metaDescription="Web development for Manamadurai SIPCOT industries. Professional websites for manufacturers and ceramic exporters."
+      industryText="With the SIPCOT Industrial Park driving growth, Manamadurai is becoming a manufacturing center. We design corporate websites for SIPCOT industries to showcase infrastructure and capabilities. From traditional ceramics to modern manufacturing, we help you look professional."
+    />
+  );
+};
+export default ManamaduraiPage;
+6. Dindigul (Manufacturing & Tannery) File: client/src/pages/locations/Dindigul.tsx
+
+TypeScript
+
+import React from 'react';
+import CityLandingPage from '@/components/CityLandingPage';
+
+const DindigulPage = () => {
+  return (
+    <CityLandingPage 
+      city="Dindigul"
+      district="Dindigul"
+      industryFocus="Locks, Leather & Agro"
+      landmark="the Fort City"
+      metaDescription="Best web design company in Dindigul. Serving tanneries, lock manufacturers, and agro-processing units."
+      industryText="Dindigul is an industrial powerhouse, famous for locks and leather tanneries. International leather buyers expect a world-class website. Godiva Tech specializes in creating B2B export portals that highlight your production quality and reach global markets effectively."
+    />
+  );
+};
+export default DindigulPage;
+7. Theni (Agriculture & Trading) File: client/src/pages/locations/Theni.tsx
+
+TypeScript
+
+import React from 'react';
+import CityLandingPage from '@/components/CityLandingPage';
+
+const TheniPage = () => {
+  return (
+    <CityLandingPage 
+      city="Theni"
+      district="Theni"
+      industryFocus="Cardamom, Banana & Cotton"
+      landmark="the nature hub of TN"
+      metaDescription="Web design services in Theni. E-commerce solutions for cardamom traders, banana exporters, and textile businesses."
+      industryText="Theni is the agricultural trade capital, dealing in cardamom, cotton, and bananas. We build e-commerce platforms and trade portals that allow Theni merchants to connect directly with buyers across India, cutting out middlemen and increasing profits."
+    />
+  );
+};
+export default TheniPage;
+Final Step: Update App.tsx Please import these 7 new pages and add their routes to App.tsx:

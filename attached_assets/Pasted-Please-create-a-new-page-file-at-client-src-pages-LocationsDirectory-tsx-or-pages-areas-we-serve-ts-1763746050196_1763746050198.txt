@@ -1,0 +1,166 @@
+Please create a new page file at client/src/pages/LocationsDirectory.tsx (or pages/areas-we-serve.tsx).
+
+This page will act as our 'SEO Hub' to link all our future city landing pages. Use the content below, which is tailored to specific local industries.
+
+Code to Implement:
+
+TypeScript
+
+import React from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link } from 'wouter'; // Or your specific Router Link component
+
+const LocationsDirectory = () => {
+  return (
+    <>
+      <Helmet>
+        <title>Service Areas | Godiva Tech Web Design Madurai</title>
+        <meta 
+          name="description" 
+          content="Godiva Tech serves businesses across Madurai, Virudhunagar, Ramanathapuram, and Sivaganga districts. Local web design & digital marketing services." 
+        />
+        <link rel="canonical" href="https://godivatech.com/areas-we-serve" />
+      </Helmet>
+
+      <main className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Serving Southern Tamil Nadu
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            We bring Madurai-quality IT solutions to your doorstep. From the textile hubs of Rajapalayam to the trading centers of Paramakudi, we help local businesses go global.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          
+          {/* DISTRICT 1: MADURAI HUB */}
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+            <h2 className="text-2xl font-bold text-blue-900 mb-6">Madurai District</h2>
+            <ul className="space-y-4">
+              <li>
+                <Link href="/">
+                  <a className="block font-semibold text-blue-600 hover:underline">
+                    Madurai City (Headquarters)
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500 mt-1">
+                  Serving Iyer Bungalow, Anna Nagar, KK Nagar, and Bypass Road.
+                </p>
+              </li>
+              <li>
+                <Link href="/web-design-melur">
+                  <a className="block font-medium text-gray-900 hover:text-blue-600">
+                    Melur
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500">Granite & Agriculture industries.</p>
+              </li>
+              <li>
+                <Link href="/web-design-thirumangalam">
+                  <a className="block font-medium text-gray-900 hover:text-blue-600">
+                    Thirumangalam
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500">Industrial estate & logistics support.</p>
+              </li>
+            </ul>
+          </div>
+
+          {/* DISTRICT 2: VIRUDHUNAGAR BELT */}
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+            <h2 className="text-2xl font-bold text-blue-900 mb-6">Virudhunagar District</h2>
+            <ul className="space-y-4">
+              <li>
+                <Link href="/web-design-rajapalayam">
+                  <a className="block font-semibold text-blue-600 hover:underline">
+                    Rajapalayam
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500 mt-1">
+                  Specialized E-commerce for <strong>Surgical Cotton</strong>, Textile Mills, and Mango Pulp exporters.
+                </p>
+              </li>
+              <li>
+                <Link href="/web-design-sivakasi">
+                  <a className="block font-semibold text-blue-600 hover:underline">
+                    Sivakasi
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500 mt-1">
+                  Digital catalogs for <strong>Printing</strong>, Fireworks, and Safety Match industries.
+                </p>
+              </li>
+              <li>
+                <Link href="/web-design-aruppukottai">
+                  <a className="block font-medium text-gray-900 hover:text-blue-600">
+                    Aruppukottai
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500">
+                  Solutions for Spinning Mills & Handloom Weavers.
+                </p>
+              </li>
+            </ul>
+          </div>
+
+          {/* DISTRICT 3: RAMANATHAPURAM BELT */}
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+            <h2 className="text-2xl font-bold text-blue-900 mb-6">Ramnad & Sivaganga</h2>
+            <ul className="space-y-4">
+              <li>
+                <Link href="/web-design-ramanathapuram">
+                  <a className="block font-semibold text-blue-600 hover:underline">
+                    Ramanathapuram
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500 mt-1">
+                  Websites for <strong>Solar Energy</strong> (Kamuthi), Seafood Exports, and Logistics.
+                </p>
+              </li>
+              <li>
+                <Link href="/web-design-paramakudi">
+                  <a className="block font-medium text-gray-900 hover:text-blue-600">
+                    Paramakudi
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500">
+                  Digital marketing for Chilli Trading & Charcoal industries.
+                </p>
+              </li>
+              <li>
+                <Link href="/web-design-manamadurai">
+                  <a className="block font-medium text-gray-900 hover:text-blue-600">
+                    Manamadurai
+                  </a>
+                </Link>
+                <p className="text-sm text-gray-500">
+                  Support for <strong>SIPCOT</strong> manufacturers & Agro-processing.
+                </p>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-16 bg-blue-50 rounded-2xl p-8 text-center">
+          <h3 className="text-xl font-bold text-blue-900 mb-2">
+            Don't see your city?
+          </h3>
+          <p className="text-gray-600 mb-6">
+            We serve the entire Southern Tamil Nadu region. Contact our Madurai HQ.
+          </p>
+          <Link href="/contact">
+            <a className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+              Get a Quote
+            </a>
+          </Link>
+        </div>
+      </main>
+    </>
+  );
+};
+
+export default LocationsDirectory;

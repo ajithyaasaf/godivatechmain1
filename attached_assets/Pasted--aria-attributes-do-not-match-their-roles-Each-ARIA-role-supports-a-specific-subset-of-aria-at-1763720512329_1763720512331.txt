@@ -1,0 +1,117 @@
+[aria-*] attributes do not match their roles
+Each ARIA role supports a specific subset of aria-* attributes. Mismatching these invalidates the aria-* attributes. Learn how to match ARIA attributes to their roles.
+Failing Elements
+All Topics
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Digital Marketing
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+SEO
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Technology Trends
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+UI/UX Design
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Web Development
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+[role]s are not contained by their required parent element
+Some ARIA child roles must be contained by specific parent roles to properly perform their intended accessibility functions. Learn more about ARIA roles and required parent element.
+Failing Elements
+All Topics
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Digital Marketing
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+SEO
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Technology Trends
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+UI/UX Design
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+Web Development
+<button class="py-1.5 px-4 rounded-full text-sm font-medium transition-all duration-150 t…" aria-pressed="true" role="tab" aria-controls="blog-posts" aria-selected="true">
+[aria-*] attributes do not have valid values
+These are opportunities to improve the usage of ARIA in your application which may enhance the experience for users of assistive technology, like a screen reader.
+Best practices
+[user-scalable="no"] is used in the <meta name="viewport"> element or the [maximum-scale] attribute is less than 5.
+Disabling zooming is problematic for users with low vision who rely on screen magnification to properly see the contents of a web page. Learn more about the viewport meta tag.
+Failing Elements
+head > meta
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+Touch targets do not have sufficient size or spacing.
+Touch targets with sufficient size and spacing help users who may have difficulty targeting small controls to activate the targets. Learn more about touch targets.
+Failing Elements
+Start Your Project
+<a href="/contact">
+Start Your Project
+<button class="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold …">
+View image 1
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white scale-125" aria-label="View image 1">
+View image 2
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 2">
+View image 2
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 2">
+View image 1
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white scale-125" aria-label="View image 1">
+View image 3
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 3">
+View image 3
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 3">
+View image 2
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 2">
+View image 4
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 4">
+View image 4
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 4">
+View image 3
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 3">
+View image 5
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 5">
+View image 5
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 5">
+View image 4
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 4">
+View image 6
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 6">
+View image 6
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 6">
+View image 5
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 5">
+View image 7
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 7">
+View image 7
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 7">
+View image 6
+<button class="w-2 h-2 rounded-full transition-all duration-200 bg-white/60 hover:bg-whit…" aria-label="View image 6">
+Go to testimonial 1
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 1">
+Go to testimonial 2
+<button class="w-3 h-3 rounded-full bg-white transition-colors duration-300" aria-label="Go to testimonial 2">
+Go to testimonial 2
+<button class="w-3 h-3 rounded-full bg-white transition-colors duration-300" aria-label="Go to testimonial 2">
+Go to testimonial 1
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 1">
+Go to testimonial 3
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 3">
+Go to testimonial 3
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 3">
+Go to testimonial 2
+<button class="w-3 h-3 rounded-full bg-white transition-colors duration-300" aria-label="Go to testimonial 2">
+Go to testimonial 4
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 4">
+Go to testimonial 4
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 4">
+Go to testimonial 3
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 3">
+Go to testimonial 5
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 5">
+Go to testimonial 5
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 5">
+Go to testimonial 4
+<button class="w-3 h-3 rounded-full bg-white/50 hover:bg-white/70 transition-colors durat…" aria-label="Go to testimonial 4">
+Identical links have the same purpose.
+These items highlight common accessibility best practices.
+Contrast
+Background and foreground colors do not have a sufficient contrast ratio.
+Low-contrast text is difficult or impossible for many users to read. Learn how to provide sufficient color contrast.
+Failing Elements
+OUR SERVICES
+<span class="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold">
