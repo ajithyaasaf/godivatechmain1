@@ -10,8 +10,8 @@ import Breadcrumb from "@/components/ui/breadcrumb";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
 import { pageKeywords } from "@/lib/seoKeywords";
-import { 
-  getOrganizationData, 
+import {
+  getOrganizationData,
   getWebPageData,
   getBreadcrumbData,
   getBlogPostData,
@@ -22,19 +22,19 @@ import { useQuery } from "@tanstack/react-query";
 
 // Animated empty state component
 const EmptyState = ({ onReset }: { onReset: () => void }) => (
-  <motion.div 
+  <motion.div
     className="text-center py-20"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.6 }}
   >
-    <motion.div 
+    <motion.div
       className="w-24 h-24 mx-auto mb-6 rounded-full bg-neutral-100 flex items-center justify-center"
-      animate={{ 
+      animate={{
         scale: [1, 1.05, 1],
         rotate: [0, 5, 0, -5, 0],
       }}
-      transition={{ 
+      transition={{
         duration: 4,
         repeat: Infinity,
         repeatType: "loop"
@@ -42,12 +42,12 @@ const EmptyState = ({ onReset }: { onReset: () => void }) => (
     >
       <Search className="h-10 w-10 text-neutral-400" />
     </motion.div>
-    
+
     <h3 className="text-2xl font-semibold text-neutral-800 mb-4">No articles found</h3>
     <p className="text-neutral-600 mb-8 max-w-md mx-auto">
       Try adjusting your search or filter to find what you're looking for.
     </p>
-    <Button 
+    <Button
       onClick={onReset}
       className="px-6 py-2 rounded-full"
     >
@@ -57,16 +57,16 @@ const EmptyState = ({ onReset }: { onReset: () => void }) => (
 );
 
 // Pagination component with animations
-const Pagination = ({ 
-  currentPage, 
-  totalPages, 
-  onPageChange 
-}: { 
-  currentPage: number; 
-  totalPages: number; 
-  onPageChange: (page: number) => void 
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void
 }) => (
-  <motion.div 
+  <motion.div
     className="flex justify-center mt-12"
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -84,7 +84,7 @@ const Pagination = ({
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
-      
+
       {[...Array(totalPages)].map((_, i) => (
         <motion.div
           key={i}
@@ -101,7 +101,7 @@ const Pagination = ({
           </Button>
         </motion.div>
       ))}
-      
+
       <Button
         onClick={() => onPageChange(currentPage < totalPages ? currentPage + 1 : totalPages)}
         disabled={currentPage === totalPages}
@@ -133,7 +133,7 @@ const Blog = () => {
   });
 
   const loading = categoriesLoading || postsLoading;
-  
+
   // Set up category from URL parameters
   useEffect(() => {
     if (params.categorySlug && params.categorySlug !== 'all' && categories.length > 0) {
@@ -144,20 +144,20 @@ const Blog = () => {
       }
     }
   }, [params.categorySlug, categories]);
-  
+
   // Filter and search logic moved to filteredPosts computation
 
   // Filter posts by category and search term
   const filteredPosts = allBlogPosts.filter(post => {
     // Category filter
     const matchesCategory = activeCategory === null || activeCategory === 0 || post.categoryId === activeCategory;
-    
+
     // Search filter
-    const matchesSearch = !searchTerm || 
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const matchesSearch = !searchTerm ||
+      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.content.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     return matchesCategory && matchesSearch;
   });
 
@@ -166,22 +166,23 @@ const Blog = () => {
   const displayPosts = filteredPosts.slice((page - 1) * postsPerPage, page * postsPerPage);
 
   // Default categories in case API doesn't return data
+  // Aligned with GodivaTech's actual services for better SEO
   const defaultCategories = [
     { id: 0, name: "All Topics", slug: "all" },
-    { id: 1, name: "Technology Trends", slug: "technology-trends" },
-    { id: 2, name: "Cloud Computing", slug: "cloud-computing" },
-    { id: 3, name: "Cybersecurity", slug: "cybersecurity" },
-    { id: 4, name: "AI & Machine Learning", slug: "ai-machine-learning" }
+    { id: 1, name: "Web & Mobile Development", slug: "web-mobile-development" },
+    { id: 2, name: "Digital Marketing & SEO", slug: "digital-marketing-seo" },
+    { id: 3, name: "ERP, Billing & Custom Software", slug: "erp-billing-custom-software" },
+    { id: 4, name: "Design & Branding", slug: "design-branding" }
   ];
 
-  const displayCategories = categories.length > 0 
-    ? [{ id: 0, name: "All Topics", slug: "all" }, ...categories] 
+  const displayCategories = categories.length > 0
+    ? [{ id: 0, name: "All Topics", slug: "all" }, ...categories]
     : defaultCategories;
 
   const handleCategoryChange = (categoryId: number | null) => {
     setActiveCategory(categoryId);
     setPage(1); // Reset to first page when changing category
-    
+
     // Update URL to reflect the selected category
     if (categoryId === null || categoryId === 0) {
       // Navigate to the base blog URL for "All Topics"
@@ -220,17 +221,17 @@ const Blog = () => {
     getBreadcrumbData(
       activeCategory && activeCategory > 0
         ? [
-            { name: "Home", item: "https://godivatech.com/" },
-            { name: "Blog", item: "https://godivatech.com/blog" },
-            { 
-              name: displayCategories.find(c => c.id === activeCategory)?.name || "Category",
-              item: `https://godivatech.com/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`
-            }
-          ]
+          { name: "Home", item: "https://godivatech.com/" },
+          { name: "Blog", item: "https://godivatech.com/blog" },
+          {
+            name: displayCategories.find(c => c.id === activeCategory)?.name || "Category",
+            item: `https://godivatech.com/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`
+          }
+        ]
         : [
-            { name: "Home", item: "https://godivatech.com/" },
-            { name: "Blog", item: "https://godivatech.com/blog" }
-          ]
+          { name: "Home", item: "https://godivatech.com/" },
+          { name: "Blog", item: "https://godivatech.com/blog" }
+        ]
     )
   ];
 
@@ -247,7 +248,7 @@ const Blog = () => {
         }))
       )
     );
-    
+
     // Also add the latest blog post schema
     const latestPost = allBlogPosts[0];
     if (latestPost) {
@@ -268,7 +269,7 @@ const Blog = () => {
   return (
     <>
       <SEO
-        title={activeCategory && activeCategory > 0 
+        title={activeCategory && activeCategory > 0
           ? `${displayCategories.find(c => c.id === activeCategory)?.name || "Category"} | Digital Marketing & Web Development Blog`
           : "Digital Marketing Insights & Tech Blog | Godiva Tech"
         }
@@ -311,25 +312,25 @@ const Blog = () => {
             <section className="relative py-24 overflow-hidden">
               {/* Background gradient */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-indigo-700"></div>
-              
+
               {/* Animated patterns */}
-              <motion.div 
+              <motion.div
                 className="absolute inset-0"
-                style={{ 
+                style={{
                   backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
-                  backgroundSize: '20px 20px' 
+                  backgroundSize: '20px 20px'
                 }}
-                animate={{ 
-                  backgroundPosition: ['0% 0%', '100% 100%'] 
+                animate={{
+                  backgroundPosition: ['0% 0%', '100% 100%']
                 }}
-                transition={{ 
-                  duration: 25, 
-                  ease: "linear", 
-                  repeat: Infinity, 
-                  repeatType: "reverse" 
+                transition={{
+                  duration: 25,
+                  ease: "linear",
+                  repeat: Infinity,
+                  repeatType: "reverse"
                 }}
               />
-              
+
               {/* Content */}
               <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="text-center max-w-3xl mx-auto text-white">
@@ -345,7 +346,7 @@ const Blog = () => {
                       Expert tips and strategies for Madurai businesses to grow online with web development, digital marketing, and branding solutions.
                     </p>
                   </motion.div>
-                  
+
                   {/* Search bar animation */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -361,8 +362,8 @@ const Blog = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="py-3 px-6 pr-12 rounded-full border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-transparent w-full"
                       />
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors"
                         aria-label="Search"
                       >
@@ -372,15 +373,15 @@ const Blog = () => {
                   </motion.div>
                 </div>
               </div>
-              
+
               {/* Decorative elements */}
               <div className="absolute -bottom-24 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-white/5 backdrop-blur-sm"></div>
-              <motion.div 
+              <motion.div
                 className="absolute top-1/3 right-10 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl"
                 animate={{ y: [0, -30, 0], opacity: [0.2, 0.3, 0.2] }}
                 transition={{ duration: 8, repeat: Infinity }}
               />
-              <motion.div 
+              <motion.div
                 className="absolute bottom-0 left-10 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl"
                 animate={{ y: [0, 30, 0], opacity: [0.2, 0.3, 0.2] }}
                 transition={{ duration: 8, repeat: Infinity, delay: 1 }}
@@ -392,26 +393,26 @@ const Blog = () => {
           <TransitionItem delay={0.05}>
             <section className="py-6 bg-white border-b border-neutral-100">
               <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <Breadcrumb 
+                <Breadcrumb
                   items={
-                    activeCategory && activeCategory > 0 
+                    activeCategory && activeCategory > 0
                       ? [
-                          { name: "Blog", href: "/blog" },
-                          { 
-                            name: displayCategories.find(c => c.id === activeCategory)?.name || "Category", 
-                            href: `/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`,
-                            current: true 
-                          }
-                        ]
+                        { name: "Blog", href: "/blog" },
+                        {
+                          name: displayCategories.find(c => c.id === activeCategory)?.name || "Category",
+                          href: `/blog/category/${displayCategories.find(c => c.id === activeCategory)?.slug || ""}`,
+                          current: true
+                        }
+                      ]
                       : [
-                          { name: "Blog", href: "/blog", current: true }
-                        ]
+                        { name: "Blog", href: "/blog", current: true }
+                      ]
                   }
                 />
               </div>
             </section>
           </TransitionItem>
-          
+
           {/* Content section */}
           <TransitionItem delay={0.1}>
             <section className="py-20 bg-neutral-50/50 relative">
@@ -419,17 +420,17 @@ const Blog = () => {
               <div className="absolute inset-0 
                 [background-image:linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] 
                 [background-size:4rem_4rem]" />
-                
+
               <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Filter controls */}
-                <motion.div 
+                <motion.div
                   className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6"
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
                 >
-                  <CategoryFilter 
+                  <CategoryFilter
                     categories={displayCategories}
                     activeCategory={activeCategory}
                     onCategoryChange={handleCategoryChange}
@@ -452,8 +453,8 @@ const Blog = () => {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-100px" }}
-                            transition={{ 
-                              duration: 0.5, 
+                            transition={{
+                              duration: 0.5,
                               delay: index * 0.1,
                               ease: "easeOut"
                             }}
@@ -465,10 +466,10 @@ const Blog = () => {
 
                       {/* Pagination */}
                       {totalPages > 1 && (
-                        <Pagination 
-                          currentPage={page} 
-                          totalPages={totalPages} 
-                          onPageChange={setPage} 
+                        <Pagination
+                          currentPage={page}
+                          totalPages={totalPages}
+                          onPageChange={setPage}
                         />
                       )}
                     </motion.div>

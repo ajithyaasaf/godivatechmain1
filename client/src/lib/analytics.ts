@@ -37,10 +37,10 @@ export const initGA = () => {
 // Track page views - useful for single-page applications
 export const trackPageView = (url: string, title?: string) => {
   if (typeof window === 'undefined' || !window.gtag) return;
-  
+
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
   if (!measurementId) return;
-  
+
   window.gtag('config', measurementId, {
     page_path: url,
     page_title: title
@@ -49,15 +49,15 @@ export const trackPageView = (url: string, title?: string) => {
 
 // Track events
 export const trackEvent = (
-  action: string, 
-  category?: string, 
-  label?: string, 
+  action: string,
+  category?: string,
+  label?: string,
   value?: number,
   nonInteraction: boolean = false,
   customParams?: Record<string, any>
 ) => {
   if (typeof window === 'undefined' || !window.gtag) return;
-  
+
   window.gtag('event', action, {
     event_category: category,
     event_label: label,
@@ -70,13 +70,13 @@ export const trackEvent = (
 // Track outbound links
 export const trackOutboundLink = (url: string, label: string = 'outbound') => {
   if (typeof window === 'undefined' || !window.gtag) return;
-  
+
   window.gtag('event', 'click', {
     event_category: 'outbound',
     event_label: label,
     transport_type: 'beacon',
     event_callback: () => {
-      document.location = url as unknown as Location;
+      window.location.href = url;
     }
   });
 };
@@ -126,7 +126,7 @@ export const trackScrollDepth = (scrollDepth: number) => {
   const closestBreakpoint = breakpoints.reduce((prev, curr) => {
     return (Math.abs(curr - scrollDepth) < Math.abs(prev - scrollDepth) ? curr : prev);
   });
-  
+
   if (scrollDepth >= closestBreakpoint) {
     trackEvent(
       'scroll_depth',
@@ -141,10 +141,10 @@ export const trackScrollDepth = (scrollDepth: number) => {
 // Track time on page
 export const trackTimeOnPage = () => {
   let startTime = Date.now();
-  
+
   window.addEventListener('beforeunload', () => {
     const timeSpent = Math.round((Date.now() - startTime) / 1000); // Time in seconds
-    
+
     trackEvent(
       'time_on_page',
       'engagement',
@@ -163,7 +163,7 @@ export const seoTracking = {
       try {
         // @ts-ignore - web-vitals library might not be available
         const { getLCP, getFID, getCLS } = window['web-vitals'];
-        
+
         getLCP((metric: any) => {
           trackEvent(
             'web_vitals',
@@ -174,7 +174,7 @@ export const seoTracking = {
             { metric_name: 'LCP', metric_value: metric.value }
           );
         });
-        
+
         getFID((metric: any) => {
           trackEvent(
             'web_vitals',
@@ -185,7 +185,7 @@ export const seoTracking = {
             { metric_name: 'FID', metric_value: metric.value }
           );
         });
-        
+
         getCLS((metric: any) => {
           trackEvent(
             'web_vitals',
@@ -201,7 +201,7 @@ export const seoTracking = {
       }
     }
   },
-  
+
   // Track structured data engagement (for rich snippets)
   trackStructuredDataEngagement: (schemaType: string, elementId: string) => {
     trackEvent(

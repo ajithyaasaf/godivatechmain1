@@ -3,10 +3,10 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { 
-  Loader2, 
-  Check, 
-  X, 
+import {
+  Loader2,
+  Check,
+  X,
   AlertCircle,
   Heading1,
   Heading2,
@@ -17,7 +17,8 @@ import {
   List,
   ListOrdered,
   Link as LinkIcon,
-  Image as ImageIcon
+  Image as ImageIcon,
+  ChevronDown
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,7 @@ import { useFirestore } from "@/hooks/use-firestore";
 import FileUpload from "@/components/admin/FileUpload";
 import { useCollection } from "@/hooks/use-firestore";
 
+// Enhanced Zod schema with better validation
 const blogPostSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   slug: z.string().min(3, "Slug must be at least 3 characters")
@@ -58,7 +60,13 @@ const blogPostSchema = z.object({
   metaTitle: z.string().optional().nullable(),
   metaDescription: z.string().optional().nullable(),
   focusKeyword: z.string().optional().nullable(),
-  tags: z.array(z.string()).optional().nullable(),
+  // Enhanced tags validation - prevents empty strings and validates length
+  tags: z.array(
+    z.string()
+      .min(1, "Tag cannot be empty")
+      .max(50, "Tag must be less than 50 characters")
+      .trim()
+  ).optional().nullable(),
   authorName: z.string().min(2, "Author name is required"),
   authorImage: z.string().optional().nullable(),
   published: z.boolean().default(false),
@@ -91,10 +99,41 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
   const [tagsInput, setTagsInput] = useState<string>(
     post?.tags?.join(", ") || ""
   );
-  
+  // Track if slug was manually edited to prevent auto-overwrite
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(!!post?.slug);
+  // Collapsible SEO section state
+  const [seoExpanded, setSeoExpanded] = useState(false);
+
   const firestore = useFirestore("blog-posts");
-  const { data: categories } = useCollection("categories");
-  
+
+  // Fetch categories from API instead of Firestore hook
+  const [categories, setCategories] = useState<any[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        const response = await fetch('/api/categories');
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Categories loaded:', data); // Debug log
+          setCategories(data || []);
+        } else {
+          console.error('Failed to fetch categories:', response.status);
+          setCategories([]);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        setCategories([]);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const formatPublishedDate = () => {
     if (post?.publishedAt) {
       return post.publishedAt;
@@ -125,13 +164,19 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
 
   const watchedValues = form.watch();
 
+  // Improved slug generation - respects manual edits
   const generateSlug = () => {
     const title = form.getValues("title");
-    if (title && !form.getValues("slug")) {
+    const currentSlug = form.getValues("slug");
+
+    // Only auto-generate if: 1) slug is empty OR 2) user hasn't manually edited
+    if (title && (!currentSlug || !slugManuallyEdited)) {
       const slug = title
         .toLowerCase()
         .replace(/[^\w\s-]/g, "")
-        .replace(/\s+/g, "-");
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-") // Remove consecutive hyphens
+        .replace(/^-|-$/g, ""); // Remove leading/trailing hyphens
       form.setValue("slug", slug);
     }
   };
@@ -156,9 +201,14 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
     form.setValue("authorImage", null);
   };
 
+  // Enhanced tags handling - removes duplicates and empty strings
   const handleTagsChange = (value: string) => {
     setTagsInput(value);
-    const tagsArray = value.split(",").map(tag => tag.trim()).filter(tag => tag.length > 0);
+    const tagsArray = value
+      .split(",")
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0)
+      .filter((tag, index, self) => self.indexOf(tag) === index); // Remove duplicates
     form.setValue("tags", tagsArray);
   };
 
@@ -168,7 +218,7 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
     form.setValue("content", content + "\n\n" + headingMark);
   };
 
-  const insertFormatting = (format: string) => {
+  const insertFormatting = (formatType: string) => {
     const content = form.getValues("content");
     const formats: Record<string, string> = {
       bold: "**bold text**",
@@ -178,19 +228,33 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
       link: "[link text](https://example.com)",
       image: "![alt text](image-url)"
     };
-    form.setValue("content", content + " " + (formats[format] || ""));
+    form.setValue("content", content + " " + (formats[formatType] || ""));
   };
 
+  // Fixed published date logic - proper toggle behavior
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
-      if (name === "published" && value.published) {
-        if (!form.getValues("publishedAt")) {
-          form.setValue("publishedAt", formatPublishedDate());
+      if (name === "published") {
+        if (value.published) {
+          // When publishing, set date only if not already set
+          if (!form.getValues("publishedAt")) {
+            form.setValue("publishedAt", formatPublishedDate());
+          }
+        } else {
+          // When unpublishing a NEW post, clear the date
+          if (!post?.id) {
+            form.setValue("publishedAt", null);
+          }
         }
       }
     });
     return () => subscription.unsubscribe();
-  }, [form]);
+  }, [form, post?.id]);
+
+  // Consistent word count calculation
+  const getWordCount = (text: string) => {
+    return text?.split(/\s+/).filter(Boolean).length || 0;
+  };
 
   const getSEOChecks = useCallback((): SEOCheckItem[] => {
     const metaTitle = watchedValues.metaTitle || watchedValues.title || "";
@@ -200,27 +264,29 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
     const coverImageAlt = watchedValues.coverImageAlt || "";
     const coverImage = watchedValues.coverImage || "";
 
+    const wordCount = getWordCount(content);
+
     const checks: SEOCheckItem[] = [
       {
         label: "Meta Title Length",
         passed: metaTitle.length >= 50 && metaTitle.length <= 60,
-        message: metaTitle.length === 0 
-          ? "Add a meta title" 
-          : metaTitle.length < 50 
-            ? `Too short (${metaTitle.length}/50-60)` 
-            : metaTitle.length > 60 
-              ? `Too long (${metaTitle.length}/50-60)` 
+        message: metaTitle.length === 0
+          ? "Add a meta title"
+          : metaTitle.length < 50
+            ? `Too short (${metaTitle.length}/50-60)`
+            : metaTitle.length > 60
+              ? `Too long (${metaTitle.length}/50-60)`
               : `Perfect (${metaTitle.length}/50-60)`
       },
       {
         label: "Meta Description Length",
         passed: metaDescription.length >= 150 && metaDescription.length <= 160,
-        message: metaDescription.length === 0 
-          ? "Add a meta description" 
-          : metaDescription.length < 150 
-            ? `Too short (${metaDescription.length}/150-160)` 
-            : metaDescription.length > 160 
-              ? `Too long (${metaDescription.length}/150-160)` 
+        message: metaDescription.length === 0
+          ? "Add a meta description"
+          : metaDescription.length < 150
+            ? `Too short (${metaDescription.length}/150-160)`
+            : metaDescription.length > 160
+              ? `Too long (${metaDescription.length}/150-160)`
               : `Perfect (${metaDescription.length}/150-160)`
       },
       {
@@ -231,19 +297,19 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
       {
         label: "Keyword in Title",
         passed: focusKeyword.length > 0 && metaTitle.toLowerCase().includes(focusKeyword.toLowerCase()),
-        message: focusKeyword.length === 0 
-          ? "Set focus keyword first" 
-          : metaTitle.toLowerCase().includes(focusKeyword.toLowerCase()) 
-            ? "Keyword found in title" 
+        message: focusKeyword.length === 0
+          ? "Set focus keyword first"
+          : metaTitle.toLowerCase().includes(focusKeyword.toLowerCase())
+            ? "Keyword found in title"
             : "Add keyword to title"
       },
       {
         label: "Keyword in Content",
         passed: focusKeyword.length > 0 && content.toLowerCase().includes(focusKeyword.toLowerCase()),
-        message: focusKeyword.length === 0 
-          ? "Set focus keyword first" 
-          : content.toLowerCase().includes(focusKeyword.toLowerCase()) 
-            ? "Keyword found in content" 
+        message: focusKeyword.length === 0
+          ? "Set focus keyword first"
+          : content.toLowerCase().includes(focusKeyword.toLowerCase())
+            ? "Keyword found in content"
             : "Add keyword to content"
       },
       {
@@ -254,22 +320,22 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
       {
         label: "Image Alt Text",
         passed: Boolean(coverImageAlt) || !coverImage,
-        message: !coverImage 
-          ? "No image added yet" 
-          : coverImageAlt 
-            ? "Alt text added" 
+        message: !coverImage
+          ? "No image added yet"
+          : coverImageAlt
+            ? "Alt text added"
             : "Add alt text for SEO"
       },
       {
         label: "Content Length",
-        passed: content.split(/\s+/).length >= 300,
-        message: `${content.split(/\s+/).length} words (aim for 300+)`
+        passed: wordCount >= 300,
+        message: `${wordCount} words (aim for 300+)`
       },
       {
         label: "Headings Used",
         passed: content.includes("# ") || content.includes("## ") || content.includes("<h"),
-        message: content.includes("# ") || content.includes("## ") || content.includes("<h") 
-          ? "Headings found" 
+        message: content.includes("# ") || content.includes("## ") || content.includes("<h")
+          ? "Headings found"
           : "Add H1/H2/H3 headings"
       }
     ];
@@ -284,10 +350,11 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
     try {
       setIsSubmitting(true);
 
+      // Sync uploaded image URLs
       if (uploadedCoverImageUrl) {
         values.coverImage = uploadedCoverImageUrl;
       }
-      
+
       if (uploadedAuthorImageUrl) {
         values.authorImage = uploadedAuthorImageUrl;
       }
@@ -311,6 +378,7 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
       <div className="lg:col-span-2">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Title and Slug Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -319,11 +387,11 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         data-testid="input-blog-title"
-                        placeholder="Post title" 
-                        {...field} 
-                        onBlur={generateSlug} 
+                        placeholder="Post title"
+                        {...field}
+                        onBlur={generateSlug}
                       />
                     </FormControl>
                     <FormMessage />
@@ -338,10 +406,17 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                   <FormItem>
                     <FormLabel>URL Slug</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         data-testid="input-blog-slug"
-                        placeholder="post-slug" 
-                        {...field} 
+                        placeholder="post-slug"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          // Track manual edits
+                          if (e.target.value) {
+                            setSlugManuallyEdited(true);
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormDescription>
@@ -354,112 +429,127 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
             </div>
 
             <Separator className="my-4" />
-            <h3 className="text-lg font-semibold">SEO Settings</h3>
 
-            <div className="grid grid-cols-1 gap-4">
-              <FormField
-                control={form.control}
-                name="metaTitle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center justify-between">
-                      <span>Meta Title</span>
-                      <span className={`text-xs ${
-                        (field.value?.length || 0) >= 50 && (field.value?.length || 0) <= 60 
-                          ? "text-green-600" 
-                          : "text-muted-foreground"
-                      }`}>
-                        {field.value?.length || 0}/60
-                      </span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        data-testid="input-meta-title"
-                        placeholder="SEO title for search results (50-60 characters)" 
-                        {...field} 
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      This appears in search engine results. Aim for 50-60 characters.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
+            {/* Collapsible SEO Settings Section */}
+            <button
+              type="button"
+              onClick={() => setSeoExpanded(!seoExpanded)}
+              className="flex items-center justify-between w-full py-2 text-left hover:bg-muted/50 rounded-md px-2 -mx-2 transition-colors"
+            >
+              <h3 className="text-lg font-semibold">SEO Settings (Advanced)</h3>
+              <ChevronDown
+                className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${seoExpanded ? 'rotate-180' : ''}`}
               />
+            </button>
+            <p className="text-sm text-muted-foreground -mt-2">
+              Leave blank to auto-populate from post title and excerpt
+            </p>
 
-              <FormField
-                control={form.control}
-                name="metaDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center justify-between">
-                      <span>Meta Description</span>
-                      <span className={`text-xs ${
-                        (field.value?.length || 0) >= 150 && (field.value?.length || 0) <= 160 
-                          ? "text-green-600" 
-                          : "text-muted-foreground"
-                      }`}>
-                        {field.value?.length || 0}/160
-                      </span>
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        data-testid="input-meta-description"
-                        placeholder="SEO description for search results (150-160 characters)" 
-                        className="min-h-[80px]"
-                        {...field}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      This appears below the title in search results. Aim for 150-160 characters.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {seoExpanded && (
+              <div className="grid grid-cols-1 gap-4 pt-2 animate-in slide-in-from-top-2 duration-200">
                 <FormField
                   control={form.control}
-                  name="focusKeyword"
+                  name="metaTitle"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Focus Keyword</FormLabel>
+                      <FormLabel className="flex items-center justify-between">
+                        <span>Meta Title (Optional)</span>
+                        <span className={`text-xs ${(field.value?.length || 0) >= 50 && (field.value?.length || 0) <= 60
+                          ? "text-green-600"
+                          : "text-muted-foreground"
+                          }`}>
+                          {field.value?.length || 0}/60
+                        </span>
+                      </FormLabel>
                       <FormControl>
-                        <Input 
-                          data-testid="input-focus-keyword"
-                          placeholder="Main keyword to target" 
+                        <Input
+                          data-testid="input-meta-title"
+                          placeholder="Leave blank to use post title"
                           {...field}
                           value={field.value || ""}
                         />
                       </FormControl>
                       <FormDescription>
-                        The primary keyword you want to rank for
+                        Customize how this appears in Google search (50-60 chars optimal)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <FormItem>
-                  <FormLabel>Tags</FormLabel>
-                  <Input 
-                    data-testid="input-tags"
-                    placeholder="tag1, tag2, tag3" 
-                    value={tagsInput}
-                    onChange={(e) => handleTagsChange(e.target.value)}
+                <FormField
+                  control={form.control}
+                  name="metaDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center justify-between">
+                        <span>Meta Description (Optional)</span>
+                        <span className={`text-xs ${(field.value?.length || 0) >= 150 && (field.value?.length || 0) <= 160
+                          ? "text-green-600"
+                          : "text-muted-foreground"
+                          }`}>
+                          {field.value?.length || 0}/160
+                        </span>
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          data-testid="input-meta-description"
+                          placeholder="Leave blank to use excerpt"
+                          className="min-h-[80px]"
+                          {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Customize the description shown in search results (150-160 chars optimal)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="focusKeyword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Focus Keyword</FormLabel>
+                        <FormControl>
+                          <Input
+                            data-testid="input-focus-keyword"
+                            placeholder="Main keyword to target"
+                            {...field}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          The primary keyword you want to rank for
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                  <FormDescription>
-                    Comma-separated tags for categorization
-                  </FormDescription>
-                </FormItem>
+
+                  <FormItem>
+                    <FormLabel>Tags</FormLabel>
+                    <Input
+                      data-testid="input-tags"
+                      placeholder="tag1, tag2, tag3"
+                      value={tagsInput}
+                      onChange={(e) => handleTagsChange(e.target.value)}
+                    />
+                    <FormDescription>
+                      Comma-separated tags (duplicates removed automatically)
+                    </FormDescription>
+                  </FormItem>
+                </div>
               </div>
-            </div>
+            )}
 
             <Separator className="my-4" />
-            
+
+            {/* Excerpt Section */}
             <FormField
               control={form.control}
               name="excerpt"
@@ -482,6 +572,7 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
               )}
             />
 
+            {/* Cover Image Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -502,6 +593,9 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                         />
                       </div>
                     </FormControl>
+                    <FormDescription>
+                      Recommended: 1200x630px for optimal SEO
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -514,9 +608,9 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                   <FormItem>
                     <FormLabel>Image Alt Text</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         data-testid="input-cover-image-alt"
-                        placeholder="Describe the image for SEO and accessibility" 
+                        placeholder="Describe the image for SEO and accessibility"
                         {...field}
                         value={field.value || ""}
                       />
@@ -530,6 +624,7 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
               />
             </div>
 
+            {/* Category Section with Loading/Empty States */}
             <FormField
               control={form.control}
               name="categoryId"
@@ -539,10 +634,17 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                   <Select
                     value={field.value}
                     onValueChange={field.onChange}
+                    disabled={categoriesLoading || !categories?.length}
                   >
                     <FormControl>
                       <SelectTrigger data-testid="select-category">
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue placeholder={
+                          categoriesLoading
+                            ? "Loading categories..."
+                            : !categories?.length
+                              ? "No categories available"
+                              : "Select a category"
+                        } />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -553,11 +655,17 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                       ))}
                     </SelectContent>
                   </Select>
+                  {!categoriesLoading && !categories?.length && (
+                    <FormDescription className="text-amber-600">
+                      Please create a category first before adding blog posts
+                    </FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
 
+            {/* Author Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -566,10 +674,10 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                   <FormItem>
                     <FormLabel>Author Name</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         data-testid="input-author-name"
-                        placeholder="Author's name" 
-                        {...field} 
+                        placeholder="Author's name"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -604,38 +712,39 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
 
             <Separator className="my-4" />
             <h3 className="text-lg font-semibold">Content</h3>
-            
+
+            {/* Content Editor Toolbar */}
             <div className="flex flex-wrap gap-1 p-2 bg-muted rounded-t-md border border-b-0">
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertHeading(1)}
                 title="Heading 1"
               >
                 <Heading1 className="h-4 w-4" />
               </Button>
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertHeading(2)}
                 title="Heading 2"
               >
                 <Heading2 className="h-4 w-4" />
               </Button>
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertHeading(3)}
                 title="Heading 3"
               >
                 <Heading3 className="h-4 w-4" />
               </Button>
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertHeading(4)}
                 title="Heading 4"
@@ -643,18 +752,18 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                 <Heading4 className="h-4 w-4" />
               </Button>
               <Separator orientation="vertical" className="h-6 mx-1" />
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertFormatting("bold")}
                 title="Bold"
               >
                 <Bold className="h-4 w-4" />
               </Button>
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertFormatting("italic")}
                 title="Italic"
@@ -662,18 +771,18 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                 <Italic className="h-4 w-4" />
               </Button>
               <Separator orientation="vertical" className="h-6 mx-1" />
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertFormatting("list")}
                 title="Bullet List"
               >
                 <List className="h-4 w-4" />
               </Button>
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertFormatting("orderedList")}
                 title="Numbered List"
@@ -681,18 +790,18 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                 <ListOrdered className="h-4 w-4" />
               </Button>
               <Separator orientation="vertical" className="h-6 mx-1" />
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertFormatting("link")}
                 title="Insert Link"
               >
                 <LinkIcon className="h-4 w-4" />
               </Button>
-              <Button 
-                type="button" 
-                size="icon" 
+              <Button
+                type="button"
+                size="icon"
                 variant="ghost"
                 onClick={() => insertFormatting("image")}
                 title="Insert Image"
@@ -701,6 +810,7 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
               </Button>
             </div>
 
+            {/* Content Textarea */}
             <FormField
               control={form.control}
               name="content"
@@ -737,7 +847,7 @@ Add images: ![alt text](image-url)"
                   <FormDescription className="flex items-center justify-between">
                     <span>Use Markdown for formatting. Supports headings, bold, italic, lists, and links.</span>
                     <span className="text-muted-foreground">
-                      {field.value?.split(/\s+/).filter(Boolean).length || 0} words
+                      {getWordCount(field.value || "")} words
                     </span>
                   </FormDescription>
                   <FormMessage />
@@ -745,6 +855,7 @@ Add images: ![alt text](image-url)"
               )}
             />
 
+            {/* Publish Settings */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -780,7 +891,8 @@ Add images: ![alt text](image-url)"
                         <Input
                           data-testid="input-published-at"
                           type="datetime-local"
-                          value={field.value ? field.value.substring(0, 16) : ""}
+                          // Fixed null handling - check type before substring
+                          value={field.value && typeof field.value === 'string' ? field.value.substring(0, 16) : ""}
                           onChange={(e) => {
                             field.onChange(e.target.value ? new Date(e.target.value).toISOString() : null);
                           }}
@@ -796,6 +908,7 @@ Add images: ![alt text](image-url)"
               )}
             </div>
 
+            {/* Form Actions */}
             <div className="flex justify-end gap-2">
               <Button
                 type="button"
@@ -808,7 +921,7 @@ Add images: ![alt text](image-url)"
               </Button>
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || (!categoriesLoading && !categories?.length)}
                 data-testid="button-save-post"
               >
                 {isSubmitting ? (
@@ -825,12 +938,13 @@ Add images: ![alt text](image-url)"
         </Form>
       </div>
 
+      {/* SEO Checklist Sidebar */}
       <div className="lg:col-span-1">
         <Card className="sticky top-4">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between gap-2">
               <span>SEO Checklist</span>
-              <Badge 
+              <Badge
                 variant={seoScore >= 80 ? "default" : seoScore >= 50 ? "secondary" : "destructive"}
                 className="text-sm"
               >
@@ -840,8 +954,8 @@ Add images: ![alt text](image-url)"
           </CardHeader>
           <CardContent className="space-y-3">
             {seoChecks.map((check, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="flex items-start gap-2 text-sm"
               >
                 {check.passed ? (
@@ -859,9 +973,9 @@ Add images: ![alt text](image-url)"
                 </div>
               </div>
             ))}
-            
+
             <Separator className="my-4" />
-            
+
             <div className="text-xs text-muted-foreground space-y-2">
               <div className="flex items-start gap-2">
                 <AlertCircle className="h-3 w-3 mt-0.5 shrink-0" />

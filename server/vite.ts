@@ -23,7 +23,7 @@ export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: true,
+    allowedHosts: true as true,
   };
 
   const vite = await createViteServer({
@@ -93,7 +93,7 @@ export function serveStatic(app: Express) {
 
   app.use("*", (req, res) => {
     const pathname = req.path;
-    
+
     // Skip API routes (they handle their own 404s)
     if (pathname.startsWith("/api")) {
       return res.status(404).json({ error: "Not found" });

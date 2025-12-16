@@ -120,7 +120,7 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
   // Add a technology
   const addTechnology = () => {
     if (newTech.trim() === "") return;
-    
+
     const currentTechs = form.getValues("technologies") || [];
     if (!currentTechs.includes(newTech.trim())) {
       form.setValue("technologies", [...currentTechs, newTech.trim()]);
@@ -227,9 +227,9 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                     <FormItem>
                       <FormLabel>Client Name</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Client or company name" 
-                          {...field} 
+                        <Input
+                          placeholder="Client or company name"
+                          {...field}
                           value={field.value || ''}
                         />
                       </FormControl>
@@ -272,7 +272,7 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                     <FormDescription>
                       List the technologies, languages, and tools used in this project
                     </FormDescription>
-                    
+
                     <div className="flex flex-wrap gap-2 mb-2">
                       {field.value?.map((tech) => (
                         <Badge key={tech} variant="secondary" className="text-sm">
@@ -289,7 +289,7 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                         </Badge>
                       ))}
                     </div>
-                    
+
                     <div className="flex gap-2">
                       <Input
                         placeholder="Add a technology..."
@@ -309,7 +309,7 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                         Add
                       </Button>
                     </div>
-                    
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -323,10 +323,10 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                     <FormItem>
                       <FormLabel>Completion Date</FormLabel>
                       <FormControl>
-                        <Input 
+                        <Input
                           type="date"
-                          placeholder="Select completion date" 
-                          {...field} 
+                          placeholder="Select completion date"
+                          {...field}
                           value={field.value || ''}
                         />
                       </FormControl>
@@ -395,9 +395,9 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                     <FormItem>
                       <FormLabel>Live Project URL</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="https://..." 
-                          {...field} 
+                        <Input
+                          placeholder="https://..."
+                          {...field}
                           value={field.value || ''}
                         />
                       </FormControl>
@@ -416,9 +416,9 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                     <FormItem>
                       <FormLabel>GitHub Repository</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="https://github.com/..." 
-                          {...field} 
+                        <Input
+                          placeholder="https://github.com/..."
+                          {...field}
                           value={field.value || ''}
                         />
                       </FormControl>
@@ -499,9 +499,9 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                           {field.value?.map((imageUrl, index) => (
                             <div key={index} className="relative group">
-                              <img 
-                                src={imageUrl} 
-                                alt={`Gallery image ${index + 1}`} 
+                              <img
+                                src={imageUrl}
+                                alt={`Gallery image ${index + 1}`}
                                 className="w-full h-auto object-cover rounded-md border border-border aspect-video"
                               />
                               <Button
@@ -518,18 +518,13 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
                               </div>
                             </div>
                           ))}
-                          
+
                           <div className="border border-dashed border-border rounded-md p-6 flex flex-col items-center justify-center">
                             <FileUpload
                               onUploadComplete={(url) => handleGalleryImageUpload(url)}
                               folder="projects/gallery"
                               accept="image/*"
-                              buttonText={
-                                <>
-                                  <Plus className="h-4 w-4 mr-2" />
-                                  Add Gallery Image
-                                </>
-                              }
+                              buttonText="Add Gallery Image"
                               showPreview={false}
                             />
                             <p className="text-sm text-muted-foreground mt-2">Upload additional images</p>

@@ -39,7 +39,7 @@ export const searchBlogPosts = async (query: string) => {
 };
 
 // Generic Firestore functions
-export const getCollection = async (collectionName: string) => {
+export const getCollection = async (collectionName: string, constraints?: any[]) => {
   return [];
 };
 

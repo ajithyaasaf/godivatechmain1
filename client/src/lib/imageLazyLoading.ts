@@ -5,8 +5,6 @@
  * metrics like Largest Contentful Paint (LCP) and Cumulative Layout Shift (CLS).
  */
 
-import { optimizeCloudinaryUrl } from "./imageOptimizer";
-
 export interface OptimizedImageProps {
   src: string;
   alt: string;
@@ -25,14 +23,17 @@ export interface OptimizedImageProps {
 export function generateSrcSet(src: string): string {
   // Default widths for responsive images
   const widths = [320, 640, 768, 1024, 1280, 1536, 1920];
-  
+
   // For Cloudinary images, use their transformation API
   if (src.includes('cloudinary.com')) {
     return widths
-      .map(w => `${optimizeCloudinaryUrl(src, { width: w })} ${w}w`)
+      .map(w => {
+        const optimizedUrl = src.replace('/upload/', `/upload/c_scale,w_${w},q_auto,f_auto/`);
+        return `${optimizedUrl} ${w}w`;
+      })
       .join(', ');
   }
-  
+
   // For regular images, return the original
   return src;
 }
@@ -44,7 +45,7 @@ export function generateSrcSet(src: string): string {
  */
 export function generateSizes(customSizes?: string): string {
   if (customSizes) return customSizes;
-  
+
   // Default sizes for responsive layout
   return "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 }
@@ -67,7 +68,7 @@ export function getImageLoadingAttrs(isPriority: boolean = false): {
       fetchpriority: 'high', // Changed to lowercase for DOM attribute
     };
   }
-  
+
   // For below-the-fold images, use lazy loading
   return {
     loading: 'lazy',
@@ -97,6 +98,6 @@ export function trackImagePerformance(imageUrl: string, loadTime: number): void 
   if (process.env.NODE_ENV === 'development') {
     console.log(`Image loaded: ${imageUrl} in ${loadTime}ms`);
   }
-  
+
   // In production, we could send this to an analytics service
 }

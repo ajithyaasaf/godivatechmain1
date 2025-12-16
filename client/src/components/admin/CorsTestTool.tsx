@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { testCorsForEndpoint, runComprehensiveCorsTest } from '@/utils/cors-test';
+import { testCorsForEndpoint, runComprehensiveCorsTest } from '@/lib/cors-test';
 
 export function CorsTestTool() {
   const [customEndpoint, setCustomEndpoint] = useState('/api/categories');
@@ -99,7 +99,7 @@ export function CorsTestTool() {
                       <strong>User Agent:</strong> {navigator.userAgent.substring(0, 50)}...
                     </div>
                   </div>
-                  
+
                   <h4 className="font-medium mt-4">Endpoint Results:</h4>
                   {Object.entries(results.results).map(([endpoint, result]: [string, any]) => (
                     <div key={endpoint} className="border p-3 rounded-md mb-2">
@@ -132,7 +132,7 @@ export function CorsTestTool() {
                     </span>
                   </div>
                   <p className="my-2">{results.message}</p>
-                  
+
                   {results.headers && (
                     <div className="mt-2">
                       <details>
@@ -143,7 +143,7 @@ export function CorsTestTool() {
                       </details>
                     </div>
                   )}
-                  
+
                   {results.details && (
                     <div className="mt-2">
                       <details>

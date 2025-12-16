@@ -41,6 +41,11 @@ const BlogSection = memo(() => {
       published: true,
       publishedAt: "2023-06-15T00:00:00.000Z",
       coverImage: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      coverImageAlt: "Edge computing network visualization",
+      metaTitle: null,
+      metaDescription: null,
+      focusKeyword: null,
+      tags: [],
       authorName: "Sarah Johnson",
       authorImage: "https://randomuser.me/api/portraits/women/76.jpg",
       categoryId: 1,
@@ -59,6 +64,11 @@ const BlogSection = memo(() => {
       published: true,
       publishedAt: "2023-05-28T00:00:00.000Z",
       coverImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      coverImageAlt: "Cybersecurity protection concept",
+      metaTitle: null,
+      metaDescription: null,
+      focusKeyword: null,
+      tags: [],
       authorName: "David Rodriguez",
       authorImage: "https://randomuser.me/api/portraits/men/22.jpg",
       categoryId: 2,
@@ -77,6 +87,11 @@ const BlogSection = memo(() => {
       published: true,
       publishedAt: "2023-05-10T00:00:00.000Z",
       coverImage: "https://images.unsplash.com/photo-1607798748738-b15c40d33d57?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      coverImageAlt: "AI chatbot customer service interface",
+      metaTitle: null,
+      metaDescription: null,
+      focusKeyword: null,
+      tags: [],
       authorName: "Emily Patel",
       authorImage: "https://randomuser.me/api/portraits/women/38.jpg",
       categoryId: 3,
@@ -88,42 +103,42 @@ const BlogSection = memo(() => {
     }
   ], []);
 
-  // Memoize default categories
+  // Memoize default categories - aligned with GodivaTech services for SEO
   const defaultCategories = useMemo(() => [
     { id: -1, name: "All Topics", slug: "all" },
-    { id: 1, name: "Technology Trends", slug: "technology-trends" },
-    { id: 2, name: "Cloud Computing", slug: "cloud-computing" },
-    { id: 3, name: "Cybersecurity", slug: "cybersecurity" },
-    { id: 4, name: "AI & Machine Learning", slug: "ai-machine-learning" }
+    { id: 1, name: "Web & Mobile Development", slug: "web-mobile-development" },
+    { id: 2, name: "Digital Marketing & SEO", slug: "digital-marketing-seo" },
+    { id: 3, name: "ERP, Billing & Custom Software", slug: "erp-billing-custom-software" },
+    { id: 4, name: "Design & Branding", slug: "design-branding" }
   ], []);
 
   // Memoize computed values based on dependencies
   const allTopicsCategory = useMemo(() => ({ id: -1, name: "All Topics", slug: "all" }), []);
-  
-  const displayCategories = useMemo(() => 
-    categories.length > 0 
-      ? [allTopicsCategory, ...categories] 
+
+  const displayCategories = useMemo(() =>
+    categories.length > 0
+      ? [allTopicsCategory, ...categories]
       : defaultCategories
-  , [categories, allTopicsCategory, defaultCategories]);
+    , [categories, allTopicsCategory, defaultCategories]);
 
   // Filter and prepare posts based on active category
-  const filteredPosts = useMemo(() => 
+  const filteredPosts = useMemo(() =>
     activeCategory
       ? blogPosts.filter(post => post.categoryId === activeCategory)
       : blogPosts
-  , [blogPosts, activeCategory]);
+    , [blogPosts, activeCategory]);
 
   // Only show latest 3 posts on home page
   const displayPosts = useMemo(() => filteredPosts.slice(0, 3), [filteredPosts]);
-  
-  const finalPosts = useMemo(() => 
+
+  const finalPosts = useMemo(() =>
     displayPosts.length > 0 ? displayPosts : defaultPosts
-  , [displayPosts, defaultPosts]);
+    , [displayPosts, defaultPosts]);
 
   // Memoize event handlers with useCallback
   const handleCategoryChange = useCallback((categoryId: number | null) => {
     setActiveCategory(categoryId === -1 ? null : categoryId);
-    
+
     // If a category is selected (not All Topics), navigate to the category page
     if (categoryId !== null && categoryId !== -1) {
       const category = categories.find(c => c.id === categoryId);
@@ -139,19 +154,19 @@ const BlogSection = memo(() => {
   // Animation variants for section elements
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
-      transition: { 
+      transition: {
         duration: 0.5,
         staggerChildren: 0.1
       }
     }
   };
-  
+
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: { duration: 0.5 }
     }
@@ -163,7 +178,7 @@ const BlogSection = memo(() => {
       <div className="absolute inset-0 opacity-5 
         [background-image:linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] 
         [background-size:8rem_8rem]"></div>
-      
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <LazyMotion features={domAnimation} strict>
           <m.div
@@ -173,13 +188,13 @@ const BlogSection = memo(() => {
             viewport={{ once: true, margin: "-50px" }}
             variants={containerVariants}
           >
-            <m.h2 
+            <m.h2
               className="text-3xl font-bold text-neutral-800 mb-4"
               variants={itemVariants}
             >
               Latest Insights
             </m.h2>
-            <m.p 
+            <m.p
               className="text-lg text-neutral-600 max-w-2xl mx-auto"
               variants={itemVariants}
             >
@@ -193,7 +208,7 @@ const BlogSection = memo(() => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <CategoryFilter 
+            <CategoryFilter
               categories={displayCategories}
               activeCategory={activeCategory}
               onCategoryChange={handleCategoryChange}
@@ -207,22 +222,22 @@ const BlogSection = memo(() => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10%" }}
-                transition={{ 
-                  duration: 0.5, 
+                transition={{
+                  duration: 0.5,
                   delay: Math.min(0.1 * index, 0.3),
                   ease: "easeOut"
                 }}
                 style={{ willChange: "transform, opacity" }}
               >
-                <BlogCard 
-                  post={post} 
+                <BlogCard
+                  post={post}
                   index={index}
                 />
               </m.div>
             ))}
           </div>
 
-          <m.div 
+          <m.div
             className="text-center mt-12"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
