@@ -83,10 +83,6 @@ class AuthService {
       
       const response = await fetch(getApiUrl('/api/user'), {
         credentials: 'include',
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        },
         signal: controller.signal
       });
       
@@ -218,11 +214,7 @@ class AuthService {
    */
   private async fetchCurrentUser(): Promise<any> {
     const response = await fetch(getApiUrl('/api/user'), {
-      credentials: 'include',
-      headers: {
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache'
-      }
+      credentials: 'include'
     });
     
     if (!response.ok) {
@@ -259,11 +251,8 @@ class AuthService {
         const response = await fetch(getApiUrl('/api/logout'), {
           method: 'POST',
           credentials: 'include',
-          cache: 'no-cache',
           headers: {
-            'Content-Type': 'application/json',
-            'Pragma': 'no-cache',
-            'Cache-Control': 'no-cache'
+            'Content-Type': 'application/json'
           }
         });
         

@@ -1,0 +1,39 @@
+GET https://www.godivatech.com/api/categories net::ERR_ABORTED 404 (Not Found)Understand this error
+admin:74  GET https://www.godivatech.com/api/testimonials net::ERR_ABORTED 404 (Not Found)Understand this error
+admin:73  GET https://www.godivatech.com/api/team-members net::ERR_ABORTED 404 (Not Found)Understand this error
+admin:76  GET https://www.godivatech.com/api/blog-posts net::ERR_ABORTED 404 (Not Found)Understand this error
+admin:71  GET https://www.godivatech.com/api/services net::ERR_ABORTED 404 (Not Found)Understand this error
+admin:72  GET https://www.godivatech.com/api/projects net::ERR_ABORTED 404 (Not Found)Understand this error
+index-BR1ZElMJ.js:2330 Auth state changed: false
+auth:1 Access to fetch at 'https://godivatech-backend.onrender.com/api/user' from origin 'https://www.godivatech.com' has been blocked by CORS policy: Request header field pragma is not allowed by Access-Control-Allow-Headers in preflight response.Understand this error
+index-BR1ZElMJ.js:2330  GET https://godivatech-backend.onrender.com/api/user net::ERR_FAILED
+checkSessionAuth @ index-BR1ZElMJ.js:2330
+isAuthenticated @ index-BR1ZElMJ.js:2330
+(anonymous) @ index-BR1ZElMJ.js:2330
+_r @ vendor-react-DKGmYsB2.js:138
+V0 @ vendor-react-DKGmYsB2.js:151
+j0 @ vendor-react-DKGmYsB2.js:151
+F0 @ vendor-react-DKGmYsB2.js:151
+H0 @ vendor-react-DKGmYsB2.js:151
+E_ @ vendor-react-DKGmYsB2.js:151
+Qa @ vendor-react-DKGmYsB2.js:151
+db @ vendor-react-DKGmYsB2.js:151
+Sr @ vendor-react-DKGmYsB2.js:68
+S_ @ vendor-react-DKGmYsB2.js:151
+yi @ vendor-react-DKGmYsB2.js:151
+s_ @ vendor-react-DKGmYsB2.js:151
+cb @ vendor-react-DKGmYsB2.js:151
+kn @ vendor-react-DKGmYsB2.js:39
+An @ vendor-react-DKGmYsB2.js:39
+Za @ vendor-react-DKGmYsB2.js:39Understand this error
+index-BR1ZElMJ.js:2330 Failed to check session auth: TypeError: Failed to fetch
+    at AA.checkSessionAuth (index-BR1ZElMJ.js:2330:4967)
+    at AA.isAuthenticated (index-BR1ZElMJ.js:2330:8966)
+    at index-BR1ZElMJ.js:2330:10647
+    at _r (vendor-react-DKGmYsB2.js:138:22780)
+    at V0 (vendor-react-DKGmYsB2.js:151:12938)
+    at j0 (vendor-react-DKGmYsB2.js:151:12686)
+    at F0 (vendor-react-DKGmYsB2.js:151:12597)
+    at H0 (vendor-react-DKGmYsB2.js:151:12479)
+    at E_ (vendor-react-DKGmYsB2.js:151:24724)
+    at Qa (vendor-react-DKGmYsB2.js:151:24383)
