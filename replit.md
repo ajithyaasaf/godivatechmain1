@@ -30,6 +30,11 @@ Preferred communication style: Simple, everyday language.
 ### Key Features
 - **Public Website**: Homepage, About, Services, Portfolio, Blog, Contact pages.
 - **Admin Dashboard**: Content (CRUD for posts, services, projects), User, and Media management.
+- **SEO-Friendly Blog System**: 
+  - Rich text editor with H1-H4 heading toolbar
+  - SEO fields: meta title, meta description, focus keyword, image alt text, tags
+  - Real-time SEO checklist with character counters and validation
+  - Structured data (JSON-LD) for search engine optimization
 - **Data Flow**: Frontend uses TanStack Query for API interactions; Backend handles routing, database, and authentication.
 
 ## External Dependencies
