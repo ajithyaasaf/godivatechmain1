@@ -31,15 +31,9 @@ export const API_CONFIG = {
     const serverUrl = getEnvVar('VITE_SERVER_URL');
     if (serverUrl) return serverUrl;
     
-    // Check if running on production domain (godivatech.com)
-    const isProductionDomain = typeof window !== 'undefined' && (
-      window.location.hostname.includes('godivatech.com') ||
-      window.location.hostname === 'www.godivatech.com'
-    );
-    
-    // In production or on production domain, always use the full backend URL
-    if (isProd || isProductionDomain) {
-      console.warn('Using Render backend URL for production/deployed environment.');
+    // In production, always use the full backend URL
+    if (isProd) {
+      console.warn('No API URL configured in production! Using Render backend URL.');
       return 'https://godivatech-backend.onrender.com/api';
     }
     

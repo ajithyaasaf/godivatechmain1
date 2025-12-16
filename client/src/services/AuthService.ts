@@ -8,20 +8,6 @@ import {
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { queryClient } from '@/lib/queryClient';
-import { API_CONFIG } from '@/config/environment';
-
-// Get the API base URL, ensuring proper URL construction
-const getApiUrl = (endpoint: string): string => {
-  const baseUrl = API_CONFIG.BASE_URL;
-  if (!baseUrl) {
-    // In development, use relative paths
-    return endpoint;
-  }
-  // In production, use the full backend URL
-  // Remove /api from baseUrl if endpoint already starts with /api
-  const cleanBase = baseUrl.replace(/\/api$/, '');
-  return `${cleanBase}${endpoint}`;
-};
 
 /**
  * AuthService - Centralized service for authentication
@@ -81,8 +67,12 @@ class AuthService {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
       
-      const response = await fetch(getApiUrl('/api/user'), {
+      const response = await fetch('/api/user', {
         credentials: 'include',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        },
         signal: controller.signal
       });
       
@@ -154,7 +144,7 @@ class AuthService {
         // Session based login
         console.log('Attempting session-based login with:', username);
         
-        const response = await fetch(getApiUrl('/api/login'), {
+        const response = await fetch('/api/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -213,8 +203,12 @@ class AuthService {
    * Fetch current user data from API
    */
   private async fetchCurrentUser(): Promise<any> {
-    const response = await fetch(getApiUrl('/api/user'), {
-      credentials: 'include'
+    const response = await fetch('/api/user', {
+      credentials: 'include',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
     });
     
     if (!response.ok) {
@@ -248,11 +242,14 @@ class AuthService {
       
       // Try session logout
       try {
-        const response = await fetch(getApiUrl('/api/logout'), {
+        const response = await fetch('/api/logout', {
           method: 'POST',
           credentials: 'include',
+          cache: 'no-cache',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Pragma': 'no-cache',
+            'Cache-Control': 'no-cache'
           }
         });
         
