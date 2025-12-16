@@ -51,20 +51,20 @@ const BlogSection = memo(() => {
       categoryId: 1,
       category: {
         id: 1,
-        name: "Technology Trends",
-        slug: "technology-trends"
+        name: "Web & Mobile Development",
+        slug: "web-mobile-development"
       }
     },
     {
       id: 2,
-      title: "5 Essential Cybersecurity Measures Every Business Needs",
-      slug: "essential-cybersecurity-measures",
-      excerpt: "Learn about the critical security controls that can protect your organization from the most common cyber threats.",
+      title: "Local SEO Guide for Tamil Nadu Businesses",
+      slug: "local-seo-guide-tamil-nadu",
+      excerpt: "Learn proven SEO strategies to rank higher on Google and attract more local customers in Madurai and across Tamil Nadu.",
       content: "Full content of the article goes here...",
       published: true,
       publishedAt: "2023-05-28T00:00:00.000Z",
-      coverImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      coverImageAlt: "Cybersecurity protection concept",
+      coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      coverImageAlt: "SEO analytics dashboard",
       metaTitle: null,
       metaDescription: null,
       focusKeyword: null,
@@ -74,15 +74,15 @@ const BlogSection = memo(() => {
       categoryId: 2,
       category: {
         id: 2,
-        name: "Cybersecurity",
-        slug: "cybersecurity"
+        name: "Digital Marketing & SEO",
+        slug: "digital-marketing-seo"
       }
     },
     {
       id: 3,
-      title: "How AI is Transforming Customer Service Experiences",
-      slug: "ai-transforming-customer-service",
-      excerpt: "Discover how artificial intelligence is revolutionizing customer support through chatbots, sentiment analysis, and predictive service.",
+      title: "How AI Chatbots Improve Your Website Customer Support",
+      slug: "ai-chatbots-customer-support",
+      excerpt: "Discover how AI-powered chatbots can transform your website's customer experience and reduce support costs.",
       content: "Full content of the article goes here...",
       published: true,
       publishedAt: "2023-05-10T00:00:00.000Z",
@@ -97,8 +97,8 @@ const BlogSection = memo(() => {
       categoryId: 3,
       category: {
         id: 3,
-        name: "AI & Machine Learning",
-        slug: "ai-machine-learning"
+        name: "ERP, Billing & Custom Software",
+        slug: "erp-billing-custom-software"
       }
     }
   ], []);
@@ -198,7 +198,7 @@ const BlogSection = memo(() => {
               className="text-lg text-neutral-600 max-w-2xl mx-auto"
               variants={itemVariants}
             >
-              Stay up-to-date with the latest technology trends and insights from our experts.
+              Expert web development, digital marketing, and business software insights for Madurai businesses.
             </m.p>
           </m.div>
 

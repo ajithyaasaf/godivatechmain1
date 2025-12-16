@@ -40,16 +40,16 @@ if (typeof window !== 'undefined') {
             if (!res.ok) throw new Error(`Failed to fetch ${endpoint}`);
             return res.json();
           }
-        }).catch(() => {});
+        }).catch(() => { });
       });
     };
-    
+
     // Performance monitoring after page load
     initPerformanceMonitoring();
-    
+
     warmupAPIs();
   };
-  
+
   if (document.readyState === 'complete') {
     deferredInit();
   } else {
@@ -59,7 +59,7 @@ if (typeof window !== 'undefined') {
 
 // Sample data initialization removed for production
 // Production environment should use real data from the database
-  
+
 // Firebase configuration testing removed for production
 // Testing code was moved to dedicated test utilities
 

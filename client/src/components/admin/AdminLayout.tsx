@@ -3,19 +3,19 @@ import { Link, useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 
-import { 
-  BarChart3, 
-  Files, 
-  FolderKanban, 
-  Home, 
-  LayoutDashboard, 
-  LogOut, 
-  LucideIcon, 
-  Mail, 
-  Menu, 
-  MessageSquare, 
-  PenTool, 
-  Users, 
+import {
+  BarChart3,
+  Files,
+  FolderKanban,
+  Home,
+  LayoutDashboard,
+  LogOut,
+  LucideIcon,
+  Mail,
+  Menu,
+  MessageSquare,
+  PenTool,
+  Users,
   UserPlus,
   Wrench,
   X
@@ -35,12 +35,11 @@ interface NavItemProps {
 
 const NavItem = ({ icon: Icon, label, href, active, onClick }: NavItemProps) => (
   <Link href={href}>
-    <div 
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
-        active 
-          ? "bg-primary text-primary-foreground" 
-          : "hover:bg-secondary"
-      }`}
+    <div
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${active
+        ? "bg-primary text-primary-foreground"
+        : "hover:bg-secondary"
+        }`}
       onClick={onClick}
     >
       <Icon size={18} />
@@ -67,19 +66,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     try {
       // Set loading state
       setIsLoggingOut(true);
-      
+
       // Log for debugging
       console.log("AdminLayout: Initiating logout process");
-      
+
       // Use centralized logout from AuthService via AuthContext
       await logout();
-      
+
       // Note: No need to manually redirect as our AuthService handles it
       console.log("AdminLayout: Logout sequence completed");
-      
+
     } catch (error) {
       console.error("AdminLayout: Error during logout:", error);
-      
+
       // Even if there's an error, force redirect to auth page
       window.location.replace('/auth');
     }
@@ -112,12 +111,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <h1 className="text-2xl font-bold text-primary">GodivaTech</h1>
           <p className="text-sm text-muted-foreground">Admin Dashboard</p>
         </div>
-        
+
         <Separator />
-        
+
         <nav className="flex-1 p-4 space-y-1">
           {navItems.map((item) => (
-            <NavItem 
+            <NavItem
               key={item.href}
               icon={item.icon}
               label={item.label}
@@ -126,7 +125,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             />
           ))}
         </nav>
-        
+
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 mb-4">
             <Avatar>
@@ -137,8 +136,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               <p className="text-xs text-muted-foreground">Administrator</p>
             </div>
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="w-full justify-start"
             onClick={handleLogout}
             disabled={isLoggingOut || isLoading}
@@ -151,9 +150,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       {/* Mobile Nav Toggle */}
       <div className="md:hidden fixed top-4 left-4 z-30">
-        <Button 
-          variant="outline" 
-          size="icon" 
+        <Button
+          variant="outline"
+          size="icon"
           className="rounded-full"
           onClick={() => setMobileNavOpen(true)}
         >
@@ -164,7 +163,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       {/* Mobile Sidebar */}
       {mobileNavOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden">
-          <motion.div 
+          <motion.div
             className="fixed inset-y-0 left-0 w-3/4 max-w-xs bg-card shadow-lg p-4"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
@@ -176,12 +175,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 <X size={20} />
               </Button>
             </div>
-            
+
             <Separator className="mb-4" />
-            
+
             <nav className="space-y-1 mb-6">
               {navItems.map((item) => (
-                <NavItem 
+                <NavItem
                   key={item.href}
                   icon={item.icon}
                   label={item.label}
@@ -191,7 +190,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 />
               ))}
             </nav>
-            
+
             <div className="border-t pt-4">
               <div className="flex items-center gap-3 mb-4">
                 <Avatar>
@@ -202,8 +201,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   <p className="text-xs text-muted-foreground">Administrator</p>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full justify-start"
                 onClick={handleLogout}
                 disabled={isLoggingOut || isLoading}
@@ -218,7 +217,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       {/* Main Content */}
       <main className="flex-1 min-h-screen flex flex-col">
-        <div className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full">
+        <div className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
           {children}
         </div>
       </main>

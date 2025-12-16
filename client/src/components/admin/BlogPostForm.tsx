@@ -50,16 +50,35 @@ import { useCollection } from "@/hooks/use-firestore";
 
 // Enhanced Zod schema with better validation
 const blogPostSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
+  // Title with soft validation (warning) and hard limit for extremes
+  title: z.string()
+    .min(30, "Title too short - aim for 50-60 characters for optimal SEO")
+    .max(70, "Title too long - Google may truncate. Keep under 60 characters"),
   slug: z.string().min(3, "Slug must be at least 3 characters")
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
-  excerpt: z.string().min(10, "Excerpt must be at least 10 characters"),
-  content: z.string().min(50, "Content must be at least 50 characters"),
+  // Excerpt with meta description fallback requirements (120-160 chars)
+  excerpt: z.string()
+    .min(120, "Excerpt too short - should be 120-160 characters (works as meta description fallback)")
+    .max(160, "Excerpt too long - keep under 160 characters for meta description compatibility"),
+  // Content minimum increased to prevent thin content (300 chars ≈ 50 words minimum)
+  content: z.string()
+    .min(300, "Content too thin - aim for at least 300 words (1500 characters) for quality SEO")
+    .max(50000, "Content exceeds reasonable length"),
   coverImage: z.string().optional().nullable(),
   coverImageAlt: z.string().optional().nullable(),
-  metaTitle: z.string().optional().nullable(),
-  metaDescription: z.string().optional().nullable(),
-  focusKeyword: z.string().optional().nullable(),
+  // Meta title with max length enforcement
+  metaTitle: z.string()
+    .max(60, "Meta title too long - Google truncates after 60 characters")
+    .optional()
+    .nullable(),
+  // META DESCRIPTION IS CRITICAL FOR SEO - REQUIRED!
+  metaDescription: z.string()
+    .min(120, "Meta description too short - aim for 150-160 characters for optimal SEO")
+    .max(160, "Meta description too long - Google truncates after 160 characters"),
+  // FOCUS KEYWORD IS CRITICAL FOR SEO - REQUIRED!
+  focusKeyword: z.string()
+    .min(2, "Focus keyword is required for SEO targeting")
+    .max(60, "Focus keyword too long - keep it concise"),
   // Enhanced tags validation - prevents empty strings and validates length
   tags: z.array(
     z.string()
@@ -72,7 +91,19 @@ const blogPostSchema = z.object({
   published: z.boolean().default(false),
   publishedAt: z.string().optional().nullable(),
   categoryId: z.string().min(1, "Category is required"),
-});
+}).refine(
+  (data) => {
+    // If cover image exists, alt text is REQUIRED for SEO and accessibility
+    if (data.coverImage && data.coverImage.trim().length > 0) {
+      return data.coverImageAlt && data.coverImageAlt.trim().length >= 10;
+    }
+    return true;
+  },
+  {
+    message: "Alt text is required when cover image is uploaded (minimum 10 characters for SEO and accessibility)",
+    path: ["coverImageAlt"],
+  }
+);
 
 type BlogPostFormValues = z.infer<typeof blogPostSchema>;
 
@@ -103,6 +134,11 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(!!post?.slug);
   // Collapsible SEO section state
   const [seoExpanded, setSeoExpanded] = useState(false);
+
+  // Image validation warnings (non-blocking)
+  const [imageWarnings, setImageWarnings] = useState<{
+    coverImage?: string[];
+  }>({});
 
   const firestore = useFirestore("blog-posts");
 
@@ -181,14 +217,53 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
     }
   };
 
+  // Handle cover image upload with validation
   const handleCoverImageUpload = (url: string) => {
     setUploadedCoverImageUrl(url);
     form.setValue("coverImage", url);
+
+    // Validate image dimensions and file size
+    const img = new Image();
+    img.src = url;
+
+    img.onload = () => {
+      const warnings: string[] = [];
+      const { width, height } = img;
+
+      // Check dimensions (social sharing best practice, not SEO ranking factor)
+      if (width !== 1200 || height !== 630) {
+        if (width < 1200 || height < 630) {
+          warnings.push(
+            `⚠️ Image is ${width}×${height}. Recommended 1200×630 for optimal social sharing (Facebook, LinkedIn, Twitter). Smaller images may appear pixelated when shared.`
+          );
+        } else {
+          warnings.push(
+            `ℹ️ Image is ${width}×${height}. Recommended 1200×630 for consistent social sharing. Current size will work but may be cropped on some platforms.`
+          );
+        }
+      }
+
+      // Estimate file size from URL (if we had the fetch API we could get exact size)
+      // For now, warn about dimensions which correlate with file size
+      if (width > 2000 || height > 2000) {
+        warnings.push(
+          `🔴 Large image dimensions (${width}×${height}) may impact page load speed and Core Web Vitals score. Consider resizing to 1200×630 for better performance.`
+        );
+      }
+
+      if (warnings.length > 0) {
+        setImageWarnings(prev => ({ ...prev, coverImage: warnings }));
+      } else {
+        // Clear warnings if image is perfect
+        setImageWarnings(prev => ({ ...prev, coverImage: undefined }));
+      }
+    };
   };
 
   const handleCoverImageRemove = () => {
     setUploadedCoverImageUrl(null);
     form.setValue("coverImage", null);
+    setImageWarnings(prev => ({ ...prev, coverImage: undefined })); // Clear warnings on remove
   };
 
   const handleAuthorImageUpload = (url: string) => {
@@ -383,20 +458,44 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
               <FormField
                 control={form.control}
                 name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        data-testid="input-blog-title"
-                        placeholder="Post title"
-                        {...field}
-                        onBlur={generateSlug}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const titleLength = field.value?.length || 0;
+                  const isOptimal = titleLength >= 50 && titleLength <= 60;
+                  const isAcceptable = (titleLength >= 30 && titleLength < 50) || (titleLength > 60 && titleLength <= 70);
+
+                  return (
+                    <FormItem>
+                      <FormLabel className="flex items-center justify-between">
+                        <span>Title</span>
+                        <span className={`text-xs font-medium ${isOptimal
+                          ? "text-green-600"
+                          : isAcceptable
+                            ? "text-amber-600"
+                            : "text-red-600"
+                          }`}>
+                          {titleLength}/70 {
+                            isOptimal ? "✓ Perfect" :
+                              isAcceptable ? "⚠ Acceptable" :
+                                titleLength < 30 ? "Too Short" :
+                                  "Too Long"
+                          }
+                        </span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          data-testid="input-blog-title"
+                          placeholder="Write a compelling 50-60 character title..."
+                          {...field}
+                          onBlur={generateSlug}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Optimal: 50-60 characters. This appears in Google search results.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
 
               <FormField
@@ -483,25 +582,33 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex items-center justify-between">
-                        <span>Meta Description (Optional)</span>
-                        <span className={`text-xs ${(field.value?.length || 0) >= 150 && (field.value?.length || 0) <= 160
+                        <span>Meta Description <span className="text-red-600">*</span></span>
+                        <span className={`text-xs ${(field.value?.length || 0) >= 120 && (field.value?.length || 0) <= 160
                           ? "text-green-600"
-                          : "text-muted-foreground"
+                          : (field.value?.length || 0) < 120
+                            ? "text-amber-600"
+                            : "text-red-600"
                           }`}>
-                          {field.value?.length || 0}/160
+                          {field.value?.length || 0}/160 {
+                            (field.value?.length || 0) >= 120 && (field.value?.length || 0) <= 160
+                              ? "✓ Perfect"
+                              : (field.value?.length || 0) < 120
+                                ? "Too short"
+                                : "Too long"
+                          }
                         </span>
                       </FormLabel>
                       <FormControl>
                         <Textarea
                           data-testid="input-meta-description"
-                          placeholder="Leave blank to use excerpt"
+                          placeholder="Write a compelling 150-160 character description that will appear in Google search results"
                           className="min-h-[80px]"
                           {...field}
                           value={field.value || ""}
                         />
                       </FormControl>
                       <FormDescription>
-                        Customize the description shown in search results (150-160 chars optimal)
+                        CRITICAL for SEO! This appears in Google search results and affects your click-through rate. Aim for 150-160 characters.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -514,17 +621,19 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                     name="focusKeyword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Focus Keyword</FormLabel>
+                        <FormLabel>
+                          Focus Keyword <span className="text-red-600">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             data-testid="input-focus-keyword"
-                            placeholder="Main keyword to target"
+                            placeholder="e.g., web development Madurai"
                             {...field}
                             value={field.value || ""}
                           />
                         </FormControl>
                         <FormDescription>
-                          The primary keyword you want to rank for
+                          The primary keyword you want this post to rank for on Google
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -553,23 +662,45 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
             <FormField
               control={form.control}
               name="excerpt"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Excerpt</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      data-testid="input-excerpt"
-                      placeholder="Brief summary of the post"
-                      className="min-h-[80px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    A short teaser that appears in blog listings
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const excerptLength = field.value?.length || 0;
+                const isOptimal = excerptLength >= 150 && excerptLength <= 160;
+                const isAcceptable = excerptLength >= 120 && excerptLength < 150;
+
+                return (
+                  <FormItem>
+                    <FormLabel className="flex items-center justify-between">
+                      <span>Excerpt</span>
+                      <span className={`text-xs font-medium ${isOptimal
+                        ? "text-green-600"
+                        : isAcceptable
+                          ? "text-amber-600"
+                          : "text-red-600"
+                        }`}>
+                        {excerptLength}/160 {
+                          isOptimal ? "✓ Perfect" :
+                            isAcceptable ? "⚠ Good" :
+                              excerptLength < 120 ? "Too Short" :
+                                "Too Long"
+                        }
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        data-testid="input-excerpt"
+                        placeholder="Write a compelling 150-160 character summary..."
+                        className="min-h-[80px]"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      120-160 characters. Used in blog listings AND as meta description fallback.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             {/* Cover Image Section */}
@@ -591,10 +722,28 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                           existingFileUrl={field.value || undefined}
                           onRemove={handleCoverImageRemove}
                         />
+
+                        {/* Image Validation Warnings */}
+                        {imageWarnings.coverImage && imageWarnings.coverImage.length > 0 && (
+                          <div className="mt-3 space-y-2">
+                            {imageWarnings.coverImage.map((warning, idx) => (
+                              <div
+                                key={idx}
+                                className={`text-xs p-2 rounded border flex items-start gap-2 ${warning.includes("🔴")
+                                  ? "bg-red-50 text-red-700 border-red-200"
+                                  : "bg-amber-50 text-amber-700 border-amber-200"
+                                  }`}
+                              >
+                                <span className="mt-0.5 select-none">{warning.split(" ")[0]}</span>
+                                <span>{warning.substring(warning.indexOf(" ") + 1)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </FormControl>
                     <FormDescription>
-                      Recommended: 1200x630px for optimal SEO
+                      Recommended: 1200x630px (Max 200KB) for optimal performance & social sharing
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -604,23 +753,32 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
               <FormField
                 control={form.control}
                 name="coverImageAlt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image Alt Text</FormLabel>
-                    <FormControl>
-                      <Input
-                        data-testid="input-cover-image-alt"
-                        placeholder="Describe the image for SEO and accessibility"
-                        {...field}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Important for SEO and screen readers
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const hasCoverImage = form.watch("coverImage");
+                  return (
+                    <FormItem>
+                      <FormLabel>
+                        Image Alt Text
+                        {hasCoverImage && <span className="text-red-600"> *</span>}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          data-testid="input-cover-image-alt"
+                          placeholder="Describe the image for SEO and accessibility"
+                          {...field}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {hasCoverImage
+                          ? "REQUIRED for SEO and accessibility when image is uploaded (min 10 characters)"
+                          : "Important for SEO and screen readers if you upload an image"
+                        }
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
             </div>
 
@@ -632,8 +790,8 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                 <FormItem>
                   <FormLabel>Category</FormLabel>
                   <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
+                    value={field.value ? String(field.value) : ""}
+                    onValueChange={(value) => field.onChange(value)}
                     disabled={categoriesLoading || !categories?.length}
                   >
                     <FormControl>
@@ -649,7 +807,7 @@ const BlogPostForm = ({ post, onSave, onCancel }: BlogPostFormProps) => {
                     </FormControl>
                     <SelectContent>
                       {categories?.map((category: any) => (
-                        <SelectItem key={category.id} value={category.id}>
+                        <SelectItem key={category.id} value={String(category.id)}>
                           {category.name}
                         </SelectItem>
                       ))}
@@ -909,13 +1067,14 @@ Add images: ![alt text](image-url)"
             </div>
 
             {/* Form Actions */}
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onCancel}
                 disabled={isSubmitting}
                 data-testid="button-cancel"
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
@@ -923,6 +1082,7 @@ Add images: ![alt text](image-url)"
                 type="submit"
                 disabled={isSubmitting || (!categoriesLoading && !categories?.length)}
                 data-testid="button-save-post"
+                className="w-full sm:w-auto"
               >
                 {isSubmitting ? (
                   <>

@@ -94,9 +94,9 @@ const CategoryForm = ({ category, onSave, onCancel }: CategoryFormProps) => {
             <FormItem>
               <FormLabel>Category Name</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="Category name" 
-                  {...field} 
+                <Input
+                  placeholder="Category name"
+                  {...field}
                   onBlur={generateSlug}
                 />
               </FormControl>
@@ -144,18 +144,20 @@ const CategoryForm = ({ category, onSave, onCancel }: CategoryFormProps) => {
           )}
         />
 
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
             disabled={isSubmitting}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting}
+            className="w-full sm:w-auto"
           >
             {isSubmitting ? (
               <>
