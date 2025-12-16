@@ -39,6 +39,11 @@ export const insertBlogPostSchema = z.object({
   authorName: z.string(),
   authorImage: z.string().optional().nullable(),
   coverImage: z.string().optional().nullable(),
+  coverImageAlt: z.string().optional().nullable(),
+  metaTitle: z.string().optional().nullable(),
+  metaDescription: z.string().optional().nullable(),
+  focusKeyword: z.string().optional().nullable(),
+  tags: z.array(z.string()).optional().nullable(),
   publishedAt: z.date().or(z.string()).optional(),
   categoryId: z.number().optional().nullable(),
 });
@@ -54,6 +59,11 @@ export interface BlogPost {
   authorName: string;
   authorImage: string | null;
   coverImage: string | null;
+  coverImageAlt: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  focusKeyword: string | null;
+  tags: string[] | null;
   publishedAt: string | Date;
   categoryId: number | null;
 }

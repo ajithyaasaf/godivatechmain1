@@ -54,6 +54,13 @@ const BlogPost = () => {
         .filter(p => p.categoryId === post.categoryId && p.id !== post.id)
         .slice(0, 3)
     : [];
+  
+  // Get SEO fields with fallbacks
+  const seoTitle = post?.metaTitle || post?.title || "";
+  const seoDescription = post?.metaDescription || post?.excerpt || "";
+  const seoImageAlt = post?.coverImageAlt || post?.title || "";
+  const focusKeyword = post?.focusKeyword || "";
+  const tags = post?.tags || [];
 
   useEffect(() => {
     // If we have posts loaded but can't find the post by slug, redirect to blog
@@ -188,12 +195,18 @@ const BlogPost = () => {
       )
     ];
 
-  // Create custom keywords for this blog post
-  const customKeywords = `${category?.name?.toLowerCase() || 'digital services'} Madurai, 
+  // Create custom keywords for this blog post including focus keyword and tags
+  const baseKeywords = `${category?.name?.toLowerCase() || 'digital services'} Madurai, 
     best ${category?.name?.toLowerCase() || 'digital services'} in Tamil Nadu,
     ${post.title.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')},
     GodivaTech Madurai, IT company Tamil Nadu, 
     web development Madurai, digital marketing Madurai, app development Madurai`;
+  
+  const customKeywords = [
+    focusKeyword,
+    ...tags,
+    baseKeywords
+  ].filter(Boolean).join(", ");
 
   // Determine if we should show AMP version for mobile users
   const showAmpVersion = isMobile && window.location.search.includes('amp=1');
@@ -221,8 +234,8 @@ const BlogPost = () => {
   return (
     <>
       <SEO
-        title={`${post.title} | Best ${category?.name || 'Digital Services'} in Madurai | GodivaTech`}
-        description={`${post.excerpt} GodivaTech provides the best ${category?.name || 'digital services'} in Madurai, Tamil Nadu for businesses looking to grow their online presence.`}
+        title={seoTitle ? `${seoTitle} | GodivaTech` : `${post.title} | Best ${category?.name || 'Digital Services'} in Madurai | GodivaTech`}
+        description={seoDescription || `${post.excerpt} GodivaTech provides the best ${category?.name || 'digital services'} in Madurai, Tamil Nadu for businesses looking to grow their online presence.`}
         keywords={customKeywords}
         canonicalUrl={formatCanonicalUrl(`/blog/${post.slug}`)}
         ogType="article"
@@ -320,7 +333,7 @@ const BlogPost = () => {
               <figure>
                 <OptimizedImage 
                   src={post.coverImage || '/assets/blog-default.jpg'} 
-                  alt={`${post.title} - GodivaTech Madurai - ${category?.name || 'Blog'}`} 
+                  alt={seoImageAlt || `${post.title} - GodivaTech Madurai - ${category?.name || 'Blog'}`} 
                   className="w-full h-auto rounded-lg shadow-lg"
                   width={800}
                   height={450}

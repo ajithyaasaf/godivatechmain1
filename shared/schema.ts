@@ -42,6 +42,11 @@ export const blogPosts = pgTable("blog_posts", {
   authorName: text("author_name").notNull(),
   authorImage: text("author_image"),
   coverImage: text("cover_image"),
+  coverImageAlt: text("cover_image_alt"),
+  metaTitle: text("meta_title"),
+  metaDescription: text("meta_description"),
+  focusKeyword: text("focus_keyword"),
+  tags: text("tags").array(),
   publishedAt: timestamp("published_at").notNull().defaultNow(),
   categoryId: integer("category_id").references(() => categories.id),
 });
@@ -55,6 +60,11 @@ export const insertBlogPostSchema = createInsertSchema(blogPosts).pick({
   authorName: true,
   authorImage: true,
   coverImage: true,
+  coverImageAlt: true,
+  metaTitle: true,
+  metaDescription: true,
+  focusKeyword: true,
+  tags: true,
   publishedAt: true,
   categoryId: true,
 });
@@ -73,7 +83,11 @@ export interface ExtendedBlogPost {
   authorName: string;
   authorImage: string | null;
   coverImage: string | null;
-  // publishedAt can be Date or string since it might come from API as string
+  coverImageAlt: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  focusKeyword: string | null;
+  tags: string[] | null;
   publishedAt: string | Date;
   categoryId: number | null;
   category?: {
