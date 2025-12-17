@@ -4,6 +4,7 @@
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
+  "rootDirectory": "client",
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -81,7 +82,7 @@
       ]
     },
     {
-      "source": "/(.*)\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf)",
+      "source": "/(.*)\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf)",
       "headers": [
         {
           "key": "Cache-Control",
