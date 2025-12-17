@@ -19,7 +19,7 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Remove text-decoration from links underline */
+/* Remove text-decoration from links */
 a {
     text-decoration: none;
 }
