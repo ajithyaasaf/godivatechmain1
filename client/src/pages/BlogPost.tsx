@@ -86,44 +86,8 @@ const BlogPost = () => {
   const formattedDate = format(new Date(post.publishedAt), "MMMM dd, yyyy");
   const timeAgo = formatDistanceToNow(new Date(post.publishedAt), { addSuffix: true });
 
-  // Custom link transformer to add SEO-optimized internal linking
-  const transformKeywordsToLinks = (content: string) => {
-    return content
-      // Add internal links to services with targeted SEO keywords for Madurai
-      .replace(/Web Development/g, '[best web development in Madurai](https://www.godivatech.com/services/web-development)')
-      .replace(/Digital Marketing/g, '[top digital marketing agency in Madurai](https://www.godivatech.com/services/digital-marketing)')
-      .replace(/Mobile App/g, '[mobile app development company in Madurai](https://www.godivatech.com/services/app-development)')
-      .replace(/ SEO /g, ' [SEO services in Madurai](https://www.godivatech.com/services/digital-marketing) ')
-      .replace(/Logo Design/g, '[professional logo design in Madurai](https://www.godivatech.com/services/logo-brand-design)')
-      .replace(/UI\/UX Design/g, '[UI/UX design services in Madurai](https://www.godivatech.com/services/ui-ux-design)')
-      .replace(/Brand Design/g, '[brand design company in Madurai](https://www.godivatech.com/services/logo-brand-design)')
-      .replace(/Poster Design/g, '[poster design services in Madurai](https://www.godivatech.com/services/poster-design)')
-
-      // Add Madurai-specific business keywords
-      .replace(/business website/gi, '[business website development in Madurai](https://www.godivatech.com/services/web-development)')
-      .replace(/online presence/gi, '[digital presence for Madurai businesses](https://www.godivatech.com/services/digital-marketing)')
-      .replace(/social media/gi, '[social media marketing in Madurai](https://www.godivatech.com/services/digital-marketing)')
-      .replace(/local business/gi, '[Madurai local business solutions](https://www.godivatech.com/about)')
-      .replace(/ecommerce/gi, '[eCommerce website development in Madurai](https://www.godivatech.com/services/web-development)')
-      .replace(/website design/gi, '[best website design in Madurai](https://www.godivatech.com/services/web-development)')
-      .replace(/responsive website/gi, '[responsive website design in Madurai](https://www.godivatech.com/services/web-development)')
-      .replace(/professional website/gi, '[professional website development in Madurai](https://www.godivatech.com/services/web-development)')
-      .replace(/branding/gi, '[branding services in Madurai](https://www.godivatech.com/services/logo-brand-design)')
-      .replace(/content marketing/gi, '[content marketing services in Madurai](https://www.godivatech.com/services/digital-marketing)')
-      .replace(/Tamil Nadu/gi, '[best IT company in Tamil Nadu](https://www.godivatech.com/about)')
-
-      // Replace GodivaTech mentions
-      .replace(/GodivaTech/g, '[GodivaTech - best software company in Madurai](https://www.godivatech.com/about')
-
-      // Add external authoritative links
-      .replace(/Google My Business/g, '[Google My Business for Madurai companies](https://business.google.com)')
-      .replace(/Google Maps/g, '[Google Maps listing for Madurai](https://maps.google.com)')
-      .replace(/Facebook/g, '[Facebook marketing for Madurai](https://business.facebook.com)')
-      .replace(/Instagram/g, '[Instagram marketing for Madurai](https://business.instagram.com)');
-  };
-
-  // Pre-process content with SEO keyword links
-  const processedContent = transformKeywordsToLinks(post.content);
+  // Note: Removed aggressive keyword stuffing to avoid Google penalties
+  // Content editors should manually add relevant internal links where natural
 
   // Detect if user is on mobile
   const [isMobile, setIsMobile] = useState(false);
@@ -376,7 +340,7 @@ const BlogPost = () => {
                   ),
                 }}
               >
-                {processedContent}
+                {post.content}
               </ReactMarkdown>
             </article>
 
