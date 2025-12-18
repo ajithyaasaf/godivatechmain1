@@ -22,22 +22,22 @@ interface TeamMember {
 const TeamMemberCard = memo(({ member, index }: { member: TeamMember; index: number }) => {
   // Calculate staggered animation delay based on index
   const animationDelay = useMemo(() => Math.min(index * 0.1, 0.5), [index]);
-  
+
   return (
-    <div 
+    <div
       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-      style={{ 
-        willChange: "transform", 
-        animationDelay: `${animationDelay}s` 
+      style={{
+        willChange: "transform",
+        animationDelay: `${animationDelay}s`
       }}
     >
       <div className="relative">
         <OptimizedImage
           src={member.image}
           alt={`${member.name} - ${member.position}`}
-          className="w-full h-64 object-cover object-top"
+          className="w-full h-80 object-cover object-[center_30%]"
           width={400}
-          height={256}
+          height={320}
         />
         {/* Static gradient overlay instead of animation */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -99,9 +99,9 @@ const TeamSection = memo(() => {
   ], []);
 
   // Memoize to avoid recalculation on re-renders
-  const displayTeamMembers = useMemo(() => 
+  const displayTeamMembers = useMemo(() =>
     teamMembers.length > 0 ? teamMembers : defaultTeamMembers
-  , [teamMembers, defaultTeamMembers]);
+    , [teamMembers, defaultTeamMembers]);
 
   return (
     <section className="py-20 bg-neutral-50 relative">
@@ -109,10 +109,10 @@ const TeamSection = memo(() => {
       <div className="absolute inset-0 opacity-5 
         [background-image:radial-gradient(#4f46e520_1px,transparent_1px)] 
         [background-size:20px_20px]"></div>
-      
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <LazyMotion features={domAnimation} strict>
-          <m.div 
+          <m.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -132,25 +132,25 @@ const TeamSection = memo(() => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10%" }}
-                transition={{ 
+                transition={{
                   duration: 0.5,
                   delay: Math.min(0.1 * index, 0.3),
                   ease: "easeOut"
                 }}
                 style={{ willChange: "transform, opacity" }}
               >
-                <TeamMemberCard 
+                <TeamMemberCard
                   member={member}
                   index={index}
                 />
               </m.div>
             ))}
           </div>
-          
+
           {/* View Team link for internal linking */}
           <div className="text-center">
-            <Link 
-              href="/about#team" 
+            <Link
+              href="/about#team"
               className="inline-flex items-center justify-center px-6 py-3 rounded-full
                         bg-white border border-primary/20 text-primary font-semibold
                         shadow-md hover:shadow-xl transition-all duration-300
