@@ -165,7 +165,15 @@ const Footer = () => {
               <li className="flex items-start group">
                 <MapPin className="h-5 w-5 mt-0.5 mr-3 text-primary group-hover:text-white transition-colors flex-shrink-0" />
                 <span className="text-neutral-300 group-hover:text-white transition-colors text-sm sm:text-base break-words">
+                  <span className="font-semibold block text-white/95">Corporate Office:</span>
                   261, Vaigai Mainroad 4th Street<br/>Sri Nagar, Iyer Bungalow<br/>Madurai 625007, India
+                </span>
+              </li>
+              <li className="flex items-start group">
+                <MapPin className="h-5 w-5 mt-0.5 mr-3 text-primary group-hover:text-white transition-colors flex-shrink-0" />
+                <span className="text-neutral-300 group-hover:text-white transition-colors text-sm sm:text-base break-words">
+                  <span className="font-semibold block text-white/95">Branch Office:</span>
+                  32/3, South Street<br/>Sathirapatti<br/>Rajapalayam, India
                 </span>
               </li>
               <li className="flex items-start group">

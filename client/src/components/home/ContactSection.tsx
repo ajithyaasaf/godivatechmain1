@@ -167,11 +167,25 @@ const ContactSection = () => {
                     <MapPinIcon className="text-primary h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-medium text-neutral-800 mb-1">Our Office</p>
+                    <p className="font-medium text-neutral-800 mb-1">Corporate Office</p>
                     <p className="text-neutral-600">
                       261, Vaigai Mainroad 4th Street<br />
                       Sri Nagar, Iyer Bungalow<br />
                       Madurai 625007, India
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-4 shrink-0">
+                    <MapPinIcon className="text-primary h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-neutral-800 mb-1">Branch Office</p>
+                    <p className="text-neutral-600">
+                      32/3, South Street<br />
+                      Sathirapatti<br />
+                      Rajapalayam, India
                     </p>
                   </div>
                 </div>
