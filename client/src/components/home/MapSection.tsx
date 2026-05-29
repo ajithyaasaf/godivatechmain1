@@ -61,7 +61,7 @@ const MapSection = memo(() => {
       )}
       
       <div className="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-md max-w-xs z-10">
-        <p className="font-medium text-neutral-800 text-sm">GodivaTech</p>
+        <p className="font-medium text-neutral-800 text-sm">GodivaTech - Corporate Office</p>
         <p className="text-neutral-600 text-xs">
           261, Vaigai mainroad 4th Street, Sri Nagar, Iyer Bungalow, Madurai 625007
         </p>
