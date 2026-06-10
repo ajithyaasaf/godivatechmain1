@@ -9,7 +9,7 @@ const PageTransition = lazy(() => import("@/components/PageTransition"));
 const TransitionItem = ({ children, delay }: any) => <>{children}</>;
 
 // Lazy loaded components (below the fold)
-const TeamSection = lazy(() => import("@/components/home/TeamSection"));
+// const TeamSection = lazy(() => import("@/components/home/TeamSection"));
 const PortfolioSection = lazy(() => import("@/components/home/PortfolioSection"));
 const TestimonialsSection = lazy(() => import("@/components/home/TestimonialsSection"));
 const BlogSection = lazy(() => import("@/components/home/BlogSection"));
@@ -75,11 +75,13 @@ const Home = () => {
       <AboutSection />
       
       {/* Below-the-fold sections lazy loaded */}
+      {/* Team section commented out
       <Suspense fallback={<div className="min-h-[400px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
         <TransitionItem delay={0.2}>
           <TeamSection />
         </TransitionItem>
       </Suspense>
+      */}
       
       <Suspense fallback={<div className="min-h-[500px] bg-gray-50/20 animate-pulse rounded-md my-8"></div>}>
         <TransitionItem delay={0.1}>

@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import TeamSection from "@/components/home/TeamSection";
+// import TeamSection from "@/components/home/TeamSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
@@ -206,10 +206,11 @@ const About = () => {
             </section>
           </TransitionItem>
 
-          {/* Team Section with delay */}
+          {/* Team Section with delay commented out
           <TransitionItem delay={0.2}>
             <TeamSection />
           </TransitionItem>
+          */}
           
           {/* Testimonials Section with delay */}
           <TransitionItem delay={0.3}>
