@@ -254,8 +254,15 @@ const Portfolio = () => {
     queryKey: ['/api/projects'],
   });
 
-  // Use API projects directly
-  const displayProjects = apiProjects;
+  // Use API projects with custom priority sort (Rotary Club first)
+  const displayProjects = useMemo(() => {
+    return [...apiProjects].sort((a: any, b: any) => {
+      const orderA = a.title === 'Rotary Club of Madurai' ? 0 : (a.order ?? 999);
+      const orderB = b.title === 'Rotary Club of Madurai' ? 0 : (b.order ?? 999);
+      if (orderA !== orderB) return orderA - orderB;
+      return (a.title || '').localeCompare(b.title || '');
+    });
+  }, [apiProjects]);
 
   // Log data source
   useEffect(() => {

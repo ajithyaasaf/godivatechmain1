@@ -66,14 +66,14 @@ export interface IStorage {
   getAllContactMessages(): Promise<ContactMessage[]>;
   getContactMessage(id: number): Promise<ContactMessage | undefined>;
   createContactMessage(contactMessage: InsertContactMessage): Promise<ContactMessage>;
-  deleteContactMessage(id: number): Promise<boolean>;
+  deleteContactMessage(id: number | string): Promise<boolean>;
 
   // Subscribers methods
   getAllSubscribers(): Promise<Subscriber[]>;
   getSubscriber(id: number): Promise<Subscriber | undefined>;
   getSubscriberByEmail(email: string): Promise<Subscriber | undefined>;
   createSubscriber(subscriber: InsertSubscriber): Promise<Subscriber>;
-  deleteSubscriber(id: number): Promise<boolean>;
+  deleteSubscriber(id: number | string): Promise<boolean>;
 
   // Session store for authentication
   sessionStore: session.Store;

@@ -3,11 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { DeploymentDiagnostic } from "@/components/admin/DeploymentDiagnostic";
 import {
   BarChart3,
+  Briefcase,
   CalendarDays,
   FileText,
   MessageSquareText,
@@ -131,7 +130,16 @@ const AdminDashboard = () => {
 
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <Button asChild className="bg-blue-600 hover:bg-blue-700">
+              <a href="/admin/careers" className="flex items-center gap-1.5">
+                <Briefcase className="h-4 w-4" />
+                <span>Job Applications</span>
+              </a>
+            </Button>
+            <Button asChild>
+              <a href="/admin/contact-messages">Contact Messages</a>
+            </Button>
             <Button asChild>
               <a href="/admin/blog-posts">Manage Blog Posts</a>
             </Button>
@@ -141,49 +149,7 @@ const AdminDashboard = () => {
             <Button asChild>
               <a href="/admin/testimonials">Manage Testimonials</a>
             </Button>
-            <Button asChild>
-              <a href="/admin/team-members">Manage Team</a>
-            </Button>
           </div>
-        </div>
-
-        <div className="mt-8">
-          <Tabs defaultValue="overview">
-            <TabsList className="w-full justify-start overflow-x-auto whitespace-nowrap">
-              <TabsTrigger value="overview">Dashboard Overview</TabsTrigger>
-              <TabsTrigger value="analytics">Usage Analytics</TabsTrigger>
-              <TabsTrigger value="diagnostic">Deployment Diagnostic</TabsTrigger>
-              <TabsTrigger value="tips">Admin Tips</TabsTrigger>
-            </TabsList>
-            <TabsContent value="overview" className="p-4">
-              <h3 className="text-lg font-medium mb-2">Welcome to your Admin Dashboard</h3>
-              <p className="text-muted-foreground">
-                This dashboard gives you an overview of your website content and provides
-                quick access to manage various aspects of your GodivaTech website. Use the
-                sidebar navigation to access specific content management areas.
-              </p>
-            </TabsContent>
-            <TabsContent value="analytics" className="p-4">
-              <h3 className="text-lg font-medium mb-2">Analytics Coming Soon</h3>
-              <p className="text-muted-foreground">
-                Website analytics and visitor statistics will be available in a future update.
-                For now, focus on managing your content and keeping your website up-to-date.
-              </p>
-            </TabsContent>
-            <TabsContent value="diagnostic" className="p-4">
-              <DeploymentDiagnostic />
-            </TabsContent>
-            <TabsContent value="tips" className="p-4">
-              <h3 className="text-lg font-medium mb-2">Admin Tips</h3>
-              <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-                <li>Regularly update your blog with fresh content to improve SEO</li>
-                <li>Add testimonials from satisfied clients to build trust</li>
-                <li>Keep your services section up-to-date with your current offerings</li>
-                <li>Showcase your team members to add a personal touch to your business</li>
-                <li>Respond to contact messages promptly to engage potential clients</li>
-              </ul>
-            </TabsContent>
-          </Tabs>
         </div>
       </AdminLayout>
     </>

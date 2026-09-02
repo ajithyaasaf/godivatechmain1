@@ -378,7 +378,7 @@ export class FirestoreStorage {
       
       console.log(`Found ${querySnapshot.size} projects in Firestore collection`);
       
-      return querySnapshot.docs.map(docSnap => {
+      const projects = querySnapshot.docs.map(docSnap => {
         const data = docSnap.data() as any;
         // Use the actual document ID as the project ID
         const projectId = docSnap.id;
@@ -388,7 +388,7 @@ export class FirestoreStorage {
         let normalizedCategory = data.category;
         if (normalizedCategory) {
           // Fix case sensitivity - convert all web development variations to consistent format
-          if (normalizedCategory.toLowerCase() === 'web development') {
+          if (normalizedCategory.toLowerCase() === 'web development' || normalizedCategory.toLowerCase() === 'websites') {
             normalizedCategory = 'Web Development';
           }
           // Consolidate Corporate Website and Solar Solutions Website under Web Development
@@ -400,6 +400,9 @@ export class FirestoreStorage {
         // Update project links for specific projects
         let projectLink = data.link ?? null;
         switch (data.title) {
+          case 'Rotary Club of Madurai':
+            projectLink = 'https://rotary-website-iota.vercel.app/';
+            break;
           case 'JP FInserv':
             projectLink = 'https://www.jpfinserv.com';
             break;
@@ -423,6 +426,14 @@ export class FirestoreStorage {
           link: projectLink, // Use updated link
           image: data.image ?? null
         } as Project;
+      });
+
+      // Sort with custom order priority (Rotary Club / order=1 first)
+      return projects.sort((a: any, b: any) => {
+        const orderA = a.title === 'Rotary Club of Madurai' ? 0 : (a.order ?? 999);
+        const orderB = b.title === 'Rotary Club of Madurai' ? 0 : (b.order ?? 999);
+        if (orderA !== orderB) return orderA - orderB;
+        return (a.title || '').localeCompare(b.title || '');
       });
     } catch (error) {
       console.error("Error getting all projects:", error);
@@ -1034,27 +1045,23 @@ export class FirestoreStorage {
           const data = docSnap.data() as any;
           console.log(`Contact message ${docSnap.id}: ${JSON.stringify(data, null, 2)}`);
           
-          // Handle different document ID formats
-          let docId: number;
-          try {
-            docId = parseInt(docSnap.id);
-          } catch (e) {
-            console.log(`Could not parse document ID "${docSnap.id}" as number, using fallback ID`);
-            docId = 9999;
+          let docId: any = data.id !== undefined ? data.id : parseInt(docSnap.id);
+          if (isNaN(docId)) {
+            docId = docSnap.id;
           }
           
-          // Handle different date formats
           let createdAtDate: Date;
           try {
             createdAtDate = convertTimestampToDate(data.createdAt);
           } catch (e) {
-            console.log(`Could not convert createdAt for message ${docSnap.id}, using current date`);
             createdAtDate = new Date();
           }
           
           return { 
             ...data,
             id: docId,
+            docId: docSnap.id,
+            firebaseId: docSnap.id,
             createdAt: createdAtDate
           } as ContactMessage;
         });
@@ -1065,27 +1072,23 @@ export class FirestoreStorage {
         const data = docSnap.data() as any;
         console.log(`Contact message ${docSnap.id}: ${JSON.stringify(data, null, 2)}`);
         
-        // Handle different document ID formats
-        let docId: number;
-        try {
-          docId = parseInt(docSnap.id);
-        } catch (e) {
-          console.log(`Could not parse document ID "${docSnap.id}" as number, using fallback ID`);
-          docId = 9999;
+        let docId: any = data.id !== undefined ? data.id : parseInt(docSnap.id);
+        if (isNaN(docId)) {
+          docId = docSnap.id;
         }
         
-        // Handle different date formats
         let createdAtDate: Date;
         try {
           createdAtDate = convertTimestampToDate(data.createdAt);
         } catch (e) {
-          console.log(`Could not convert createdAt for message ${docSnap.id}, using current date`);
           createdAtDate = new Date();
         }
         
         return { 
           ...data,
           id: docId,
+          docId: docSnap.id,
+          firebaseId: docSnap.id,
           createdAt: createdAtDate
         } as ContactMessage;
       });
@@ -1099,7 +1102,7 @@ export class FirestoreStorage {
     }
   }
 
-  async getContactMessage(id: number): Promise<ContactMessage | undefined> {
+  async getContactMessage(id: number | string): Promise<ContactMessage | undefined> {
     try {
       const docRef = doc(db, 'contact_messages', id.toString());
       const docSnap = await getDoc(docRef);
@@ -1110,6 +1113,7 @@ export class FirestoreStorage {
       return { 
         ...data,
         id,
+        docId: docSnap.id,
         createdAt: convertTimestampToDate(data.createdAt)
       } as ContactMessage;
     } catch (error) {
@@ -1143,11 +1147,35 @@ export class FirestoreStorage {
     }
   }
 
-  async deleteContactMessage(id: number): Promise<boolean> {
+  async deleteContactMessage(id: number | string): Promise<boolean> {
     try {
-      const docRef = doc(db, 'contact_messages', id.toString());
-      await deleteDoc(docRef);
-      return true;
+      const targetId = String(id);
+      console.log(`Deleting contact message with target ID: ${targetId}`);
+      
+      // 1. Try direct doc ID match first
+      const directRef = doc(db, 'contact_messages', targetId);
+      const directSnap = await getDoc(directRef);
+      if (directSnap.exists()) {
+        await deleteDoc(directRef);
+        console.log(`Successfully deleted contact message document '${targetId}'`);
+        return true;
+      }
+      
+      // 2. Query collection for matching id or numeric id
+      const allDocs = await getDocs(collection(db, 'contact_messages'));
+      let deleted = false;
+      for (const d of allDocs.docs) {
+        const data = d.data();
+        if (
+          d.id === targetId ||
+          (data.id !== undefined && String(data.id) === targetId)
+        ) {
+          await deleteDoc(doc(db, 'contact_messages', d.id));
+          console.log(`Deleted contact message document '${d.id}' matched ID ${targetId}`);
+          deleted = true;
+        }
+      }
+      return deleted;
     } catch (error) {
       console.error("Error deleting contact message:", error);
       return false;
@@ -1287,11 +1315,31 @@ export class FirestoreStorage {
     }
   }
 
-  async deleteSubscriber(id: number): Promise<boolean> {
+  async deleteSubscriber(id: number | string): Promise<boolean> {
     try {
-      const docRef = doc(db, 'subscribers', id.toString());
-      await deleteDoc(docRef);
-      return true;
+      const targetId = String(id);
+      console.log(`Deleting subscriber with target ID: ${targetId}`);
+      
+      const directRef = doc(db, 'subscribers', targetId);
+      const directSnap = await getDoc(directRef);
+      if (directSnap.exists()) {
+        await deleteDoc(directRef);
+        return true;
+      }
+      
+      const allDocs = await getDocs(collection(db, 'subscribers'));
+      let deleted = false;
+      for (const d of allDocs.docs) {
+        const data = d.data();
+        if (
+          d.id === targetId ||
+          (data.id !== undefined && String(data.id) === targetId)
+        ) {
+          await deleteDoc(doc(db, 'subscribers', d.id));
+          deleted = true;
+        }
+      }
+      return deleted;
     } catch (error) {
       console.error("Error deleting subscriber:", error);
       return false;

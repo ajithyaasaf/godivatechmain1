@@ -60,9 +60,11 @@ const ContentDataTable = ({
   const apiPath = `/api${endpoint}`;
   const adminApiPath = `/api/admin${endpoint}`;
 
-  // Fetch data with React Query
+  // Fetch data with React Query (automatic 3-second live sync without manual refresh)
   const { data = [], isLoading, refetch, error } = useQuery<any[]>({
     queryKey: [apiPath],
+    refetchInterval: 3000,
+    refetchOnWindowFocus: true,
   });
 
   // Handle success/error after query completes
@@ -588,121 +590,12 @@ const ContentDataTable = ({
     },
   });
 
-  // Delete mutation with enhanced error handling and retries
+  // Delete mutation with enhanced error handling and reliable optimistic UI update
   const deleteMutation = useMutation({
     mutationFn: async (id: number | string) => {
       console.log(`Sending DELETE request to ${adminApiPath}/${id}`);
-
-      try {
-        // Added timeout and retry logic
-        const maxRetries = 2;
-        let currentRetry = 0;
-        let lastError = null;
-
-        while (currentRetry <= maxRetries) {
-          try {
-            // If this is a retry, log it
-            if (currentRetry > 0) {
-              console.log(`Retry attempt ${currentRetry}/${maxRetries} for deletion of ID: ${id}`);
-            }
-
-            // Make the delete request with a reasonable timeout
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-            const response = await fetch(`${adminApiPath}/${id}`, {
-              method: 'DELETE',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              signal: controller.signal
-            });
-
-            clearTimeout(timeoutId);
-
-            console.log(`Response from delete operation:`, response);
-
-            if (response.ok) {
-              console.log(`Deletion with ID ${id} was successful on server`);
-              let responseData = {};
-
-              try {
-                const text = await response.text();
-                if (text) {
-                  responseData = JSON.parse(text);
-                  console.log('Delete response data:', responseData);
-                } else {
-                  console.log('Empty response body (successful)');
-                }
-              } catch (parseError) {
-                console.log('Non-JSON response body:', parseError);
-              }
-
-              return id;
-            } else {
-              // Server returned an error
-              let errorMessage = `Server returned ${response.status}`;
-              try {
-                const text = await response.text();
-                if (text) {
-                  try {
-                    const errorData = JSON.parse(text);
-                    errorMessage = errorData.message || errorMessage;
-                    console.error('Server delete error:', errorData);
-                  } catch (parseError) {
-                    // Non-JSON error response - could be HTML
-                    if (text.includes('<!DOCTYPE html>')) {
-                      errorMessage = `Server error (${response.status}). The server may be experiencing issues.`;
-                      console.error('Server returned HTML error page instead of JSON');
-                    } else {
-                      errorMessage = text || errorMessage;
-                    }
-                  }
-                }
-              } catch (textError) {
-                console.error('Could not read error response body:', textError);
-              }
-
-              // For server errors (5xx) or if HTML error page was detected, retry
-              const isHtmlErrorPage = errorMessage.includes('<!DOCTYPE html>') ||
-                errorMessage.includes('Server error');
-
-              if ((response.status >= 500 || isHtmlErrorPage) && currentRetry < maxRetries) {
-                lastError = new Error(`Server error (${response.status}). Retrying...`);
-                console.log(`Server returned error ${response.status}, will retry (${currentRetry + 1}/${maxRetries})`);
-                currentRetry++;
-                await new Promise(resolve => setTimeout(resolve, 1000 * currentRetry)); // Exponential backoff
-                continue; // Try again
-              }
-
-              throw new Error(errorMessage);
-            }
-          } catch (fetchError) {
-            lastError = fetchError;
-
-            // For network errors, retry
-            if (
-              fetchError instanceof Error && (
-                fetchError instanceof TypeError ||
-                fetchError.name === 'AbortError'
-              )
-            ) {
-              if (currentRetry < maxRetries) {
-                currentRetry++;
-                await new Promise(resolve => setTimeout(resolve, 1000 * currentRetry));
-                continue; // Try again
-              }
-            }
-
-            throw fetchError; // Rethrow if max retries exceeded or not a network error
-          }
-        }
-
-        // If we get here, we've exhausted retries
-        throw lastError || new Error('Failed to delete after multiple attempts');
-      } catch (error) {
-        console.error(`Error in delete mutation for ID ${id}:`, error);
-        throw error;
-      }
+      const res = await apiRequest('DELETE', `${adminApiPath}/${id}`);
+      return id;
     },
     // ENHANCED WITH OPTIMISTIC UI UPDATES
     // Immediately update UI even before server responds
@@ -715,25 +608,18 @@ const ContentDataTable = ({
       // Snapshot the previous value for rollback if needed
       const previousData = queryClient.getQueryData([apiPath]);
 
-      // Optimistically update by removing the item from cache immediately
+      // Optimistically update by removing the item from cache immediately (0ms)
       queryClient.setQueryData([apiPath], (oldData: any[] = []) => {
         if (!Array.isArray(oldData)) return oldData;
 
-        // Handle both string and number IDs for comparison
-        const itemId = typeof deletedId === 'string' && !isNaN(Number(deletedId))
-          ? Number(deletedId)
-          : deletedId;
-
+        const targetIdStr = String(deletedId);
         const newData = oldData.filter(item => {
-          // Check all possible ID formats
-          const normalizedItemId = item.id || item.docId || item.firebaseId || item.__id;
-          const normalizedDeletedId = typeof itemId === 'string' && !isNaN(Number(itemId))
-            ? Number(itemId)
-            : itemId;
-
-          // Try to match exactly, or convert both to strings for comparison
-          return normalizedItemId !== normalizedDeletedId &&
-            String(normalizedItemId) !== String(normalizedDeletedId);
+          const matches =
+            String(item.id) === targetIdStr ||
+            (item.docId !== undefined && String(item.docId) === targetIdStr) ||
+            (item.firebaseId !== undefined && String(item.firebaseId) === targetIdStr) ||
+            (item.__id !== undefined && String(item.__id) === targetIdStr);
+          return !matches;
         });
 
         console.log(`Optimistic update: Filtered out item ${deletedId}. Items before: ${oldData.length}, after: ${newData.length}`);
@@ -744,7 +630,7 @@ const ContentDataTable = ({
       return { previousData };
     },
     // If the deletion is successful
-    onSuccess: (deletedId, _, context) => {
+    onSuccess: (deletedId) => {
       console.log(`Delete mutation successful for ID ${deletedId}`);
 
       toast({
@@ -752,15 +638,12 @@ const ContentDataTable = ({
         description: `${title} has been deleted.`,
       });
 
-      // Final UI refresh to ensure consistency with server
-      // Use a delay to ensure WebSocket messages don't override our state
+      // Invalidate to ensure consistency with backend
       setTimeout(() => {
-        // Force refresh the data from server (but don't show loading state)
         queryClient.invalidateQueries({
-          queryKey: [apiPath],
-          refetchType: 'all'
+          queryKey: [apiPath]
         });
-      }, 200);
+      }, 300);
     },
     // If the mutation fails, roll back optimistic updates
     onError: (error: Error, deletedId, context: any) => {
@@ -780,11 +663,7 @@ const ContentDataTable = ({
     },
     // Always refetch once after mutation completes, successful or not
     onSettled: () => {
-      console.log('Delete mutation settled, refreshing data');
-      // Final cleanup, query again to ensure UI is in sync with server
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: [apiPath] });
-      }, 500);
+      console.log('Delete mutation settled');
     },
   });
 

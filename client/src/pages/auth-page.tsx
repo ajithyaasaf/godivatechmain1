@@ -25,7 +25,7 @@ export default function AuthPage() {
 
   // If user is already logged in, redirect to admin page
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated || user) {
       console.log("User is already authenticated, redirecting to /admin");
       setLocation("/admin");
     }
@@ -50,10 +50,7 @@ export default function AuthPage() {
       
       if (success) {
         console.log("Login successful, redirecting to /admin");
-        // Redirect to admin dashboard after successful login
-        setTimeout(() => {
-          window.location.href = '/admin';
-        }, 500);
+        setLocation("/admin");
       } else {
         console.log("Login failed");
         loginForm.setError("password", { 

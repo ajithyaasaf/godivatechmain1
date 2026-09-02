@@ -19,15 +19,17 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 // Auth provider component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return typeof window !== 'undefined' && localStorage.getItem('auth_status') === 'authenticated';
+  });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { toast } = useToast();
 
-  // Fetch user data
-  const { data: user = null } = useQuery<SelectUser | null>({
+  // Fetch user data from session
+  const { data: user = null, refetch: refetchUser } = useQuery<SelectUser | null>({
     queryKey: ['/api/user'],
     queryFn: getQueryFn({ on401: 'returnNull' }),
-    enabled: isAuthenticated,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Subscribe to auth service on mount
@@ -55,6 +57,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const success = await authService.login(username, password);
       
       if (success) {
+        setIsAuthenticated(true);
+        try {
+          await refetchUser();
+        } catch (e) {}
+        
         toast({
           title: 'Login successful',
           description: 'Welcome back!',

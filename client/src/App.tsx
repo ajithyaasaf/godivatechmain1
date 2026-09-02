@@ -72,6 +72,7 @@ const ProjectsPage = lazy(() => import("@/pages/admin/projects"));
 const ContactMessagesPage = lazy(
   () => import("@/pages/admin/contact-messages"),
 );
+const AdminCareersPage = lazy(() => import("@/pages/admin/careers"));
 const SubscribersPage = lazy(() => import("@/pages/admin/subscribers"));
 
 /**
@@ -171,6 +172,10 @@ function App() {
             <ProtectedRoute
               path="/admin/contact-messages"
               component={ContactMessagesPage}
+            />
+            <ProtectedRoute
+              path="/admin/careers"
+              component={AdminCareersPage}
             />
             <ProtectedRoute
               path="/admin/subscribers"

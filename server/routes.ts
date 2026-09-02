@@ -613,7 +613,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.delete("/api/admin/contact-messages/:id", isAuthenticated, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = !isNaN(Number(req.params.id)) ? Number(req.params.id) : req.params.id;
       await storage.deleteContactMessage(id);
       res.status(204).end();
     } catch (error) {
@@ -656,7 +656,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   app.delete("/api/admin/subscribers/:id", isAuthenticated, async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = !isNaN(Number(req.params.id)) ? Number(req.params.id) : req.params.id;
       await storage.deleteSubscriber(id);
       res.status(204).end();
     } catch (error) {
