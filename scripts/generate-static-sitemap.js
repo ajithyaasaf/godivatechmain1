@@ -27,12 +27,16 @@ const staticPages = [
 
 // Service pages
 const servicePages = [
-  { url: '/services/web-development', priority: '0.8', changefreq: 'monthly' },
+  { url: '/services/web-design-development', priority: '0.8', changefreq: 'monthly' },
   { url: '/services/digital-marketing', priority: '0.8', changefreq: 'monthly' },
+  { url: '/services/custom-software', priority: '0.8', changefreq: 'monthly' },
+  { url: '/services/ecommerce-solutions', priority: '0.8', changefreq: 'monthly' },
   { url: '/services/app-development', priority: '0.8', changefreq: 'monthly' },
-  { url: '/services/poster-design', priority: '0.7', changefreq: 'monthly' },
   { url: '/services/ui-ux-design', priority: '0.8', changefreq: 'monthly' },
   { url: '/services/logo-brand-design', priority: '0.7', changefreq: 'monthly' },
+  { url: '/services/poster-design', priority: '0.7', changefreq: 'monthly' },
+  { url: '/services/corporate-video-production', priority: '0.8', changefreq: 'monthly' },
+  { url: '/services/data-analytics', priority: '0.8', changefreq: 'monthly' },
 ];
 
 // Fetch dynamic content from API

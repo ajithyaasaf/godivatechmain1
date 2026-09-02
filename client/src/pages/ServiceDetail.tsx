@@ -4,7 +4,8 @@ import { useParams, useLocation } from "wouter";
 import { 
   ArrowLeft, ArrowRight, CheckCircle, Clock, 
   Users, Briefcase, Sparkles, Globe, Palette, Cloud, 
-  Box, Database, CircleUser, Code, ShieldCheck, Layers
+  Box, Database, CircleUser, Code, ShieldCheck, Layers,
+  Video, LineChart, Film, BarChart3
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,9 @@ const getIconForService = (slug: string) => {
     'ui-ux-design': CircleUser,
     'app-development': Code,
     'cyber-security': ShieldCheck,
-    'cloud-solutions': Layers
+    'cloud-solutions': Layers,
+    'corporate-video-production': Video,
+    'data-analytics': LineChart
   };
   
   return iconMap[slug] || Globe;
@@ -238,6 +241,52 @@ const defaultServiceData: Record<string, ServiceType> = {
       "Multiple format options for different needs"
     ],
     technologies: ["Adobe Photoshop", "Adobe Illustrator", "Figma", "Canva Pro", "Print Design Standards"]
+  },
+  "corporate-video-production": {
+    id: 9,
+    title: "Corporate Video Production",
+    description: "High-impact brand storytelling, commercial advertisements, 3D product animations, and corporate documentaries that elevate your market presence.",
+    slug: "corporate-video-production",
+    features: ["4K Cinematic Production", "Scriptwriting & Storyboarding", "Aerial & Drone Videography", "Motion Graphics & 3D VFX", "Sound Design & Color Grading"],
+    longDescription: "Our corporate video production services deliver captivating, cinematic visual stories that connect with your audience, amplify brand authority, and accelerate sales conversions. From high-concept brand films and executive interviews to 3D product showcases and social media reels, we manage every phase from creative concept to final color grading and multi-platform publishing.",
+    processSteps: [
+      { title: "Concept & Scriptwriting", description: "We define your core message, write compelling scripts, and create visual storyboards." },
+      { title: "Pre-Production Planning", description: "Location scouting, casting, equipment setup, and detailed filming schedules." },
+      { title: "Cinematic Filming", description: "High-resolution 4K/6K camera shoots, professional audio recording, and aerial drone coverage." },
+      { title: "Post-Production & VFX", description: "Precision editing, motion graphics, 3D animations, color grading, and licensed soundtrack scoring." },
+      { title: "Multi-Format Delivery", description: "Optimized video exports tailored for websites, YouTube, TV commercials, and social media ad campaigns." }
+    ],
+    benefits: [
+      "Substantially higher audience engagement and memory retention",
+      "Increased conversion rates on landing pages and ad campaigns",
+      "Premium, authoritative corporate brand positioning",
+      "Reusable visual assets across all digital marketing channels",
+      "Crystal-clear communication of complex products and business workflows"
+    ],
+    technologies: ["4K/6K Cinema Cameras", "Adobe Premiere Pro", "After Effects", "DaVinci Resolve", "Blender 3D", "DJI Drones"]
+  },
+  "data-analytics": {
+    id: 10,
+    title: "Data Analytics & Business Intelligence",
+    description: "Transform raw data into actionable business intelligence with custom dashboards, automated reporting, predictive analytics, and data pipeline engineering.",
+    slug: "data-analytics",
+    features: ["Custom BI Dashboards", "Automated Data Pipelines", "Predictive Analytics", "KPI & Revenue Tracking", "Data Warehouse Integration"],
+    longDescription: "Our Data Analytics and Business Intelligence services empower organizations to make confident, data-backed decisions. We design robust data architectures, integrate fragmented data sources, and build intuitive, real-time executive dashboards that uncover revenue opportunities, optimize operational workflows, and forecast market trends.",
+    processSteps: [
+      { title: "Data Discovery & Audit", description: "We assess your existing data infrastructure, sources, data hygiene, and strategic KPIs." },
+      { title: "Pipeline & ETL Engineering", description: "We connect disparate databases, APIs, and cloud services into automated, reliable data pipelines." },
+      { title: "Data Modeling & Warehousing", description: "Structured data storage optimized for rapid querying, aggregation, and deep analysis." },
+      { title: "Interactive Dashboard Design", description: "Intuitive executive and departmental dashboards with real-time alerts and drill-down analytics." },
+      { title: "Predictive Analytics & Enablement", description: "Machine learning forecasting, stakeholder training, and continuous analytics optimization." }
+    ],
+    benefits: [
+      "Instant, real-time visibility into mission-critical KPIs and revenue streams",
+      "Elimination of manual spreadsheets and time-consuming reporting errors",
+      "Accurate predictive modeling for sales, customer churn, and inventory",
+      "Data-driven operational efficiencies that lower costs and improve margins",
+      "A unified, secure single source of truth across your entire organization"
+    ],
+    technologies: ["Power BI", "Tableau", "Python", "SQL", "Google BigQuery", "Snowflake", "Looker Studio"]
   }
 };
 
@@ -704,6 +753,34 @@ const getFAQsForService = (slug: string): {question: string, answer: string}[] =
       {
         question: "Do you provide app maintenance services in Madurai?",
         answer: "Yes, we offer comprehensive app maintenance services for all applications developed by us. Our Madurai-based support team handles updates for new OS versions, bug fixes, security patches, and feature enhancements. We provide flexible maintenance packages to ensure your app continues to perform optimally."
+      }
+    ],
+    'corporate-video-production': [
+      {
+        question: "What types of corporate video production services do you offer?",
+        answer: "We produce a comprehensive range of corporate videos including brand story films, promotional advertisements, 3D product explainers, executive interviews, training modules, client testimonials, and dynamic social media reels."
+      },
+      {
+        question: "What is the typical turnaround time for a corporate video?",
+        answer: "Depending on project scope, scripting, and post-production requirements, most corporate video projects are completed within 2 to 4 weeks from initial concept approval to final delivery."
+      },
+      {
+        question: "Do you provide scriptwriting, voiceover, and drone filming?",
+        answer: "Yes, our video production package is complete end-to-end. We handle professional scriptwriting, professional voiceover artists across multiple languages, 4K drone cinematography, motion graphics, and audio mastering."
+      }
+    ],
+    'data-analytics': [
+      {
+        question: "How can data analytics and BI benefit my business?",
+        answer: "Data analytics transforms fragmented data from your sales, marketing, operations, and CRM systems into real-time visual dashboards. This eliminates guesswork, automates reporting, identifies bottlenecks, and highlights new revenue opportunities."
+      },
+      {
+        question: "Which business intelligence tools and platforms do you support?",
+        answer: "We build custom solutions using Power BI, Tableau, Google Looker Studio, Python, SQL, BigQuery, and Snowflake, integrating seamlessly with your current software stack."
+      },
+      {
+        question: "Can you connect and unify data from multiple separate platforms?",
+        answer: "Yes, we build automated ETL (Extract, Transform, Load) data pipelines that sync data from ERPs, e-commerce stores, CRMs, marketing platforms, and databases into a single, cohesive dashboard."
       }
     ],
     // Default FAQs for any other service

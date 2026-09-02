@@ -777,6 +777,22 @@ export class FirestoreStorage {
           slug: "poster-design",
           icon: "code",
           features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
+        },
+        {
+          id: 9,
+          title: "Corporate Video Production",
+          description: "High-impact brand storytelling, commercial advertisements, 3D product showcases, and corporate documentaries that elevate your market presence.",
+          slug: "corporate-video-production",
+          icon: "video",
+          features: ["4K Cinematic Filming", "Scriptwriting & Storyboard", "Drone & Aerial Shots", "Motion Graphics & VFX", "Sound Design & Color Grading"]
+        },
+        {
+          id: 10,
+          title: "Data Analytics & BI",
+          description: "Transform raw data into actionable business intelligence with custom dashboards, automated reporting, and predictive analytics.",
+          slug: "data-analytics",
+          icon: "bar-chart",
+          features: ["Custom BI Dashboards", "Automated Data Pipelines", "Predictive Analytics", "KPI & Revenue Tracking", "Data Warehouse Integration"]
         }
       ];
       

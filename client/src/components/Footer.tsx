@@ -86,6 +86,8 @@ const Footer = () => {
               {[
                 { name: "Web Development", slug: "web-design-development" },
                 { name: "Digital Marketing", slug: "digital-marketing" },
+                { name: "Corporate Video Production", slug: "corporate-video-production" },
+                { name: "Data Analytics & BI", slug: "data-analytics" },
                 { name: "E-commerce Solutions", slug: "ecommerce-solutions" },
                 { name: "Web Hosting & Cloud", slug: "web-hosting-maintenance" },
                 { name: "UI/UX Design", slug: "ui-ux-design" },

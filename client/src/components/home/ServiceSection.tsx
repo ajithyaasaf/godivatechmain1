@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "wouter";
 import { 
   Globe, Megaphone, Smartphone, PenTool, Layout, Palette, 
-  ArrowRight, Star, CheckCircle, Cloud, Box, User, Database 
+  ArrowRight, Star, CheckCircle, Cloud, Box, User, Database,
+  Video, LineChart, BarChart3 
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -126,6 +127,12 @@ const getIconComponent = (iconName?: string, serviceTitle?: string): React.Eleme
       'poster': PenTool,
       'ecommerce': Box,
       'hosting': Database,
+      'video': Video,
+      'film': Video,
+      'analytics': LineChart,
+      'data': LineChart,
+      'chart': BarChart3,
+      'bar-chart': LineChart
     };
     
     const mapped = iconMap[iconName.toLowerCase()];
@@ -142,6 +149,8 @@ const getIconComponent = (iconName?: string, serviceTitle?: string): React.Eleme
     if (title.includes('poster') || title.includes('design') && title.includes('poster')) return PenTool;
     if (title.includes('ui') || title.includes('ux') || title.includes('interface')) return Layout;
     if (title.includes('logo') || title.includes('brand') || title.includes('branding')) return Palette;
+    if (title.includes('video') || title.includes('film') || title.includes('media')) return Video;
+    if (title.includes('data') || title.includes('analytic') || title.includes('intelligence')) return LineChart;
   }
   
   return Globe; // Default fallback
@@ -220,6 +229,22 @@ const ServiceSection: React.FC = () => {
       icon: PenTool,
       slug: "poster-design",
       features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
+    },
+    {
+      id: 9,
+      title: "Corporate Video Production",
+      description: "High-impact brand storytelling, commercial advertisements, 3D product animations, and corporate documentaries.",
+      icon: Video,
+      slug: "corporate-video-production",
+      features: ["4K Cinematic Filming", "Drone Videography", "Motion Graphics & 3D VFX", "Sound Design"]
+    },
+    {
+      id: 10,
+      title: "Data Analytics & BI",
+      description: "Transform complex data into actionable business intelligence with custom dashboards, automated reporting, and predictive analytics.",
+      icon: LineChart,
+      slug: "data-analytics",
+      features: ["Custom BI Dashboards", "Automated Data Pipelines", "Predictive Analytics", "KPI Tracking"]
     }
   ];
 

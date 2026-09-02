@@ -16,7 +16,8 @@ import {
   GraduationCap, ArrowRight, Globe, Layers, Code, Cloud, 
   Database, Palette, BrainCircuit, BarChart, ShieldCheck,
   Cpu, ScrollText, Users, Box, Bookmark, ChevronRight, 
-  CheckCircle2, Sparkles, FileCheck, MessageCircle, Layout
+  CheckCircle2, Sparkles, FileCheck, MessageCircle, Layout,
+  Video, LineChart
 } from "lucide-react";
 import ServiceSection from "@/components/home/ServiceSection";
 import NewsletterSection from "@/components/home/NewsletterSection";
@@ -282,6 +283,22 @@ const Services = () => {
       description: "Craft eye-catching posters, banners, and marketing materials that effectively communicate your message and attract customer attention.",
       slug: "poster-design",
       features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
+    },
+    { 
+      id: 9,
+      icon: Video, 
+      title: "Corporate Video Production", 
+      description: "Cinematic brand films, commercial ads, 3D product animations, and corporate documentaries that elevate your company's global positioning.",
+      slug: "corporate-video-production",
+      features: ["4K Cinematic Filming", "Scriptwriting & Storyboard", "Drone & Aerial Shots", "Motion Graphics & VFX", "Sound Design & Color Grading"]
+    },
+    { 
+      id: 10,
+      icon: LineChart, 
+      title: "Data Analytics & BI", 
+      description: "Transform complex data into actionable business intelligence with custom dashboards, automated reporting, and predictive analytics.",
+      slug: "data-analytics",
+      features: ["Custom BI Dashboards", "Automated Data Pipelines", "Predictive Analytics", "KPI & Revenue Tracking", "Data Warehouse Integration"]
     }
   ];
   

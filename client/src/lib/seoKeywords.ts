@@ -186,6 +186,24 @@ export const pageKeywords = {
     "business logo design Madurai",
     "logo redesign services Madurai"
   ],
+  corporateVideoProduction: [
+    "corporate video production company",
+    "commercial video production services",
+    "brand film production",
+    "product explainer video agency",
+    "3D product animation and VFX",
+    "drone videography services",
+    "corporate documentary filmmakers"
+  ],
+  dataAnalytics: [
+    "data analytics and business intelligence",
+    "custom BI dashboard development",
+    "Power BI consulting services",
+    "Tableau dashboard design",
+    "predictive analytics solutions",
+    "automated data pipeline engineering",
+    "enterprise data warehouse architecture"
+  ],
   portfolio: [
     // Portfolio with focus on "best" keywords
     "best web development projects Madurai",

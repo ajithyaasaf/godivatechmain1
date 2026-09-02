@@ -7,7 +7,7 @@ import {
   Box, XIcon, ChevronDown, Search, 
   ArrowUpRight, Globe, Layers, Shield, Database, 
   Braces, BrainCircuit, Palette, CircleUser, 
-  Menu, Phone, Mail
+  Menu, Phone, Mail, Video, BarChart3
 } from "lucide-react";
 import godivaLogo from "../assets/godiva-logo.png";
 
@@ -610,6 +610,20 @@ const Header: React.FC = () => {
       description: "User-centered design enhancing usability and engagement",
       path: "/services/ui-ux-design",
       color: "text-rose-500"
+    },
+    { 
+      icon: Video, 
+      title: "Corporate Video Production", 
+      description: "Cinematic brand films, commercial ads, and 3D product animations",
+      path: "/services/corporate-video-production",
+      color: "text-amber-500"
+    },
+    { 
+      icon: BarChart3, 
+      title: "Data Analytics & BI", 
+      description: "Custom BI dashboards, automated reporting, and predictive analytics",
+      path: "/services/data-analytics",
+      color: "text-emerald-500"
     }
   ];
 
