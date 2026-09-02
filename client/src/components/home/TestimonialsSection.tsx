@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { LazyMotion, domAnimation, m } from "framer-motion";
+import { Star, CheckCircle } from "lucide-react";
 import OptimizedImage from "@/components/ui/optimized-image";
 
 interface Testimonial {
@@ -9,8 +10,36 @@ interface Testimonial {
   position: string;
   company: string;
   content: string;
-  image: string;
+  image?: string;
 }
+
+// Generate 2-letter uppercase initials from name
+const getInitials = (name: string): string => {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+  }
+  return (name.slice(0, 2) || "GT").toUpperCase();
+};
+
+// Vibrant curated gradients for authentic initials avatars
+const GRADIENTS = [
+  "from-blue-600 to-indigo-600",
+  "from-purple-600 to-pink-600",
+  "from-emerald-600 to-teal-600",
+  "from-amber-500 to-orange-600",
+  "from-cyan-600 to-blue-600",
+  "from-rose-500 to-red-600",
+  "from-violet-600 to-purple-600"
+];
+
+const getAvatarGradient = (name: string): string => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return GRADIENTS[Math.abs(hash) % GRADIENTS.length];
+};
 
 // Optimized with memoization to prevent unnecessary renders
 const TestimonialCard = memo(({ testimonial, index, isActive = true }: { 
@@ -20,10 +49,29 @@ const TestimonialCard = memo(({ testimonial, index, isActive = true }: {
 }) => {
   // Pre-compute the animation delay once per component instance
   const animationDelay = useMemo(() => Math.min(index * 0.1, 0.3), [index]);
+  const initials = useMemo(() => getInitials(testimonial.name), [testimonial.name]);
+  const gradient = useMemo(() => getAvatarGradient(testimonial.name), [testimonial.name]);
+
+  // Clean location & subtitle without awkward commas
+  const subtitle = useMemo(() => {
+    const pos = (testimonial.position || "").trim();
+    const comp = (testimonial.company || "").trim();
+    if (pos && comp) return `${pos}, ${comp}`;
+    if (pos) return pos;
+    if (comp) return comp;
+    return "Verified Client";
+  }, [testimonial.position, testimonial.company]);
   
+  // Check if image is a real uploaded photo (ignore unsplash placeholders)
+  const hasRealCustomImage = Boolean(
+    testimonial.image && 
+    !testimonial.image.includes('images.unsplash.com') && 
+    testimonial.image.trim() !== ''
+  );
+
   return (
     <div 
-      className={`bg-white rounded-lg shadow-lg p-8 relative hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
+      className={`bg-white rounded-2xl shadow-lg p-8 relative hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-neutral-100/80 ${
         isActive ? 'animate-fade-in' : ''
       }`}
       style={{ 
@@ -31,23 +79,42 @@ const TestimonialCard = memo(({ testimonial, index, isActive = true }: {
         animationDelay: `${animationDelay}s`
       }}
     >
-      <div className="text-primary text-5xl absolute -top-4 -left-2">
-        "
+      {/* 5-Star Rating Header */}
+      <div className="flex items-center gap-1 text-amber-400 mb-4">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+        ))}
       </div>
-      <p className="text-neutral-600 mb-6 relative z-10">
-        {testimonial.content}
+
+      <p className="text-neutral-700 mb-6 relative z-10 leading-relaxed text-base italic">
+        "{testimonial.content}"
       </p>
-      <div className="flex items-center">
-        <OptimizedImage
-          src={testimonial.image}
-          alt={testimonial.name}
-          className="w-12 h-12 rounded-full mr-4"
-          width={48}
-          height={48}
-        />
-        <div>
-          <p className="font-semibold text-neutral-800">{testimonial.name}</p>
-          <p className="text-neutral-500">{testimonial.position}, {testimonial.company}</p>
+
+      <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
+        <div className="flex items-center">
+          {hasRealCustomImage ? (
+            <OptimizedImage
+              src={testimonial.image!}
+              alt={testimonial.name}
+              className="w-12 h-12 rounded-full mr-4 object-cover shadow-sm"
+              width={48}
+              height={48}
+            />
+          ) : (
+            <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-base shadow-md mr-4 flex-shrink-0 tracking-wider`}>
+              {initials}
+            </div>
+          )}
+          <div>
+            <p className="font-bold text-neutral-900 text-base leading-snug">{testimonial.name}</p>
+            <p className="text-sm text-neutral-500 font-medium">{subtitle}</p>
+          </div>
+        </div>
+
+        {/* Verified Badge */}
+        <div className="hidden sm:flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+          <CheckCircle className="w-3.5 h-3.5 mr-1 text-emerald-500" />
+          Verified
         </div>
       </div>
     </div>
@@ -94,40 +161,35 @@ const TestimonialsSection = memo(() => {
       name: "Murugan Selvam",
       position: "",
       company: "Madurai",
-      content: "Godiva Technologies created a beautiful website for our traditional silk business. The design perfectly showcases our products and has helped us reach customers across Tamil Nadu. Very professional team!",
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=60&fm=webp"
+      content: "Godiva Technologies created a beautiful website for our traditional silk business. The design perfectly showcases our products and has helped us reach customers across Tamil Nadu. Very professional team!"
     },
     {
       id: 2,
       name: "Sarah Johnson",
       position: "",
       company: "US",
-      content: "Godiva Tech delivered exceptional logo design and branding services for our US-based creative agency. Their understanding of modern design trends and attention to detail exceeded our expectations. Highly recommended for branding projects!",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=60&fm=webp"
+      content: "Godiva Tech delivered exceptional logo design and branding services for our US-based creative agency. Their understanding of modern design trends and attention to detail exceeded our expectations. Highly recommended for branding projects!"
     },
     {
       id: 3,
       name: "Karthik Ramasamy",
       position: "",
       company: "Madurai",
-      content: "Our restaurant's online presence improved dramatically after Godiva Technologies built our website. Online orders increased by 60% and customer engagement is much better. Great work by the Madurai team!",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=60&fm=webp"
+      content: "Our restaurant's online presence improved dramatically after Godiva Technologies built our website. Online orders increased by 60% and customer engagement is much better. Great work by the Madurai team!"
     },
     {
       id: 4,
       name: "Lakshmi Sundar",
       position: "",
       company: "Chennai",
-      content: "The digital marketing strategies implemented by Godiva Technologies have brought more customers to our jewelry store. Their social media campaigns perfectly capture our brand essence. Excellent service!",
-      image: "https://images.unsplash.com/photo-1594736797933-d0401ba6fe65?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=60&fm=webp"
+      content: "The digital marketing strategies implemented by Godiva Technologies have brought more customers to our jewelry store. Their social media campaigns perfectly capture our brand essence. Excellent service!"
     },
     {
       id: 5,
       name: "Vinoth Kumar",
       position: "",
       company: "Chennai",
-      content: "As a fellow tech company in Chennai, we appreciate Godiva's technical expertise in web development. They helped us build a robust platform that serves our clients effectively. Top-notch development skills!",
-      image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=60&fm=webp"
+      content: "As a fellow tech company in Chennai, we appreciate Godiva's technical expertise in web development. They helped us build a robust platform that serves our clients effectively. Top-notch development skills!"
     }
   ], []);
 

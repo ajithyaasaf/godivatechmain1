@@ -2,18 +2,21 @@ import React, { memo } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Play, Users, Target, Code2, Megaphone, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
-import heroFullBg from "@/assets/herosection/hero-full-bg.png";
+
+const HERO_BG_CDN_URL = "https://res.cloudinary.com/doeodacsg/image/upload/f_auto,q_auto/v1788351134/godivatech/herosection/hero-full-bg.png";
 
 const HeroSection = () => {
   return (
     <section className="relative min-h-[92vh] lg:min-h-screen bg-[#03050E] text-white flex items-center pt-28 pb-16 lg:pt-32 lg:pb-20 overflow-hidden">
-      {/* 16:9 Full Master Background Canvas (Rendered via high-priority Image) */}
+      {/* 16:9 Full Master Background Canvas (Rendered via high-priority Image from CDN) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
         <img 
-          src={heroFullBg} 
+          src={HERO_BG_CDN_URL} 
           alt="Next-Gen Technology Solutions Master Canvas"
           className="w-full h-full object-cover object-center select-none"
           loading="eager"
+          // @ts-ignore
+          fetchpriority="high"
         />
         {/* Soft edge blending gradient on mobile */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#03050E]/80 via-transparent to-transparent lg:hidden" />
