@@ -1,6 +1,4 @@
 # SPA fallback for client-side routing with specific route handling
-# API proxy to backend
-/api/* https://godivatech-backend.onrender.com/api/:splat 200
 
 # Dynamic service routes (including location-based)
 /services/* /index.html 200
@@ -13,6 +11,10 @@
 
 # Auth route
 /auth /index.html 200
+
+# Legal routes
+/privacy /index.html 200
+/terms /index.html 200
 
 # Sitemap route
 /sitemap /index.html 200

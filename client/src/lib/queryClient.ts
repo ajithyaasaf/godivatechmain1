@@ -19,50 +19,22 @@ function getFullApiUrl(urlPath: string): string {
     return urlPath;
   }
 
-  // For development in Replit, use relative URLs to avoid CORS issues
-  if (ENV.isDev && ENV.isReplit) {
-    return urlPath;
-  }
-
-  // For production deployments, always use the full backend URL
-  // Never use relative URLs in production to avoid routing to wrong domains
-  const isProdEnv = ENV.isProd ||
-    (typeof window !== 'undefined' && (
-      window.location.hostname.includes('godivatech.com') ||
-      window.location.hostname === 'www.godivatech.com'
-    ));
-
-  if (isProdEnv) {
-    // Use the configured base URL from environment
-    const baseUrl = API_BASE_URL;
-
-    // If no base URL is configured, use fallback
-    if (!baseUrl) {
-      console.error('No API base URL configured! Using fallback backend URL.');
-      const fallbackUrl = 'https://godivatech-backend.onrender.com';
-      const fullUrl = `${fallbackUrl}${urlPath.startsWith('/') ? urlPath : `/${urlPath}`}`;
-      console.log(`Using fallback API URL: ${fullUrl}`);
-      return fullUrl;
-    }
-
-    // Ensure proper URL construction
-    const baseWithTrailingSlash = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+  // If a custom external base URL is configured (e.g., VITE_API_URL)
+  if (API_BASE_URL && API_BASE_URL.startsWith('http')) {
+    const baseWithTrailingSlash = API_BASE_URL.endsWith('/') ? API_BASE_URL : `${API_BASE_URL}/`;
     const pathWithoutLeadingSlash = urlPath.startsWith('/') ? urlPath.substring(1) : urlPath;
 
     // Remove api/ prefix if it's already in the base URL to avoid duplicates
     let finalPath = pathWithoutLeadingSlash;
-    if (baseUrl.includes('/api') && finalPath.startsWith('api/')) {
+    if (API_BASE_URL.includes('/api') && finalPath.startsWith('api/')) {
       finalPath = finalPath.substring(4);
     }
 
-    const fullUrl = `${baseWithTrailingSlash}${finalPath}`;
-    console.log(`Constructed API URL: ${fullUrl} from path: ${urlPath}`);
-
-    return fullUrl;
+    return `${baseWithTrailingSlash}${finalPath}`;
   }
 
-  // Fallback to relative URL for development
-  return urlPath;
+  // Default: Return normalized relative URL for same-origin execution (Vercel & Local dev)
+  return urlPath.startsWith('/') ? urlPath : `/${urlPath}`;
 }
 
 async function throwIfResNotOk(res: Response) {

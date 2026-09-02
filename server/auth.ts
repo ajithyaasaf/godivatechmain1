@@ -73,8 +73,8 @@ export function setupAuth(app: Express) {
       secure: process.env.NODE_ENV === "production",
       maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days for persistent sessions
       httpOnly: true,
-      // For cross-domain cookies in production (Vercel frontend + Render backend)
-      sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+      // Same-origin cookies for unified Vercel deployment (works on iOS/Safari without third-party cookie restrictions)
+      sameSite: 'lax',
       // Don't set domain - let browser handle it for cross-origin
     },
     rolling: true // Reset expiration on every response

@@ -7,10 +7,6 @@
   "rootDirectory": "client",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://godivatech-backend.onrender.com/api/$1"
-    },
-    {
       "source": "/services/:slug",
       "destination": "/index.html"
     },

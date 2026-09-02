@@ -76,7 +76,7 @@ async function setupCategories() {
                     slug: category.slug,
                     description: category.description,
                     order: category.order
-                });
+                } as any);
             } else {
                 console.log(`   + Creating: ${category.name} with ID ${category.id}`);
                 // Use the specific ID we want by manually creating the document
@@ -99,7 +99,7 @@ async function setupCategories() {
         console.log('📋 Final category structure:');
         console.log('═══════════════════════════════════════════════════════════\n');
 
-        finalCategories
+        (finalCategories as any[])
             .sort((a, b) => (a.order || 0) - (b.order || 0))
             .forEach(cat => {
                 console.log(`${cat.order || '?'}. ${cat.name}`);

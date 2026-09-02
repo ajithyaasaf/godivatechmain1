@@ -124,8 +124,8 @@ async function uploadActualImages() {
   
   const imageUpdates = [
     {
-      projectId: 'hzn553uZj2NmF5pA2ZwT', // Truewaves Letterpad Design
-      projectTitle: 'Truewaves Letterpad Design',
+      projectId: 'hzn553uZj2NmF5pA2ZwT', // True Waves Group Letterpad Design
+      projectTitle: 'True Waves Group Letterpad Design',
       imagePath: 'attached_assets/Mockup.jpg'
     },
     {
@@ -134,8 +134,8 @@ async function uploadActualImages() {
       imagePath: 'attached_assets/Mockup 2.jpg'
     },
     {
-      projectId: 'xkzv4CWM1cDhfwY97rtO', // Truewaves Business Card Design
-      projectTitle: 'Truewaves Business Card Design',
+      projectId: 'xkzv4CWM1cDhfwY97rtO', // True Waves Group Business Card Design
+      projectTitle: 'True Waves Group Business Card Design',
       imagePath: 'attached_assets/Business Card.jpg'
     }
   ];

@@ -21,23 +21,17 @@ const getEnvVar = (key: string, fallback?: string): string => {
 
 // API Configuration
 export const API_CONFIG = {
-  // Primary API URL - in production, this MUST be set to your backend URL
+  // Primary API URL - defaults to same-origin relative URL for unified serverless deployment
   BASE_URL: (() => {
-    // Try VITE_API_URL first
+    // If VITE_API_URL is explicitly configured, use it (useful for custom staging/testing)
     const apiUrl = getEnvVar('VITE_API_URL');
     if (apiUrl) return apiUrl;
     
-    // Try VITE_SERVER_URL as fallback
+    // Try VITE_SERVER_URL as secondary override
     const serverUrl = getEnvVar('VITE_SERVER_URL');
     if (serverUrl) return serverUrl;
     
-    // In production, always use the full backend URL
-    if (isProd) {
-      console.warn('No API URL configured in production! Using Render backend URL.');
-      return 'https://godivatech-backend.onrender.com/api';
-    }
-    
-    // In development, use relative URLs
+    // Default to same-origin relative URL for both dev and Vercel production
     return '';
   })(),
   

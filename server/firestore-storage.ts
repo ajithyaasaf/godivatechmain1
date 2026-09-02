@@ -97,7 +97,7 @@ export class FirestoreStorage {
       
       // Create the user
       const userRef = doc(db, 'users', nextId.toString());
-      const user: User = { ...insertUser, id: nextId };
+      const user: User = { ...insertUser, name: insertUser.name ?? null, id: nextId };
       await setDoc(userRef, user);
       
       return user;
@@ -194,6 +194,11 @@ export class FirestoreStorage {
         published: insertBlogPost.published ?? true,
         authorImage: insertBlogPost.authorImage ?? null,
         coverImage: insertBlogPost.coverImage ?? null,
+        coverImageAlt: insertBlogPost.coverImageAlt ?? null,
+        metaTitle: insertBlogPost.metaTitle ?? null,
+        metaDescription: insertBlogPost.metaDescription ?? null,
+        focusKeyword: insertBlogPost.focusKeyword ?? null,
+        tags: insertBlogPost.tags ?? null,
         publishedAt: insertBlogPost.publishedAt ?? new Date(),
         categoryId: insertBlogPost.categoryId ?? null
       };
@@ -510,12 +515,12 @@ export class FirestoreStorage {
       console.log(`Successfully created project with ID: ${newDocId}`);
       
       // Return the project with the Firestore document ID
-      const project: Project = {
+      const project = {
         ...projectData,
         id: newDocId, // Use the Firebase document ID
         docId: newDocId, // Also include document ID explicitly 
         firebaseId: newDocId // Additional field to be explicit
-      } as Project;
+      } as unknown as Project;
       
       return project;
     } catch (error) {
@@ -547,7 +552,7 @@ export class FirestoreStorage {
         console.log(`Found ${querySnapshot.size} projects in Firestore collection to search through`);
         
         // Check for different possible matches
-        let foundDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+        let foundDoc: any = null;
         
         querySnapshot.forEach(docSnapshot => {
           const data = docSnapshot.data();
@@ -649,7 +654,7 @@ export class FirestoreStorage {
       
       // Look for exact match first with string comparison
       const targetDocId = typeof id === 'string' ? id : id.toString();
-      let foundDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+      let foundDoc: any = null;
       
       querySnapshot.forEach(docSnapshot => {
         const data = docSnapshot.data();
@@ -708,7 +713,7 @@ export class FirestoreStorage {
     try {
       // Return updated services with new structure and order
       // Web Development, Digital Marketing, Custom Software, Ecommerce, Mobile App, UI/UX, Logo & Brand, Poster & Graphics
-      const defaultServices: Service[] = [
+      const defaultServices: any[] = [
         {
           id: 1,
           title: "Web Design & Development",

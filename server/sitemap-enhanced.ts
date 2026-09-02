@@ -420,6 +420,27 @@ export const setupEnhancedSitemaps = (app: Express): void => {
   app.get('/sitemap.xml', (req: Request, res: Response) => {
     res.redirect(301, '/sitemap-index.xml');
   });
+
+  // Dynamic robots.txt
+  app.get('/robots.txt', (req: Request, res: Response) => {
+    res.set({
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400, s-maxage=86400'
+    });
+    res.send(`User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: ${BASE_URL}/sitemap-index.xml
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+
+# Crawl delay
+Crawl-delay: 1
+`);
+  });
 };
 
 // Ping Google about sitemap updates

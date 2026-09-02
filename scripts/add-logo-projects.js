@@ -64,12 +64,12 @@ const logoProjects = [
     clientName: "Dermi"
   },
   {
-    title: "RSS Digital Innovation Logo",
-    description: "Tech-forward logo design for RSS Digital Innovation featuring gradient abstract shapes, representing creativity and innovation in digital solutions.",
+    title: "ESS Digital Innovation Logo",
+    description: "Tech-forward logo design for ESS Digital Innovation featuring gradient abstract shapes, representing creativity and innovation in digital solutions.",
     category: "Logo",
     image: "/client/src/assets/logos/rss-digital-innovation.png",
     technologies: ["Tech Branding", "Logo Design", "Digital Identity"],
-    clientName: "RSS Digital Innovation"
+    clientName: "ESS Digital Innovation"
   },
   {
     title: "AR Dream Construction Logo",

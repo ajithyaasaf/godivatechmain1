@@ -56,6 +56,8 @@ const Dindigul = lazy(() => import("@/pages/locations/Dindigul"));
 const Theni = lazy(() => import("@/pages/locations/Theni"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 const AuthPage = lazy(() => import("@/pages/auth-page"));
+const Privacy = lazy(() => import("@/pages/Privacy"));
+const Terms = lazy(() => import("@/pages/Terms"));
 // Diagnostics page removed for production
 
 // Admin pages - lazy loaded
@@ -129,6 +131,8 @@ function App() {
                 <Route path="/blog/category/:categorySlug" component={Blog} />
                 <Route path="/blog/:slug" component={BlogPost} />
                 <Route path="/contact" component={Contact} />
+                <Route path="/privacy" component={Privacy} />
+                <Route path="/terms" component={Terms} />
                 <Route path="/auth" component={AuthPage} />
                 {/* Diagnostics route removed for production */}
                 <Route component={NotFound} />

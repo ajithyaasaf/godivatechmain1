@@ -38,7 +38,7 @@ const servicePages = [
 // Fetch dynamic content from API
 async function fetchDynamicContent() {
   const dynamicPages = [];
-  const BACKEND_URL = 'https://godivatech-backend.onrender.com';
+  const BACKEND_URL = process.env.API_URL || process.env.VITE_API_URL || 'https://www.godivatech.com';
   
   try {
     // Fetch blog posts from backend

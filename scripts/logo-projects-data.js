@@ -50,8 +50,8 @@ export const logoProjectsData = [
     technologies: ["Medical Branding", "Logo Design", "Healthcare Identity"]
   },
   {
-    title: "RSS Digital Innovation Logo",
-    description: "Tech-forward logo design for RSS Digital Innovation featuring gradient abstract shapes, representing creativity and innovation in digital solutions.",
+    title: "ESS Digital Innovation Logo",
+    description: "Tech-forward logo design for ESS Digital Innovation featuring gradient abstract shapes, representing creativity and innovation in digital solutions.",
     category: "Logo",
     image: "/attached_assets/rss-digital-innovation.png",
     technologies: ["Tech Branding", "Logo Design", "Digital Identity"]

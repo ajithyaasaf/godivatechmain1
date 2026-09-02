@@ -6,12 +6,12 @@ const CLOUDINARY_CLOUD_NAME = 'doeodacsg';
 const CLOUDINARY_API_KEY = '269267633995791';
 const CLOUDINARY_API_SECRET = 'wUw9Seu6drQEIbQ1tAvYeVyqHdU';
 
-// Function to get cloudinary credentials - using hardcoded values for now to debug
+// Function to get cloudinary credentials with process.env priority and fallback
 const getCloudinaryConfig = () => {
   return {
-    cloudName: CLOUDINARY_CLOUD_NAME,
-    apiKey: CLOUDINARY_API_KEY, 
-    apiSecret: CLOUDINARY_API_SECRET
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY || CLOUDINARY_API_KEY, 
+    apiSecret: process.env.CLOUDINARY_API_SECRET || CLOUDINARY_API_SECRET
   };
 };
 

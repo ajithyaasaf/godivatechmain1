@@ -1,6 +1,4 @@
-# Netlify/Vercel SPA fallback for client-side routing with comprehensive route handling
-# API proxy to backend
-/api/* https://godivatech-backend.onrender.com/api/:splat 200
+# SPA fallback for client-side routing with specific route handling
 
 # Dynamic service routes (including location-based)
 /services/* /index.html 200
@@ -8,11 +6,15 @@
 # Dynamic blog routes (including location-based)
 /blog/* /index.html 200
 
-# Admin routes (protected by client-side auth)
+# Admin routes
 /admin/* /index.html 200
 
 # Auth route
 /auth /index.html 200
+
+# Legal routes
+/privacy /index.html 200
+/terms /index.html 200
 
 # Sitemap route
 /sitemap /index.html 200
