@@ -267,7 +267,7 @@ const ContactSection = () => {
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full py-3 px-4 rounded-md border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                      placeholder="John Doe"
+                      placeholder="Enter your name"
                       required
                     />
                   </div>
@@ -283,7 +283,7 @@ const ContactSection = () => {
                       value={formData.email}
                       onChange={handleChange}
                       className="w-full py-3 px-4 rounded-md border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                      placeholder="john@example.com"
+                      placeholder="Enter your email"
                       required
                     />
                   </div>
@@ -300,7 +300,7 @@ const ContactSection = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full py-3 px-4 rounded-md border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="+91 96005 20130"
+                    placeholder="Enter your phone number"
                   />
                 </div>
 
@@ -315,7 +315,7 @@ const ContactSection = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     className="w-full py-3 px-4 rounded-md border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="How can we help you?"
+                    placeholder="Enter your subject"
                     required
                   />
                 </div>
@@ -331,7 +331,7 @@ const ContactSection = () => {
                     onChange={handleChange}
                     rows={5}
                     className="w-full py-3 px-4 rounded-md border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="Please provide details about your project or inquiry..."
+                    placeholder="Enter your message details..."
                     required
                   />
                 </div>
