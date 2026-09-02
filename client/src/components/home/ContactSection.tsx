@@ -184,7 +184,7 @@ const ContactSection = () => {
                     <p className="font-medium text-neutral-800 mb-1">Branch Office</p>
                     <p className="text-neutral-600">
                       32/3, South Street<br />
-                      Sathirapatti<br />
+                      Chatrapatti<br />
                       Rajapalayam, India
                     </p>
                   </div>

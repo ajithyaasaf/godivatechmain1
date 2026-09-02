@@ -37,7 +37,7 @@ const Contact = memo(() => {
     { 
       icon: MapPin, 
       title: "Branch Office", 
-      info: "32/3, South Street, Sathirapatti, Rajapalayam",
+      info: "32/3, South Street, Chatrapatti, Rajapalayam",
       description: "Our regional office location"
     },
     { 
