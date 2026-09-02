@@ -248,8 +248,34 @@ const MethodologyStep = memo(({ number, title, description, delay }: {
 ));
 
 const Portfolio = () => {
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  // Removed Firestore logic - using API only
+  // Initialize active tab from URL query param (?category=...) or sessionStorage so refresh keeps the tab
+  const [activeFilter, setActiveFilter] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const catParam = params.get("category");
+      if (catParam) return catParam;
+      const savedTab = sessionStorage.getItem("portfolio_active_tab");
+      if (savedTab && savedTab !== "All") return savedTab;
+    }
+    return null;
+  });
+
+  const handleCategoryChange = (category: string) => {
+    const selected = category === 'All' ? null : category;
+    setActiveFilter(selected);
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (selected) {
+        url.searchParams.set("category", selected);
+        sessionStorage.setItem("portfolio_active_tab", selected);
+      } else {
+        url.searchParams.delete("category");
+        sessionStorage.removeItem("portfolio_active_tab");
+      }
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
 
   // Fetch projects from API with direct Firestore client fallback
   const { data: apiProjects = [], isLoading: isLoadingApi } = useQuery<Project[]>({
@@ -284,7 +310,7 @@ const Portfolio = () => {
             }
 
             let projectLink = data.link ?? null;
-            if (data.title === 'Rotary Club of Madurai') {
+            if (data.title && data.title.toLowerCase().includes('rotary')) {
               projectLink = 'https://rotary-website-iota.vercel.app/';
             }
 
@@ -312,11 +338,16 @@ const Portfolio = () => {
     }
   });
 
-  // Use API projects with custom priority sort (Rotary Club first)
+  // Use API projects with bulletproof priority sort (Rotary Club always #1)
   const displayProjects = useMemo(() => {
     return [...apiProjects].sort((a: any, b: any) => {
-      const orderA = a.title === 'Rotary Club of Madurai' ? 0 : (a.order ?? 999);
-      const orderB = b.title === 'Rotary Club of Madurai' ? 0 : (b.order ?? 999);
+      const isRotaryA = a.title?.toLowerCase().includes('rotary') || a.link?.includes('rotary');
+      const isRotaryB = b.title?.toLowerCase().includes('rotary') || b.link?.includes('rotary');
+      if (isRotaryA && !isRotaryB) return -1;
+      if (!isRotaryA && isRotaryB) return 1;
+
+      const orderA = a.order ?? 999;
+      const orderB = b.order ?? 999;
       if (orderA !== orderB) return orderA - orderB;
       return (a.title || '').localeCompare(b.title || '');
     });
@@ -483,7 +514,7 @@ const Portfolio = () => {
                 {categories.map((category, index) => (
                   <motion.button
                     key={`filter-category-${category}-${index}`}
-                    onClick={() => setActiveFilter(category === 'All' ? null : category)}
+                    onClick={() => handleCategoryChange(category)}
                     className={`py-2 px-6 rounded-full text-sm font-medium transition-all duration-300 ${(category === 'All' && activeFilter === null) || category === activeFilter
                         ? "bg-primary text-white shadow-md"
                         : "bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200"
