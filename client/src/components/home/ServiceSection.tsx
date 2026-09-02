@@ -22,9 +22,8 @@ const ServiceCard: React.FC<{ service: Partial<ServiceDefinition>; index: number
         
         {/* Icon section */}
         <div className="flex items-center justify-between mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl 
-                          flex items-center justify-center shadow-lg">
-            <IconComponent className="w-8 h-8 text-white" />
+          <div className="w-14 h-14 flex items-center justify-start">
+            <IconComponent className="w-11 h-11 text-blue-600 group-hover:text-indigo-600 group-hover:scale-110 transition-all duration-300" />
           </div>
           <div className="text-right">
             <div className="flex items-center text-amber-500 mb-1">
