@@ -1,379 +1,178 @@
-import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import React, { memo } from "react";
 import { Link } from "wouter";
-import { 
-  ArrowUpRight, Sparkles, Code, Layers, BarChart
-} from "lucide-react";
-import { preloadHeroImages, optimizeFonts, decodeImagesAsync } from "@/lib/lcp-optimization";
-import { delayAnimationsUntilAfterLCP, getOptimizedAnimationVariants } from "@/lib/animation-optimizer";
+import { ArrowRight, Play, Users, Target, Code2, Megaphone, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
+import heroFullBg from "@/assets/herosection/hero-full-bg.png";
 
-// Lazy load framer-motion only after LCP
-let useScroll: any = () => ({ scrollYProgress: { get current() { return 0; } } });
-let useTransform: any = () => ({ get current() { return 1; } });
-let LazyMotion: any = ({ children }: any) => children;
-let domAnimation: any = null;
-let m: any = { div: 'div', h1: 'h1', p: 'p' };
-
-const loadFramerMotion = async () => {
-  if (typeof window !== 'undefined' && document.readyState === 'complete') {
-    const fm = await import('framer-motion');
-    useScroll = fm.useScroll;
-    useTransform = fm.useTransform;
-    LazyMotion = fm.LazyMotion;
-    domAnimation = fm.domAnimation;
-    m = fm.m;
-  }
-};
-
-// Hero Section - optimized for LCP (no heavy animations)
 const HeroSection = () => {
-  // Refs for different elements
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const ctaButtonRef = useRef<HTMLButtonElement>(null);
-  
-  // Scroll to services section - memoized to avoid recreation on each render
-  const scrollToNext = useCallback(() => {
-    const nextSection = document.getElementById('services');
-    if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, []);
-  
-  // Critical: Minimal effect - only set subtitle text immediately for LCP
-  useEffect(() => {
-    // Show subtitle text immediately without any blocking operations
-    if (subtitleRef.current) {
-      subtitleRef.current.style.visibility = 'visible';
-      subtitleRef.current.textContent = "Providing affordable IT solutions to businesses in Madurai and beyond.";
-    }
-  }, []);
-
-  // Defer ALL non-critical work to after page becomes interactive
-  useEffect(() => {
-    const deferredWork = () => {
-      // Load framer-motion only after LCP
-      loadFramerMotion();
-      // Preload images asynchronously
-      preloadHeroImages(['/src/assets/godiva-logo.png']);
-      optimizeFonts();
-      decodeImagesAsync('img[loading="eager"]');
-      delayAnimationsUntilAfterLCP(2000).then(() => {
-        setShouldStartAnimations(true);
-      });
-    };
-    
-    // Only run after page is fully loaded (not during LCP)
-    if (document.readyState === 'complete') {
-      requestIdleCallback?.(deferredWork) || setTimeout(deferredWork, 1000);
-    } else {
-      window.addEventListener('load', () => {
-        requestIdleCallback?.(deferredWork) || setTimeout(deferredWork, 100);
-      });
-    }
-  }, []);
-  
-  // Featured services to display in hero - memoized to prevent recreation
-  const featuredServices = useMemo(() => [
-    { icon: Code, label: "Web Development" },
-    { icon: Layers, label: "Digital Marketing" },
-    { icon: BarChart, label: "UI/UX Design" }
-  ], []);
-  
-  // Animation state to control when animations start
-  const [shouldStartAnimations, setShouldStartAnimations] = useState(false);
-  
-  // Animation variants - optimized based on device capabilities
-  const itemFadeIn = useMemo(() => 
-    getOptimizedAnimationVariants({
-      hidden: { opacity: 0, y: 20 },
-      visible: { 
-        opacity: 1, 
-        y: 0,
-        transition: { duration: 0.8, ease: "easeOut" } 
-      }
-    })
-  , []);
-  
-  // Pre-compute sparkles for consistent rendering
-  const sparkles = useMemo(() => 
-    Array.from({ length: 6 }).map((_, i) => ({
-      id: i,
-      top: `${Math.floor(Math.random() * 100)}%`,
-      left: `${Math.floor(Math.random() * 100)}%`,
-      size: Math.floor(Math.random() * 4 + 2),
-      animationDelay: `${Math.floor(Math.random() * 5)}s`
-    }))
-  , []);
-  
-  // Container animation variants
-  const containerVariants = useMemo(() => ({
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  }), []);
-  
   return (
-    <div 
-      ref={sectionRef} 
-      className="hero-section relative min-h-[100vh] overflow-hidden flex items-center py-20"
-      // All style properties removed to restore original colors completely
-    >
-      {/* Modern mesh gradient background - static elements for better performance */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900 via-primary to-purple-800 opacity-90" />
-        
-        {/* Noise texture overlay */}
-        <div className="absolute inset-0 opacity-[0.15] 
-          [background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGQ9Ik0wIDBoMzAwdjMwMEgweiIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIuMDUiLz48L3N2Zz4=')]" />
-        
-        {/* Static gradient blobs - animation removed for better performance (TBT reduction) */}
-        <div className="absolute top-1/4 -left-10 w-72 h-72 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10" 
+    <section className="relative min-h-[92vh] lg:min-h-screen bg-[#03050E] text-white flex items-center pt-28 pb-16 lg:pt-32 lg:pb-20 overflow-hidden">
+      {/* 16:9 Full Master Background Canvas (Rendered via high-priority Image) */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+        <img 
+          src={heroFullBg} 
+          alt="Next-Gen Technology Solutions Master Canvas"
+          className="w-full h-full object-cover object-center select-none"
+          loading="eager"
         />
-        <div className="absolute -bottom-10 left-1/4 w-72 h-72 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-10" 
-        />
-        
-        {/* Grid lines with larger size for better performance */}
-        <div className="absolute inset-0 
-          [background-image:linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] 
-          [background-size:6rem_6rem]" />
+        {/* Soft edge blending gradient on mobile */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#03050E]/80 via-transparent to-transparent lg:hidden" />
       </div>
-      
-      {/* Static sparkles - animation disabled for better performance (TBT reduction) */}
-      <div className="absolute inset-0 overflow-hidden z-10 pointer-events-none">
-        {sparkles.map(sparkle => (
-          <div
-            key={sparkle.id}
-            className="absolute rounded-full bg-white"
-            style={{
-              top: sparkle.top,
-              left: sparkle.left,
-              width: `${sparkle.size}px`,
-              height: `${sparkle.size}px`,
-              filter: 'blur(1px)',
-              boxShadow: '0 0 6px 2px rgba(255, 255, 255, 0.3)',
-              opacity: 0.3
-            }}
-          />
-        ))}
+
+      {/* Calibrated Overlay Elements for the 3D Tablet in 16:9 Space (Desktop) */}
+      <div className="hidden lg:block absolute inset-0 pointer-events-none z-10">
+        {/* Tablet Screen Text Header */}
+        <div 
+          className="absolute transform -translate-y-1/2 -rotate-6 skew-y-2 select-none"
+          style={{ left: '63.5%', top: '38%' }}
+        >
+          <div className="text-xl lg:text-2xl xl:text-[27px] font-semibold text-white tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+            Innovative Solutions
+          </div>
+          <div className="text-base lg:text-lg xl:text-xl font-light text-slate-200 tracking-wide mt-1 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+            for a Digital World
+          </div>
+          <div className="w-14 h-0.5 bg-gradient-to-r from-cyan-400 to-transparent mt-2 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+        </div>
+
+        {/* Floating Glass Card 1: Software Development (Left of Tablet) */}
+        <motion.div 
+          className="absolute -translate-x-1/2 -translate-y-1/2 p-3.5 xl:p-4 rounded-2xl bg-[#090d21]/80 border border-cyan-500/35 backdrop-blur-xl shadow-[0_15px_35px_rgba(0,0,0,0.7)] flex flex-col items-center justify-center text-center w-[120px] xl:w-[130px] pointer-events-auto hover:border-cyan-400 transition-colors group cursor-default"
+          style={{ left: '54%', top: '53.4%' }}
+          animate={{ y: [-2, -8, -2] }}
+          transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
+        >
+          <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.35)] mb-2 group-hover:scale-110 transition-transform">
+            <Code2 className="w-5 h-5" />
+          </div>
+          <div className="text-xs font-semibold text-white tracking-wide leading-tight">Software</div>
+          <div className="text-[11px] text-slate-300 font-medium leading-tight mt-0.5">Development</div>
+        </motion.div>
+
+        {/* Floating Glass Card 2: Digital Marketing (Top Right of Tablet) */}
+        <motion.div 
+          className="absolute -translate-x-1/2 -translate-y-1/2 p-3.5 xl:p-4 rounded-2xl bg-[#090d21]/80 border border-purple-500/35 backdrop-blur-xl shadow-[0_15px_35px_rgba(0,0,0,0.7)] flex flex-col items-center justify-center text-center w-[120px] xl:w-[130px] pointer-events-auto hover:border-purple-400 transition-colors group cursor-default"
+          style={{ left: '83.2%', top: '29.1%' }}
+          animate={{ y: [2, 8, 2] }}
+          transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 0.5 }}
+        >
+          <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.35)] mb-2 group-hover:scale-110 transition-transform">
+            <Megaphone className="w-5 h-5" />
+          </div>
+          <div className="text-xs font-semibold text-white tracking-wide leading-tight">Digital</div>
+          <div className="text-[11px] text-slate-300 font-medium leading-tight mt-0.5">Marketing</div>
+        </motion.div>
+
+        {/* Floating Glass Card 3: Growth Strategy (Bottom Right of Tablet) */}
+        <motion.div 
+          className="absolute -translate-x-1/2 -translate-y-1/2 p-3.5 xl:p-4 rounded-2xl bg-[#090d21]/80 border border-indigo-500/35 backdrop-blur-xl shadow-[0_15px_35px_rgba(0,0,0,0.7)] flex flex-col items-center justify-center text-center w-[120px] xl:w-[130px] pointer-events-auto hover:border-indigo-400 transition-colors group cursor-default"
+          style={{ left: '83.2%', top: '67.3%' }}
+          animate={{ y: [-2, -8, -2] }}
+          transition={{ repeat: Infinity, duration: 4.8, ease: "easeInOut", delay: 1 }}
+        >
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.35)] mb-2 group-hover:scale-110 transition-transform">
+            <TrendingUp className="w-5 h-5" />
+          </div>
+          <div className="text-xs font-semibold text-white tracking-wide leading-tight">Growth</div>
+          <div className="text-[11px] text-slate-300 font-medium leading-tight mt-0.5">Strategy</div>
+        </motion.div>
       </div>
-      
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <LazyMotion features={domAnimation} strict>
-            {/* Left content */}
-            <m.div 
-              className="lg:order-1 mt-8 lg:mt-0 text-center lg:text-left"
-              initial="hidden"
-              animate={shouldStartAnimations ? "visible" : "hidden"}
-              variants={containerVariants}
+
+      {/* Main Content Container (Left Side on Desktop) */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[65vh]">
+          
+          {/* ================= LEFT COLUMN: Value Proposition, CTAs & Proof ================= */}
+          <motion.div 
+            className="lg:col-span-7 xl:col-span-6 text-center lg:text-left"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            {/* Pill Badge */}
+            <motion.div 
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-blue-400/25 backdrop-blur-md mb-6 sm:mb-8 shadow-[0_0_15px_rgba(59,130,246,0.15)]"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
             >
-              <m.div 
-                variants={itemFadeIn}
-                className="mb-6 inline-flex"
-              >
-                <span 
-                  className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium border border-white/20 transition-transform duration-200 hover:scale-105"
+              <span className="text-xs sm:text-sm font-medium tracking-wide text-white/90 flex items-center gap-2">
+                <span className="text-base leading-none">🚀</span>
+                Next-Gen Technology Solutions
+              </span>
+            </motion.div>
+
+            {/* Main Headline (H1) */}
+            <h1 className="text-4xl sm:text-5xl lg:text-[54px] xl:text-[62px] font-extrabold tracking-tight text-white leading-[1.08] mb-6">
+              <span className="block text-white">Digital Marketing.</span>
+              <span className="block text-white mt-1">Software Solutions.</span>
+              <span className="block mt-1 bg-gradient-to-r from-[#00D2FF] via-[#818CF8] to-[#D946EF] bg-clip-text text-transparent pb-1">
+                Real Business Impact.
+              </span>
+            </h1>
+
+            {/* Supporting Subtitle */}
+            <p className="text-base sm:text-lg text-slate-400 max-w-xl mx-auto lg:mx-0 mb-8 sm:mb-10 leading-relaxed font-normal">
+              We help businesses grow their online presence, generate quality leads, and build powerful software that drives efficiency and scale.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10 sm:mb-12">
+              <Link href="/contact" className="w-full sm:w-auto">
+                <button 
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-[#4F46E5] to-[#7C3AED] hover:from-[#4338CA] hover:to-[#6D28D9] shadow-[0_0_25px_rgba(124,58,237,0.45)] hover:shadow-[0_0_35px_rgba(124,58,237,0.65)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer text-base"
                 >
-                  <Sparkles className="h-3.5 w-3.5 mr-2 text-yellow-300" />
-                  Next-Gen Technology Solutions
-                </span>
-              </m.div>
-              
-              <m.div 
-                variants={itemFadeIn}
-              >
-                <h1 
-                  className="text-5xl md:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
-                  data-above-fold="true"
+                  <span>Start a Project</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </Link>
+
+              <Link href="/services" className="w-full sm:w-auto">
+                <button 
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl font-medium text-white bg-[#0B0F19]/90 hover:bg-[#121829] border border-white/10 hover:border-white/20 backdrop-blur-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer text-base"
                 >
-                  <span className="block">
-                    Professional Web Development & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">Digital Marketing</span>
-                  </span>
-                  <span className="block mt-2">
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200">Services in Madurai</span>
-                  </span>
-                </h1>
-              </m.div>
-              
-              <m.div 
-                variants={itemFadeIn}
-              >
-                <h2 className="text-xl md:text-2xl font-medium text-white/80 mb-4">
-                  Affordable Big IT & Technology Solutions For Your Business
-                </h2>
-              </m.div>
-              
-              <m.div variants={itemFadeIn}>
-                <p 
-                  ref={subtitleRef} 
-                  className="text-xl text-white/90 mb-6 max-w-xl lg:mx-0 mx-auto min-h-[4rem]"
-                  style={{ visibility: 'hidden' }}
-                >
-                  {/* Text will be filled in by typing effect */}
-                </p>
-              </m.div>
-              
-              <m.div 
-                variants={itemFadeIn}
-                className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8"
-              >
-                <div 
-                  className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
-                >
-                  <Button 
-                    ref={ctaButtonRef}
-                    asChild 
-                    size="lg" 
-                    className="bg-white text-primary hover:bg-neutral-50 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full w-full sm:w-auto"
-                  >
-                    <Link href="/contact">
-                      <span className="flex items-center justify-center gap-2">
-                        Start a Project 
-                        <ArrowUpRight strokeWidth={2.5} className="h-4 w-4" />
-                      </span>
-                    </Link>
-                  </Button>
-                </div>
-                
-                <div 
-                  className="w-full sm:w-auto transition-transform duration-200 hover:scale-105 active:scale-95"
-                >
-                  <Button 
-                    asChild 
-                    variant="outline" 
-                    size="lg" 
-                    className="border-white/20 bg-white/5 backdrop-blur-sm text-white hover:bg-white/10 rounded-full w-full sm:w-auto"
-                  >
-                    <Link href="/services">Explore Solutions</Link>
-                  </Button>
-                </div>
-              </m.div>
-              
-              {/* Featured services tags */}
-              <m.div 
-                variants={itemFadeIn}
-                className="mt-10 flex flex-wrap gap-2 justify-center lg:justify-start"
-              >
-                <span className="text-white/70 mr-2 text-sm">Featured:</span>
-                {featuredServices.map((service, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white/90 bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-200 hover:scale-105 hover:bg-white/10"
-                  >
-                    <service.icon className="h-3 w-3 mr-1.5" />
-                    {service.label}
-                  </span>
-                ))}
-              </m.div>
-            </m.div>
-            
-            {/* Right content - 3D isometric illustration - Loading priority reduced for better LCP */}
-            <m.div 
-              className="lg:order-2 flex justify-center items-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: shouldStartAnimations ? 1 : 0 }}
-              transition={{ duration: 0.3 }} // Faster animation for better performance
-              data-below-fold="true" // Mark as below fold for delayed loading
-            >
-              <div className="relative w-full max-w-lg">
-                {/* Glowing background shape - using static effect for better performance */}
-                <div 
-                  className="absolute top-0 left-1/2 -translate-x-1/2 h-[350px] w-[350px] rounded-full bg-gradient-to-br from-blue-400/20 to-purple-600/20 blur-3xl animate-pulse-slow"
-                  style={{ opacity: 0.5, animationDuration: '10s' }}
-                />
-              
-              {/* Simplified 3D visuals with minimal animation */}
-              <div className="relative mx-auto">
-                <div
-                  className="relative mx-auto"
-                >
-                  {/* Main image container */}
-                  <div className="relative w-full max-w-[400px] aspect-square mx-auto">
-                    {/* Shadow */}
-                    <div className="absolute -inset-px rounded-3xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-2xl opacity-20 blur-xl" />
-                    
-                    {/* Image - Static for better performance */}
-                    <div
-                      className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl bg-gradient-to-br from-indigo-900/90 to-purple-900/90 backdrop-blur-sm"
-                      style={{ 
-                        transformStyle: 'preserve-3d'
-                      }}
-                    >
-                      {/* Display 3D visualization */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div 
-                          className="text-white/90 text-center relative z-20"
-                        >
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-32 h-32 rounded-full bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center">
-                              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400/30 to-purple-400/30 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-                                <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/30 flex items-center justify-center">
-                                  <Sparkles className="w-6 h-6 text-white/90" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {/* Static feature boxes - animations removed for performance */}
-                          <div
-                            className="absolute top-8 right-8 w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600/60 to-blue-400/60 border border-white/20 backdrop-blur-sm shadow-lg"
-                          />
-                          
-                          <div
-                            className="absolute top-8 left-8 w-16 h-16 rounded-lg bg-gradient-to-br from-purple-600/60 to-purple-400/60 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
-                          />
-                          
-                          <div
-                            className="absolute bottom-8 left-1/2 -translate-x-1/2 w-16 h-16 rounded-lg bg-gradient-to-br from-cyan-400/60 to-cyan-600/60 border border-white/20 backdrop-blur-sm shadow-lg rotate-12"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                  <span>Explore Solutions</span>
+                  <div className="w-5 h-5 rounded-full border border-white/30 flex items-center justify-center">
+                    <Play className="w-2 h-2 text-white fill-white translate-x-0.5" />
                   </div>
+                </button>
+              </Link>
+            </div>
+
+            {/* Social Proof Counters */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8 sm:gap-12 pt-2">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-full border border-white/15 bg-white/[0.03] flex items-center justify-center text-white/80 shrink-0">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none mb-1">150+</div>
+                  <div className="text-xs sm:text-sm text-slate-400 font-medium">Happy Clients</div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-full border border-white/15 bg-white/[0.03] flex items-center justify-center text-white/80 shrink-0">
+                  <Target className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-none mb-1">250+</div>
+                  <div className="text-xs sm:text-sm text-slate-400 font-medium">Projects Delivered</div>
                 </div>
               </div>
             </div>
-            </m.div>
-          </LazyMotion>
+          </motion.div>
+
+          {/* Right spacer for layout balance on large screens */}
+          <div className="hidden lg:block lg:col-span-5 xl:col-span-6" />
+
         </div>
       </div>
-      
-      {/* Modern scroll indicator - using CSS animation */}
-      <div 
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-30 flex flex-col items-center"
-        style={{ opacity: 0.7 }}
-      >
-        <div 
-          className="text-sm mb-3 text-white/70 font-light animate-float-slow"
-          style={{ animationDuration: '2s' }}
-        >
-          Scroll to explore
-        </div>
-        <button
-          onClick={scrollToNext}
-          className="relative w-8 h-12 rounded-full border border-white/20 flex items-center justify-center overflow-hidden backdrop-blur-sm bg-white/5 hover:bg-white/10 transition-colors"
-          aria-label="Scroll to services section"
-        >
-          <div
-            className="w-1.5 h-1.5 bg-white rounded-full animate-float-slow"
-            style={{ 
-              animationDuration: '1.5s',
-              transformOrigin: 'center',
-              animationTimingFunction: 'cubic-bezier(0.45, 0, 0.55, 1)'
-            }}
-          />
-        </button>
-      </div>
-    </div>
+    </section>
   );
 };
 
-// Set displayName for React DevTools
 HeroSection.displayName = "HeroSection";
+export default memo(HeroSection);
 
-// Use memo to prevent unnecessary re-renders
-export default React.memo(HeroSection);
+
