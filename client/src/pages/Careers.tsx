@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Briefcase, 
@@ -27,6 +27,13 @@ import { Button } from "@/components/ui/button";
 const Careers = () => {
   const { toast } = useToast();
   const [expandedJob, setExpandedJob] = useState<string | null>("ui-ux-designer");
+  
+  // Ensure page always starts from the top on load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
   
   // Application Form State
   const [formData, setFormData] = useState({

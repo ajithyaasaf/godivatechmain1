@@ -16,14 +16,12 @@ const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   // Unique key for each route to force re-render
   const pageKey = location;
   
-  // Smooth scroll to top when this component mounts (page change)
+  // Scroll to top immediately when route changes
   useEffect(() => {
-    // Reset scroll position
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'smooth'
-    });
+    // Reset scroll position to top
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
     
     // Show the transition effect
     setShowTransition(true);
