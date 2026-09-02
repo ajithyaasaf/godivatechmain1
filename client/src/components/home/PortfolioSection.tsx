@@ -242,12 +242,21 @@ const PortfolioSection = memo(() => {
       technologies: ["ERP Development", "Solar Industry", "Business Management", "Multi-Module Integration", "Role-Based Access"]
     },
     {
+      id: 0,
+      title: "Rotary Club of Madurai",
+      description: "Modern, responsive official website designed and built for Rotary Club of Madurai, showcasing social impact initiatives, youth leadership, membership, and club community projects.",
+      image: "https://res.cloudinary.com/doeodacsg/image/upload/v1788354273/godivatech/portfolio/websites/rotary-club-of-madurai.png",
+      category: "Web Development",
+      technologies: ["Mobile Responsive", "SEO Friendly", "Fast Loading", "Modern UI/UX"],
+      link: "https://rotary-website-iota.vercel.app/"
+    },
+    {
       id: 8,
       title: "OM Vinayaga Associates",
       description: "Comprehensive building solutions website providing expert diagnosis and treatment for all building ailments with precision and over 10 years of experience.",
       image: "/attached_assets/OM Vinayaga Associates_1757931851659.jpg",
       category: "Web Development",
-      technologies: ["React", "TypeScript", "Firestore Database", "Framer Motion", "Tailwind CSS"],
+      technologies: ["Mobile Responsive", "SEO Friendly", "Fast Loading", "Modern UI/UX"],
       link: "https://www.omvinayagaassociates.com"
     },
     {
@@ -256,7 +265,7 @@ const PortfolioSection = memo(() => {
       description: "Modern e-commerce platform for electrical products featuring scalable architecture, optimized performance, and comprehensive product catalog management.",
       image: "/attached_assets/copperbear_1757931994763.jpg",
       category: "E-commerce Development",
-      technologies: ["React", "TypeScript", "Express.js", "Node.js", "MongoDB", "Performance Optimization"]
+      technologies: ["Mobile Responsive", "SEO Friendly", "Fast Loading", "Modern UI/UX"]
     },
     {
       id: 10,
@@ -264,7 +273,7 @@ const PortfolioSection = memo(() => {
       description: "Innovative corporate website showcasing sustainable future solutions with modern design principles and comprehensive business portfolio presentation.",
       image: "/attached_assets/smart main site_1757932105967.jpg",
       category: "Corporate Website",
-      technologies: ["Modern Web Technologies", "Responsive Design", "Corporate Branding"],
+      technologies: ["Mobile Responsive", "SEO Friendly", "Fast Loading", "Modern UI/UX"],
       link: "https://smart-group-main.vercel.app/"
     },
     {
@@ -273,7 +282,7 @@ const PortfolioSection = memo(() => {
       description: "Leading solar solutions website in Madurai featuring modern design principles, energy savings calculators, and comprehensive solar service information.",
       image: "/attached_assets/smart shine solar_1757932290390.jpg",
       category: "Solar Solutions Website", 
-      technologies: ["Modern Design Principles", "Energy Calculators", "Responsive Design"],
+      technologies: ["Mobile Responsive", "SEO Friendly", "Fast Loading", "Modern UI/UX"],
       link: "https://solar-main-1.vercel.app/"
     }
   ], []);

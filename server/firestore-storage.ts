@@ -417,9 +417,16 @@ export class FirestoreStorage {
             break;
         }
         
+        // Normalize technologies for website projects to client-friendly feature tags
+        let projectTechnologies = data.technologies ?? [];
+        if (normalizedCategory === 'Web Development' || (projectLink && projectLink.startsWith('http'))) {
+          projectTechnologies = ['Mobile Responsive', 'SEO Friendly', 'Fast Loading', 'Modern UI/UX'];
+        }
+        
         return { 
           ...data,
           category: normalizedCategory, // Use normalized category
+          technologies: projectTechnologies,
           id: projectId, // Use the Firebase document ID directly
           docId: projectId, // Also store the document ID in docId for reference
           firebaseId: projectId, // Additional field to make it clear this is a Firebase ID
