@@ -31,30 +31,30 @@ const ContactSection = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Track form interaction event
     trackEvent('contact_form_submit_attempt', 'engagement', 'Contact Form');
-    
+
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
         variant: "destructive",
       });
-      
+
       // Track validation error for SEO form optimization
       trackEvent(
-        'form_validation_error', 
-        'engagement', 
+        'form_validation_error',
+        'engagement',
         'Contact Form',
         undefined,
         false,
-        { 
+        {
           form_type: 'contact',
-          error_type: 'missing_required_fields' 
+          error_type: 'missing_required_fields'
         }
       );
-      
+
       return;
     }
 
@@ -64,25 +64,25 @@ const ContactSection = () => {
         description: "Please agree to the privacy policy",
         variant: "destructive",
       });
-      
+
       // Track privacy policy error
       trackEvent(
-        'form_validation_error', 
-        'engagement', 
+        'form_validation_error',
+        'engagement',
         'Contact Form',
         undefined,
         false,
-        { 
+        {
           form_type: 'contact',
-          error_type: 'privacy_policy_not_accepted' 
+          error_type: 'privacy_policy_not_accepted'
         }
       );
-      
+
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       await apiRequest('POST', '/api/contact', {
         name: formData.name,
@@ -91,29 +91,29 @@ const ContactSection = () => {
         subject: formData.subject,
         message: formData.message,
       });
-      
+
       toast({
         title: "Success",
         description: "Your message has been sent. We'll get back to you soon!",
       });
-      
+
       // Track successful form submission for conversion tracking
       trackFormSubmission('contact_form', true);
-      
+
       // Track additional conversion details for SEO analysis
       trackEvent(
-        'lead_generated', 
-        'conversion', 
+        'lead_generated',
+        'conversion',
         formData.subject,
         undefined,
         false,
-        { 
+        {
           lead_type: 'contact_form',
           lead_source: window.location.pathname,
           lead_subject: formData.subject
         }
       );
-      
+
       setFormData({
         name: "",
         email: "",
@@ -128,10 +128,10 @@ const ContactSection = () => {
         description: "Failed to send message. Please try again later.",
         variant: "destructive",
       });
-      
+
       // Track form submission failure
       trackFormSubmission('contact_form', false);
-      
+
       // Track error for debugging and optimization
       trackEvent(
         'form_submission_error',
