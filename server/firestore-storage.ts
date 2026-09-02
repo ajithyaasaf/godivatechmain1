@@ -373,8 +373,7 @@ export class FirestoreStorage {
   async getAllProjects(): Promise<Project[]> {
     try {
       const projectsRef = collection(db, 'projects');
-      const q = query(projectsRef, orderBy('title'));
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(projectsRef);
       
       console.log(`Found ${querySnapshot.size} projects in Firestore collection`);
       

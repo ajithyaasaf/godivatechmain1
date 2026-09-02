@@ -7,7 +7,8 @@ import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import SEO from "@/components/SEO";
 import { pageKeywords } from "@/lib/seoKeywords";
 import OptimizedImage from "@/components/ui/optimized-image";
-// Remove unused Firestore import - using API data instead
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
 import {
   getOrganizationData,
   getWebPageData,
@@ -16,7 +17,7 @@ import {
 } from "@/lib/structuredData";
 
 interface Project {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   image: string;
@@ -24,6 +25,7 @@ interface Project {
   technologies: string[];
   link?: string;
   gallery?: string[];
+  order?: number;
 }
 
 // Helper function to determine if a project should show the overlay
@@ -249,9 +251,65 @@ const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   // Removed Firestore logic - using API only
 
-  // Fetch projects from API
+  // Fetch projects from API with direct Firestore client fallback
   const { data: apiProjects = [], isLoading: isLoadingApi } = useQuery<Project[]>({
     queryKey: ['/api/projects'],
+    queryFn: async () => {
+      // 1. Try API server
+      try {
+        const res = await fetch('/api/projects');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            return data;
+          }
+        }
+      } catch (err) {
+        console.warn('API endpoint failed, trying direct Firestore fetch:', err);
+      }
+
+      // 2. Direct Firestore Client Fallback
+      try {
+        const querySnapshot = await getDocs(collection(db, 'projects'));
+        if (!querySnapshot.empty) {
+          const firestoreProjects = querySnapshot.docs.map(docSnap => {
+            const data = docSnap.data() as any;
+            let normalizedCategory = data.category;
+            if (normalizedCategory) {
+              if (normalizedCategory.toLowerCase() === 'web development' || normalizedCategory.toLowerCase() === 'websites') {
+                normalizedCategory = 'Web Development';
+              } else if (normalizedCategory === 'Corporate Website' || normalizedCategory === 'Solar Solutions Website') {
+                normalizedCategory = 'Web Development';
+              }
+            }
+
+            let projectLink = data.link ?? null;
+            if (data.title === 'Rotary Club of Madurai') {
+              projectLink = 'https://rotary-website-iota.vercel.app/';
+            }
+
+            let projectTechnologies = data.technologies ?? [];
+            if (normalizedCategory === 'Web Development' || (projectLink && projectLink.startsWith('http'))) {
+              projectTechnologies = ['Mobile Responsive', 'SEO Friendly', 'Fast Loading', 'Modern UI/UX'];
+            }
+
+            return {
+              ...data,
+              id: docSnap.id,
+              category: normalizedCategory || 'Web Development',
+              technologies: projectTechnologies,
+              link: projectLink,
+              image: data.image ?? null
+            } as Project;
+          });
+          return firestoreProjects;
+        }
+      } catch (firestoreError) {
+        console.error('Firestore client fallback error:', firestoreError);
+      }
+
+      return [];
+    }
   });
 
   // Use API projects with custom priority sort (Rotary Club first)
