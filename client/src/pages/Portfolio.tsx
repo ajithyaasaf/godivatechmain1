@@ -8,8 +8,8 @@ import SEO from "@/components/SEO";
 import { pageKeywords } from "@/lib/seoKeywords";
 import OptimizedImage from "@/components/ui/optimized-image";
 // Remove unused Firestore import - using API data instead
-import { 
-  getOrganizationData, 
+import {
+  getOrganizationData,
   getWebPageData,
   getBreadcrumbData,
   getCollectionPageData
@@ -34,7 +34,7 @@ const shouldShowOverlay = (project: Project): boolean => {
 // Enhanced Project card component with gallery support and animation
 const ProjectCard = memo(({ project, index }: { project: Project; index: number }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
+
   // Use gallery if available, otherwise fall back to single image
   const images = useMemo(() => {
     if (project.gallery && project.gallery.length > 0) {
@@ -42,16 +42,16 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
     }
     return [project.image];
   }, [project.gallery, project.image]);
-  
+
   const hasMultipleImages = images.length > 1;
-  
+
   // Navigation functions
   const nextImage = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
   }, [images.length]);
-  
+
   const prevImage = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -65,17 +65,17 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
-        transition={{ 
+        transition={{
           duration: 0.6,
           delay: index * 0.1 + 0.2,
-          ease: [0.25, 0.1, 0.25, 1.0] 
+          ease: [0.25, 0.1, 0.25, 1.0]
         }}
         whileHover={{ y: -8 }}
       >
         <div className="relative overflow-hidden group h-64">
           {/* Overlay effect on hover - only for projects that need external links and don't have galleries */}
           {shouldShowOverlay(project) && (
-            <div 
+            <div
               className="absolute inset-0 bg-primary/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30 cursor-pointer"
               onClick={(e) => {
                 e.preventDefault();
@@ -90,7 +90,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               </div>
             </div>
           )}
-          
+
           {/* Project image with fixed height container */}
           <div className="w-full h-64 bg-white">
             <OptimizedImage
@@ -101,7 +101,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               height={600}
             />
           </div>
-          
+
           {/* Category badge */}
           <div className="absolute top-4 right-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md z-10">
             {project.category}
@@ -115,7 +115,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
                 <ImageIcon className="h-3 w-3" />
                 {images.length}
               </div>
-              
+
               {/* Navigation arrows - only show on hover */}
               <button
                 onClick={prevImage}
@@ -124,7 +124,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               >
                 <ChevronLeftIcon className="h-4 w-4" />
               </button>
-              
+
               <button
                 onClick={nextImage}
                 className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-30"
@@ -132,7 +132,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
-              
+
               {/* Dot indicators */}
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-30">
                 {images.map((_, idx) => (
@@ -143,11 +143,10 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
                       e.stopPropagation();
                       setCurrentImageIndex(idx);
                     }}
-                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                      idx === currentImageIndex 
-                        ? 'bg-white scale-125' 
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${idx === currentImageIndex
+                        ? 'bg-white scale-125'
                         : 'bg-white/60 hover:bg-white/80'
-                    }`}
+                      }`}
                     aria-label={`View image ${idx + 1}`}
                   />
                 ))}
@@ -160,7 +159,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
             {project.title}
           </h3>
           <p className="text-neutral-600 mb-4 text-sm">{project.description}</p>
-          
+
           {/* Show image count for multi-image projects */}
           {hasMultipleImages && (
             <div className="text-sm text-neutral-500 mb-3 flex items-center gap-1">
@@ -168,7 +167,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
               {images.length} design variations
             </div>
           )}
-          
+
           <div className="flex flex-wrap gap-2 mb-4">
             {project.technologies.map((tech, idx) => (
               <span
@@ -216,14 +215,14 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
 });
 
 // Methodology step component - optimized with memo and LazyMotion
-const MethodologyStep = memo(({ number, title, description, delay }: { 
-  number: number; 
-  title: string; 
+const MethodologyStep = memo(({ number, title, description, delay }: {
+  number: number;
+  title: string;
   description: string;
   delay: number;
 }) => (
   <LazyMotion features={domAnimation}>
-    <m.div 
+    <m.div
       className="bg-white p-8 rounded-xl shadow-lg text-center border border-neutral-100 h-full"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -233,7 +232,7 @@ const MethodologyStep = memo(({ number, title, description, delay }: {
     >
       <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 relative hover:scale-110 transition-transform duration-300">
         {/* Pulse effect using CSS animation instead of JS animation */}
-        <div 
+        <div
           className="absolute inset-0 rounded-full bg-primary/5 animate-pulse"
         />
         <span className="text-xl font-bold text-primary relative z-10">{number}</span>
@@ -249,7 +248,7 @@ const MethodologyStep = memo(({ number, title, description, delay }: {
 const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   // Removed Firestore logic - using API only
-  
+
   // Fetch projects from API
   const { data: apiProjects = [], isLoading: isLoadingApi } = useQuery<Project[]>({
     queryKey: ['/api/projects'],
@@ -257,7 +256,7 @@ const Portfolio = () => {
 
   // Use API projects directly
   const displayProjects = apiProjects;
-  
+
   // Log data source
   useEffect(() => {
     if (apiProjects.length > 0) {
@@ -266,19 +265,19 @@ const Portfolio = () => {
       console.log("No projects found from API");
     }
   }, [apiProjects.length]);
-  
+
   // Get unique categories from projects
   const uniqueCategories = Array.from(new Set(displayProjects.map(project => project.category)));
   const categories = ['All', ...uniqueCategories];
-  
+
   // Show loading state
   const isLoading = isLoadingApi && displayProjects.length === 0;
-    
+
   // Filter projects by category
-  const filteredProjects = activeFilter 
-    ? displayProjects.filter(project => project.category === activeFilter) 
+  const filteredProjects = activeFilter
+    ? displayProjects.filter(project => project.category === activeFilter)
     : displayProjects;
-    
+
   // Methodology steps
   const methodologySteps = [
     {
@@ -355,12 +354,12 @@ const Portfolio = () => {
           <section className="relative py-24 overflow-hidden">
             {/* Background gradient with mesh */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary to-indigo-800"></div>
-            
+
             {/* Background patterns */}
             <div className="absolute inset-0 opacity-20">
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMjkgNTl2LTJoMnYyaC0yem0wLTRWMzloMnYxNmgtMnptMC0xOFYyMWgydjE2aC0yem0wLTE4VjNoMnYxNmgtMnptLTIgNDBWNDFoMnYxNmgtMnptMC0xOFYyM2gydjE2aC0yek0yNyA1VjNoMnYyaC0yem0yIDJWNWgydjJoLTJ6bTIgMlY3aDJ2MmgtMnptMiAyVjloMnYyaC0yem0yIDJWMTFoMnYyaC0yem0yIDJWMTNoMnYyaC0yem0yIDJWMTVoMnYyaC0yem0yIDJWMTdoMnYyaC0yem0yIDJWMTloMnYyaC0yem0tMTYgMTRWMzNoMnYyaC0yem0wIDRWMzdoMnYyaC0yem0wIDRWNDFoMnYyaC0yem0wIDRWNDVoMnYyaC0yem0wIDRWNDloMnYyaC0yem0wIDRWNTNoMnYyaC0yem0wIDRWNTdoMnYyaC0yeiIvPjwvZz48L2c+PC9zdmc+')]"></div>
             </div>
-            
+
             {/* Content */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <div className="text-center max-w-3xl mx-auto text-white">
@@ -377,7 +376,7 @@ const Portfolio = () => {
                       Explore our successful projects and see how we've helped businesses across various industries achieve their goals through innovative technology solutions.
                     </p>
                   </m.div>
-                  
+
                   {/* Animated highlight */}
                   <m.div
                     className="mt-8 inline-block bg-white/10 backdrop-blur-sm px-6 py-3 rounded-lg border border-white/20"
@@ -392,7 +391,7 @@ const Portfolio = () => {
                 </LazyMotion>
               </div>
             </div>
-            
+
             {/* Decorative elements with CSS animations instead of JS for better performance */}
             <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/30 rounded-full blur-3xl animate-float-slow" />
             <div className="absolute top-1/4 -right-10 w-60 h-60 bg-indigo-500/30 rounded-full blur-3xl animate-float-reverse" />
@@ -406,10 +405,10 @@ const Portfolio = () => {
             <div className="absolute inset-0 
               [background-image:linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] 
               [background-size:4rem_4rem]" />
-              
+
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               {/* Filter buttons */}
-              <motion.div 
+              <motion.div
                 className="mb-12 flex flex-wrap justify-center gap-4"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -420,11 +419,10 @@ const Portfolio = () => {
                   <motion.button
                     key={`filter-category-${category}-${index}`}
                     onClick={() => setActiveFilter(category === 'All' ? null : category)}
-                    className={`py-2 px-6 rounded-full text-sm font-medium transition-all duration-300 ${
-                      (category === 'All' && activeFilter === null) || category === activeFilter
+                    className={`py-2 px-6 rounded-full text-sm font-medium transition-all duration-300 ${(category === 'All' && activeFilter === null) || category === activeFilter
                         ? "bg-primary text-white shadow-md"
                         : "bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200"
-                    }`}
+                      }`}
                     whileHover={{ y: -3 }}
                     whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0, y: 20 }}
@@ -438,7 +436,7 @@ const Portfolio = () => {
 
               {/* Loading state */}
               {isLoading && (
-                <motion.div 
+                <motion.div
                   className="flex flex-col items-center justify-center py-16"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -450,10 +448,10 @@ const Portfolio = () => {
                   </p>
                 </motion.div>
               )}
-              
+
               {/* Empty state - no projects found */}
               {!isLoading && displayProjects.length === 0 && (
-                <motion.div 
+                <motion.div
                   className="flex flex-col items-center justify-center py-16 px-4 text-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -475,7 +473,7 @@ const Portfolio = () => {
               {/* Projects grid with staggered animation */}
               {!isLoading && displayProjects.length > 0 && (
                 <AnimatePresence mode="wait">
-                  <motion.div 
+                  <motion.div
                     key={activeFilter || 'all'}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -484,10 +482,10 @@ const Portfolio = () => {
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                   >
                     {filteredProjects.map((project, index) => (
-                      <ProjectCard 
-                        key={project.id} 
-                        project={project} 
-                        index={index} 
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                        index={index}
                       />
                     ))}
                   </motion.div>
@@ -503,9 +501,9 @@ const Portfolio = () => {
             {/* Background elements */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -mr-48 -mt-48" />
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl -ml-48 -mb-48" />
-            
+
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-              <motion.div 
+              <motion.div
                 className="text-center mb-16"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -515,7 +513,7 @@ const Portfolio = () => {
                 <div className="inline-flex items-center justify-center mb-4 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
                   <span className="text-primary font-semibold text-sm">OUR APPROACH</span>
                 </div>
-                
+
                 <h2 className="text-4xl font-bold text-neutral-800 mb-4">Our Project Methodology</h2>
                 <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
                   We follow a proven approach to ensure successful project delivery and exceptional results.
@@ -524,7 +522,7 @@ const Portfolio = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {methodologySteps.map((step, index) => (
-                  <MethodologyStep 
+                  <MethodologyStep
                     key={`methodology-step-${step.title}-${index}`}
                     number={step.number}
                     title={step.title}
