@@ -37,7 +37,7 @@ const Footer = () => {
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-6 mb-16"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-16"
           variants={footerVariants}
           initial="hidden"
           whileInView="show"
@@ -57,7 +57,7 @@ const Footer = () => {
               </motion.span>
             </div>
             <p className="text-neutral-300 mb-6 leading-relaxed">
-              Empowering businesses through innovative technology solutions since 2020.
+              Empowering businesses worldwide through innovative digital and software solutions since 2020.
             </p>
             <div className="flex space-x-4">
               {[
@@ -86,8 +86,8 @@ const Footer = () => {
               {[
                 { name: "Web Development", slug: "web-design-development" },
                 { name: "Digital Marketing", slug: "digital-marketing" },
-                { name: "E-commerce", slug: "ecommerce-solutions" },
-                { name: "Web Hosting", slug: "web-hosting-maintenance" },
+                { name: "E-commerce Solutions", slug: "ecommerce-solutions" },
+                { name: "Web Hosting & Cloud", slug: "web-hosting-maintenance" },
                 { name: "UI/UX Design", slug: "ui-ux-design" },
                 { name: "Branding & Logo Design", slug: "branding-logo-design" }
               ].map((service, index) => (
@@ -114,7 +114,7 @@ const Footer = () => {
               {[
                 { label: "About Us", path: "/about" },
                 { label: "Portfolio", path: "/portfolio" },
-                { label: "Blog", path: "/blog" },
+                { label: "Blog & Insights", path: "/blog" },
                 { label: "Careers", path: "/about" },
                 { label: "Contact Us", path: "/contact" }
               ].map((item, index) => (
@@ -125,30 +125,6 @@ const Footer = () => {
                 >
                   <Link
                     href={item.path}
-                    className="text-neutral-300 hover:text-white transition-colors flex items-center"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary/70 mr-2"></span>
-                    {item.label}
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
-
-          <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold mb-6 relative pl-3 border-l-2 border-primary">Serving TN</h3>
-            <ul className="space-y-3">
-              {[
-                { label: "Areas We Serve", path: "/areas-we-serve", title: "Web Design Service Areas in Tamil Nadu" }
-              ].map((item, index) => (
-                <motion.li 
-                  key={index}
-                  whileHover={{ x: 5 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                  <Link
-                    href={item.path}
-                    title={item.title}
                     className="text-neutral-300 hover:text-white transition-colors flex items-center"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/70 mr-2"></span>
@@ -173,7 +149,7 @@ const Footer = () => {
                 <MapPin className="h-5 w-5 mt-0.5 mr-3 text-primary group-hover:text-white transition-colors flex-shrink-0" />
                 <span className="text-neutral-300 group-hover:text-white transition-colors text-sm sm:text-base break-words">
                   <span className="font-semibold block text-white/95">Branch Office:</span>
-                  32/3, South Street<br/>Sathirapatti<br/>Rajapalayam, India
+                  32/3, South Street<br/>Chatrapatti<br/>Rajapalayam, India
                 </span>
               </li>
               <li className="flex items-start group">
