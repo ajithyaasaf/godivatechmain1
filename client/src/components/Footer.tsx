@@ -117,7 +117,7 @@ const Footer = () => {
                 { label: "About Us", path: "/about" },
                 { label: "Portfolio", path: "/portfolio" },
                 { label: "Blog & Insights", path: "/blog" },
-                { label: "Careers", path: "/about" },
+                { label: "Careers", path: "/careers" },
                 { label: "Contact Us", path: "/contact" }
               ].map((item, index) => (
                 <motion.li 

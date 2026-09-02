@@ -44,6 +44,7 @@ const Portfolio = lazy(() => import("@/pages/Portfolio"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Contact = lazy(() => import("@/pages/Contact"));
+const Careers = lazy(() => import("@/pages/Careers"));
 const AreasWeServe = lazy(() => import("@/pages/AreasWeServe"));
 const Virudhunagar = lazy(() => import("@/pages/locations/Virudhunagar"));
 const Aruppukottai = lazy(() => import("@/pages/locations/Aruppukottai"));
@@ -131,6 +132,7 @@ function App() {
                 <Route path="/blog/category/:categorySlug" component={Blog} />
                 <Route path="/blog/:slug" component={BlogPost} />
                 <Route path="/contact" component={Contact} />
+                <Route path="/careers" component={Careers} />
                 <Route path="/privacy" component={Privacy} />
                 <Route path="/terms" component={Terms} />
                 <Route path="/auth" component={AuthPage} />
