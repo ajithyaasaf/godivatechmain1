@@ -17,13 +17,15 @@ import {
   Database, Palette, BrainCircuit, BarChart, ShieldCheck,
   Cpu, ScrollText, Users, Box, Bookmark, ChevronRight, 
   CheckCircle2, Sparkles, FileCheck, MessageCircle, Layout,
-  Video, LineChart
+  Video, LineChart, PenTool, Megaphone, Smartphone
 } from "lucide-react";
 import ServiceSection from "@/components/home/ServiceSection";
 import NewsletterSection from "@/components/home/NewsletterSection";
 import CTASection from "@/components/home/CTASection";
 import PageTransition, { TransitionItem } from "@/components/PageTransition";
 import { useQuery } from "@tanstack/react-query";
+import { ALL_SERVICES } from "@shared/services-data";
+import { getServiceIcon } from "@/lib/service-icons";
 
 // Industry card component with animation - optimized with memo and CSS animations
 const IndustryCard = memo(({ icon: Icon, title, description, index }: { 
@@ -94,20 +96,22 @@ const ServiceStep = memo(({ number, title, description, delay }: {
 
 // Service Card component for main services section - optimized with memo and LazyMotion
 const EnterpriseServiceCard = memo(({ 
-  icon: Icon, 
+  icon, 
   title, 
   description, 
   path, 
   features = [], 
   index 
 }: { 
-  icon: React.ElementType; 
+  icon: any; 
   title: string; 
   description: string; 
   path: string; 
   features?: string[];
   index: number;
 }) => {
+  const IconComponent = getServiceIcon(icon, title);
+
   return (
     <LazyMotion features={domAnimation}>
       <m.div 
@@ -120,7 +124,7 @@ const EnterpriseServiceCard = memo(({
         <div className="p-8 flex-grow flex flex-col">
           <div className="mb-6 relative">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
-              <Icon className="text-primary h-8 w-8" />
+              <IconComponent className="text-primary h-8 w-8" />
             </div>
             <div 
               className="absolute top-0 right-0 w-20 h-20 opacity-10 animate-pulse-slow"
@@ -218,92 +222,8 @@ const Services = () => {
     };
   }, []);
   
-  // Enterprise level services data
-  const enterpriseServices: ServiceType[] = [
-    { 
-      id: 1,
-      icon: Globe, 
-      title: "Web Design & Development", 
-      description: "Custom websites with responsive designs that work seamlessly across all devices, providing optimal user experiences.",
-      slug: "web-design-development",
-      features: ["Responsive Design", "SEO Optimization", "Custom CMS Integration"]
-    },
-    { 
-      id: 2,
-      icon: Cloud, 
-      title: "Digital Marketing", 
-      description: "Strategic marketing solutions to increase your online visibility, engage with customers, and drive conversions.",
-      slug: "digital-marketing",
-      features: ["SEO & SEM", "Social Media Marketing", "Content Strategy"]
-    },
-    { 
-      id: 3,
-      icon: Database, 
-      title: "Custom Software Solutions", 
-      description: "Build enterprise-grade custom software including CRM systems, ERP solutions, and business management platforms tailored to your needs.",
-      slug: "custom-software",
-      features: ["CRM Systems", "ERP Solutions", "Cloud Ready", "Scalable Architecture"]
-    },
-    { 
-      id: 4,
-      icon: Box, 
-      title: "E-commerce Solutions", 
-      description: "End-to-end e-commerce platforms with secure payment processing and inventory management systems.",
-      slug: "ecommerce-solutions",
-      features: ["Secure Payments", "Inventory Management", "Mobile Shopping Experience"]
-    },
-    { 
-      id: 5,
-      icon: Users, 
-      title: "Mobile App Development", 
-      description: "Build custom mobile applications for Android and iOS platforms that connect you with your customers wherever they are.",
-      slug: "app-development",
-      features: ["iOS & Android", "Native Performance", "App Store Ready", "Cloud Integration"]
-    },
-    { 
-      id: 6,
-      icon: Layout, 
-      title: "UI/UX Design", 
-      description: "User-centered design approaches that enhance usability and create engaging digital experiences.",
-      slug: "ui-ux-design",
-      features: ["User Research", "Wireframing & Prototyping", "Usability Testing"]
-    },
-    { 
-      id: 7,
-      icon: Palette, 
-      title: "Logo & Brand Design", 
-      description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
-      slug: "logo-brand-design",
-      features: ["Logo Design", "Brand Guidelines", "Color Palette", "Typography"]
-    },
-    { 
-      id: 8,
-      icon: Code, 
-      title: "Poster & Graphics Design", 
-      description: "Craft eye-catching posters, banners, and marketing materials that effectively communicate your message and attract customer attention.",
-      slug: "poster-design",
-      features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
-    },
-    { 
-      id: 9,
-      icon: Video, 
-      title: "Corporate Video Production", 
-      description: "Cinematic brand films, commercial ads, 3D product animations, and corporate documentaries that elevate your company's global positioning.",
-      slug: "corporate-video-production",
-      features: ["4K Cinematic Filming", "Scriptwriting & Storyboard", "Drone & Aerial Shots", "Motion Graphics & VFX", "Sound Design & Color Grading"]
-    },
-    { 
-      id: 10,
-      icon: LineChart, 
-      title: "Data Analytics & BI", 
-      description: "Transform complex data into actionable business intelligence with custom dashboards, automated reporting, and predictive analytics.",
-      slug: "data-analytics",
-      features: ["Custom BI Dashboards", "Automated Data Pipelines", "Predictive Analytics", "KPI & Revenue Tracking", "Data Warehouse Integration"]
-    }
-  ];
-  
-  // Combine API services with default services if needed
-  const services = apiServices.length > 0 ? apiServices : enterpriseServices;
+  // Combine API services with Single Source of Truth defaults
+  const services = apiServices.length > 0 ? apiServices : ALL_SERVICES;
   
   // Industry data
   const industries = [
@@ -592,17 +512,23 @@ const Services = () => {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {services.map((service, index) => (
-                  <EnterpriseServiceCard 
-                    key={service.id || index}
-                    icon={service.icon || Globe}
-                    title={service.title}
-                    description={service.description}
-                    path={`/services/${service.slug}`}
-                    features={service.features || []}
-                    index={index}
-                  />
-                ))}
+                {services.map((service, index) => {
+                  const title = (service.slug === 'poster-design' || service.title?.toLowerCase().includes('poster'))
+                    ? 'Graphic Design & Creatives'
+                    : service.title;
+
+                  return (
+                    <EnterpriseServiceCard 
+                      key={service.id || index}
+                      icon={service.icon || Globe}
+                      title={title}
+                      description={service.description}
+                      path={`/services/${service.slug}`}
+                      features={service.features || []}
+                      index={index}
+                    />
+                  );
+                })}
               </div>
               
               <div className="mt-16 text-center">

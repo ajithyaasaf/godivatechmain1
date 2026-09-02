@@ -19,6 +19,7 @@ import {
   InsertContactMessage, ContactMessage,
   InsertSubscriber, Subscriber
 } from "@shared/schema";
+import { ALL_SERVICES, getServiceBySlug as getSharedServiceBySlug } from "@shared/services-data";
 
 // Create a memory store for session storage
 const MemoryStoreClass = MemoryStore(session);
@@ -711,92 +712,8 @@ export class FirestoreStorage {
   // Services methods
   async getAllServices(): Promise<Service[]> {
     try {
-      // Return updated services with new structure and order
-      // Web Development, Digital Marketing, Custom Software, Ecommerce, Mobile App, UI/UX, Logo & Brand, Poster & Graphics
-      const defaultServices: any[] = [
-        {
-          id: 1,
-          title: "Web Design & Development",
-          description: "Custom websites with responsive designs that work seamlessly across all devices, providing optimal user experiences.",
-          slug: "web-design-development",
-          icon: "globe",
-          features: ["Responsive Design", "SEO Optimization", "Custom CMS Integration"]
-        },
-        {
-          id: 2,
-          title: "Digital Marketing",
-          description: "Strategic marketing solutions to increase your online visibility, engage with customers, and drive conversions.",
-          slug: "digital-marketing",
-          icon: "cloud",
-          features: ["SEO & SEM", "Social Media Marketing", "Content Strategy"]
-        },
-        {
-          id: 3,
-          title: "Custom Software Solutions",
-          description: "Build enterprise-grade custom software including CRM systems, ERP solutions, and business management platforms tailored to your needs.",
-          slug: "custom-software",
-          icon: "database",
-          features: ["CRM Systems", "ERP Solutions", "Cloud Ready", "Scalable Architecture"]
-        },
-        {
-          id: 4,
-          title: "E-commerce Solutions",
-          description: "End-to-end e-commerce platforms with secure payment processing and inventory management systems.",
-          slug: "ecommerce-solutions",
-          icon: "box",
-          features: ["Secure Payments", "Inventory Management", "Mobile Shopping Experience"]
-        },
-        {
-          id: 5,
-          title: "Mobile App Development",
-          description: "Native and cross-platform mobile applications that deliver exceptional user experiences on iOS and Android devices.",
-          slug: "app-development",
-          icon: "users",
-          features: ["Native iOS & Android", "Cross-Platform Solutions", "App Store Optimization"]
-        },
-        {
-          id: 6,
-          title: "UI/UX Design",
-          description: "User-centered design approaches that enhance usability and create engaging digital experiences.",
-          slug: "ui-ux-design",
-          icon: "layout",
-          features: ["User Research", "Wireframing & Prototyping", "Usability Testing"]
-        },
-        {
-          id: 7,
-          title: "Logo & Brand Design",
-          description: "Develop a distinctive visual identity with professional logo design and comprehensive branding that communicates your company values.",
-          slug: "logo-brand-design",
-          icon: "palette",
-          features: ["Logo Design", "Brand Guidelines", "Color Palette", "Typography"]
-        },
-        {
-          id: 8,
-          title: "Poster & Graphics Design",
-          description: "Craft eye-catching posters, banners, and marketing materials that effectively communicate your message and attract customer attention.",
-          slug: "poster-design",
-          icon: "code",
-          features: ["Creative Design", "Print Ready", "Multiple Formats", "Quick Turnaround"]
-        },
-        {
-          id: 9,
-          title: "Corporate Video Production",
-          description: "High-impact brand storytelling, commercial advertisements, 3D product showcases, and corporate documentaries that elevate your market presence.",
-          slug: "corporate-video-production",
-          icon: "video",
-          features: ["4K Cinematic Filming", "Scriptwriting & Storyboard", "Drone & Aerial Shots", "Motion Graphics & VFX", "Sound Design & Color Grading"]
-        },
-        {
-          id: 10,
-          title: "Data Analytics & BI",
-          description: "Transform raw data into actionable business intelligence with custom dashboards, automated reporting, and predictive analytics.",
-          slug: "data-analytics",
-          icon: "bar-chart",
-          features: ["Custom BI Dashboards", "Automated Data Pipelines", "Predictive Analytics", "KPI & Revenue Tracking", "Data Warehouse Integration"]
-        }
-      ];
-      
-      return defaultServices;
+      // Single Source of Truth from @shared/services-data
+      return ALL_SERVICES as Service[];
     } catch (error) {
       console.error("Error getting all services:", error);
       return [];
@@ -805,7 +722,6 @@ export class FirestoreStorage {
 
   async getService(id: number): Promise<Service | undefined> {
     try {
-      // Get all services and find by ID
       const allServices = await this.getAllServices();
       return allServices.find(s => s.id === id);
     } catch (error) {
@@ -816,9 +732,7 @@ export class FirestoreStorage {
 
   async getServiceBySlug(slug: string): Promise<Service | undefined> {
     try {
-      // Get all services and find by slug
-      const allServices = await this.getAllServices();
-      return allServices.find(s => s.slug === slug);
+      return getSharedServiceBySlug(slug) as Service | undefined;
     } catch (error) {
       console.error("Error getting service by slug:", error);
       return undefined;
