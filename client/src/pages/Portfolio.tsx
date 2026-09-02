@@ -28,22 +28,7 @@ interface Project {
 
 // Helper function to determine if a project should show the overlay
 const shouldShowOverlay = (project: Project): boolean => {
-  // Always show overlay for projects with external links that need to be accessed
-  if (project.link !== null) return true;
-  
-  // Don't show overlay for certain categories that don't need external links
-  const categoriesWithoutOverlay = [
-    'E-commerce Development',
-    'Brand Design', 
-    'UI/UX Design',
-    'Software Development'
-  ];
-  
-  if (categoriesWithoutOverlay.includes(project.category)) return false;
-  
-  // Show overlay for Web Development projects that should have external links
-  return project.category === 'Web Development' && 
-         ['JP FInserv', 'OM Vinayaga Associates', 'Smart Group of Companies', 'Smart Shine Solar'].includes(project.title);
+  return Boolean(project.link && project.link.trim() !== "");
 };
 
 // Enhanced Project card component with gallery support and animation

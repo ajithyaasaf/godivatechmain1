@@ -1,17 +1,12 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { log } from './vite';
 
-// Directly define the cloudinary credentials
-const CLOUDINARY_CLOUD_NAME = 'doeodacsg';
-const CLOUDINARY_API_KEY = '269267633995791';
-const CLOUDINARY_API_SECRET = 'wUw9Seu6drQEIbQ1tAvYeVyqHdU';
-
-// Function to get cloudinary credentials with process.env priority and fallback
+// Function to get cloudinary credentials from environment variables
 const getCloudinaryConfig = () => {
   return {
-    cloudName: process.env.CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME,
-    apiKey: process.env.CLOUDINARY_API_KEY || CLOUDINARY_API_KEY, 
-    apiSecret: process.env.CLOUDINARY_API_SECRET || CLOUDINARY_API_SECRET
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY, 
+    apiSecret: process.env.CLOUDINARY_API_SECRET
   };
 };
 
@@ -19,20 +14,14 @@ const getCloudinaryConfig = () => {
 const configureCloudinary = () => {
   const { cloudName, apiKey, apiSecret } = getCloudinaryConfig();
 
-  // Configure Cloudinary with environment variables
-  console.log('Cloudinary Config:', {
-    cloud_name: cloudName,
-    api_key: apiKey ? 'Exists (not shown)' : 'Missing',
-    api_secret: apiSecret ? 'Exists (not shown)' : 'Missing'
-  });
-
-  // Configure Cloudinary
-  cloudinary.config({
-    cloud_name: cloudName,
-    api_key: apiKey,
-    api_secret: apiSecret,
-    secure: true,
-  });
+  if (cloudName && apiKey && apiSecret) {
+    cloudinary.config({
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret,
+      secure: true,
+    });
+  }
 
   return { cloudName, apiKey, apiSecret };
 };

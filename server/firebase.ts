@@ -2,15 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"; 
 import { getAuth } from "firebase/auth";
 
-// Firebase configuration for client usage
+// Firebase configuration from environment variables
 export const firebaseConfig = {
-  apiKey: "AIzaSyDzIqWI6AApvWSE22y1Ug7h-8MysAo2fNw",
-  authDomain: "godiva-tech.firebaseapp.com",
-  projectId: "godiva-tech",
-  storageBucket: "godiva-tech.firebasestorage.app",
-  messagingSenderId: "801444351245",
-  appId: "1:801444351245:web:f030b472d6fb7be3d4f444",
-  measurementId: "G-KHE7CZP6EZ"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN || "godiva-tech.firebaseapp.com",
+  projectId: process.env.FIREBASE_PROJECT_ID || "godiva-tech",
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET || "godiva-tech.firebasestorage.app",
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || "801444351245",
+  appId: process.env.FIREBASE_APP_ID,
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID || "G-KHE7CZP6EZ"
 };
 
 // Initialize Firebase
