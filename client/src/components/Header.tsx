@@ -45,7 +45,7 @@ const Logo: React.FC = () => (
       <img 
         src={godivaLogo} 
         alt="GodivaTech Logo" 
-        className="h-10 w-auto"
+        className="h-12 sm:h-13 md:h-14 w-auto max-w-[220px] sm:max-w-[260px] object-contain transition-all duration-300"
       />
       <motion.div 
         className="absolute bottom-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary via-blue-500 to-indigo-600 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"
