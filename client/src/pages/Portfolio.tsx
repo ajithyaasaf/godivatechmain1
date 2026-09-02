@@ -338,17 +338,30 @@ const Portfolio = () => {
     }
   });
 
-  // Use API projects with bulletproof priority sort (Rotary Club always #1)
+  // Use API projects with bulletproof priority sort (Rotary Club #1, Bright Life swapped to #5)
   const displayProjects = useMemo(() => {
     return [...apiProjects].sort((a: any, b: any) => {
-      const isRotaryA = a.title?.toLowerCase().includes('rotary') || a.link?.includes('rotary');
-      const isRotaryB = b.title?.toLowerCase().includes('rotary') || b.link?.includes('rotary');
-      if (isRotaryA && !isRotaryB) return -1;
-      if (!isRotaryA && isRotaryB) return 1;
+      const getPriority = (item: any) => {
+        const title = (item.title || '').toLowerCase();
+        const link = (item.link || '').toLowerCase();
 
-      const orderA = a.order ?? 999;
-      const orderB = b.order ?? 999;
-      if (orderA !== orderB) return orderA - orderB;
+        if (title.includes('rotary') || link.includes('rotary')) return 1;
+        if (title.includes('healthy home loans') && !title.includes('logo') && !title.includes('card')) return 2;
+        if (title.includes('imex')) return 3;
+        if (title.includes('jp finserv')) return 4;
+        if (title === 'bright life' || (title.includes('bright life') && !title.includes('logo'))) return 5;
+        if (title.includes('om vinayaga') && !title.includes('logo')) return 6;
+        if (title.includes('smart group')) return 7;
+        if (title.includes('smart shine')) return 8;
+        if (title.includes('copper bear')) return 9;
+
+        return item.order ?? 100;
+      };
+
+      const priorityA = getPriority(a);
+      const priorityB = getPriority(b);
+
+      if (priorityA !== priorityB) return priorityA - priorityB;
       return (a.title || '').localeCompare(b.title || '');
     });
   }, [apiProjects]);
